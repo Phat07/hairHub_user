@@ -1,0 +1,23 @@
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+body {
+  width: 100vw;
+  overflow-x: hidden;
+  background: #f1f1f1;
+  height: auto;
+}
+
+@layer {
+  
+  /* .auth-section {
+    @apply w-full h-screen overflow-hidden flex flex-col items-start justify-start px-6 py-4 gap-6;
+
+  } */
+}
+
+

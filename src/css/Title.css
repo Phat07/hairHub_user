@@ -1,0 +1,19 @@
+.pretty-title {
+    background-color: #4CAF50; /* Background color */
+    color: white !important; /* Text color */
+    padding: 10px 20px; /* Padding around the text */
+    border: 2px solid #388E3C; /* Border color */
+    border-radius: 5px; /* Rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    transition: all 0.3s ease; /* Smooth transition for hover effect */
+    font-size: 24px; /* Font size, does not effect, add !important if want to fix this */
+    text-align: center; /* Center align text */
+  }
+  
+  /* Hover effect */
+  .pretty-title:hover {
+    background-color: #388E3C; /* Darker background color on hover */
+    border-color: #2E7D32; /* Darker border color on hover */
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Slightly larger shadow on hover */
+    transform: translateY(-3px); /* Slightly move up on hover */
+  }

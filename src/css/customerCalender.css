@@ -1,0 +1,101 @@
+.react-calendar__month-view__weekdays {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.react-calendar__tile {
+  background: white;
+  color: black;
+  border-radius: 8px;
+}
+
+.react-calendar__navigation button {
+  min-width: 44px;
+  background: none;
+  font-size: 1.2em;
+}
+
+.react-calendar__navigation {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+/* .react-calendar__tile--now {
+  background: #1890ff;
+  color: white;
+} */
+
+.event-day {
+  background-color: #52c41a !important;
+  color: white !important;
+  border-radius: 50% !important;
+}
+
+.react-calendar__navigation .react-calendar__navigation__label {
+  font-size: 1.4em;
+  font-weight: bold;
+}
+
+.weekly-calendar {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.weekly-calendar th,
+.weekly-calendar td {
+  border: 1px solid #ddd;
+  text-align: center;
+  padding: 8px;
+  min-height: 100px;
+}
+
+.weekly-calendar th {
+  background-color: #f2f2f2;
+  color: black;
+  font-weight: bold;
+  border: 1px solid #ddd;
+  text-align: center;
+  padding: 8px;
+}
+
+.appointment-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease,
+    background-color 0.3s ease;
+  cursor: pointer;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.appointment-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  background-color: #f0f0f0;
+}
+
+.appointment-card:active {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+  background-color: #e0e0e0;
+}
+
+select {
+  width: auto;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+  font-size: 16px;
+  color: #333;
+  line-height: 1.5;
+  cursor: pointer;
+  outline: none;
+}
+
+option {
+  padding: 8px 12px;
+}

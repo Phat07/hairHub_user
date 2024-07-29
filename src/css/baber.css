@@ -1,0 +1,10 @@
+.system-salon__container {
+  width: 100%;
+  max-width: 1170px;
+  padding: 40px 16px;
+  background: #fff;
+  margin: auto;
+  margin-top: 150px;
+  border-radius: 5px;
+  box-shadow: 3px 6px #ebb26288;
+}

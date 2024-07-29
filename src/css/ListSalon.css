@@ -1,0 +1,105 @@
+.carousel-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+  width: 160rem;
+  /* max-width: 153rem; */
+  margin-left: -7rem;
+}
+
+.arrow-button {
+  background: white;
+  border: 2px solid rgba(0, 0, 0, 0.146);
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 2rem;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  margin: 0 10px;
+}
+
+.arrow-button:focus {
+  outline: none;
+}
+
+.arrow-button:hover {
+  background: black;
+  color: white;
+}
+
+.small-card {
+  width: 220px;  
+}
+
+.small-card .ant-card-body {
+  padding: 10px;  
+}
+
+.small-card .ant-card-meta-title {
+  font-size: 16px;  
+}
+
+.small-card .ant-card-meta-description {
+  font-size: 11px;  
+}
+
+.small-card .ant-card-actions li {
+  margin: 6px 0;
+}
+
+/* EmployeeForm.css */
+.custom-timepicker .ant-picker-input {
+  /* background-color: #f0f2f5; Light grey background */
+  color: #333; /* Text color */
+  border-radius: 8px; /* Rounded corners */
+  margin-left: 10rem;
+}
+
+.custom-timepicker .ant-picker-input input {
+  font-size: 16px; /* Font size */
+  padding: 5px; /* Padding */
+}
+
+.custom-timepicker .ant-picker-clear {
+  color: #ff4d4f; /* Clear icon color */
+}
+
+.custom-timepicker .ant-picker-clock-icon {
+  color: #1890ff; /* Clock icon color */
+}
+
+.custom-timepicker .ant-picker {
+  border: 1px solid #d9d9d9; /* Border color */
+}
+
+.custom-timepicker .ant-picker:hover,
+.custom-timepicker .ant-picker-focused {
+  border-color: #40a9ff; /* Border color on hover/focus */
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2); /* Box shadow on hover/focus */
+}
+
+.ButtonHoverable {
+  margin-left: 2rem;
+  width: 30%;
+  height: 100%;
+  border-radius: 50%;
+  background: #40a9ff;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+
+.ButtonHoverable:hover{
+  background: rgb(255,255,255, 0.10);
+  color: black;
+}
+
+:where(.css-dev-only-do-not-override-17seli4).ant-rate .ant-rate-star:not(:last-child) {
+  margin-inline-end: 0;
+}
+

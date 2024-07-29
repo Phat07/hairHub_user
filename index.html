@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="/src/assets/images/hairHubLogo.png"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HairHub</title>
+    <style>
+      .ripple {
+        position: absolute;
+        border-radius: 50%;
+        transform: scale(0);
+        animation: ripple-animation 1.6s ease-out;
+        background-image: linear-gradient(
+          45deg,
+          rgba(238, 51, 213, 0.2) 0%,
+          rgba(51, 170, 238, 0.5) 100%
+        );
+        pointer-events: none;
+        z-index: 9999;
+      }
+
+      @keyframes ripple-animation {
+        to {
+          transform: scale(0.1);
+          opacity: 0;
+        }
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+      integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p"
+      crossorigin="anonymous"
+    />
+    <!-- <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDPd9amUMvfU5Ete2_iugs172kmLn1WFvo&libraries=&v=weekly">
+  </script> -->
+  </head>
+
+  <body>
+    <div id="ripple-container">
+      <div id="root"></div>
+    </div>
+
+    <script type="module" src="/src/main.jsx"></script>
+    <script>
+      document.addEventListener("click", function (e) {
+        const ripple = document.createElement("span");
+        const diameter = Math.max(
+          document.documentElement.clientWidth,
+          document.documentElement.clientHeight
+        );
+        const radius = diameter / 2;
+
+        ripple.style.width = ripple.style.height = `${diameter}px`;
+        ripple.style.left = `${e.clientX - radius}px`;
+        ripple.style.top = `${e.clientY - radius}px`;
+        ripple.classList.add("ripple");
+
+        const rippleContainer = document.getElementById("ripple-container");
+        rippleContainer.appendChild(ripple);
+
+        ripple.addEventListener("animationend", () => {
+          rippleContainer.removeChild(ripple);
+        });
+      });
+    </script>
+  </body>
+</html>

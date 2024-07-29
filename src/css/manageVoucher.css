@@ -1,0 +1,65 @@
+.editButtonStyle {
+  color: #3498db !important; /* Màu chữ */
+  border: 1px solid #3498db !important; /* Viền */
+  background-color: transparent !important; /* Nền trong suốt */
+}
+
+.editButtonStyle:hover {
+  background-color: #3498db !important; /* Nền màu xanh dương khi hover */
+  color: white !important; /* Màu chữ trắng khi hover */
+}
+
+.deleteButtonStyle {
+  color: #e74c3c !important; /* Màu chữ */
+  border: 1px solid #e74c3c !important; /* Viền */
+  background-color: transparent !important; /* Nền trong suốt */
+}
+
+.deleteButtonStyle:hover {
+  background-color: #e74c3c !important; /* Nền màu đỏ khi hover */
+  color: white !important; /* Màu chữ trắng khi hover */
+}
+
+.addButtonStyle {
+  color: rgb(40, 167, 69) !important; /* Màu chữ */
+  border: 1px solid rgb(40, 167, 69) !important; /* Viền */
+  background-color: transparent !important; /* Nền trong suốt */
+}
+
+.addButtonStyle:hover {
+  background-color: rgb(40, 167, 69) !important; /* Nền màu xanh lá khi hover */
+  color: white !important; /* Màu chữ trắng khi hover */
+}
+
+/* .custom-select .ant-select-selector {
+  background-color: #28a745 !important;
+  color: white !important;
+  border-color: #28a745 !important;
+}
+
+.custom-select .ant-select-selection-item,
+.custom-select .ant-select-selection-placeholder {
+  color: white !important;
+}
+
+/* Tùy chỉnh màu nền và màu chữ của Dropdown */
+/* .ant-select-dropdown {
+  background-color: #28a745 !important;
+} */ */
+
+.ant-select-dropdown-menu-item {
+  color: white !important;
+}
+
+/* Tùy chỉnh màu sắc của icon xổ xuống */
+.ant-select .ant-select-arrow {
+  color: white !important;
+}
+
+.ant-table-thead > tr > th {
+  background-color: #ebf5ea !important;
+}
+
+.ant-table-tbody > tr > td {
+  background-color: white !important;
+}
