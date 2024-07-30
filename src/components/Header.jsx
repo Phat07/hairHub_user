@@ -6,8 +6,18 @@ import { Link, Outlet, redirect, useNavigate } from "react-router-dom";
 import { IoMenu } from "react-icons/io5";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import useSignOut from "react-auth-kit/hooks/useSignOut";
-import { Avatar, Button, Col, Flex, Row, Typography, message } from "antd";
-import { LogoutOutlined, UserOutlined } from "@ant-design/icons";
+import {
+  Avatar,
+  Button,
+  Col,
+  Dropdown,
+  Flex,
+  Menu,
+  Row,
+  Typography,
+  message,
+} from "antd";
+import { DownOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons";
 import { SalonInformationServices } from "../services/salonInformationServices";
 import { isEmptyObject } from "./formatCheckValue/checkEmptyObject";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,7 +31,7 @@ function Header(props) {
   const [salonInformation, setSalonInformation] = useState({});
   const userName = auth?.username;
   const idOwner = auth?.idOwner;
-  const uid= auth?.uid
+  const uid = auth?.uid;
   const idCustomer = auth?.idCustomer;
   const dispatch = useDispatch();
 
@@ -42,7 +52,6 @@ function Header(props) {
       signOut();
       message.success("Đăng xuất thành công");
       navigate("/");
-      // window.location.reload();
     }
   };
   const handleEmptySalon = () => {
@@ -53,28 +62,70 @@ function Header(props) {
     }
   };
 
+  const serviceMenu = (
+    <Menu>
+      {idOwner && (
+        <Menu.Item>
+          <Link to={handleEmptySalon()}>Quản lý Salon</Link>
+        </Menu.Item>
+      )}
+      <Menu.Item>
+        <Link to={"/listPackage"}>Dịch vụ hệ thống</Link>
+      </Menu.Item>
+      <Menu.Item>
+        <Link to={"/listPayment"}>Dịch vụ đã thanh toán</Link>
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <div>
       <header className="header fixed-header">
         <div className="header-bottom" data-header>
           <div className="container">
-            <img
-              style={{
-                width: "8rem",
-                borderRadius: "50px",
-                marginLeft: "-8rem",
-                backgroundImage: "cover",
-                objectFit: "cover",
-                marginRight: "1rem",
-              }}
-              src={hairHubLogo}
-              // className="headerLogo"
-            />
-
-            <Typography.Title className="logo" onClick={() => navigate("/")}>
-              HairHub
-              <span className="span">Salon | Barber Shop</span>
-            </Typography.Title>
+            <Link
+              to={"/"}
+              className="logo"
+              style={{ display: "flex", alignItems: "center" }}
+            >
+              <img
+                style={{
+                  width: "4.5rem",
+                  borderRadius: "50%",
+                  marginRight: "1rem",
+                }}
+                src={hairHubLogo}
+                alt="HairHub Logo"
+              />
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  width: "12.5rem",
+                }}
+              >
+                <h1
+                  style={{
+                    margin: 0,
+                    padding: 0,
+                    fontSize: "1.5rem",
+                    lineHeight: "1.5rem",
+                  }}
+                >
+                  HairHub
+                </h1>
+                <span
+                  style={{
+                    fontSize: "0.9rem",
+                    color: "#888",
+                    lineHeight: "1.5rem",
+                  }}
+                >
+                  Salon | Barber
+                </span>
+              </div>
+            </Link>
 
             <nav className="navbar container" data-navbar>
               <ul className="navbar-list">
@@ -83,32 +134,14 @@ function Header(props) {
                     Trang chủ
                   </Link>
                 </li>
-                {/* <li className="navbar-item">
-                  {idCustomer && (
-                    <a href="#services" className="navbar-link" data-nav-link>
-                      Dịch vụ
-                    </a>
-                  )}
-                </li> */}
-                {/* <li className="navbar-item">
+                <li className="navbar-item">
                   <Link
-                    to={"/list_salon"}
+                    to={"/system_shop"}
                     className="navbar-link"
                     data-nav-link
                   >
-                    Salons | Barbers
+                    Hệ thống cửa hàng
                   </Link>
-                </li> */}
-                <li className="navbar-item">
-                  {idOwner && (
-                    <Link
-                      to={handleEmptySalon()}
-                      className="navbar-link"
-                      data-nav-link
-                    >
-                      Quản lý Salon
-                    </Link>
-                  )}
                 </li>
                 <li className="navbar-item">
                   {(idCustomer || idOwner) && (
@@ -134,40 +167,13 @@ function Header(props) {
                 </li>
                 <li className="navbar-item">
                   {idOwner && (
-                    <Link className="navbar-link" to={"/listPackage"}>
-                      Các gói dịch vụ của hệ thống
-                    </Link>
+                    <Dropdown overlay={serviceMenu} trigger={["hover"]}>
+                      <a className="navbar-link" href="#!" data-nav-link>
+                        Tiện ích <DownOutlined />
+                      </a>
+                    </Dropdown>
                   )}
                 </li>
-                <li className="navbar-item">
-                  {idOwner && (
-                    <Link className="navbar-link" to={"/listPayment"}>
-                      Các gói dịch vụ đã được thanh toán
-                    </Link>
-                  )}
-                </li>
-                {/* <li className="navbar-item">
-                  {idCustomer && (
-                    <Link className="navbar-link" to={"/customer_report"}>
-                      Báo cáo 
-                    </Link>
-                  )}
-                </li> */}
-                <li className="navbar-item">
-                    <Link
-                      to={"/system_shop"}
-                      className="navbar-link"
-                      data-nav-link
-                    >
-                      Hệ thống cửa hàng
-                    </Link>
-                
-                </li>
-                {/* <li className="navbar-item">
-                  <Link className="navbar-link" to={"/barber"}>
-                    Barber
-                  </Link>
-                </li> */}
               </ul>
             </nav>
             <button
@@ -182,14 +188,6 @@ function Header(props) {
                 align="middle"
                 justify="space-between"
                 className="logOutSection"
-                // style={{
-                //   padding: "0 5px",
-                //   background:
-                //     "linear-gradient(90deg, rgba(31, 17, 206, 1) 0%, rgba(229, 43, 43, 1) 100%)",
-                //   borderBottom: "1px solid #d9d9d9",
-                //   // boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                //   borderRadius: "8px",
-                // }}
               >
                 <Col span={14}>
                   <Typography.Title
@@ -197,17 +195,17 @@ function Header(props) {
                     style={{
                       margin: 0,
                       padding: "10px",
-                      // backgroundColor: "#f5f5f5",
-                      // borderRadius: "5px",
                       display: "flex",
                       alignItems: "center",
-                      // boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                      width: "100%",
+                      width: "35rem",
                     }}
                   >
                     <Link
                       to={`/Account/${uid}`}
-                      style={{ color: "#ffff" }}
+                      style={{
+                        color: "#ffff",
+                        fontSize: "1.3rem",
+                      }}
                     >
                       {<UserOutlined />} {userName}
                     </Link>
@@ -225,7 +223,6 @@ function Header(props) {
                       background:
                         "linear-gradient(90deg, rgba(238, 130, 238, 0.8) 0%, rgba(0, 209, 255, 0.8) 100%)",
                     }}
-                    // className="bg-gradient-to-r from-blue-500 to-pink-400 mr-[15rem] w-[100%]"
                   >
                     Đăng xuất
                   </Button>
@@ -235,7 +232,6 @@ function Header(props) {
               <Link to={"/login"}>
                 <a className="btn has-before">
                   <span className="span min-w-14 max-h-36 w-36">Đăng nhập</span>
-                  {/* <ion-icon name="arrow-forward" aria-hidden="true" /> */}
                 </a>
               </Link>
             )}
