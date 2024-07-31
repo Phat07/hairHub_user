@@ -24,10 +24,10 @@ function App() {
   );
   useEffect(() => {
     // Kiểm tra token hết hạn
-    if (!auth || !auth.token) {
-      navigate("/login"); // Điều hướng đến trang đăng nhập nếu token không hợp lệ
-      return;
-    }
+    // if (!auth || !auth.token) {
+    //   navigate("/login"); // Điều hướng đến trang đăng nhập nếu token không hợp lệ
+    //   return;
+    // }
 
     dispatch(actGetSalonInformationByOwnerId(ownerId));
     dispatch(actGetAllPaymentList(ownerId, 1, 10));

@@ -52,7 +52,6 @@ import { ProConfigProvider } from "@ant-design/pro-components";
 import PackagePage from "./pages/PackagePage.jsx";
 import PackageSuccessPage from "./pages/PackageSuccessPage.jsx";
 import DashboardTransactionPage from "./pages/DashboardTransactionPage.jsx";
-import Layout from "./pages/Layout.jsx";
 
 const authStore = createStore({
   authName: "_auth",
@@ -64,7 +63,7 @@ const authStore = createStore({
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,
+    element: <App />,
     errorElement: <ErrorPage />,
     children: [
       {
@@ -316,7 +315,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <ConfigProvider locale={viVn} theme={customTheme}>
         <AuthProvider store={authStore}>
           <RouterProvider router={router}>
-            <App />
+            {/* <App /> */}
           </RouterProvider>
         </AuthProvider>
       </ConfigProvider>
