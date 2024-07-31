@@ -74,7 +74,6 @@ const ListSalon = () => {
       currentPage,
       pageSize
     ).then((res) => {
-      console.log("ressFound", res);
       setSalonList(res.data.items);
       setTotalPages(res.data.totalPages);
     });
@@ -129,7 +128,9 @@ const ListSalon = () => {
           navigator.geolocation.getCurrentPosition(
             (pos) => {
               const { latitude, longitude } = pos.coords;
-              const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=AIzaSyCS8UxismntEBlETj9ZS85msU7bC35CyJM`;
+              const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${
+                import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
+              }`;
 
               fetch(url)
                 .then((res) => res.json())
@@ -169,7 +170,7 @@ const ListSalon = () => {
       },
     });
   };
-  
+
   const handleFoundBaber = () => {
     if (!searchTerm) {
       navigate(`/list_salon?location=${searchLocation}`);
@@ -193,9 +194,15 @@ const ListSalon = () => {
         }}
       ></div>
       <LoadScript
-        googleMapsApiKey="AIzaSyAs7hqe3ZUJTjrM7KbdVqkdxB__0eCcKgE"
+        googleMapsApiKey={import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY}
         libraries={libraries}
-        onLoad={() => setIsApiLoaded(true)}
+        onLoad={() => {
+          if (isApiLoaded) {
+            console.clear(); // Clear console to remove previous logs
+          }
+          setIsApiLoaded(true)
+        }}
+        // onLoad={() => setIsApiLoaded(true)}
       />
       {isApiLoaded ? (
         <div

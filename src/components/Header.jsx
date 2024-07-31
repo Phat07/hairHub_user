@@ -46,7 +46,7 @@ function Header(props) {
       console.log(err, "errors");
     }
   }, [idOwner]);
-
+  
   const handleSignOut = () => {
     if (auth) {
       signOut();

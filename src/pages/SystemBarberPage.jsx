@@ -18,9 +18,9 @@ import axios from "axios";
 import {
   GoogleMap,
   LoadScript,
-  Marker,
   InfoWindow,
   MarkerF,
+  useJsApiLoader 
 } from "@react-google-maps/api";
 
 import "../css/baber.css";
@@ -183,7 +183,7 @@ function SystemBarberPage(props) {
       });
     }
   }, [salonName, locationSalon, currentPage, pageSize]);
-  console.log("salon", salonName);
+
   useEffect(() => {
     axios
       .get(
@@ -272,7 +272,6 @@ function SystemBarberPage(props) {
       setTotalPages(res.data.totalPages);
     });
   };
-  console.log("list", salonList);
 
   const handleChangeDistrict = (value) => {
     setSelectedDistrict(value);
@@ -290,12 +289,13 @@ function SystemBarberPage(props) {
           navigator.geolocation.getCurrentPosition(
             async (pos) => {
               const { latitude, longitude } = pos.coords;
-              const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=AIzaSyAs7hqe3ZUJTjrM7KbdVqkdxB__0eCcKgE`;
+              const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${
+                import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
+              }`;
 
               try {
                 const res = await fetch(url);
                 const data = await res.json();
-                console.log("Geocode API response:", data);
 
                 if (data.status === "OK") {
                   const address = data.results[0].formatted_address;
@@ -377,6 +377,7 @@ function SystemBarberPage(props) {
     }
     navigate(`/system_shop?${searchParams.toString()}`);
   };
+
   return (
     <div>
       <div className="system-salon__container">
@@ -386,11 +387,11 @@ function SystemBarberPage(props) {
             style={{ backgroundColor: "#1677FF", borderRadius: "10px" }}
           >
             <Button type="primary" onClick={handleSearch}>
-              {currentLocationUser ? (
+              {/* {currentLocationUser ? (
                 currentLocationUser
-              ) : (
-                <>Tìm salon gần bạn</>
-              )}
+              ) : ( */}
+              <>Tìm salon gần bạn</>
+              {/* )} */}
             </Button>
           </div>
           <div>
@@ -499,7 +500,15 @@ function SystemBarberPage(props) {
                   </List.Item>
                 )}
                 locale={{
-                  emptyText: <Empty description="Không có salon nào" />,
+                  emptyText: (
+                    <Empty
+                      description={
+                        currentLocationUser
+                          ? "Không có salon nào gần bạn"
+                          : "Không có salon nào"
+                      }
+                    />
+                  ),
                 }}
               />
               <Pagination
@@ -512,8 +521,15 @@ function SystemBarberPage(props) {
           </div>
           <div className="ml-5" style={{ height: "500px", width: "600px" }}>
             <LoadScript
-              googleMapsApiKey="AIzaSyAs7hqe3ZUJTjrM7KbdVqkdxB__0eCcKgE"
-              onLoad={() => setScriptLoaded(true)}
+              googleMapsApiKey={
+                import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
+              }
+              onLoad={() => {
+                if (scriptLoaded) {
+                  console.clear(); // Clear console to remove previous logs
+                }
+                setScriptLoaded(true);
+              }}
             >
               {/* {scriptLoaded ? ( */}
               {/* {salonList ? ( */}

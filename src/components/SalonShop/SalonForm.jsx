@@ -238,7 +238,7 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
             {
               params: {
                 address: place.formatted_address,
-                key: "AIzaSyCS8UxismntEBlETj9ZS85msU7bC35CyJM", // Replace with your API key
+                key: import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY, // Replace with your API key
               },
             }
           );
@@ -367,7 +367,7 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
       style={{ marginTop: "120px", marginLeft: "250px", marginRight: "250px" }}
     >
       <LoadScript
-        googleMapsApiKey="AIzaSyAs7hqe3ZUJTjrM7KbdVqkdxB__0eCcKgE"
+        googleMapsApiKey={import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY}
         libraries={libraries}
         loadingElement={
           <div className="overlay">

@@ -12,7 +12,7 @@ import { BsFillEarFill } from "react-icons/bs";
 import { IoMenu } from "react-icons/io5";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { Button, Card, Flex, Modal, Rate, Space, Typography } from "antd";
+import { Button, Card, Flex, message, Modal, Rate, Space, Typography } from "antd";
 import heroBanner from "../assets/images/bannerHomePage.jpg";
 import {
   CheckCircleOutlined,
@@ -63,7 +63,13 @@ function HomePage(props) {
   const amount = url.searchParams.get("amount");
   const configId = url.searchParams.get("configId");
   const id = url.searchParams.get("id");
+  // const login = url.searchParams.get("login");
 
+  // useEffect(()=>{
+  //   if(login){
+  //     message.success('Đăng nhập thành công')
+  //   }
+  // },[login])
   useEffect(() => {
     if (orderCode && amount && configId && id) {
       setIsModalVisible(true);
@@ -75,13 +81,13 @@ function HomePage(props) {
   useEffect(() => {
     dispatch(actGetAllSalonInformation());
   }, []);
-  console.log(salonList, "salonList");
+  
   const handleOk = () => {
     setIsModalVisible(false);
     handleClick();
   };
   const handleClick = () => {
-    console.log("aaaaa");
+
     const dataMapping = {
       ordercode: orderCode,
       configId: configId,
