@@ -59,22 +59,50 @@ function HeaderUnAuth(props) {
   return (
     <div>
       <header className="header fixed-header">
-        <div className="header-bottom" data-header>
-          <div className="container">
-            <img
-              style={{
-                width: "8rem",
-                borderRadius: "50px",
-                marginLeft: "-8rem",
-                backgroundImage: "cover",
-                objectFit: "cover",
-                marginRight: "1rem",
-              }}
-              src={hairHubLogo}
-            />
-            <Link to={"/"} className="logo">
-              HairHub
-              <span className="span">Salon | Barber Shop</span>
+        <div className="header-bottom" style={{ height: "10rem" }} data-header>
+          <div className="container" style={{ marginTop: "1rem" }}>
+            <Link
+              to={"/"}
+              className="logo"
+              style={{ display: "flex", alignItems: "center" }}
+            >
+              <img
+                style={{
+                  width: "4.5rem",
+                  borderRadius: "50%",
+                  marginRight: "1rem",
+                }}
+                src={hairHubLogo}
+                alt="HairHub Logo"
+              />
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  width: "12.5rem",
+                }}
+              >
+                <h1
+                  style={{
+                    margin: 0,
+                    padding: 0,
+                    fontSize: "1.5rem",
+                    lineHeight: "1.5rem",
+                  }}
+                >
+                  HairHub
+                </h1>
+                <span
+                  style={{
+                    fontSize: "0.9rem",
+                    color: "#888",
+                    lineHeight: "1.5rem",
+                  }}
+                >
+                  Salon | Barber
+                </span>
+              </div>
             </Link>
             <nav className="navbar container" data-navbar>
               <ul className="navbar-list">
@@ -116,7 +144,7 @@ function HeaderUnAuth(props) {
               <IoMenu />
             </button>
             <Link to={"/login"}>
-              <a className="btn has-before">
+              <a className="btn has-before" style={{ textAlign: "center" }}>
                 <span className="span min-w-14 max-h-36 w-36">Đăng nhập</span>
               </a>
             </Link>
