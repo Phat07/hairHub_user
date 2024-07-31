@@ -93,6 +93,7 @@ const LoginPage = () => {
   const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [timer, setTimer] = useState(120);
+
   const renderInput = (props) => (
     <input
       {...props}
@@ -121,6 +122,7 @@ const LoginPage = () => {
     const seconds = time % 60;
     return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
   };
+
   const sendOtp = async () => {
     setLoading(true);
     const email = form.getFieldValue("email");
@@ -510,29 +512,18 @@ const LoginPage = () => {
   );
 
   const handleFinish = (values) => {
-    // const { username, password } = values;
-    // const formLogin = {
-    //   username,
-    //   password,
-    // };
     setLoading(true);
-    // {
-    //   accessType === "login";
-    // }
-
-    //call api
-    //Login api
     if (accessType === "login") {
       AccountServices.loginUser(values)
         .then((res) => {
           //login success
-
           if (
             signIn({
               auth: {
-                expiresIn: 3600,
+                // expiresIn: 3600,
                 token: res.data.accessToken,
                 type: "Bearer",
+                refreshToken: res.data.refreshToken,
               },
               // refresh: res.data.refreshToken,
               userState: {
@@ -544,13 +535,12 @@ const LoginPage = () => {
                 idOwner: res.data?.salonOwnerResponse?.id,
                 idCustomer: res.data?.customerResponse?.id,
               },
-              // expiresIn: 3600,
             })
           ) {
-            message.success("Đăng nhập thành công!");
-            navigate("/");
-            // navigate(`/?login=${res.data?.salonOwnerResponse?.fullName}`);
-            // Redirect or do-something
+            // message.success("Đăng nhập thành công!", 1);
+            navigate('/')
+            // navigate(`/?login=${res.data.accountId}`);
+            // window.location.href = `/?login=${res.data.accountId}`;
           } else {
             message.error("Đăng nhập thất bại!");
             //Throw error
@@ -559,12 +549,9 @@ const LoginPage = () => {
         .catch((err) => {
           message.error(err.response.data.message);
           setIsLoading(false);
-          console.log(isLoading);
-          console.log(accessType);
         })
         .finally(() => {
           setIsLoading(false);
-          console.log(isLoading);
         });
     } else {
       //Register api
