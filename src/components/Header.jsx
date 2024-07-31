@@ -81,8 +81,8 @@ function Header(props) {
   return (
     <div>
       <header className="header fixed-header">
-        <div className="header-bottom" data-header>
-          <div className="container">
+        <div className="header-bottom" style={{ height: "10rem" }} data-header>
+          <div className="container" style={{ marginTop: "1rem" }}>
             <Link
               to={"/"}
               className="logo"
@@ -230,7 +230,7 @@ function Header(props) {
               </Row>
             ) : (
               <Link to={"/login"}>
-                <a className="btn has-before">
+                <a className="btn has-before" style={{ textAlign: "center" }}>
                   <span className="span min-w-14 max-h-36 w-36">Đăng nhập</span>
                 </a>
               </Link>
