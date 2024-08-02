@@ -20,7 +20,7 @@ import {
   theme,
 } from "antd";
 import { motion } from "framer-motion";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "../css/login.css";
 
 import {
@@ -93,6 +93,9 @@ const LoginPage = () => {
   const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [timer, setTimer] = useState(120);
+
+  const [submitting, setSubmitting] = useState(false);
+  const submitButtonRef = useRef(null);
 
   const renderInput = (props) => (
     <input
@@ -513,6 +516,7 @@ const LoginPage = () => {
 
   const handleFinish = (values) => {
     // setLoading(true);
+    setSubmitting(true);
     if (accessType === "login") {
       AccountServices.loginUser(values)
         .then((res) => {
@@ -537,6 +541,7 @@ const LoginPage = () => {
               },
             })
           ) {
+            setSubmitting(false);
             message.success("Đăng nhập thành công!", 1);
             navigate("/");
             // navigate(`/?login=${res.data.accountId}`);
@@ -565,7 +570,14 @@ const LoginPage = () => {
     }
   };
 
-
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      if (submitButtonRef.current) {
+        submitButtonRef.current.click();
+      }
+    }
+  };
   return (
     <>
       <div
@@ -626,7 +638,17 @@ const LoginPage = () => {
                   ? "Đăng nhập"
                   : "Đăng ký",
             },
+            htmlType: "button",
+            submitButtonProps: {
+              ref: submitButtonRef,
+            }, // uncomment this line
           }}
+          // onKeyDown={handleKeyDown}
+          // onFinish={(values, errors, event) => {
+          //   event.preventDefault(); // <--- Add this line
+          //   handleFinish(values, errors);
+          // }}
+          onKeyDown={handleKeyDown}
           onFinish={handleFinish}
           backgroundImageUrl="https://res.cloudinary.com/dtlvihfka/image/upload/v1719936805/xov2xoo8jqppdas53kva.png"
           logo={
@@ -672,7 +694,6 @@ const LoginPage = () => {
               </div>
             )
           }
-
         >
           <Tabs
             onClick={(activeKey) => showModal(activeKey)}
