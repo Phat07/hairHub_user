@@ -12,10 +12,11 @@ import { actGetAllServicesBySalonId } from "./store/salonEmployees/action";
 import { actGetAllPaymentList } from "./store/config/action";
 import HeaderUnAuth from "./components/HeaderUnAuth";
 import { useNavigate } from "react-router-dom";
+import ChatButton from "./components/ChatButton";
 
 function App() {
   const auth = useAuthUser();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const ownerId = auth?.idOwner;
@@ -37,7 +38,12 @@ function App() {
   useEffect(() => {
     dispatch(actGetAllServicesBySalonId(salonDetail?.id));
   }, [salonDetail]);
-  return <>{auth ? <Header /> : <HeaderUnAuth />}</>;
+  return (
+    <>
+      {auth ? <Header /> : <HeaderUnAuth />}
+      <ChatButton />
+    </>
+  );
 }
 
 export default App;
