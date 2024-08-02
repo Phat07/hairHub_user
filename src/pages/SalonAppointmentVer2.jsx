@@ -81,6 +81,7 @@ function SalonAppointmentVer2(props) {
     FAILED: "Thất bại",
     SUCCESSED: "Thành công",
   };
+  console.log(salonAppointments);
 
   const handleStatusChange = (newStatus) => {
     setStatus(newStatus);
@@ -273,12 +274,13 @@ function SalonAppointmentVer2(props) {
                     padding: "1rem",
                     width: "calc(25% - 1rem)",
                     boxSizing: "border-box",
+                    color:"black"
                   }}
                 >
                   <h3>{appointment.customer.fullName}</h3>
                   <p>Ngày đặt: {formatDate(appointment.startDate)}</p>
                   <p>
-                    Thời gian bắt đầu:
+                    Thời gian bắt đầu: {" "}
                     {moment(
                       appointment.appointmentDetails[0]?.startTime
                     ).format("HH:mm")}
