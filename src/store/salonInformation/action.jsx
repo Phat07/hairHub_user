@@ -29,7 +29,6 @@ export function actGetSalonInformationByOwnerId(id) {
     await result
       .then((response) => {
         if (response.status === 200 || response.status === 201) {
-          console.log("ressData", response);
           dispatch(getSalonInformationByOwnerId(response.data));
         } else {
           message.error("Can't get salon by Owner id!!!");
@@ -37,7 +36,7 @@ export function actGetSalonInformationByOwnerId(id) {
       })
       .catch((error) => {
         // Xử lý lỗi nếu có
-        console.error("Error while fetching all config money:", error);
+        console.error("error", error);
       });
   };
 }

@@ -539,6 +539,8 @@ const LoginPage = () => {
                 idOwner: res.data?.salonOwnerResponse?.id,
                 idCustomer: res.data?.customerResponse?.id,
               },
+              // refreshToken: res.data.refreshToken,
+              refreshTokenExpireIn: 86400,
             })
           ) {
             setSubmitting(false);

@@ -521,9 +521,10 @@ function SystemBarberPage(props) {
           </div>
           <div className="ml-5" style={{ height: "500px", width: "600px" }}>
             <LoadScript
-              googleMapsApiKey={
-                import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
-              }
+              // googleMapsApiKey={
+              //   import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
+              // }
+              googleMapsApiKey={`${import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY}&loading=async`}
               onLoad={() => {
                 if (scriptLoaded) {
                   console.clear(); // Clear console to remove previous logs

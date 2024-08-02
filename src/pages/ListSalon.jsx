@@ -130,7 +130,7 @@ const ListSalon = () => {
               const { latitude, longitude } = pos.coords;
               const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${
                 import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
-              }`;
+              }&loading=async`;
 
               fetch(url)
                 .then((res) => res.json())
@@ -194,13 +194,15 @@ const ListSalon = () => {
         }}
       ></div>
       <LoadScript
-        googleMapsApiKey={import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY}
+        googleMapsApiKey={`${
+          import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
+        }&loading=async`}
         libraries={libraries}
         onLoad={() => {
           if (isApiLoaded) {
             console.clear(); // Clear console to remove previous logs
           }
-          setIsApiLoaded(true)
+          setIsApiLoaded(true);
         }}
         // onLoad={() => setIsApiLoaded(true)}
       />
