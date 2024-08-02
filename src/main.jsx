@@ -314,8 +314,17 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <Provider store={store}>
         {/** Set languages from Chinese to Vietnamese entire project **/}
         <ConfigProvider locale={viVn} theme={customTheme}>
-          <AuthProvider store={authStore}>
-            <RouterProvider router={router}>{/* <App /> */}</RouterProvider>
+          <AuthProvider
+            store={authStore}
+            authType={"cookie"}
+            authName={"_auth"}
+            refresh={{
+              url: "https://gahonghac.net/api/v1/auth/RefreshToken",
+              interval: 15, // Tần suất làm mới token (trong phút)
+              method: "POST", // Phương thức HTTP sử dụng để làm mới token
+            }}
+          >
+            <RouterProvider router={router}></RouterProvider>
           </AuthProvider>
         </ConfigProvider>
       </Provider>

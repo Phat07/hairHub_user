@@ -12,10 +12,11 @@ import { actGetAllServicesBySalonId } from "./store/salonEmployees/action";
 import { actGetAllPaymentList } from "./store/config/action";
 import HeaderUnAuth from "./components/HeaderUnAuth";
 import { useNavigate } from "react-router-dom";
+import ChatComponent from "./components/chat/ChatComponent";
 
 function App() {
   const auth = useAuthUser();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const ownerId = auth?.idOwner;
@@ -28,8 +29,10 @@ function App() {
     //   navigate("/login"); // Điều hướng đến trang đăng nhập nếu token không hợp lệ
     //   return;
     // }
+    if (ownerId) {
+      dispatch(actGetSalonInformationByOwnerId(ownerId));
+    }
 
-    dispatch(actGetSalonInformationByOwnerId(ownerId));
     dispatch(actGetAllPaymentList(ownerId, 1, 10));
     dispatch(actGetAllSalonInformation);
   }, [auth, dispatch, navigate, ownerId]);
@@ -37,7 +40,12 @@ function App() {
   useEffect(() => {
     dispatch(actGetAllServicesBySalonId(salonDetail?.id));
   }, [salonDetail]);
-  return <>{auth ? <Header /> : <HeaderUnAuth />}</>;
+  return (
+    <>
+      {auth ? <Header /> : <HeaderUnAuth />}
+      {/* <ChatComponent /> */}
+    </>
+  );
 }
 
 export default App;

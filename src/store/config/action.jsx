@@ -55,7 +55,7 @@ export function actGetAllPaymentList(id, page, size) {
       })
       .catch((error) => {
         // Xử lý lỗi nếu có
-        console.error("feedback:", error);
+        console.error("error:", error);
       });
   };
 }

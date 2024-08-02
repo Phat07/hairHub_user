@@ -527,7 +527,7 @@ const LoginPage = () => {
                 // expiresIn: 3600,
                 token: res.data.accessToken,
                 type: "Bearer",
-                refreshToken: res.data.refreshToken,
+                // refreshToken: res.data.refreshToken,
               },
               // refresh: res.data.refreshToken,
               userState: {
@@ -539,6 +539,8 @@ const LoginPage = () => {
                 idOwner: res.data?.salonOwnerResponse?.id,
                 idCustomer: res.data?.customerResponse?.id,
               },
+              refreshToken: res.data.refreshToken,
+              refreshTokenExpireIn: 86400,
             })
           ) {
             setSubmitting(false);

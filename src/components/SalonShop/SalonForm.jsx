@@ -367,7 +367,7 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
       style={{ marginTop: "120px", marginLeft: "250px", marginRight: "250px" }}
     >
       <LoadScript
-        googleMapsApiKey={import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY}
+        googleMapsApiKey={`${import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY}&loading=async`}
         libraries={libraries}
         loadingElement={
           <div className="overlay">

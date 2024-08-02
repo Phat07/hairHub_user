@@ -113,7 +113,7 @@ function SalonDetail(props) {
   const pageSize = 5; // Số lượng phản hồi trên mỗi trang
   const indexOfLastFeedback = currentPage * pageSize;
   const indexOfFirstFeedback = indexOfLastFeedback - pageSize;
-  console.log("userAuth", userAuth);
+ 
   const [isReportModalVisible, setIsReportModalVisible] = useState(false);
   const currentDate = new Date();
 
@@ -281,7 +281,7 @@ function SalonDetail(props) {
     }
     return days;
   }
-  console.log("listFeed", listFeedback);
+
   // Call the function to get the next seven days
   const currentMonthDays = generateNextSevenDays();
 
@@ -340,6 +340,7 @@ function SalonDetail(props) {
 
     if (isServiceAlreadySelected) {
       // Hiển thị thông báo nếu dịch vụ đã được chọn
+      setIsBookingModalVisible(true)
       message.warning("Dịch vụ này đã được chọn trước đó.");
     } else {
       // Thêm dịch vụ vào mảng additionalServices nếu chưa được chọn
