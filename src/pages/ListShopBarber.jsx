@@ -53,7 +53,7 @@ function ListShopBarber(props) {
   const [page, setPage] = useState(1);
   const auth = useAuthUser();
   const ownerId = auth?.idOwner;
-  console.log(ownerId, "ownerId");
+ 
   const dispatch = useDispatch();
   const SALONINFORMATION_URL =
     "http://14.225.218.91:8080/api/v1/saloninformations/GetSalonInformationByOwnerId/";
@@ -73,7 +73,7 @@ function ListShopBarber(props) {
   const listEmployee = useSelector(
     (state) => state.SALONEMPLOYEES.listEmployee
   );
-  console.log(salonDetail);
+
   const hidePopover = () => {
     setOpenPopoverId(null);
   };
@@ -166,7 +166,7 @@ function ListShopBarber(props) {
                   <Descriptions
                     title={
                       <Flex justify="space-between" align="center">
-                        <Flex className="bg-blue-600 p-3 w-max border border-red-300 rounded-md">
+                        <Flex className="bg-blue-600 p-3 w-max border border-red-300 rounded-md cursor-pointer">
                           <Typography.Title
                             style={{ color: "rgb(241 245 249)" }}
                             level={3}

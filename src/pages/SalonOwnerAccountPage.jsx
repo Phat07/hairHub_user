@@ -26,7 +26,6 @@ function SalonOwnerAccountPage() {
   const idOwner = authUser?.idOwner;
   const idCustomer = authUser?.idCustomer;
 
-  console.log(idOwner);
   const [salonData, setSalonData] = useState({});
 
   useEffect(() => {
