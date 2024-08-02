@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.jsx";
+import App1 from "./App.jsx";
 import "./index.css";
 import {
   BrowserRouter,
@@ -9,7 +9,7 @@ import {
   Routes,
   createBrowserRouter,
 } from "react-router-dom";
-import { ConfigProvider } from "antd";
+import { ConfigProvider, App } from "antd";
 import "rsuite/dist/rsuite.min.css";
 import enUS from "antd/lib/locale/en_US";
 import viVn from "antd/lib/locale/vi_VN";
@@ -63,7 +63,7 @@ const authStore = createStore({
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: <App1 />,
     errorElement: <ErrorPage />,
     children: [
       {
@@ -310,15 +310,15 @@ const customTheme = {
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <Provider store={store}>
-      {/** Set languages from Chinese to Vietnamese entire project **/}
-      <ConfigProvider locale={viVn} theme={customTheme}>
-        <AuthProvider store={authStore}>
-          <RouterProvider router={router}>
-            {/* <App /> */}
-          </RouterProvider>
-        </AuthProvider>
-      </ConfigProvider>
-    </Provider>
+    <App>
+      <Provider store={store}>
+        {/** Set languages from Chinese to Vietnamese entire project **/}
+        <ConfigProvider locale={viVn} theme={customTheme}>
+          <AuthProvider store={authStore}>
+            <RouterProvider router={router}>{/* <App /> */}</RouterProvider>
+          </AuthProvider>
+        </ConfigProvider>
+      </Provider>
+    </App>
   </React.StrictMode>
 );

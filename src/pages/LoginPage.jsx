@@ -165,7 +165,7 @@ const LoginPage = () => {
         message.success("Otp xác thực thành công!");
       })
       .catch((error) => {
-        message.error(error?.response?.data);
+        message.error(error?.response?.data?.message);
         setOtp("");
       })
       .finally(() => {
@@ -512,7 +512,7 @@ const LoginPage = () => {
   );
 
   const handleFinish = (values) => {
-    setLoading(true);
+    // setLoading(true);
     if (accessType === "login") {
       AccountServices.loginUser(values)
         .then((res) => {
@@ -537,8 +537,8 @@ const LoginPage = () => {
               },
             })
           ) {
-            // message.success("Đăng nhập thành công!", 1);
-            navigate('/')
+            message.success("Đăng nhập thành công!", 1);
+            navigate("/");
             // navigate(`/?login=${res.data.accountId}`);
             // window.location.href = `/?login=${res.data.accountId}`;
           } else {
@@ -564,6 +564,7 @@ const LoginPage = () => {
       //   .catch((err) => message.error(err?.response?.data?.message));
     }
   };
+
 
   return (
     <>
@@ -671,6 +672,7 @@ const LoginPage = () => {
               </div>
             )
           }
+
         >
           <Tabs
             onClick={(activeKey) => showModal(activeKey)}
