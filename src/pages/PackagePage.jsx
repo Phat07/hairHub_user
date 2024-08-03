@@ -139,22 +139,28 @@ function PackagePage(props) {
   const [loadingTenLua, setLoadingTenLua] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [canShowPackages, setCanShowPackages] = useState(false);
-  const auth = useAuthUser();
+  // const auth = useAuthUser();
   const dispatch = useDispatch();
   const { Title, Text } = Typography;
 
-  const ownerId = auth?.idOwner;
-  console.log(ownerId, "ownerId");
+  // const ownerId = auth?.idOwner;
+
+  const idCustomer = useSelector(
+    (state) => state.ACCOUNT.idCustomer
+  );
+  const ownerId = useSelector(
+    (state) => state.ACCOUNT.idOwner
+  );
+
   const listPayment = useSelector(
     (state) => state.CONFIGREDUCER.getAllPaymentList
   );
-  console.log("listPayment", listPayment);
+
   const pageSize = 10;
   const listPackage = useSelector((state) => state.CONFIGREDUCER.getAllPackage);
   const totalPackages = useSelector(
     (state) => state.CONFIGREDUCER.totalPackages
   );
-  console.log("listPackage", listPackage);
 
   useEffect(() => {
     dispatch(actGetAllConfig(currentPage, pageSize));
@@ -173,7 +179,6 @@ function PackagePage(props) {
       setCanShowPackages(true); // No payments, show packages
     }
   }, [listPayment]);
-  console.log("lisPayment");
 
   const handleSelectPackage = async (pkg) => {
     setSelectedPackage(pkg);

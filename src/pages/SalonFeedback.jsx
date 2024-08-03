@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import { actGetSalonInformationByOwnerIdAsync } from "../store/salonAppointments/action";
 import { actGetAllFeedbackBySalonId } from "../store/ratingCutomer/action";
 import { Card, Col, message, Pagination, Rate, Row } from "antd";
@@ -11,8 +10,13 @@ function SalonFeedback(props) {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
-  const auth = useAuthUser();
-  console.log("auth", auth);
+  const idCustomer = useSelector(
+    (state) => state.ACCOUNT.idCustomer
+  );
+  const idOwner = useSelector(
+    (state) => state.ACCOUNT.idOwner
+  );
+
 
   const salonInformationByOwnerId = useSelector(
     (state) => state.SALONAPPOINTMENTS.salonInformationByOwnerId
@@ -20,7 +24,7 @@ function SalonFeedback(props) {
   console.log("salonInformationByOwnerId", salonInformationByOwnerId);
 
   useEffect(() => {
-    dispatch(actGetSalonInformationByOwnerIdAsync(auth.idOwner));
+    dispatch(actGetSalonInformationByOwnerIdAsync(idOwner));
   }, []);
 
   const salonFeedback = useSelector(

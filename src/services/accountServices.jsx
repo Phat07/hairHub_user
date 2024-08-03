@@ -7,8 +7,11 @@ export const AccountServices = {
   registerUser(userData) {
     return API.post("/accounts/RegisterAccount", userData);
   },
+  refreshToken: (refreshToken) => {
+    return API.post('/auth/RefreshToken', { refreshToken });
+  },
   fetchUserByToken(token) {
-    return API.get(`/acccounts/fetchUser/${token}`, {
+    return API.get(`/auth/FetchUser/${token}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

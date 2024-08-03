@@ -19,12 +19,23 @@ import {
 import { UserOutlined, CalendarOutlined } from "@ant-design/icons";
 import { AccountServices } from "../services/accountServices";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 function SalonOwnerAccountPage() {
-  const authUser = useAuthUser();
-  const uid = authUser?.uid;
-  const idOwner = authUser?.idOwner;
-  const idCustomer = authUser?.idCustomer;
+ 
+  const userName = useSelector(
+    (state) => state.ACCOUNT.userName
+  );
+  const idCustomer = useSelector(
+    (state) => state.ACCOUNT.idCustomer
+  );
+  const idOwner = useSelector(
+    (state) => state.ACCOUNT.idOwner
+  );
+  const uid = useSelector(
+    (state) => state.ACCOUNT.uid
+  );
+ 
 
   const [salonData, setSalonData] = useState({});
 

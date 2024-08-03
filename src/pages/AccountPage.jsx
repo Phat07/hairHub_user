@@ -30,9 +30,7 @@ import { actGetAllEmployees } from "../store/salonEmployees/action";
 
 function AccountPage() {
   const [form] = Form.useForm();
-  const { id, employeeId } = useParams(); //id
-  console.log(employeeId, "emp Idddd");
-  console.log(id, "salon Idddd"); //salonId
+  const { id, employeeId } = useParams(); //id//salonId
   const [dayOff, setDayOff] = useState({
     Monday: false,
     Tuesday: false,

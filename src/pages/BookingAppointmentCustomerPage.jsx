@@ -34,9 +34,21 @@ import Loader from "../components/Loader";
 
 function BookingAppointmentCustomerPage() {
   const dispatch = useDispatch();
-  const userAuth = useAuthUser();
+  const userName = useSelector(
+    (state) => state.ACCOUNT.userName
+  );
+  const userIdCustomer = useSelector(
+    (state) => state.ACCOUNT.idCustomer
+  );
+  const idOwner = useSelector(
+    (state) => state.ACCOUNT.idOwner
+  );
+  const uid = useSelector(
+    (state) => state.ACCOUNT.uid
+  );
+  // const userAuth = useAuthUser();
   const [selectedStatus, setSelectedStatus] = useState("BOOKING");
-  const userIdCustomer = userAuth?.idCustomer;
+  // const userIdCustomer = userAuth?.idCustomer;
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
   const [isModalVisible, setIsModalVisible] = useState(false);

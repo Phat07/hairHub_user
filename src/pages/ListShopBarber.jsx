@@ -51,9 +51,14 @@ function ListShopBarber(props) {
   const [data, setData] = useState([]);
   const [list, setList] = useState([]);
   const [page, setPage] = useState(1);
-  const auth = useAuthUser();
-  const ownerId = auth?.idOwner;
- 
+  // const auth = useAuthUser();
+  // const ownerId = auth?.idOwner;
+  const idCustomer = useSelector(
+    (state) => state.ACCOUNT.idCustomer
+  );
+  const ownerId = useSelector(
+    (state) => state.ACCOUNT.idOwner
+  );
   const dispatch = useDispatch();
   const SALONINFORMATION_URL =
     "http://14.225.218.91:8080/api/v1/saloninformations/GetSalonInformationByOwnerId/";

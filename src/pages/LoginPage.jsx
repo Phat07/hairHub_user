@@ -46,6 +46,8 @@ import {
 } from "../components/Regex/Patterns";
 import "../css/loader.css";
 import { AccountServices } from "../services/accountServices";
+import { useDispatch } from "react-redux";
+import { loginAccount } from "../store/account/action";
 // import LoginGoogle from "../components/googleSignIn/LoginGoogle";
 
 const { Meta } = Card;
@@ -77,11 +79,9 @@ const LoginPage = () => {
   // const { token } = theme.useToken();
   const [accessType, setAccessType] = useState("login");
   // const [loginSuccess, setLoginSucess] = useState(false);
-  // const signIn = useSignIn();
-  const isAuthenticated = useIsAuthenticated();
+
   // const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const signIn = useSignIn();
   const [user, setUser] = useState({});
   const [form] = Form.useForm();
   const navigate = useNavigate();
@@ -93,7 +93,7 @@ const LoginPage = () => {
   const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [timer, setTimer] = useState(120);
-
+  const dispatch = useDispatch();
   const [submitting, setSubmitting] = useState(false);
   const submitButtonRef = useRef(null);
 
@@ -471,104 +471,22 @@ const LoginPage = () => {
       setSelected(true);
     }
   }, [id, selected]);
-  const handleResendCode = () => {
-    const email = form.getFieldValue("email");
-    let fullName = "demo";
-    axios
-      .post("https://gahonghac.net/api/v1/otps/SendOTPToEmail", {
-        email,
-        fullName,
-      })
-      .then((res) => {
-        setLoading(true);
-        message.success("Otp đã được gửi lại");
-        setOtp("");
-        setTimer(120);
-      })
-      .catch((err) => {
-        message.error("Gửi otp thất bại");
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
-
-  const genderPrefix = (
-    <>
-      <ManOutlined
-        style={
-          {
-            // color: token.colorText,
-          }
-        }
-        className={"prefixIcon"}
-      />
-      <WomanOutlined
-        style={
-          {
-            // color: token.colorText,
-          }
-        }
-        className={"prefixIcon"}
-      />
-    </>
-  );
 
   const handleFinish = (values) => {
-    // setLoading(true);
     setSubmitting(true);
+
     if (accessType === "login") {
-      AccountServices.loginUser(values)
-        .then((res) => {
-          //login success
-          if (
-            signIn({
-              auth: {
-                // expiresIn: 3600,
-                token: res.data.accessToken,
-                type: "Bearer",
-                refreshToken: res.data.refreshToken,
-              },
-              // refresh: res.data.refreshToken,
-              userState: {
-                token: res.data.accessToken,
-                username:
-                  res.data?.salonOwnerResponse?.fullName ||
-                  res.data?.customerResponse?.fullName,
-                uid: res.data.accountId,
-                idOwner: res.data?.salonOwnerResponse?.id,
-                idCustomer: res.data?.customerResponse?.id,
-              },
-              // refreshToken: res.data.refreshToken,
-              refreshTokenExpireIn: 86400,
-            })
-          ) {
-            setSubmitting(false);
-            message.success("Đăng nhập thành công!", 1);
-            navigate("/");
-            // navigate(`/?login=${res.data.accountId}`);
-            // window.location.href = `/?login=${res.data.accountId}`;
-          } else {
-            message.error("Đăng nhập thất bại!");
-            //Throw error
-          }
-        })
-        .catch((err) => {
-          message.error(err.response.data.message);
-          setIsLoading(false);
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
+      dispatch(loginAccount(values, navigate));
+      
     } else {
-      //Register api
+      // Đăng ký tài khoản
       // AccountServices.registerUser(values)
       //   .then((res) => {
       //     message.success("Thông tin của bạn đã đúng");
       //     setCurrent(current + 1);
       //     setUser(res.data);
       //   })
-      //   .catch((err) => message.error(err?.response?.data?.message));
+      //   .catch((err) => message.error(err?.response?.data?.message || "Đã xảy ra lỗi!"));
     }
   };
 

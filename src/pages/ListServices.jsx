@@ -77,7 +77,7 @@ function ListServices() {
   //   });
   // }, [status]);
   const listService = useSelector((state) => state.SALONEMPLOYEES.listService);
-  console.log("listData", listService);
+ 
   useEffect(() => {
     if (id) {
       dispatch(actGetAllServicesBySalonId(id));

@@ -21,11 +21,17 @@ function PackageSuccessPage(props) {
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const auth = useAuthUser();
+ 
   const dispatch = useDispatch();
   const { Title, Text } = Typography;
 
-  const ownerId = auth?.idOwner;
+
+  const idCustomer = useSelector(
+    (state) => state.ACCOUNT.idCustomer
+  );
+  const ownerId = useSelector(
+    (state) => state.ACCOUNT.idOwner
+  );
   console.log(ownerId, "ownerId");
 
   const pageSize = 10;
@@ -35,7 +41,7 @@ function PackageSuccessPage(props) {
   const totalPackages = useSelector(
     (state) => state.CONFIGREDUCER.totalPagesList
   );
-  console.log("listPayment", listPayment);
+
   useEffect(() => {
     dispatch(actGetAllPaymentList(ownerId, currentPage, pageSize));
   }, [currentPage]);

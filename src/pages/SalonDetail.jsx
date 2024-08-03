@@ -49,7 +49,9 @@ import {
 import RandomIcon from "@rsuite/icons/Random";
 import { actGetAllFeedbackBySalonId } from "../store/ratingCutomer/action";
 import Loader from "../components/Loader";
-
+import useSignIn from "react-auth-kit/hooks/useSignIn";
+import jwt_decode from 'jwt-decode';
+import { AccountServices } from "../services/accountServices";
 const { Panel } = Collapse;
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -106,9 +108,21 @@ function renderStars(stars) {
 
 function SalonDetail(props) {
   const { id } = useParams();
-  const userAuth = useAuthUser();
-  const userId = userAuth?.idOwner;
-  const userIdCustomer = userAuth?.idCustomer;
+  const userName = useSelector(
+    (state) => state.ACCOUNT.userName
+  );
+  const userIdCustomer = useSelector(
+    (state) => state.ACCOUNT.idCustomer
+  );
+  const userId = useSelector(
+    (state) => state.ACCOUNT.idOwner
+  );
+  const uid = useSelector(
+    (state) => state.ACCOUNT.uid
+  );
+  // const userAuth = useAuthUser();
+  // const userId = userAuth?.idOwner;
+  // const userIdCustomer = userAuth?.idCustomer;
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5; // Số lượng phản hồi trên mỗi trang
   const indexOfLastFeedback = currentPage * pageSize;
@@ -290,7 +304,7 @@ function SalonDetail(props) {
       message.warning("Bạn là chủ cửa hàng không thể đặt lịch");
       return;
     }
-    if (userAuth === null) {
+    if (userName === undefined) {
       navigate("/login");
       message.warning("Vui lòng đăng ký hoặc đăng nhập để đặt lịch");
     }
@@ -921,11 +935,10 @@ function SalonDetail(props) {
     const updatedVouchers = voucherSelected.filter((e) => e?.id !== id);
     setVoucherSelected(updatedVouchers);
   };
-
+ 
   const sortedSchedules = salonDetail?.schedules?.sort((a, b) => {
     return daysOrder.indexOf(a.dayOfWeek) - daysOrder.indexOf(b.dayOfWeek);
   });
-  console.log("sort", sortedSchedules);
 
   return (
     <div>

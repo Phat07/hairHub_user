@@ -14,7 +14,13 @@ function CustomerReport(props) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedReport, setSelectedReport] = useState(null);
 
-  const auth = useAuthUser();
+  // const auth = useAuthUser();
+  const idCustomer = useSelector(
+    (state) => state.ACCOUNT.idCustomer
+  );
+  const idOwner = useSelector(
+    (state) => state.ACCOUNT.idOwner
+  );
 
   const customerReport = useSelector(
     (state) => state.REPORTREDUCER.getReportCustomer
@@ -22,7 +28,7 @@ function CustomerReport(props) {
 
   useEffect(() => {
     dispatch(
-      actGetAllReportCustomerId(currentPage, pageSize, auth.idCustomer, status)
+      actGetAllReportCustomerId(currentPage, pageSize, idCustomer, status)
     );
   }, [dispatch, status, currentPage, pageSize]);
 

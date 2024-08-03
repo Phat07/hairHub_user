@@ -34,9 +34,13 @@ function SalonAppointmentVer2(props) {
   const [itemReport, setItemReport] = useState({});
   const pageSize = 8;
 
-  const auth = useAuthUser();
 
-  const ownerId = auth?.idOwner;
+  const idCustomer = useSelector(
+    (state) => state.ACCOUNT.idCustomer
+  );
+  const ownerId = useSelector(
+    (state) => state.ACCOUNT.idOwner
+  );
 
   const salonInformationByOwnerId = useSelector(
     (state) => state.SALONAPPOINTMENTS.salonInformationByOwnerId

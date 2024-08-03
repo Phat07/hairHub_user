@@ -14,18 +14,24 @@ import { actGetSalonInformationByOwnerId } from "../store/salonInformation/actio
 import hairHubLogo from "../assets/images/hairHubLogo.png";
 
 function HeaderUnAuth(props) {
-  const auth = useAuthUser();
-  const signOut = useSignOut();
+  // const auth = useAuthUser();
+  // const signOut = useSignOut();
   const navigate = useNavigate();
   const [salonInformation, setSalonInformation] = useState({});
-  const userName = auth?.username;
-  const idOwner = auth?.idOwner;
-  const idCustomer = auth?.idCustomer;
+  const userName = useSelector(
+    (state) => state.ACCOUNT.userName
+  );
+  const idCustomer = useSelector(
+    (state) => state.ACCOUNT.idCustomer
+  );
+  const idOwner = useSelector(
+    (state) => state.ACCOUNT.idOwner
+  );
+  const uid = useSelector(
+    (state) => state.ACCOUNT.uid
+  );
   const dispatch = useDispatch();
-  console.log(userName, "userName");
-  console.log(idOwner, "idOwner");
-  console.log(idCustomer, "idCustomer");
-  console.log("auth", auth);
+ 
 
   const salonDetail = useSelector(
     (state) => state.SALONINFORMATION.getSalonByOwnerId
@@ -39,14 +45,14 @@ function HeaderUnAuth(props) {
     }
   }, [idOwner]);
 
-  const handleSignOut = () => {
-    if (auth) {
-      signOut();
-      message.success("Đăng xuất thành công");
-      navigate("/");
-      // window.location.reload();
-    }
-  };
+  // const handleSignOut = () => {
+  //   if (auth) {
+  //     signOut();
+  //     message.success("Đăng xuất thành công");
+  //     navigate("/");
+  //     // window.location.reload();
+  //   }
+  // };
   console.log("salon", salonDetail);
   const handleEmptySalon = () => {
     if (!salonDetail) {

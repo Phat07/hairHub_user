@@ -18,14 +18,20 @@ function SalonReport(props) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedReport, setSelectedReport] = useState(null);
 
-  const auth = useAuthUser();
+  // const auth = useAuthUser();
+  const idCustomer = useSelector(
+    (state) => state.ACCOUNT.idCustomer
+  );
+  const idOwner = useSelector(
+    (state) => state.ACCOUNT.idOwner
+  );
   const salonInformationByOwnerId = useSelector(
     (state) => state.SALONAPPOINTMENTS.salonInformationByOwnerId
   );
 
   useEffect(() => {
-    dispatch(actGetSalonInformationByOwnerIdAsync(auth.idOwner));
-  }, [dispatch, auth.idOwner]);
+    dispatch(actGetSalonInformationByOwnerIdAsync(idOwner));
+  }, [dispatch, idOwner]);
 
   const salonReport = useSelector(
     (state) => state.REPORTREDUCER.getReportSalon

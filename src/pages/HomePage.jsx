@@ -26,7 +26,6 @@ const { Title, Text } = Typography;
 
 import { useDispatch, useSelector } from "react-redux";
 import { actGetAllSalonInformation } from "../store/salonInformation/action";
-import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import { actGetStatusPayment } from "../store/salonPayment/action";
 
 function HomePage(props) {
@@ -36,8 +35,10 @@ function HomePage(props) {
   const [heartButton, setHeartButton] = useState(
     Array(salonList.length).fill(false)
   );
-  const auth = useAuthUser();
-  const ownerId = auth?.idOwner;
+
+  const ownerId = useSelector(
+    (state) => state.ACCOUNT.idOwner
+  );
   const scrollContainerRef = useRef(null);
   const recommendedSalons = salonList;
 

@@ -23,21 +23,25 @@ import { isEmptyObject } from "./formatCheckValue/checkEmptyObject";
 import { useDispatch, useSelector } from "react-redux";
 import { actGetSalonInformationByOwnerId } from "../store/salonInformation/action";
 import hairHubLogo from "../assets/images/hairHubLogo.png";
+import { AccountServices } from "../services/accountServices";
+import { fetchUserByTokenApi } from "../store/account/action";
 
 function Header(props) {
-  const auth = useAuthUser();
-  const signOut = useSignOut();
+  // const signOut = useSignOut();
   const navigate = useNavigate();
-  const [salonInformation, setSalonInformation] = useState({});
-  const userName = auth?.username;
-  const idOwner = auth?.idOwner;
-  const uid = auth?.uid;
-  const idCustomer = auth?.idCustomer;
+
   const dispatch = useDispatch();
+  const userName = useSelector((state) => state.ACCOUNT.userName);
+  const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
+  const idOwner = useSelector((state) => state.ACCOUNT.idOwner);
+  const uid = useSelector((state) => state.ACCOUNT.uid);
 
   const salonDetail = useSelector(
     (state) => state.SALONINFORMATION.getSalonByOwnerId
   );
+
+  const account = useSelector((state) => state.ACCOUNT.username);
+  console.log("account", account);
 
   useEffect(() => {
     try {
@@ -46,13 +50,15 @@ function Header(props) {
       console.log(err, "errors");
     }
   }, [idOwner]);
-  
+
   const handleSignOut = () => {
-    if (auth) {
-      signOut();
-      message.success("Đăng xuất thành công");
-      navigate("/");
-    }
+    // if (auth) {
+    // signOut();
+    sessionStorage.removeItem("refreshToken");
+    sessionStorage.removeItem("accessToken");
+    message.success("Đăng xuất thành công");
+    navigate("/");
+    // }
   };
   const handleEmptySalon = () => {
     if (!salonDetail) {
@@ -183,7 +189,7 @@ function Header(props) {
             >
               <IoMenu />
             </button>
-            {auth ? (
+            {account ? (
               <Row
                 align="middle"
                 justify="space-between"
@@ -207,7 +213,7 @@ function Header(props) {
                         fontSize: "1.3rem",
                       }}
                     >
-                      {<UserOutlined />} {userName}
+                      {<UserOutlined />} {account}
                     </Link>
                   </Typography.Title>
                 </Col>

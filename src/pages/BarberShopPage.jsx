@@ -22,7 +22,7 @@ function BarberShopPage(props) {
   useEffect(() => {
     axios.get(SALONDETAIL_URL + id).then((res) => {
       setSalonDetail(res.data);
-      console.log(res.data, "salon detail");
+
     });
   }, [id]);
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import App1 from "./App.jsx";
 import "./index.css";
@@ -8,8 +8,9 @@ import {
   RouterProvider,
   Routes,
   createBrowserRouter,
+  useNavigate,
 } from "react-router-dom";
-import { ConfigProvider, App } from "antd";
+import { ConfigProvider } from "antd";
 import "rsuite/dist/rsuite.min.css";
 import enUS from "antd/lib/locale/en_US";
 import viVn from "antd/lib/locale/vi_VN";
@@ -25,12 +26,12 @@ import SalonDetail from "./pages/SalonDetail.jsx";
 import ListSalon from "./pages/ListSalon.jsx";
 import Footer from "./components/Footer.jsx";
 import ErrorPage from "./pages/ErrorPage.jsx";
-import { Provider } from "react-redux";
+import { Provider, useDispatch } from "react-redux";
 import store from "./store";
 import createStore from "react-auth-kit/createStore";
 import AuthProvider from "react-auth-kit";
 import SalonOwnerPage from "./pages/SalonOwnerPage.jsx";
-import RequireAuth from "@auth-kit/react-router/RequireAuth";
+import RequireAuth from './PrivateRoute.js';
 import VoucherPage from "./pages/VoucherPage.jsx";
 import ListServices from "./pages/ListServices.jsx";
 import CustomerReport from "./pages/CustomerReport.jsx";
@@ -53,12 +54,6 @@ import PackagePage from "./pages/PackagePage.jsx";
 import PackageSuccessPage from "./pages/PackageSuccessPage.jsx";
 import DashboardTransactionPage from "./pages/DashboardTransactionPage.jsx";
 
-const authStore = createStore({
-  authName: "_auth",
-  authType: "cookie",
-  cookieDomain: window.location.hostname,
-  cookieSecure: false,
-});
 
 const router = createBrowserRouter([
   {
@@ -74,7 +69,6 @@ const router = createBrowserRouter([
         path: "barber",
         element: <BarberPage />,
       },
-
       {
         path: "create_shop",
         element: (
@@ -91,30 +85,12 @@ const router = createBrowserRouter([
           </RequireAuth>
         ),
       },
-      // {
-      //   path: "list_barber_employees/:id/*",
-      //   element: (
-      //     <RequireAuth fallbackPath="/login">
-      //       <ListBarberEmployees />
-      //     </RequireAuth>
-      //   ),
-      // },
-      // {
-      //   path: "account_details/:employeeId",
-      //   element: (
-      //     <RequireAuth fallbackPath="/login">
-      //       <AccountPage />
-      //     </RequireAuth>
-      //   ),
-      // },
       {
         path: "list_barber_employees/:id/*",
         element: (
           <RequireAuth fallbackPath="/login">
             <Routes>
-              {/* Access ListBarber first */}
-              <Route path="/" element={<ListBarberEmployees />} />{" "}
-              {/* Access next page */}
+              <Route path="/" element={<ListBarberEmployees />} />
               <Route
                 path="account_details/:employeeId"
                 element={<AccountPage />}
@@ -299,35 +275,26 @@ const router = createBrowserRouter([
   },
 ]);
 
+
+
 const customTheme = {
   components: {
     Typography: {
       fontFamily: '"Montserrat", san-serif',
-      fontSize: 16, //font size of Text
+      fontSize: 16, // font size of Text
     },
   },
 };
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <App>
-      <Provider store={store}>
-        {/** Set languages from Chinese to Vietnamese entire project **/}
-        <ConfigProvider locale={viVn} theme={customTheme}>
-          <AuthProvider
-            store={authStore}
-            authType={"cookie"}
-            authName={"_auth"}
-            refresh={{
-              url: "https://gahonghac.net/api/v1/auth/RefreshToken",
-              interval: 15, // Tần suất làm mới token (trong phút)
-              method: "POST", // Phương thức HTTP sử dụng để làm mới token
-            }}
-          >
-            <RouterProvider router={router}></RouterProvider>
-          </AuthProvider>
-        </ConfigProvider>
-      </Provider>
-    </App>
+    <Provider store={store}>
+      <ConfigProvider locale={viVn} theme={customTheme}>
+          <RouterProvider router={router}>
+            {/* <App /> */}
+          </RouterProvider>
+      </ConfigProvider>
+    </Provider>
   </React.StrictMode>
 );
+// main.jsx

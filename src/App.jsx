@@ -1,7 +1,6 @@
-// import { useState } from "react";
+import { useEffect } from "react";
 import "./App.css";
 import Header from "./components/Header";
-import { useEffect } from "react";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -12,38 +11,108 @@ import { actGetAllServicesBySalonId } from "./store/salonEmployees/action";
 import { actGetAllPaymentList } from "./store/config/action";
 import HeaderUnAuth from "./components/HeaderUnAuth";
 import { useNavigate } from "react-router-dom";
-import ChatComponent from "./components/chat/ChatComponent";
+import jwtDecode from "jwt-decode"; // Ensure jwtDecode is imported
+
+import useAuth from "./hooks/useAuth";
+import { AccountServices } from "./services/accountServices";
+import { fetchUserByTokenApi } from "./store/account/action";
+import { message } from "antd";
 
 function App() {
-  const auth = useAuthUser();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const ownerId = auth?.idOwner;
   const salonDetail = useSelector(
     (state) => state.SALONINFORMATION.getSalonByOwnerId
   );
+  const token = useSelector((state) => state.ACCOUNT.token);
+  const ownerId = useSelector((state) => state.ACCOUNT.ownerId);
+
+
+  const fetchUserByToken = async (token) => {
+    console.log("Fetching user by token:", token);
+    try {
+      await dispatch(fetchUserByTokenApi(token));
+    } catch (err) {
+      console.error("Error fetching user by token:", err);
+      navigate("/login");
+    }
+  };
+
+  const isTokenExpired = (token) => {
+    try {
+      const decodedToken = jwtDecode(token);
+      const currentTime = Date.now() / 1000; // Convert milliseconds to seconds
+      return decodedToken.exp < currentTime;
+    } catch (error) {
+      console.error("Error decoding token:", error);
+      return true;
+    }
+  };
+
+  const refreshToken = async () => {
+    try {
+      const refreshToken = sessionStorage.getItem("refreshToken");
+    
+      if (refreshToken) {
+        const res = await AccountServices.refreshToken(refreshToken);
+        console.log("Refresh response:", res);
+        if (res.data && res.data.accessToken) {
+          sessionStorage.setItem("accessToken", res.data.accessToken);
+          sessionStorage.setItem("refreshToken", res.data.refreshToken);
+          return res.data.accessToken;
+        } else {
+          throw new Error("Invalid response data");
+        }
+      } else {
+        throw new Error("No refresh token found");
+      }
+    } catch (error) {
+      console.error("Error refreshing token:", error);
+      throw new Error("Failed to refresh token");
+    }
+  };
+  
+  const authenticateUser = async () => {
+    try {
+      let accessToken = sessionStorage.getItem("accessToken");
+  
+      if (accessToken && !isTokenExpired(accessToken)) {
+        await fetchUserByToken(accessToken);
+      } else {
+        // let refreshToken = sessionStorage.getItem("refreshToken");
+        accessToken = await refreshToken();
+        await fetchUserByToken(accessToken);
+      }
+    } catch (error) {
+      console.error("Authentication error:", error);
+      // message.error("Session expired. Please log in again.");
+      // navigate("/login");
+    }
+  };
+  
+
   useEffect(() => {
-    // Kiểm tra token hết hạn
-    // if (!auth || !auth.token) {
-    //   navigate("/login"); // Điều hướng đến trang đăng nhập nếu token không hợp lệ
-    //   return;
-    // }
+    authenticateUser();
+  }, []);
+
+  useEffect(() => {
     if (ownerId) {
       dispatch(actGetSalonInformationByOwnerId(ownerId));
     }
-
     dispatch(actGetAllPaymentList(ownerId, 1, 10));
-    dispatch(actGetAllSalonInformation);
-  }, [auth, dispatch, navigate, ownerId]);
+    dispatch(actGetAllSalonInformation());
+  }, [dispatch, ownerId]);
 
   useEffect(() => {
-    dispatch(actGetAllServicesBySalonId(salonDetail?.id));
-  }, [salonDetail]);
+    if (salonDetail?.id) {
+      dispatch(actGetAllServicesBySalonId(salonDetail.id));
+    }
+  }, [salonDetail, dispatch]);
+
   return (
     <>
-      {auth ? <Header /> : <HeaderUnAuth />}
-      {/* <ChatComponent /> */}
+      {sessionStorage.getItem("refreshToken") ? <Header /> : <HeaderUnAuth />}
     </>
   );
 }

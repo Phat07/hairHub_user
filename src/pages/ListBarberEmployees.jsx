@@ -461,8 +461,14 @@ function ListBarberEmployees() {
     (state) => state.SALONEMPLOYEES.listEmployee
   );
 
-  const auth = useAuthUser();
-  const ownerId = auth?.idOwner;
+
+
+  const idCustomer = useSelector(
+    (state) => state.ACCOUNT.idCustomer
+  );
+  const ownerId = useSelector(
+    (state) => state.ACCOUNT.idOwner
+  );
 
   useEffect(() => {
     dispatch(actGetSalonInformationByOwnerId(ownerId));

@@ -9,22 +9,17 @@ function SalonPayment(props) {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
-  const auth = useAuthUser();
-  console.log("auth", auth);
+  // const auth = useAuthUser();
+  // console.log("auth", auth);
+  const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
+  const idOwner = useSelector((state) => state.ACCOUNT.idOwner);
 
   const salonPayment = useSelector(
     (state) => state.PAYMENTREDUCER.getPaymentSalon
   );
 
   useEffect(() => {
-    dispatch(
-      //   actGetAllPaymentByOwnerId(
-      //     currentPage,
-      //     pageSize,
-      //     "1BCF11C8-0272-4607-A967-D982CBA5325E"
-      //   )
-      actGetAllPaymentByOwnerId(currentPage, pageSize, auth?.idOwner)
-    );
+    dispatch(actGetAllPaymentByOwnerId(currentPage, pageSize, idOwner));
   }, [dispatch, currentPage, pageSize]);
 
   console.log("salonPayment", salonPayment);
