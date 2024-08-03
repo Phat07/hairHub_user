@@ -1,0 +1,46 @@
+/* src/css/ChatButton.css */
+.chat-button {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+}
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.chat-logo {
+  width: 40px; /* Kích thước logo */
+  height: 40px;
+  border-radius: 50%; /* Làm cho logo tròn */
+  margin-right: 10px;
+}
+
+.chat-title {
+  font-size: 20px;
+  font-weight: bold;
+  flex-grow: 1;
+}
+
+.chat-content {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 16px;
+  padding: 16px; /* Thêm khoảng trống cho nội dung chat */
+}
+
+.chat-input {
+  display: flex;
+  align-items: center;
+}
+
+.chat-message {
+  background-color: #f1f1f1; /* Màu nền cho tin nhắn */
+  padding: 8px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  word-break: break-word; /* Tự động xuống dòng nếu tin nhắn quá dài */
+}
