@@ -20,7 +20,7 @@ import {
   LoadScript,
   InfoWindow,
   MarkerF,
-  useJsApiLoader 
+  useJsApiLoader,
 } from "@react-google-maps/api";
 
 import "../css/baber.css";
@@ -119,7 +119,7 @@ function SystemBarberPage(props) {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(3);
   const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [currentLocationUser, setCurrentLocationUser] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
@@ -158,7 +158,7 @@ function SystemBarberPage(props) {
   useEffect(() => {
     setLoading(true);
     if (!locationSalon && !salonName) {
-      console.log("test1");
+      setCurrentLocationUser("");
       SalonInformationServices.getAllSalonInformation(currentPage, pageSize)
         .then((res) => {
           setLoading(false);
@@ -169,6 +169,7 @@ function SystemBarberPage(props) {
           console.log(err, "errors");
         });
     } else {
+      setCurrentLocationUser("");
       SalonInformationServices.getAllSalonInformationByAddressOrSalonName(
         servicesName ? servicesName : null,
         locationSalon ? locationSalon : null,
@@ -286,6 +287,7 @@ function SystemBarberPage(props) {
       content: "Bạn có muốn cho phép truy cập vào vị trí của bạn?",
       async onOk() {
         if ("geolocation" in navigator) {
+          setLoading(true);
           navigator.geolocation.getCurrentPosition(
             async (pos) => {
               const { latitude, longitude } = pos.coords;
@@ -336,6 +338,7 @@ function SystemBarberPage(props) {
                   "Đã xảy ra lỗi khi lấy vị trí hoặc dữ liệu salon."
                 );
               } finally {
+                setLoading(false);
                 document.body.style.overflow = "";
               }
             },
@@ -524,7 +527,9 @@ function SystemBarberPage(props) {
               // googleMapsApiKey={
               //   import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
               // }
-              googleMapsApiKey={`${import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY}&loading=async`}
+              googleMapsApiKey={`${
+                import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
+              }&loading=async`}
               onLoad={() => {
                 if (scriptLoaded) {
                   console.clear(); // Clear console to remove previous logs
