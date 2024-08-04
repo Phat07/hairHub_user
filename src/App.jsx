@@ -17,7 +17,7 @@ import useAuth from "./hooks/useAuth";
 import { AccountServices } from "./services/accountServices";
 import { fetchUserByTokenApi } from "./store/account/action";
 import { message } from "antd";
-import ChatComponent from "./components/chat/ChatComponent";
+import ChatBox from "../src/components/ChatBox";
 
 function App() {
   const navigate = useNavigate();
@@ -29,15 +29,15 @@ function App() {
   const token = useSelector((state) => state.ACCOUNT.token);
   const ownerId = useSelector((state) => state.ACCOUNT.ownerId);
 
-  const fetchUserByToken = async (token) => {
-    console.log("Fetching user by token:", token);
-    try {
-      await dispatch(fetchUserByTokenApi(token));
-    } catch (err) {
-      console.error("Error fetching user by token:", err);
-      navigate("/login");
-    }
-  };
+  // const fetchUserByToken = async (token) => {
+  //   // console.log("Fetching user by token:", token);
+  //   try {
+  //     await dispatch(fetchUserByTokenApi(token));
+  //   } catch (err) {
+  //     console.error("Error fetching user by token:", err);
+  //     navigate("/login");
+  //   }
+  // };
 
   const isTokenExpired = (token) => {
     try {
@@ -80,11 +80,12 @@ function App() {
       let accessToken = sessionStorage.getItem("accessToken");
 
       if (accessToken && !isTokenExpired(accessToken)) {
-        await fetchUserByToken(accessToken);
+        await dispatch(fetchUserByTokenApi(accessToken, navigate));
+        // await fetchUserByToken(accessToken);
       } else {
         // let refreshToken = sessionStorage.getItem("refreshToken");
         accessToken = await refreshToken();
-        await fetchUserByToken(accessToken);
+        await dispatch(fetchUserByTokenApi(accessToken, navigate));
       }
     } catch (error) {
       console.error("Authentication error:", error);
@@ -106,6 +107,7 @@ function App() {
   useEffect(() => {
     dispatch(actGetAllSalonInformation());
   }, []);
+  console.log("App đây");
   useEffect(() => {
     if (salonDetail?.id) {
       dispatch(actGetAllServicesBySalonId(salonDetail.id));
@@ -115,6 +117,7 @@ function App() {
   return (
     <>
       {sessionStorage.getItem("refreshToken") ? <Header /> : <HeaderUnAuth />}
+      <ChatBox />
       {/* <ChatComponent/> */}
     </>
   );

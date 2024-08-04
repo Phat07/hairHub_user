@@ -50,8 +50,9 @@ import RandomIcon from "@rsuite/icons/Random";
 import { actGetAllFeedbackBySalonId } from "../store/ratingCutomer/action";
 import Loader from "../components/Loader";
 import useSignIn from "react-auth-kit/hooks/useSignIn";
-import jwt_decode from 'jwt-decode';
+import jwt_decode from "jwt-decode";
 import { AccountServices } from "../services/accountServices";
+import { actGetAllSalonInformation } from "../store/salonInformation/action";
 const { Panel } = Collapse;
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -108,19 +109,13 @@ function renderStars(stars) {
 
 function SalonDetail(props) {
   const { id } = useParams();
-  const userName = useSelector(
-    (state) => state.ACCOUNT.username
-  );
-  const userIdCustomer = useSelector(
-    (state) => state.ACCOUNT.idCustomer
-  );
-  const userId = useSelector(
-    (state) => state.ACCOUNT.idOwner
-  );
-  const uid = useSelector(
-    (state) => state.ACCOUNT.uid
-  );
-
+  const userName = useSelector((state) => state.ACCOUNT.username);
+  const userIdCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
+  const userId = useSelector((state) => state.ACCOUNT.idOwner);
+  const uid = useSelector((state) => state.ACCOUNT.uid);
+  useEffect(() => {
+    dispatch(actGetAllSalonInformation());
+  }, [id]);
   // const userAuth = useAuthUser();
   // const userId = userAuth?.idOwner;
   // const userIdCustomer = userAuth?.idCustomer;
@@ -128,7 +123,7 @@ function SalonDetail(props) {
   const pageSize = 5; // Số lượng phản hồi trên mỗi trang
   const indexOfLastFeedback = currentPage * pageSize;
   const indexOfFirstFeedback = indexOfLastFeedback - pageSize;
- 
+
   const [isReportModalVisible, setIsReportModalVisible] = useState(false);
   const currentDate = new Date();
 
@@ -305,7 +300,11 @@ function SalonDetail(props) {
       message.warning("Bạn là chủ cửa hàng không thể đặt lịch");
       return;
     }
-    if (userName === undefined) {
+    if (
+      userName === undefined ||
+      !sessionStorage.getItem("refreshToken") ||
+      !sessionStorage.getItem("accessToken")
+    ) {
       navigate("/login");
       message.warning("Vui lòng đăng ký hoặc đăng nhập để đặt lịch");
     }
@@ -355,7 +354,7 @@ function SalonDetail(props) {
 
     if (isServiceAlreadySelected) {
       // Hiển thị thông báo nếu dịch vụ đã được chọn
-      setIsBookingModalVisible(true)
+      setIsBookingModalVisible(true);
       message.warning("Dịch vụ này đã được chọn trước đó.");
     } else {
       // Thêm dịch vụ vào mảng additionalServices nếu chưa được chọn
@@ -469,7 +468,7 @@ function SalonDetail(props) {
           //   tui muốn kiểm tra xem thời gian chọn là selectedTimeSlot nằm trong khoảng của res?.data.availableTimes.map((e)=>e.timeSlot xem selectedTimeSlot có nhỏ hơn hay vượt quá không nếu có thì setSelectedTimeSlot lại null)
         })
         .catch((err) => {
-          setSelectedDate(null)
+          setSelectedDate(null);
           // setSelectedTimeSlot(null)
           message.warning(err?.response?.data?.message);
         });
@@ -935,7 +934,7 @@ function SalonDetail(props) {
     const updatedVouchers = voucherSelected.filter((e) => e?.id !== id);
     setVoucherSelected(updatedVouchers);
   };
- 
+
   const sortedSchedules = salonDetail?.schedules?.sort((a, b) => {
     return daysOrder.indexOf(a.dayOfWeek) - daysOrder.indexOf(b.dayOfWeek);
   });

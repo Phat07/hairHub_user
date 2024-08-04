@@ -31,7 +31,7 @@ import store from "./store";
 import createStore from "react-auth-kit/createStore";
 import AuthProvider from "react-auth-kit";
 import SalonOwnerPage from "./pages/SalonOwnerPage.jsx";
-import RequireAuth from './PrivateRoute.js';
+import RequireAuth from "./PrivateRoute.js";
 import VoucherPage from "./pages/VoucherPage.jsx";
 import ListServices from "./pages/ListServices.jsx";
 import CustomerReport from "./pages/CustomerReport.jsx";
@@ -54,7 +54,6 @@ import PackagePage from "./pages/PackagePage.jsx";
 import PackageSuccessPage from "./pages/PackageSuccessPage.jsx";
 import DashboardTransactionPage from "./pages/DashboardTransactionPage.jsx";
 import ChatComponent from "./components/chat/ChatComponent.jsx";
-
 
 const router = createBrowserRouter([
   {
@@ -257,6 +256,16 @@ const router = createBrowserRouter([
         path: "system_shop",
         element: <SystemBarberPage />,
       },
+      {
+        path: `salon_detail/:id`,
+        element: <SalonDetail />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "list_salon",
+        element: <ListSalon />,
+        errorElement: <ErrorPage />,
+      },
     ],
   },
   {
@@ -286,8 +295,6 @@ const router = createBrowserRouter([
   },
 ]);
 
-
-
 const customTheme = {
   components: {
     Typography: {
@@ -301,9 +308,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>
       <ConfigProvider locale={viVn} theme={customTheme}>
-          <RouterProvider router={router}>
-            {/* <App /> */}
-          </RouterProvider>
+        <RouterProvider router={router}>{/* <App /> */}</RouterProvider>
       </ConfigProvider>
     </Provider>
   </React.StrictMode>
