@@ -108,7 +108,7 @@ function CustomerReport(props) {
     : [];
 
   return (
-    <div style={{ padding: "20px", marginTop: "25rem" }}>
+    <div style={{ padding: "20px", marginTop: "12rem" }}>
       <Space style={{ marginBottom: "20px" }}>
         <Button
           type={status === "PENDING" ? "primary" : "default"}

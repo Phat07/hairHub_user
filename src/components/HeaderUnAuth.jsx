@@ -18,20 +18,11 @@ function HeaderUnAuth(props) {
   // const signOut = useSignOut();
   const navigate = useNavigate();
   const [salonInformation, setSalonInformation] = useState({});
-  const userName = useSelector(
-    (state) => state.ACCOUNT.userName
-  );
-  const idCustomer = useSelector(
-    (state) => state.ACCOUNT.idCustomer
-  );
-  const idOwner = useSelector(
-    (state) => state.ACCOUNT.idOwner
-  );
-  const uid = useSelector(
-    (state) => state.ACCOUNT.uid
-  );
+  const userName = useSelector((state) => state.ACCOUNT.userName);
+  const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
+  const idOwner = useSelector((state) => state.ACCOUNT.idOwner);
+  const uid = useSelector((state) => state.ACCOUNT.uid);
   const dispatch = useDispatch();
- 
 
   const salonDetail = useSelector(
     (state) => state.SALONINFORMATION.getSalonByOwnerId
@@ -62,11 +53,17 @@ function HeaderUnAuth(props) {
     }
   };
 
+  const [menuActive, setMenuActive] = useState(false);
+
+  const toggleMenu = () => {
+    setMenuActive(!menuActive);
+  };
+
   return (
     <div>
       <header className="header fixed-header">
         <div className="header-bottom" style={{ height: "10rem" }} data-header>
-          <div className="container" style={{ marginTop: "1rem" }}>
+          <div className="container">
             <Link
               to={"/"}
               className="logo"
@@ -74,7 +71,7 @@ function HeaderUnAuth(props) {
             >
               <img
                 style={{
-                  width: "4.5rem",
+                  width: "6.5rem",
                   borderRadius: "50%",
                   marginRight: "1rem",
                 }}
@@ -86,14 +83,14 @@ function HeaderUnAuth(props) {
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "center",
-                  width: "12.5rem",
+                  width: "15rem",
                 }}
               >
                 <h1
                   style={{
                     margin: 0,
                     padding: 0,
-                    fontSize: "1.5rem",
+                    fontSize: "2.8rem",
                     lineHeight: "1.5rem",
                   }}
                 >
@@ -101,31 +98,26 @@ function HeaderUnAuth(props) {
                 </h1>
                 <span
                   style={{
-                    fontSize: "0.9rem",
+                    fontSize: "1.15rem",
                     color: "#888",
                     lineHeight: "1.5rem",
                   }}
                 >
-                  Salon | Barber
+                  Salon | Barber Shop
                 </span>
               </div>
             </Link>
-            <nav className="navbar container" data-navbar>
+            <nav
+              className={`navbar ${menuActive ? "active" : ""}`}
+              data-navbar
+              style={{ marginLeft: "auto", marginRight: "1rem" }}
+            >
               <ul className="navbar-list">
                 <li className="navbar-item">
                   <Link to={"/"} className="navbar-link" data-nav-link>
                     Trang chủ
                   </Link>
                 </li>
-                {/* <li className="navbar-item">
-                  <Link
-                    to={"/list_salon"}
-                    className="navbar-link"
-                    data-nav-link
-                  >
-                    Salons | Barbers
-                  </Link>
-                </li> */}
                 <li className="navbar-item">
                   <Link
                     to={"/system_shop"}
@@ -135,17 +127,13 @@ function HeaderUnAuth(props) {
                     Hệ thống cửa hàng
                   </Link>
                 </li>
-                {/* <li className="navbar-item">
-                  <Link className="navbar-link" to={"/barber"}>
-                    Barber
-                  </Link>
-                </li> */}
               </ul>
             </nav>
             <button
               className="nav-toggle-btn"
               aria-label="toggle menu"
               data-nav-toggler
+              onClick={toggleMenu}
             >
               <IoMenu />
             </button>
