@@ -33,7 +33,7 @@ import HeaderUnAuth from "../components/HeaderUnAuth";
 
 const mapContainerStyle = {
   height: "500px",
-  width: "600px",
+  width: "650px",
 };
 
 const defaultCenter = {
@@ -384,34 +384,39 @@ function SystemBarberPage(props) {
   return (
     <div className="system-salon__container">
       <div className="flex justify-between">
-        <div
+        <div class="left-content text-left">
+          <Button type="primary" onClick={handleSearch}>
+            <>Tìm salon gần bạn</>
+          </Button>
+          {/* <h1 class="text-xl font-bold">Nội dung bên trái</h1>
+          <p>Đây là một số thông tin bên trái.</p> */}
+        </div>
+        <div class="flex right-content text-right mr-5 mt-2">
+          {/* <h1 class="text-xl font-bold">Nội dung bên phải</h1>
+          <p>Đây là một số thông tin bên phải.</p> */}
+          <div className="mr-3 text-center">
+            <Select
+              value={selectedProvince || "Tỉnh/Thành phố"}
+              style={{ width: 200 }}
+              onChange={handleChange}
+              options={provinces}
+            />
+          </div>
+          <div className="text-center">
+            <Select
+              value={selectedDistrict || "Quận/Huyện"}
+              style={{ width: 200 }}
+              onChange={handleChangeDistrict}
+              options={selectedProvince ? districts : <Empty />}
+            />
+          </div>
+        </div>
+        {/* <div
           className="flex"
           style={{ backgroundColor: "#1677FF", borderRadius: "10px" }}
         >
-          <Button type="primary" onClick={handleSearch}>
-            {/* {currentLocationUser ? (
-                currentLocationUser
-              ) : ( */}
-            <>Tìm salon gần bạn</>
-            {/* )} */}
-          </Button>
-        </div>
-        <div>
-          <Select
-            value={selectedProvince || "Tỉnh/Thành phố"}
-            style={{ width: 200 }}
-            onChange={handleChange}
-            options={provinces}
-          />
-        </div>
-        <div>
-          <Select
-            value={selectedDistrict || "Quận/Huyện"}
-            style={{ width: 200 }}
-            onChange={handleChangeDistrict}
-            options={selectedProvince ? districts : <Empty />}
-          />
-        </div>
+          
+        </div> */}
       </div>
       <div className="flex justify-between mt-5">
         <div>
@@ -435,6 +440,11 @@ function SystemBarberPage(props) {
               <Input
                 prefix={<SearchOutlined />}
                 placeholder="Nhập tên tiệm baber"
+                style={{
+                  // marginTop: "8px",
+                  width: "80%",
+                  // marginLeft: "50px",
+                }}
                 size="large"
                 className="search-input"
                 value={searchTerm}
@@ -445,7 +455,8 @@ function SystemBarberPage(props) {
                 style={{
                   marginTop: "8px",
                   width: "80%",
-                  marginLeft: "50px",
+                  marginBottom: "16px",
+                  // marginLeft: "50px",
                 }}
                 onClick={handleFoundBaber}
               >
@@ -521,7 +532,7 @@ function SystemBarberPage(props) {
             />
           </Spin>
         </div>
-        <div className="ml-5" style={{ height: "500px", width: "600px" }}>
+        <div className="ml-5">
           <LoadScript
             // googleMapsApiKey={
             //   import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
