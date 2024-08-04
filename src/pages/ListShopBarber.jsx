@@ -528,13 +528,13 @@ function ListShopBarber(props) {
                       {salonDetail.status}
                     </Descriptions.Item>
                     <Descriptions.Item label="Đánh giá">
-                      <Rate disabled defaultValue={salonDetail.rate} />
+                      <Rate disabled defaultValue={salonDetail?.rate} />
                     </Descriptions.Item>
                     <Descriptions.Item label="Tổng đánh giá">
-                      {salonDetail.totalRating}
+                      {salonDetail?.totalRating}
                     </Descriptions.Item>
                     <Descriptions.Item label="Số đánh giá">
-                      {salonDetail.totalReviewer}
+                      {salonDetail?.totalReviewer}
                     </Descriptions.Item>
                   </Descriptions>
                 </Col>
@@ -547,7 +547,7 @@ function ListShopBarber(props) {
                         key={index}
                         label={convertDayOfWeekToVietnamese(schedule.dayOfWeek)}
                       >
-                        {schedule.startTime === "00:00" && schedule.endTime === "00:00" ? (
+                        {schedule.startTime === "00:00:00" && schedule.endTime === "00:00:00" ? (
                           <Typography.Text strong style={{ color: "red" }}>
                             Không hoạt động
                           </Typography.Text>

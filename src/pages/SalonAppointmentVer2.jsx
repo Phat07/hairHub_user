@@ -85,7 +85,7 @@ function SalonAppointmentVer2(props) {
     FAILED: "Thất bại",
     SUCCESSED: "Thành công",
   };
-  console.log(salonAppointments);
+ 
 
   const handleStatusChange = (newStatus) => {
     setStatus(newStatus);
