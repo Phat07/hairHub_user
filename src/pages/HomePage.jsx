@@ -12,7 +12,16 @@ import { BsFillEarFill } from "react-icons/bs";
 import { IoMenu } from "react-icons/io5";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { Button, Card, Flex, message, Modal, Rate, Space, Typography } from "antd";
+import {
+  Button,
+  Card,
+  Flex,
+  message,
+  Modal,
+  Rate,
+  Space,
+  Typography,
+} from "antd";
 import heroBanner from "../assets/images/bannerHomePage.jpg";
 import {
   CheckCircleOutlined,
@@ -36,9 +45,7 @@ function HomePage(props) {
     Array(salonList.length).fill(false)
   );
 
-  const ownerId = useSelector(
-    (state) => state.ACCOUNT.idOwner
-  );
+  const ownerId = useSelector((state) => state.ACCOUNT.idOwner);
   const scrollContainerRef = useRef(null);
   const recommendedSalons = salonList;
 
@@ -82,13 +89,12 @@ function HomePage(props) {
   useEffect(() => {
     dispatch(actGetAllSalonInformation());
   }, []);
-  
+
   const handleOk = () => {
     setIsModalVisible(false);
     handleClick();
   };
   const handleClick = () => {
-
     const dataMapping = {
       ordercode: orderCode,
       configId: configId,
@@ -149,8 +155,17 @@ function HomePage(props) {
               animate="visible"
               className="container"
             >
-              <Title className="hero-title" style={{ fontSize: "10rem" }}>
-                Hệ thống Salon - Barber Shop
+              <Title
+                className="hero-title"
+                style={{ fontSize: "10rem", margin: "0" }}
+              >
+                Hệ thống
+              </Title>
+              <Title
+                className="hero-title"
+                style={{ fontSize: "6.5rem", margin: "0", fontWeight: "bold" }}
+              >
+                Salon - Barber Shop
               </Title>
               <Text className="hero-text text-4xl">
                 Trải nghiệm những dịch vụ tốt nhất từ những salon, barber shop
@@ -252,10 +267,10 @@ function HomePage(props) {
               <Title className="section-title customTitle text-start">
                 Những dịch vụ mà chúng tôi cung cấp
               </Title>
-              <Text className="section-text text-center text-4xl">
+              {/* <Text className="section-text text-center text-4xl">
                 Dưới đây là 1 số dịch vụ có thể bao gồm trong những Barber Shop,
                 những cũng có thể có thêm vài dịch vụ bổ sung từ các tiệm
-              </Text>
+              </Text> */}
               <div className="containerServiceList">
                 <ul className="grid-list">
                   <li>
