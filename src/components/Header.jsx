@@ -84,11 +84,27 @@ function Header(props) {
     </Menu>
   );
 
+  const accountMenu = (
+    <Menu>
+      <Menu.Item key="username" disabled>
+        {account}
+      </Menu.Item>
+      <Menu.Item key="profile">
+        <Link to={`/Account/${uid}`}>
+          <UserOutlined /> Thông tin cá nhân
+        </Link>
+      </Menu.Item>
+      <Menu.Item key="logout" onClick={handleSignOut}>
+        <LogoutOutlined /> Đăng xuất
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <div>
       <header className="header fixed-header">
         <div className="header-bottom" style={{ height: "10rem" }} data-header>
-          <div className="container" style={{ marginTop: "1rem" }}>
+          <div className="container" style={{ padding: "0" }}>
             <Link
               to={"/"}
               className="logo"
@@ -96,7 +112,7 @@ function Header(props) {
             >
               <img
                 style={{
-                  width: "4.5rem",
+                  width: "6.5rem",
                   borderRadius: "50%",
                   marginRight: "1rem",
                 }}
@@ -108,14 +124,14 @@ function Header(props) {
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "center",
-                  width: "12.5rem",
+                  width: "15rem",
                 }}
               >
                 <h1
                   style={{
                     margin: 0,
                     padding: 0,
-                    fontSize: "1.5rem",
+                    fontSize: "2.8rem",
                     lineHeight: "1.5rem",
                   }}
                 >
@@ -123,17 +139,21 @@ function Header(props) {
                 </h1>
                 <span
                   style={{
-                    fontSize: "0.9rem",
+                    fontSize: "1.15rem",
                     color: "#888",
                     lineHeight: "1.5rem",
                   }}
                 >
-                  Salon | Barber
+                  Salon | Barber Shop
                 </span>
               </div>
             </Link>
 
-            <nav className="navbar container" data-navbar>
+            <nav
+              className="navbar"
+              data-navbar
+              style={{ marginLeft: "auto", marginRight: "1rem" }}
+            >
               <ul className="navbar-list">
                 <li className="navbar-item">
                   <Link to={"/"} className="navbar-link" data-nav-link>
@@ -165,7 +185,7 @@ function Header(props) {
                   )}
                 </li>
                 <li className="navbar-item">
-                  {idOwner && isEmptyObject(salonDetail) && (
+                  {idOwner && !salonDetail && (
                     <Link className="navbar-link" to={"/create_shop"}>
                       Tạo Salon
                     </Link>
@@ -190,55 +210,17 @@ function Header(props) {
               <IoMenu />
             </button>
             {account ? (
-              <Row
-                align="middle"
-                justify="space-between"
-                className="logOutSection"
-              >
-                <Col span={14}>
-                  <Typography.Title
-                    level={5}
-                    style={{
-                      margin: 0,
-                      padding: "10px",
-                      display: "flex",
-                      alignItems: "center",
-                      width: "35rem",
-                    }}
-                  >
-                    <Link
-                      to={`/Account/${uid}`}
-                      style={{
-                        color: "#ffff",
-                        fontSize: "1.3rem",
-                      }}
-                    >
-                      {<UserOutlined />} {account}
-                    </Link>
-                  </Typography.Title>
-                </Col>
-                <Col span={10}>
-                  <Button
-                    classNames="logOutButton"
-                    type="primary"
-                    onClick={handleSignOut}
-                    icon={<LogoutOutlined />}
-                    style={{
-                      marginRight: "15rem",
-                      width: "100%",
-                      background:
-                        "linear-gradient(90deg, rgba(238, 130, 238, 0.8) 0%, rgba(0, 209, 255, 0.8) 100%)",
-                    }}
-                  >
-                    Đăng xuất
-                  </Button>
-                </Col>
-              </Row>
+              <Dropdown overlay={accountMenu} trigger={["click"]}>
+                <a
+                  className="ant-dropdown-link"
+                  onClick={(e) => e.preventDefault()}
+                >
+                  <Avatar className="header-avatar" icon={<UserOutlined />} />
+                </a>
+              </Dropdown>
             ) : (
               <Link to={"/login"}>
-                <a className="btn has-before" style={{ textAlign: "center" }}>
-                  <span className="span min-w-14 max-h-36 w-36">Đăng nhập</span>
-                </a>
+                <Button type="primary">Đăng nhập</Button>
               </Link>
             )}
           </div>
