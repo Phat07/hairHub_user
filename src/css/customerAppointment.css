@@ -1,51 +1,140 @@
 .status-buttons {
-    margin-top: 140px;
-    margin-left: 250px;
-    margin-right: 250px;
-    display: flex;
-    flex-wrap: wrap;
+  margin: 130px 250px 10px 250px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.cards-container {
+  margin: 0 100px 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.card {
+  padding: 20px;
+  border: 1px solid #e8e8e8;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: scale(1.02);
+}
+
+.card h3 {
+  margin-bottom: 10px;
+}
+
+.card p {
+  margin: 5px 0;
+}
+
+.no-data {
+  text-align: center;
+  font-size: 18px;
+  color: #888;
+  margin-top: 20px;
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* Responsive styles */
+@media (max-width: 1200px) {
+  .status-buttons {
+    margin: 100px 150px;
   }
   
   .cards-container {
-    margin-left: 100px;
-    margin-right: 100px;
-    margin-bottom: 2rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
+    margin: 0 50px 2rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .status-buttons {
+    margin: 80px 100px;
+    justify-content: center;
+  }
+  
+  .cards-container {
+    margin: 0 30px 2rem;
+    gap: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .status-buttons {
+    margin: 120px 10px 0px 10px;
+  }
+  
+  .cards-container {
+    margin: 0 20px 2rem;
+    gap: 10px;
+    flex-direction: column;
+    align-items: center;
   }
   
   .card {
-    padding: 20px;
-    border: 1px solid #e8e8e8;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
-    transition: transform 0.2s;
+    width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .status-buttons {
+    margin: 120px 10px 0px 10px;
   }
   
-  .card:hover {
-    transform: scale(1.02);
-  }
-  
-  .card h3 {
-    margin-bottom: 10px;
-  }
-  
-  .card p {
-    margin: 5px 0;
-  }
-  
-  .no-data {
-    text-align: center;
-    font-size: 18px;
-    color: #888;
-    margin-top: 20px;
+  .cards-container {
+    margin: 0 10px 2rem;
   }
   
   .pagination-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
+    margin-top: 10px;
+  }
+}
+@media (max-width: 412px) {
+  .status-buttons {
+    /* margin: 40px 10px; */
+    margin: 120px 10px 0px 10px;
+    flex-direction: column;
+    align-items: center;
   }
   
+  .cards-container {
+    margin: 0 10px 2rem;
+    gap: 10px;
+  }
+  
+  .card {
+    width: 100%;
+  }
+  
+  .pagination-container {
+    margin-top: 10px;
+  }
+}
+
+@media (max-width: 375px) {
+  .status-buttons {
+    margin: 120px 10px 0px 10px;
+  }
+  
+  .cards-container {
+    margin: 0 5px 2rem;
+    gap: 8px;
+  }
+  
+  .card {
+    width: 100%;
+  }
+  
+  .pagination-container {
+    margin-top: 5px;
+  }
+}

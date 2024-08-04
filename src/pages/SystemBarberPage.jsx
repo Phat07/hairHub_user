@@ -33,8 +33,25 @@ import HeaderUnAuth from "../components/HeaderUnAuth";
 
 const mapContainerStyle = {
   height: "500px",
-  width: "650px",
+  width: "850px",
 };
+const responsiveMapContainerStyle = {
+  '@media (max-width: 768px)': {
+    height: "300px", // Adjust height for smaller screens
+    width: "50px",   // Full width for smaller screens
+  },
+  '@media (max-width: 480px)': {
+    height: "200px", // Further adjustment for very small screens
+    width: "50px",   // Full width for very small screens
+  },
+};
+const combinedMapContainerStyle = {
+  ...mapContainerStyle,
+  ...responsiveMapContainerStyle,
+};
+
+
+
 
 const defaultCenter = {
   lat: 10.8231, // Default to Ho Chi Minh City
@@ -380,20 +397,263 @@ function SystemBarberPage(props) {
     }
     navigate(`/system_shop?${searchParams.toString()}`);
   };
+  const [mapStyle, setMapStyle] = useState({
+    height: '500px',
+    width: '850px',
+  });
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 480) {
+        setMapStyle({ height: '200px', width: '100%' });
+      } else if (window.innerWidth <= 768) {
+        setMapStyle({ height: '300px', width: '100%' });
+      } else {
+        setMapStyle({ height: '500px', width: '850px' });
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Initial call
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   return (
+    // <div className="system-salon__container">
+    //   <div className="flex justify-between">
+    //     <div class="left-content text-left">
+    //       <Button type="primary" onClick={handleSearch}>
+    //         <>Tìm salon gần bạn</>
+    //       </Button>
+    //     </div>
+    //     <div class="flex right-content text-right mr-5 mt-2">
+    //       <div className="mr-3 text-center">
+    //         <Select
+    //           value={selectedProvince || "Tỉnh/Thành phố"}
+    //           style={{ width: 200 }}
+    //           onChange={handleChange}
+    //           options={provinces}
+    //         />
+    //       </div>
+    //       <div className="text-center">
+    //         <Select
+    //           value={selectedDistrict || "Quận/Huyện"}
+    //           style={{ width: 200 }}
+    //           onChange={handleChangeDistrict}
+    //           options={selectedProvince ? districts : <Empty />}
+    //         />
+    //       </div>
+    //     </div>
+    //   </div>
+    //   <div className="flex justify-between mt-5">
+    //     <div>
+    //       <div>
+    //         <motion.div
+    //           variants={{
+    //             hidden: { y: "-100vh", opacity: 0 },
+    //             visible: {
+    //               y: "-1px",
+    //               opacity: 1,
+    //               transition: {
+    //                 delay: 0.5,
+    //                 type: "spring",
+    //                 stiffness: 30,
+    //               },
+    //             },
+    //           }}
+    //           initial="hidden"
+    //           animate="visible"
+    //         >
+    //           <Input
+    //             prefix={<SearchOutlined />}
+    //             placeholder="Nhập tên tiệm baber"
+    //             style={{
+    //               width: "80%",
+    //             }}
+    //             size="large"
+    //             className="search-input"
+    //             value={searchTerm}
+    //             onChange={(e) => setSearchTerm(e.target.value)}
+    //           />
+    //           <Button
+    //             type="primary"
+    //             style={{
+    //               marginTop: "8px",
+    //               width: "80%",
+    //               marginBottom: "16px",
+    //             }}
+    //             onClick={handleFoundBaber}
+    //           >
+    //             Tìm kiếm baber
+    //           </Button>
+    //         </motion.div>
+    //       </div>
+    //       <Spin spinning={loading}>
+    //         <List
+    //           itemLayout="horizontal"
+    //           dataSource={salonList}
+    //           renderItem={(salon) => (
+    //             <List.Item>
+    //               <img
+    //                 src={salon.img}
+    //                 alt={salon.name}
+    //                 style={{
+    //                   width: "80px",
+    //                   height: "80px",
+    //                   marginRight: "20px",
+    //                 }}
+    //               />
+    //               <div>
+    //                 <h4 style={{ margin: "0", marginBottom: "8px" }}>
+    //                   {salon.name}
+    //                 </h4>
+    //                 <p style={{ margin: "0" }}>{salon.address}</p>
+    //                 <div>
+    //                   <Button
+    //                     size="small"
+    //                     className="mr-2"
+    //                     onClick={() => navigate(`/salon_detail/${salon.id}`)}
+    //                   >
+    //                     Đặt lịch
+    //                   </Button>
+    //                   <Button
+    //                     size="small"
+    //                     onClick={() => {
+    //                       navigator.geolocation.getCurrentPosition(
+    //                         (position) => {
+    //                           const { latitude, longitude } = position.coords;
+    //                           window.open(
+    //                             `https://www.google.com/maps/dir/?api=1&origin=${latitude},${longitude}&destination=${salon.latitude},${salon.longitude}`,
+    //                             "_blank"
+    //                           );
+    //                         }
+    //                       );
+    //                     }}
+    //                   >
+    //                     Chỉ đường
+    //                   </Button>
+    //                 </div>
+    //               </div>
+    //             </List.Item>
+    //           )}
+    //           locale={{
+    //             emptyText: (
+    //               <Empty
+    //                 description={
+    //                   currentLocationUser
+    //                     ? "Không có salon nào gần bạn"
+    //                     : "Không có salon nào"
+    //                 }
+    //               />
+    //             ),
+    //           }}
+    //         />
+    //         <Pagination
+    //           current={currentPage}
+    //           total={totalPages}
+    //           pageSize={pageSize}
+    //           onChange={handlePageChange}
+    //         />
+    //       </Spin>
+    //     </div>
+    //     <div className="ml-5">
+    //       <LoadScript
+    //         // googleMapsApiKey={
+    //         //   import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
+    //         // }
+    //         googleMapsApiKey={`${
+    //           import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
+    //         }&loading=async`}
+    //         onLoad={() => {
+    //           if (scriptLoaded) {
+    //             console.clear(); // Clear console to remove previous logs
+    //           }
+    //           setScriptLoaded(true);
+    //         }}
+    //       >
+    //         {/* {scriptLoaded ? ( */}
+    //         {/* {salonList ? ( */}
+    //         <GoogleMap
+    //           mapContainerStyle={mapContainerStyle}
+    //           center={currentLocation}
+    //           zoom={8}
+    //         >
+    //           {/* {salonList.map((salon) => (
+    //                 <Marker
+    //                   key={salon.id}
+    //                   position={{
+    //                     lat: parseFloat(salon.latitude),
+    //                     lng: parseFloat(salon.longitude),
+    //                   }}
+    //                   // icon={{
+    //                   //   url: salon.img, // URL của hình ảnh salon
+    //                   //   scaledSize: new window.google.maps.Size(50, 50), // kích thước hình ảnh marker
+    //                   //   origin: new window.google.maps.Point(0.25, 0), // gốc của hình ảnh
+    //                   //   anchor: new window.google.maps.Point(25, 25) // vị trí neo của hình ảnh
+    //                   // }}
+    //                   onClick={() => handleMarkerClick(salon)}
+    //                 />
+    //               ))} */}
+    //           {salonList &&
+    //             salonList.map((salon) => {
+    //               const lat = parseFloat(salon.latitude);
+    //               const lng = parseFloat(salon.longitude);
+
+    //               if (isNaN(lat) || isNaN(lng)) {
+    //                 console.error(
+    //                   `Invalid coordinates for salon ${salon.id}: (${salon.latitude}, ${salon.longitude})`
+    //                 );
+    //                 return null;
+    //               }
+
+    //               return (
+    //                 <MarkerF
+    //                   key={salon.id}
+    //                   position={{ lat, lng }}
+    //                   onClick={() => handleMarkerClick(salon)}
+    //                 />
+    //               );
+    //             })}
+    //           {selectedSalon && (
+    //             <InfoWindow
+    //               position={{
+    //                 lat: parseFloat(selectedSalon.latitude),
+    //                 lng: parseFloat(selectedSalon.longitude),
+    //               }}
+    //               onCloseClick={() => setSelectedSalon(null)}
+    //             >
+    //               <div>
+    //                 <h3>{selectedSalon.name}</h3>
+    //                 <p>{selectedSalon.address}</p>
+    //                 <a
+    //                   href={`https://www.google.com/maps/dir/?api=1&destination=${selectedSalon.latitude},${selectedSalon.longitude}`}
+    //                   target="_blank"
+    //                   rel="noopener noreferrer"
+    //                 >
+    //                   Chỉ đường
+    //                 </a>
+    //               </div>
+    //             </InfoWindow>
+    //           )}
+    //         </GoogleMap>
+    //         {/* ) : (
+    //             <Loader />
+    //           )} */}
+    //         {/* ) : (
+    //             <Loader />
+    //           )} */}
+    //       </LoadScript>
+    //     </div>
+    //   </div>
+    // </div>
     <div className="system-salon__container">
       <div className="flex justify-between">
-        <div class="left-content text-left">
+        <div className="left-content text-left">
           <Button type="primary" onClick={handleSearch}>
             <>Tìm salon gần bạn</>
           </Button>
-          {/* <h1 class="text-xl font-bold">Nội dung bên trái</h1>
-          <p>Đây là một số thông tin bên trái.</p> */}
         </div>
-        <div class="flex right-content text-right mr-5 mt-2">
-          {/* <h1 class="text-xl font-bold">Nội dung bên phải</h1>
-          <p>Đây là một số thông tin bên phải.</p> */}
+        <div className="flex right-content text-right mr-5 mt-2">
           <div className="mr-3 text-center">
             <Select
               value={selectedProvince || "Tỉnh/Thành phố"}
@@ -411,80 +671,61 @@ function SystemBarberPage(props) {
             />
           </div>
         </div>
-        {/* <div
-          className="flex"
-          style={{ backgroundColor: "#1677FF", borderRadius: "10px" }}
-        >
-          
-        </div> */}
       </div>
-      <div className="flex justify-between mt-5">
+      <div className="list-map-container mt-5">
         <div>
-          <div>
-            <motion.div
-              variants={{
-                hidden: { y: "-100vh", opacity: 0 },
-                visible: {
-                  y: "-1px",
-                  opacity: 1,
-                  transition: {
-                    delay: 0.5,
-                    type: "spring",
-                    stiffness: 30,
-                  },
+          <motion.div
+            variants={{
+              hidden: { y: "-100vh", opacity: 0 },
+              visible: {
+                y: "-1px",
+                opacity: 1,
+                transition: {
+                  delay: 0.5,
+                  type: "spring",
+                  stiffness: 30,
                 },
+              },
+            }}
+            initial="hidden"
+            animate="visible"
+          >
+            <Input
+              prefix={<SearchOutlined />}
+              placeholder="Nhập tên tiệm baber"
+              style={{
+                width: "80%",
               }}
-              initial="hidden"
-              animate="visible"
+              size="large"
+              className="search-input"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <Button
+              type="primary"
+              style={{
+                marginTop: "8px",
+                width: "80%",
+                marginBottom: "16px",
+              }}
+              onClick={handleFoundBaber}
             >
-              <Input
-                prefix={<SearchOutlined />}
-                placeholder="Nhập tên tiệm baber"
-                style={{
-                  // marginTop: "8px",
-                  width: "80%",
-                  // marginLeft: "50px",
-                }}
-                size="large"
-                className="search-input"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <Button
-                type="primary"
-                style={{
-                  marginTop: "8px",
-                  width: "80%",
-                  marginBottom: "16px",
-                  // marginLeft: "50px",
-                }}
-                onClick={handleFoundBaber}
-              >
-                Tìm kiếm baber
-              </Button>
-            </motion.div>
-          </div>
+              Tìm kiếm baber
+            </Button>
+          </motion.div>
           <Spin spinning={loading}>
             <List
               itemLayout="horizontal"
               dataSource={salonList}
               renderItem={(salon) => (
-                <List.Item>
-                  <img
-                    src={salon.img}
-                    alt={salon.name}
-                    style={{
-                      width: "80px",
-                      height: "80px",
-                      marginRight: "20px",
-                    }}
-                  />
-                  <div>
+                <List.Item className="salon-list-item">
+                  <img src={salon.img} alt={salon.name} className="salon-img" />
+                  <div className="salon-details">
                     <h4 style={{ margin: "0", marginBottom: "8px" }}>
                       {salon.name}
                     </h4>
                     <p style={{ margin: "0" }}>{salon.address}</p>
-                    <div>
+                    <div className="salon-buttons">
                       <Button
                         size="small"
                         className="mr-2"
@@ -534,9 +775,6 @@ function SystemBarberPage(props) {
         </div>
         <div className="ml-5">
           <LoadScript
-            // googleMapsApiKey={
-            //   import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
-            // }
             googleMapsApiKey={`${
               import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
             }&loading=async`}
@@ -547,29 +785,11 @@ function SystemBarberPage(props) {
               setScriptLoaded(true);
             }}
           >
-            {/* {scriptLoaded ? ( */}
-            {/* {salonList ? ( */}
             <GoogleMap
-              mapContainerStyle={mapContainerStyle}
+              mapContainerStyle={mapStyle}
               center={currentLocation}
               zoom={8}
             >
-              {/* {salonList.map((salon) => (
-                    <Marker
-                      key={salon.id}
-                      position={{
-                        lat: parseFloat(salon.latitude),
-                        lng: parseFloat(salon.longitude),
-                      }}
-                      // icon={{
-                      //   url: salon.img, // URL của hình ảnh salon
-                      //   scaledSize: new window.google.maps.Size(50, 50), // kích thước hình ảnh marker
-                      //   origin: new window.google.maps.Point(0.25, 0), // gốc của hình ảnh
-                      //   anchor: new window.google.maps.Point(25, 25) // vị trí neo của hình ảnh
-                      // }}
-                      onClick={() => handleMarkerClick(salon)}
-                    />
-                  ))} */}
               {salonList &&
                 salonList.map((salon) => {
                   const lat = parseFloat(salon.latitude);
@@ -612,12 +832,6 @@ function SystemBarberPage(props) {
                 </InfoWindow>
               )}
             </GoogleMap>
-            {/* ) : (
-                <Loader />
-              )} */}
-            {/* ) : (
-                <Loader />
-              )} */}
           </LoadScript>
         </div>
       </div>

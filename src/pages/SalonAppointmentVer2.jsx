@@ -19,6 +19,7 @@ import moment from "moment";
 import { actCreateReportSalon } from "../store/report/action";
 import { AppointmentService } from "../services/appointmentServices";
 import { EmptyComponent } from "../components/EmptySection/DisplayEmpty";
+import "../css/salonAppointmentV2.css"
 const { Text, Title } = Typography;
 function SalonAppointmentVer2(props) {
   const dispatch = useDispatch();
@@ -32,15 +33,10 @@ function SalonAppointmentVer2(props) {
   const [fileList, setFileList] = useState([]);
   const [reportDescription, setReportDescription] = useState("");
   const [itemReport, setItemReport] = useState({});
-  const pageSize = 8;
+  const pageSize = 4;
 
-
-  const idCustomer = useSelector(
-    (state) => state.ACCOUNT.idCustomer
-  );
-  const ownerId = useSelector(
-    (state) => state.ACCOUNT.idOwner
-  );
+  const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
+  const ownerId = useSelector((state) => state.ACCOUNT.idOwner);
 
   const salonInformationByOwnerId = useSelector(
     (state) => state.SALONAPPOINTMENTS.salonInformationByOwnerId
@@ -53,7 +49,7 @@ function SalonAppointmentVer2(props) {
 
   useEffect(() => {
     dispatch(actGetSalonInformationByOwnerIdAsync(ownerId));
-  }, []);
+  }, [ownerId]);
   useEffect(() => {
     // Khi mở modal, đặt lại showCancelButton và thiết lập setTimeout
     if (isModalVisible) {
@@ -85,7 +81,6 @@ function SalonAppointmentVer2(props) {
     FAILED: "Thất bại",
     SUCCESSED: "Thành công",
   };
- 
 
   const handleStatusChange = (newStatus) => {
     setStatus(newStatus);
@@ -213,20 +208,13 @@ function SalonAppointmentVer2(props) {
   };
   return (
     <div
-      style={{
-        marginTop: "18rem",
-        marginLeft: "10rem",
-        marginRight: "10rem",
-      }}
+     className="salon-appointment-container"
     >
+      <div className="header">
+        <Title level={2}>Cuộc hẹn của salon</Title>
+      </div>
       <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          marginBottom: "1rem",
-          marginLeft: "15rem",
-          marginRight: "15rem",
-        }}
+        className="status-filter"
       >
         {Object.keys(statusDisplayNames).map((statusKey, index) => (
           <button
@@ -254,8 +242,8 @@ function SalonAppointmentVer2(props) {
       {salonAppointments.length === 0 ? (
         <EmptyComponent description={"Hiện tại không có lịch hẹn nào!"} />
       ) : (
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
-          {salonAppointments.map((appointment) => {
+        <div  className="appointment-list">
+          {salonAppointments.map((appointment, key) => {
             const startTime = moment(
               appointment.appointmentDetails[0]?.startTime
             );
@@ -272,19 +260,27 @@ function SalonAppointmentVer2(props) {
               <>
                 <div
                   key={appointment.id}
-                  style={{
-                    border: "1px solid #ccc",
-                    borderRadius: "5px",
-                    padding: "1rem",
-                    width: "calc(25% - 1rem)",
-                    boxSizing: "border-box",
-                    color:"black"
-                  }}
+                  // style={{
+                  //   border: "1px solid #ccc",
+                  //   borderRadius: "5px",
+                  //   padding: "1rem",
+                  //   width: "calc(25% - 1rem)",
+                  //   boxSizing: "border-box",
+                  //   color:"black"
+                  // }}
+                  className="appointment-item"
+                  // style={{
+                  //   width: "calc(25% - 1rem)",
+                  //   boxSizing: "border-box",
+                  //   padding: "1rem",
+                  //   border: "1px solid #ccc",
+                  //   borderRadius: "5px",
+                  // }}
                 >
                   <h3>{appointment.customer.fullName}</h3>
                   <p>Ngày đặt: {formatDate(appointment.startDate)}</p>
                   <p>
-                    Thời gian bắt đầu: {" "}
+                    Thời gian bắt đầu:{" "}
                     {moment(
                       appointment.appointmentDetails[0]?.startTime
                     ).format("HH:mm")}
@@ -357,7 +353,7 @@ function SalonAppointmentVer2(props) {
         </div>
       )}
       <div
-        style={{ display: "flex", justifyContent: "center", marginTop: "2rem" }}
+        className="pagination"
       >
         <Pagination
           current={currentPage}

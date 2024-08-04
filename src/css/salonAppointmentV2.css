@@ -1,0 +1,144 @@
+.salon-appointment-container {
+  max-width: 1200px;
+  margin: 100px auto;
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+  margin-bottom: 20px;
+}
+
+.status-filter {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.status-filter button {
+  flex: 1;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.appointment-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.appointment-item {
+  width: calc(25% - 1rem);
+  margin-bottom: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.appointment-item h3 {
+  margin-top: 0;
+}
+
+.pagination {
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* Media queries for responsiveness */
+
+/* Tablet and mobile devices */
+@media (max-width: 1024px) {
+  .appointment-item {
+    width: calc(50% - 1rem);
+  }
+}
+
+@media (max-width: 768px) {
+  .status-filter {
+    flex-direction: column;
+  }
+
+  .appointment-item {
+    width: calc(50% - 1rem);
+  }
+}
+
+@media (max-width: 480px) {
+  .salon-appointment-container {
+    padding: 10px;
+  }
+
+  .appointment-list {
+    flex-direction: column;
+  }
+
+  .appointment-item {
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 10px;
+  }
+
+  .status-filter button {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .pagination {
+    margin-top: 10px;
+  }
+}
+
+@media (max-width: 414px) {
+  .salon-appointment-container {
+    padding: 10px;
+  }
+
+  .appointment-list {
+    flex-direction: column;
+  }
+
+  .appointment-item {
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 10px;
+  }
+
+  .status-filter button {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+
+  .pagination {
+    margin-top: 10px;
+  }
+}
+
+@media (max-width: 375px) {
+  .salon-appointment-container {
+    padding: 10px;
+  }
+
+  .appointment-list {
+    flex-direction: column;
+  }
+
+  .appointment-item {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 8px;
+  }
+
+  .status-filter button {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+
+  .pagination {
+    margin-top: 10px;
+  }
+}

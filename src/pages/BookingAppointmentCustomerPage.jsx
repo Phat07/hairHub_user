@@ -126,7 +126,7 @@ function BookingAppointmentCustomerPage() {
     );
     setListData(filteredAppointments);
   }, []);
-  console.log("seStatus", selectedStatus);
+
   useEffect(() => {
     if (selectedStatus === "BOOKING" && listAppoinment) {
       const filteredAppointments = listAppoinment?.filter(

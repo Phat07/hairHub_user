@@ -479,6 +479,8 @@ const LoginPage = () => {
       dispatch(loginAccount(values, navigate));
       
     } else {
+      setIsModalOpen(true)
+      setAccessType('register');
       // Đăng ký tài khoản
       // AccountServices.registerUser(values)
       //   .then((res) => {
