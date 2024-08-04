@@ -254,14 +254,14 @@ body {
   border-radius: var(--radius-5);
   overflow: hidden;
 }
-.ant-btn-primary {
+/* .ant-btn-primary {
   background: linear-gradient(90deg, rgba(31, 17, 206, 1) 0%, rgba(229, 43, 43, 1) 100%);
-  /* transition: background 0.5s ease; //Only effect with normal color */ 
+  
 }
 .ant-btn-primary:hover {
   background: linear-gradient(to left, rgba(31, 17, 206, 1) 0%, rgba(229, 43, 43, 1) 100%) !important;
-  /* background: red !important; */
-}
+
+} */
 
 
 .btn::before {

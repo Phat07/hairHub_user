@@ -222,6 +222,7 @@ function PackagePage(props) {
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
+  
 
   return (
     <div>
@@ -250,7 +251,7 @@ function PackagePage(props) {
                         <Flex className="mb-3" justify="end">
                           <Text style={{ fontSize: "1.5rem" }} strong mark>
                             {pkg.isActive === true
-                              ? formatCurrency(pkg.pakageFee)
+                              ? formatCurrency(pkg?.pakageFee)
                               : null}
                           </Text>
                         </Flex>

@@ -382,169 +382,168 @@ function SystemBarberPage(props) {
   };
 
   return (
-    <div>
-      <div className="system-salon__container">
-        <div className="flex justify-between">
-          <div
-            className="flex"
-            style={{ backgroundColor: "#1677FF", borderRadius: "10px" }}
-          >
-            <Button type="primary" onClick={handleSearch}>
-              {/* {currentLocationUser ? (
+    <div className="system-salon__container">
+      <div className="flex justify-between">
+        <div
+          className="flex"
+          style={{ backgroundColor: "#1677FF", borderRadius: "10px" }}
+        >
+          <Button type="primary" onClick={handleSearch}>
+            {/* {currentLocationUser ? (
                 currentLocationUser
               ) : ( */}
-              <>Tìm salon gần bạn</>
-              {/* )} */}
-            </Button>
-          </div>
-          <div>
-            <Select
-              value={selectedProvince || "Tỉnh/Thành phố"}
-              style={{ width: 200 }}
-              onChange={handleChange}
-              options={provinces}
-            />
-          </div>
-          <div>
-            <Select
-              value={selectedDistrict || "Quận/Huyện"}
-              style={{ width: 200 }}
-              onChange={handleChangeDistrict}
-              options={selectedProvince ? districts : <Empty />}
-            />
-          </div>
+            <>Tìm salon gần bạn</>
+            {/* )} */}
+          </Button>
         </div>
-        <div className="flex justify-between mt-5">
+        <div>
+          <Select
+            value={selectedProvince || "Tỉnh/Thành phố"}
+            style={{ width: 200 }}
+            onChange={handleChange}
+            options={provinces}
+          />
+        </div>
+        <div>
+          <Select
+            value={selectedDistrict || "Quận/Huyện"}
+            style={{ width: 200 }}
+            onChange={handleChangeDistrict}
+            options={selectedProvince ? districts : <Empty />}
+          />
+        </div>
+      </div>
+      <div className="flex justify-between mt-5">
+        <div>
           <div>
-            <div>
-              <motion.div
-                variants={{
-                  hidden: { y: "-100vh", opacity: 0 },
-                  visible: {
-                    y: "-1px",
-                    opacity: 1,
-                    transition: {
-                      delay: 0.5,
-                      type: "spring",
-                      stiffness: 30,
-                    },
+            <motion.div
+              variants={{
+                hidden: { y: "-100vh", opacity: 0 },
+                visible: {
+                  y: "-1px",
+                  opacity: 1,
+                  transition: {
+                    delay: 0.5,
+                    type: "spring",
+                    stiffness: 30,
                   },
-                }}
-                initial="hidden"
-                animate="visible"
-              >
-                <Input
-                  prefix={<SearchOutlined />}
-                  placeholder="Nhập tên tiệm baber"
-                  size="large"
-                  className="search-input"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                <Button
-                  type="primary"
-                  style={{
-                    marginTop: "8px",
-                    width: "80%",
-                    marginLeft: "50px",
-                  }}
-                  onClick={handleFoundBaber}
-                >
-                  Tìm kiếm baber
-                </Button>
-              </motion.div>
-            </div>
-            <Spin spinning={loading}>
-              <List
-                itemLayout="horizontal"
-                dataSource={salonList}
-                renderItem={(salon) => (
-                  <List.Item>
-                    <img
-                      src={salon.img}
-                      alt={salon.name}
-                      style={{
-                        width: "80px",
-                        height: "80px",
-                        marginRight: "20px",
-                      }}
-                    />
-                    <div>
-                      <h4 style={{ margin: "0", marginBottom: "8px" }}>
-                        {salon.name}
-                      </h4>
-                      <p style={{ margin: "0" }}>{salon.address}</p>
-                      <div>
-                        <Button
-                          size="small"
-                          className="mr-2"
-                          onClick={() => navigate(`/salon_detail/${salon.id}`)}
-                        >
-                          Đặt lịch
-                        </Button>
-                        <Button
-                          size="small"
-                          onClick={() => {
-                            navigator.geolocation.getCurrentPosition(
-                              (position) => {
-                                const { latitude, longitude } = position.coords;
-                                window.open(
-                                  `https://www.google.com/maps/dir/?api=1&origin=${latitude},${longitude}&destination=${salon.latitude},${salon.longitude}`,
-                                  "_blank"
-                                );
-                              }
-                            );
-                          }}
-                        >
-                          Chỉ đường
-                        </Button>
-                      </div>
-                    </div>
-                  </List.Item>
-                )}
-                locale={{
-                  emptyText: (
-                    <Empty
-                      description={
-                        currentLocationUser
-                          ? "Không có salon nào gần bạn"
-                          : "Không có salon nào"
-                      }
-                    />
-                  ),
-                }}
-              />
-              <Pagination
-                current={currentPage}
-                total={totalPages}
-                pageSize={pageSize}
-                onChange={handlePageChange}
-              />
-            </Spin>
-          </div>
-          <div className="ml-5" style={{ height: "500px", width: "600px" }}>
-            <LoadScript
-              // googleMapsApiKey={
-              //   import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
-              // }
-              googleMapsApiKey={`${
-                import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
-              }&loading=async`}
-              onLoad={() => {
-                if (scriptLoaded) {
-                  console.clear(); // Clear console to remove previous logs
-                }
-                setScriptLoaded(true);
+                },
               }}
+              initial="hidden"
+              animate="visible"
             >
-              {/* {scriptLoaded ? ( */}
-              {/* {salonList ? ( */}
-              <GoogleMap
-                mapContainerStyle={mapContainerStyle}
-                center={currentLocation}
-                zoom={8}
+              <Input
+                prefix={<SearchOutlined />}
+                placeholder="Nhập tên tiệm baber"
+                size="large"
+                className="search-input"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <Button
+                type="primary"
+                style={{
+                  marginTop: "8px",
+                  width: "80%",
+                  marginLeft: "50px",
+                }}
+                onClick={handleFoundBaber}
               >
-                {/* {salonList.map((salon) => (
+                Tìm kiếm baber
+              </Button>
+            </motion.div>
+          </div>
+          <Spin spinning={loading}>
+            <List
+              itemLayout="horizontal"
+              dataSource={salonList}
+              renderItem={(salon) => (
+                <List.Item>
+                  <img
+                    src={salon.img}
+                    alt={salon.name}
+                    style={{
+                      width: "80px",
+                      height: "80px",
+                      marginRight: "20px",
+                    }}
+                  />
+                  <div>
+                    <h4 style={{ margin: "0", marginBottom: "8px" }}>
+                      {salon.name}
+                    </h4>
+                    <p style={{ margin: "0" }}>{salon.address}</p>
+                    <div>
+                      <Button
+                        size="small"
+                        className="mr-2"
+                        onClick={() => navigate(`/salon_detail/${salon.id}`)}
+                      >
+                        Đặt lịch
+                      </Button>
+                      <Button
+                        size="small"
+                        onClick={() => {
+                          navigator.geolocation.getCurrentPosition(
+                            (position) => {
+                              const { latitude, longitude } = position.coords;
+                              window.open(
+                                `https://www.google.com/maps/dir/?api=1&origin=${latitude},${longitude}&destination=${salon.latitude},${salon.longitude}`,
+                                "_blank"
+                              );
+                            }
+                          );
+                        }}
+                      >
+                        Chỉ đường
+                      </Button>
+                    </div>
+                  </div>
+                </List.Item>
+              )}
+              locale={{
+                emptyText: (
+                  <Empty
+                    description={
+                      currentLocationUser
+                        ? "Không có salon nào gần bạn"
+                        : "Không có salon nào"
+                    }
+                  />
+                ),
+              }}
+            />
+            <Pagination
+              current={currentPage}
+              total={totalPages}
+              pageSize={pageSize}
+              onChange={handlePageChange}
+            />
+          </Spin>
+        </div>
+        <div className="ml-5" style={{ height: "500px", width: "600px" }}>
+          <LoadScript
+            // googleMapsApiKey={
+            //   import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
+            // }
+            googleMapsApiKey={`${
+              import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
+            }&loading=async`}
+            onLoad={() => {
+              if (scriptLoaded) {
+                console.clear(); // Clear console to remove previous logs
+              }
+              setScriptLoaded(true);
+            }}
+          >
+            {/* {scriptLoaded ? ( */}
+            {/* {salonList ? ( */}
+            <GoogleMap
+              mapContainerStyle={mapContainerStyle}
+              center={currentLocation}
+              zoom={8}
+            >
+              {/* {salonList.map((salon) => (
                     <Marker
                       key={salon.id}
                       position={{
@@ -560,56 +559,55 @@ function SystemBarberPage(props) {
                       onClick={() => handleMarkerClick(salon)}
                     />
                   ))} */}
-                {salonList &&
-                  salonList.map((salon) => {
-                    const lat = parseFloat(salon.latitude);
-                    const lng = parseFloat(salon.longitude);
+              {salonList &&
+                salonList.map((salon) => {
+                  const lat = parseFloat(salon.latitude);
+                  const lng = parseFloat(salon.longitude);
 
-                    if (isNaN(lat) || isNaN(lng)) {
-                      console.error(
-                        `Invalid coordinates for salon ${salon.id}: (${salon.latitude}, ${salon.longitude})`
-                      );
-                      return null;
-                    }
-
-                    return (
-                      <MarkerF
-                        key={salon.id}
-                        position={{ lat, lng }}
-                        onClick={() => handleMarkerClick(salon)}
-                      />
+                  if (isNaN(lat) || isNaN(lng)) {
+                    console.error(
+                      `Invalid coordinates for salon ${salon.id}: (${salon.latitude}, ${salon.longitude})`
                     );
-                  })}
-                {selectedSalon && (
-                  <InfoWindow
-                    position={{
-                      lat: parseFloat(selectedSalon.latitude),
-                      lng: parseFloat(selectedSalon.longitude),
-                    }}
-                    onCloseClick={() => setSelectedSalon(null)}
-                  >
-                    <div>
-                      <h3>{selectedSalon.name}</h3>
-                      <p>{selectedSalon.address}</p>
-                      <a
-                        href={`https://www.google.com/maps/dir/?api=1&destination=${selectedSalon.latitude},${selectedSalon.longitude}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Chỉ đường
-                      </a>
-                    </div>
-                  </InfoWindow>
-                )}
-              </GoogleMap>
-              {/* ) : (
+                    return null;
+                  }
+
+                  return (
+                    <MarkerF
+                      key={salon.id}
+                      position={{ lat, lng }}
+                      onClick={() => handleMarkerClick(salon)}
+                    />
+                  );
+                })}
+              {selectedSalon && (
+                <InfoWindow
+                  position={{
+                    lat: parseFloat(selectedSalon.latitude),
+                    lng: parseFloat(selectedSalon.longitude),
+                  }}
+                  onCloseClick={() => setSelectedSalon(null)}
+                >
+                  <div>
+                    <h3>{selectedSalon.name}</h3>
+                    <p>{selectedSalon.address}</p>
+                    <a
+                      href={`https://www.google.com/maps/dir/?api=1&destination=${selectedSalon.latitude},${selectedSalon.longitude}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Chỉ đường
+                    </a>
+                  </div>
+                </InfoWindow>
+              )}
+            </GoogleMap>
+            {/* ) : (
                 <Loader />
               )} */}
-              {/* ) : (
+            {/* ) : (
                 <Loader />
               )} */}
-            </LoadScript>
-          </div>
+          </LoadScript>
         </div>
       </div>
     </div>
