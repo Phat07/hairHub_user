@@ -53,7 +53,6 @@ import { ProConfigProvider } from "@ant-design/pro-components";
 import PackagePage from "./pages/PackagePage.jsx";
 import PackageSuccessPage from "./pages/PackageSuccessPage.jsx";
 import DashboardTransactionPage from "./pages/DashboardTransactionPage.jsx";
-import ChatButton from "./components/ChatButton.jsx";
 import ChatComponent from "./components/chat/ChatComponent.jsx";
 
 

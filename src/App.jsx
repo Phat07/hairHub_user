@@ -66,6 +66,7 @@ function App() {
           throw new Error("Invalid response data");
         }
       } else {
+        return;
         throw new Error("No refresh token found");
       }
     } catch (error) {
@@ -101,9 +102,10 @@ function App() {
       dispatch(actGetSalonInformationByOwnerId(ownerId));
     }
     dispatch(actGetAllPaymentList(ownerId, 1, 10));
-    dispatch(actGetAllSalonInformation());
   }, [dispatch, ownerId]);
-
+  useEffect(() => {
+    dispatch(actGetAllSalonInformation());
+  }, []);
   useEffect(() => {
     if (salonDetail?.id) {
       dispatch(actGetAllServicesBySalonId(salonDetail.id));
@@ -113,7 +115,7 @@ function App() {
   return (
     <>
       {sessionStorage.getItem("refreshToken") ? <Header /> : <HeaderUnAuth />}
-      <ChatComponent/>
+      {/* <ChatComponent/> */}
     </>
   );
 }
