@@ -50,6 +50,9 @@
 }
 
 @media (max-width: 767px) {
+  .justify-between{
+    display: block;
+  }
   .salon-img {
     width: 60px;
     height: 60px;
