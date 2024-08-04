@@ -17,6 +17,7 @@ import useAuth from "./hooks/useAuth";
 import { AccountServices } from "./services/accountServices";
 import { fetchUserByTokenApi } from "./store/account/action";
 import { message } from "antd";
+import ChatComponent from "./components/chat/ChatComponent";
 
 function App() {
   const navigate = useNavigate();
@@ -55,13 +56,12 @@ function App() {
 
       if (refreshToken) {
         const res = await AccountServices.refreshToken(refreshToken);
-        console.log("Refresh response:", res);
         if (res.data && res.data.accessToken) {
           sessionStorage.setItem("accessToken", res.data.accessToken);
           sessionStorage.setItem("refreshToken", res.data.refreshToken);
           return res.data.accessToken;
         } else {
-          message.warning("Đăng nhập lại!!");
+          message.warning("Đăng nhập lại!!, quá phiên đăng nhập");
           navigate("/login");
           throw new Error("Invalid response data");
         }
@@ -113,6 +113,7 @@ function App() {
   return (
     <>
       {sessionStorage.getItem("refreshToken") ? <Header /> : <HeaderUnAuth />}
+      <ChatComponent/>
     </>
   );
 }

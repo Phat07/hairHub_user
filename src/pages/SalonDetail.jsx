@@ -109,7 +109,7 @@ function renderStars(stars) {
 function SalonDetail(props) {
   const { id } = useParams();
   const userName = useSelector(
-    (state) => state.ACCOUNT.userName
+    (state) => state.ACCOUNT.username
   );
   const userIdCustomer = useSelector(
     (state) => state.ACCOUNT.idCustomer
@@ -120,6 +120,7 @@ function SalonDetail(props) {
   const uid = useSelector(
     (state) => state.ACCOUNT.uid
   );
+
   // const userAuth = useAuthUser();
   // const userId = userAuth?.idOwner;
   // const userIdCustomer = userAuth?.idCustomer;
@@ -470,8 +471,7 @@ function SalonDetail(props) {
         .catch((err) => {
           setSelectedDate(null)
           // setSelectedTimeSlot(null)
-          message.warning(err.response.data.message);
-          console.log(err);
+          message.warning(err?.response?.data?.message);
         });
       const dataMapping = [...additionalServices];
       const databooking = await dataMapping?.map((e) => {
@@ -605,7 +605,7 @@ function SalonDetail(props) {
         setSelectedTimeSlot(null);
         setStatusChangeStaff(true);
         console.error("Error booking appointment:", error);
-        message.warning(error.response.data.message);
+        message.warning(error?.response?.data?.message);
 
         // Sao chép mảng additionalServices để thay đổi mà không ảnh hưởng đến state ban đầu
       });

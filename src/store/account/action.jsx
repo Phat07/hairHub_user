@@ -19,18 +19,16 @@ export const fetchUser = (list) => {
 
 export function loginAccount(data, navigate) {
   return async (dispatch) => {
-
     const result = AccountServices.loginUser(data);
     await result
       .then((response) => {
-        console.log("login", response.data);
-        message.success("Đăng nhập thành công");
-        // if (response.status === 200 || response.status === 201) {
-        dispatch(LOGIN(response.data));
-        navigate("/");
-        // } else {
-        //   message.error("Đăng nhập không thành công");
-        // }
+        if (response.status === 200 || response.status === 201) {
+          dispatch(LOGIN(response.data));
+          message.success("Đăng nhập thành công");
+          navigate("/");
+        } else {
+          message.error("Đăng nhập không thành công");
+        }
       })
       .catch((error) => {
         // Xử lý lỗi nếu có

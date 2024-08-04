@@ -41,7 +41,6 @@ function Header(props) {
   );
 
   const account = useSelector((state) => state.ACCOUNT.username);
-  console.log("account", account);
 
   useEffect(() => {
     try {

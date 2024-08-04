@@ -53,6 +53,8 @@ import { ProConfigProvider } from "@ant-design/pro-components";
 import PackagePage from "./pages/PackagePage.jsx";
 import PackageSuccessPage from "./pages/PackageSuccessPage.jsx";
 import DashboardTransactionPage from "./pages/DashboardTransactionPage.jsx";
+import ChatButton from "./components/ChatButton.jsx";
+import ChatComponent from "./components/chat/ChatComponent.jsx";
 
 
 const router = createBrowserRouter([
@@ -271,6 +273,16 @@ const router = createBrowserRouter([
   {
     path: `salon_detail/:id`,
     element: <SalonDetail />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: `chat`,
+    element: <ChatComponent />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: `chat/:id`,
+    element: <ChatComponent />,
     errorElement: <ErrorPage />,
   },
 ]);

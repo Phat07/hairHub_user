@@ -1,58 +1,212 @@
-// ChatComponent.jsx
-import React, { useState } from 'react';
-import '../../css/ChatComponent.css';
-import { MessageOutlined } from '@ant-design/icons';
+// import React, { useState } from 'react';
+// import {
+//   MainContainer,
+//   ChatContainer,
+//   ConversationHeader,
+//   MessageList,
+//   Message,
+//   MessageInput,
+//   Avatar,
+//   TypingIndicator,
+//   MessageSeparator,
+//   VoiceCallButton,
+//   VideoCallButton,
+//   InfoButton
+// } from '@chatscope/chat-ui-kit-react';
+// import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
+// import "../../css/ChatComponent.css"
 
+// const ChatComponent = () => {
+//   const [messages, setMessages] = useState([]);
+
+//   const handleSend = async (message) => {
+//     if (message.trim() === '') return;
+
+//     const userMessage = {
+//       text: message,
+//       direction: 'outgoing',
+//       avatar: 'https://path-to-user-avatar.png',
+//       sender: 'User',
+//       sentTime: 'Just now'
+//     };
+//     setMessages((prevMessages) => [...prevMessages, userMessage]);
+
+//     // Gửi tin nhắn tới API Gemini và nhận phản hồi
+//     const response = await fetch('/api/gemini', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json'
+//       },
+//       body: JSON.stringify({ message })
+//     });
+//     const data = await response.json();
+
+//     const replyMessage = {
+//       text: data.reply,
+//       direction: 'incoming',
+//       avatar: 'https://chatscope.io/storybook/react/assets/emily-xzL8sDL2.svg',
+//       sender: 'Emily',
+//       sentTime: 'Just now'
+//     };
+//     setMessages((prevMessages) => [...prevMessages, userMessage, replyMessage]);
+//   };
+
+//   return (
+//     <MainContainer>
+//       <ChatContainer style={{ height: '400px' }}>
+//         <ConversationHeader>
+//           <Avatar
+//             name="Emily"
+//             src="https://chatscope.io/storybook/react/assets/emily-xzL8sDL2.svg"
+//           />
+//           <ConversationHeader.Content info="Active 10 mins ago" userName="Emily" />
+//           <ConversationHeader.Actions>
+//             <VoiceCallButton />
+//             <VideoCallButton />
+//             <InfoButton />
+//           </ConversationHeader.Actions>
+//         </ConversationHeader>
+//         <MessageList typingIndicator={<TypingIndicator content="Emily is typing" />}>
+//           <MessageSeparator content="Saturday, 30 November 2019" />
+//           {messages.map((msg, i) => (
+//             <Message
+//               key={i}
+//               model={{
+//                 direction: msg.direction,
+//                 message: msg.text,
+//                 position: 'single',
+//                 sender: msg.sender,
+//                 sentTime: msg.sentTime,
+//               }}
+//             >
+//               {msg.direction === 'incoming' && (
+//                 <Avatar
+//                   name={msg.sender}
+//                   src={msg.avatar}
+//                 />
+//               )}
+//             </Message>
+//           ))}
+//         </MessageList>
+//         <MessageInput placeholder="Type message here" onSend={handleSend} />
+//       </ChatContainer>
+//     </MainContainer>
+//   );
+// };
+
+// export default ChatComponent;
+import React, { useState } from 'react';
+import {
+  MainContainer,
+  ChatContainer,
+  ConversationHeader,
+  MessageList,
+  Message,
+  MessageInput,
+  Avatar,
+  TypingIndicator,
+  MessageSeparator,
+  VoiceCallButton,
+  VideoCallButton,
+  InfoButton
+} from '@chatscope/chat-ui-kit-react';
+import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
+import "../../css/ChatComponent.css";
 
 const ChatComponent = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [input, setInput] = useState('');
-  const [messages, setMessages] = useState([
-    { sender: 'bot', text: "Welcome to our chat! We're a dynamic team offering quality services. Ready for exceptional experiences? How can we assist you today?" }
-  ]);
+  const [messages, setMessages] = useState([]);
 
-  const handleInputChange = (e) => {
-    setInput(e.target.value);
-  };
+  const handleSend = async (message) => {
+    if (message.trim() === '') return;
 
-  const handleSend = () => {
-    if (input.trim()) {
-      setMessages([...messages, { sender: 'user', text: input }]);
-      setInput('');
-      // Simulate bot response
-      setTimeout(() => {
-        setMessages([...messages, { sender: 'user', text: input }, { sender: 'bot', text: "Seems like I've run out of juice, I won't be able to help you. Please try again in a while." }]);
-      }, 1000);
-    }
+    const userMessage = {
+      text: message,
+      direction: 'outgoing',
+      avatar: 'https://path-to-user-avatar.png',
+      sender: 'User',
+      sentTime: 'Just now'
+    };
+    setMessages((prevMessages) => [...prevMessages, userMessage]);
+
+    // Gửi tin nhắn tới API Gemini và nhận phản hồi
+    const response = await fetch('/api/gemini', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ message })
+    });
+    const data = await response.json();
+
+    const replyMessage = {
+      text: data.reply,
+      direction: 'incoming',
+      avatar: 'https://chatscope.io/storybook/react/assets/emily-xzL8sDL2.svg',
+      sender: 'Emily',
+      sentTime: 'Just now'
+    };
+    setMessages((prevMessages) => [...prevMessages, userMessage, replyMessage]);
   };
 
   return (
     <>
-      <div className={`chat-container ${isOpen ? 'open' : ''}`}>
-        <div className="chat-header" onClick={() => setIsOpen(!isOpen)}>
-          <span>hairHub</span>
-          <span className="chat-status">online</span>
-        </div>
-        {isOpen && (
-          <div className="chat-body">
-            <div className="chat-messages">
-              {messages.map((msg, index) => (
-                <div key={index} className={`chat-message ${msg.sender}`}>
-                  {msg.text}
-                </div>
+      {!isOpen ? (
+        <button 
+          className="open-button" 
+          onClick={() => setIsOpen(true)}
+        >
+          Open Chat
+        </button>
+      ) : (
+        <MainContainer>
+          <ChatContainer style={{ height: '400px' }}>
+            <ConversationHeader>
+              <Avatar
+                name="Emily"
+                src="https://chatscope.io/storybook/react/assets/emily-xzL8sDL2.svg"
+              />
+              <ConversationHeader.Content info="Active 10 mins ago" userName="Emily" />
+              <ConversationHeader.Actions>
+                <VoiceCallButton />
+                <VideoCallButton />
+                <InfoButton />
+              </ConversationHeader.Actions>
+            </ConversationHeader>
+            <MessageList typingIndicator={<TypingIndicator content="Emily is typing" />}>
+              <MessageSeparator content="Saturday, 30 November 2019" />
+              {messages.map((msg, i) => (
+                <Message
+                  key={i}
+                  model={{
+                    direction: msg.direction,
+                    message: msg.text,
+                    position: 'single',
+                    sender: msg.sender,
+                    sentTime: msg.sentTime,
+                  }}
+                >
+                  {msg.direction === 'incoming' && (
+                    <Avatar
+                      name={msg.sender}
+                      src={msg.avatar}
+                    />
+                  )}
+                </Message>
               ))}
-            </div>
-            <div className="chat-input">
-              <input type="text" value={input} onChange={handleInputChange} placeholder="Enter your Query..." />
-              <button onClick={handleSend}>Send</button>
-            </div>
-          </div>
-        )}
-      </div>
-      {!isOpen && <button className="chat-fab" onClick={() => setIsOpen(!isOpen)}><MessageOutlined /></button>}
+            </MessageList>
+            <MessageInput placeholder="Type message here" onSend={handleSend} />
+          </ChatContainer>
+          <button 
+            className="close-button" 
+            onClick={() => setIsOpen(false)}
+          >
+            Close Chat
+          </button>
+        </MainContainer>
+      )}
     </>
   );
 };
 
 export default ChatComponent;
-
