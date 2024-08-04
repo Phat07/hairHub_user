@@ -210,7 +210,7 @@ const ListSalon = () => {
         <div
           style={{
             marginLeft: "20rem",
-            fontFamily: "Montserrat",
+            fontFamily: "Lora",
             color: "black",
           }}
         >

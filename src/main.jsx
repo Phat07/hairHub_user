@@ -296,9 +296,12 @@ const router = createBrowserRouter([
 ]);
 
 const customTheme = {
+  token: {
+    fontFamily: '"Lora", serif',
+  },
   components: {
     Typography: {
-      fontFamily: '"Montserrat", san-serif',
+      fontFamily: '"Lora", serif',
       fontSize: 16, // font size of Text
     },
   },
