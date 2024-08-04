@@ -1,41 +1,24 @@
-import React from "react";
-import { useEffect, useState } from "react";
-import useAuthUser from "react-auth-kit/hooks/useAuthUser";
-import { SalonInformationServices } from "../services/salonInformationServices";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   Avatar,
-  List,
   Descriptions,
-  Row,
-  Col,
-  Image,
   message,
   Typography,
-  Flex,
   Button,
   Space,
 } from "antd";
-import { UserOutlined, CalendarOutlined } from "@ant-design/icons";
+import { UserOutlined } from "@ant-design/icons";
 import { AccountServices } from "../services/accountServices";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import "../css/SalonOwnerAccountPage.css";
 
 function SalonOwnerAccountPage() {
- 
-  const userName = useSelector(
-    (state) => state.ACCOUNT.userName
-  );
-  const idCustomer = useSelector(
-    (state) => state.ACCOUNT.idCustomer
-  );
-  const idOwner = useSelector(
-    (state) => state.ACCOUNT.idOwner
-  );
-  const uid = useSelector(
-    (state) => state.ACCOUNT.uid
-  );
- 
+  const userName = useSelector((state) => state.ACCOUNT.userName);
+  const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
+  const idOwner = useSelector((state) => state.ACCOUNT.idOwner);
+  const uid = useSelector((state) => state.ACCOUNT.uid);
 
   const [salonData, setSalonData] = useState({});
 
@@ -48,122 +31,55 @@ function SalonOwnerAccountPage() {
       .catch((err) => {
         message.error("Can not get your salon details!");
       });
-  }, []);
+  }, [uid]);
 
   const handleReload = () => {
     window?.location?.reload();
   };
 
-  const { name, address, description, img, salonOwner, schedules } = salonData;
   return (
-    <div
-      style={{
-        marginTop: "140px",
-        marginLeft: "100px",
-        marginRight: "100px",
-      }}
-    >
+    <div className="salon-owner-account">
       {uid ? (
-        <>
-          <Card title={name} bordered={false} style={{ width: "100%" }}>
-            <Row gutter={16}>
-              <Col span={6}>
-                <Image width={250} src={img} />
-              </Col>
-              <Col span={18}>
-                <Descriptions title="Thông tin người dùng">
-                  <Descriptions.Item label="Name">
-                    {salonData?.fullName}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="Phone">
-                    {salonData?.phone}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="Email">
-                    {salonData?.email}
-                  </Descriptions.Item>
-                </Descriptions>
-              </Col>
-            </Row>
-            <Row gutter={16}>
-              <Col span={6}>
-                {idOwner && (
-                  <Link to={"/salon_report"}> Danh sách báo cáo của bạn</Link>
-                )}
-                {idCustomer && (
-                  <Link to={"/customer_report"}>
-                    {" "}
-                    Danh sách báo cáo của bạn
-                  </Link>
-                )}
-              </Col>
-              <Col span={6}>
-                {idOwner && (
-                  <Link to={"/dashboardTransaction"}> Thống kê doanh thu</Link>
-                )}
-              </Col>
-            </Row>
-          </Card>
-
-          {/* <Card
-            title="Owner Information"
-            bordered={false}
-            style={{ width: "100%", marginTop: "20px" }}
-          >
-            <Row gutter={16}>
-              <Col span={8}>
-                <Avatar
-                  size={100}
-                  src={salonOwner?.img}
-                  icon={<UserOutlined />}
-                />
-              </Col>
-              <Col span={16}>
-                <Descriptions title="Owner Details">
-                  <Descriptions.Item label="Full Name">
-                    {salonOwner?.fullName}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="Email">
-                    {salonOwner?.email}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="Phone">
-                    {salonOwner?.phone}
-                  </Descriptions.Item>
-                </Descriptions>
-              </Col>
-            </Row>
-          </Card> */}
-
-          {/* <Card
-            title="Schedule"
-            bordered={false}
-            style={{ width: "100%", marginTop: "20px" }}
-          >
-            <List
-              itemLayout="horizontal"
-              dataSource={schedules}
-              renderItem={(item) => (
-                <List.Item>
-                  <List.Item.Meta
-                    avatar={<Avatar icon={<CalendarOutlined />} />}
-                    title={item.dayOfWeek}
-                    description={`${item.startTime} - ${item.endTime} ${
-                      item.isActive ? "(Active)" : "(Inactive)"
-                    }`}
-                  />
-                </List.Item>
-              )}
-            />
-          </Card> */}
-        </>
+        <Card className="salon-card">
+          <Avatar
+            src={salonData.img || <UserOutlined />}
+            size={100}
+            className="salon-avatar"
+          />
+          <Descriptions className="salon-info" column={1}>
+            <Descriptions.Item>
+              <Typography.Text strong>{salonData?.fullName}</Typography.Text>
+            </Descriptions.Item>
+            <Descriptions.Item>{salonData?.phone}</Descriptions.Item>
+            <Descriptions.Item>{salonData?.email}</Descriptions.Item>
+          </Descriptions>
+          <div className="salon-buttons">
+            {idOwner && (
+              <>
+                <Link to="/salon_report">
+                  <Button type="primary">Danh sách báo cáo của bạn</Button>
+                </Link>
+                <Link to="/dashboardTransaction">
+                  <Button type="primary">Thống kê doanh thu</Button>
+                </Link>
+              </>
+            )}
+            {idCustomer && (
+              <Link to="/customer_report">
+                <Button type="primary">Danh sách báo cáo của bạn</Button>
+              </Link>
+            )}
+          </div>
+        </Card>
       ) : (
-        <Flex justify="center" align="center">
+        <div className="salon-reload">
           <Space direction="vertical">
             <Typography.Title>Your account is not found!</Typography.Title>
             <Button style={{ width: "100%" }} onClick={handleReload}>
               Reload
             </Button>
           </Space>
-        </Flex>
+        </div>
       )}
     </div>
   );

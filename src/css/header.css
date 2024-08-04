@@ -1,41 +1,40 @@
 .ant-dropdown-link {
-    display: flex;
-    align-items: center;
-    color: #fff;
-    cursor: pointer;
-    text-decoration: none;
-    padding: 0.5rem;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
-  }
-  
-  .ant-dropdown-link:hover {
-    background-color: rgba(0, 0, 0, 0.1);
-  }
-  
-  .ant-dropdown-menu-item {
-    display: flex;
-    align-items: center;
-    padding: 0.5rem 1rem;
-    transition: background-color 0.3s ease;
-  }
-  
-  .ant-dropdown-menu-item:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-  }
-  
-  .ant-dropdown-menu-item a {
-    display: flex;
-    align-items: center;
-    color: #000;
-    text-decoration: none;
-  }
-  
-  .ant-dropdown-menu-item a:hover {
-    color: #1890ff;
-  }
-  
-  .header-avatar {
-    background-color: #5382D5;
-  }
-  
+  display: flex;
+  align-items: center;
+  color: #fff;
+  cursor: pointer;
+  text-decoration: none;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.ant-dropdown-link:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.ant-dropdown-menu-item {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.ant-dropdown-menu-item:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.ant-dropdown-menu-item a {
+  display: flex;
+  align-items: center;
+  color: #000;
+  text-decoration: none;
+}
+
+.ant-dropdown-menu-item a:hover {
+  color: #1890ff;
+}
+
+.header-avatar {
+  background-color: #5382d5;
+}

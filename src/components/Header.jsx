@@ -27,21 +27,16 @@ import { AccountServices } from "../services/accountServices";
 import { fetchUserByTokenApi } from "../store/account/action";
 
 function Header(props) {
-  // const signOut = useSignOut();
   const navigate = useNavigate();
-
   const dispatch = useDispatch();
   const userName = useSelector((state) => state.ACCOUNT.userName);
   const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
   const idOwner = useSelector((state) => state.ACCOUNT.idOwner);
   const uid = useSelector((state) => state.ACCOUNT.uid);
-
   const salonDetail = useSelector(
     (state) => state.SALONINFORMATION.getSalonByOwnerId
   );
-
   const account = useSelector((state) => state.ACCOUNT.username);
-  console.log("account", account);
 
   useEffect(() => {
     try {
@@ -52,14 +47,12 @@ function Header(props) {
   }, [idOwner]);
 
   const handleSignOut = () => {
-    // if (auth) {
-    // signOut();
     sessionStorage.removeItem("refreshToken");
     sessionStorage.removeItem("accessToken");
     message.success("Đăng xuất thành công");
     navigate("/");
-    // }
   };
+
   const handleEmptySalon = () => {
     if (!salonDetail) {
       return "/create_shop";
@@ -100,11 +93,17 @@ function Header(props) {
     </Menu>
   );
 
+  const [menuActive, setMenuActive] = useState(false);
+
+  const toggleMenu = () => {
+    setMenuActive(!menuActive);
+  };
+
   return (
     <div>
       <header className="header fixed-header">
         <div className="header-bottom" style={{ height: "10rem" }} data-header>
-          <div className="container" style={{ padding: "0" }}>
+          <div className="container">
             <Link
               to={"/"}
               className="logo"
@@ -150,7 +149,7 @@ function Header(props) {
             </Link>
 
             <nav
-              className="navbar"
+              className={`navbar ${menuActive ? "active" : ""}`}
               data-navbar
               style={{ marginLeft: "auto", marginRight: "1rem" }}
             >
@@ -206,6 +205,7 @@ function Header(props) {
               className="nav-toggle-btn"
               aria-label="toggle menu"
               data-nav-toggler
+              onClick={toggleMenu}
             >
               <IoMenu />
             </button>

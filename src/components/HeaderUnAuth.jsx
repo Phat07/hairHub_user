@@ -53,11 +53,17 @@ function HeaderUnAuth(props) {
     }
   };
 
+  const [menuActive, setMenuActive] = useState(false);
+
+  const toggleMenu = () => {
+    setMenuActive(!menuActive);
+  };
+
   return (
     <div>
       <header className="header fixed-header">
         <div className="header-bottom" style={{ height: "10rem" }} data-header>
-          <div className="container" style={{ padding: "0" }}>
+          <div className="container">
             <Link
               to={"/"}
               className="logo"
@@ -102,7 +108,7 @@ function HeaderUnAuth(props) {
               </div>
             </Link>
             <nav
-              className="navbar"
+              className={`navbar ${menuActive ? "active" : ""}`}
               data-navbar
               style={{ marginLeft: "auto", marginRight: "1rem" }}
             >
@@ -127,6 +133,7 @@ function HeaderUnAuth(props) {
               className="nav-toggle-btn"
               aria-label="toggle menu"
               data-nav-toggler
+              onClick={toggleMenu}
             >
               <IoMenu />
             </button>
