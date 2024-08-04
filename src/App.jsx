@@ -107,7 +107,7 @@ function App() {
   useEffect(() => {
     dispatch(actGetAllSalonInformation());
   }, []);
-  console.log("App đây");
+
   useEffect(() => {
     if (salonDetail?.id) {
       dispatch(actGetAllServicesBySalonId(salonDetail.id));

@@ -28,14 +28,17 @@ ChartJS.register(
 
 function DashboardTransactionPage(props) {
   const dispatch = useDispatch();
-  const auth = useAuthUser();
-
+  // const auth = useAuthUser();
+  const userName = useSelector((state) => state.ACCOUNT.username);
+  const userIdCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
+  const idOwner = useSelector((state) => state.ACCOUNT.idOwner);
+  const uid = useSelector((state) => state.ACCOUNT.uid);
   const salonInformationByOwnerId = useSelector(
     (state) => state.SALONAPPOINTMENTS.salonInformationByOwnerId
   );
 
   useEffect(() => {
-    dispatch(actGetSalonInformationByOwnerIdAsync(auth.idOwner));
+    dispatch(actGetSalonInformationByOwnerIdAsync(idOwner));
   }, []);
 
   const salonTransaction = useSelector(
