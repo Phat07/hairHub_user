@@ -293,6 +293,10 @@ const router = createBrowserRouter([
     element: <ChatComponent />,
     errorElement: <ErrorPage />,
   },
+  {
+    path: "*",
+    element: <ErrorPage />,
+  },
 ]);
 
 const customTheme = {
