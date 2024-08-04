@@ -28,7 +28,6 @@ function App() {
   const token = useSelector((state) => state.ACCOUNT.token);
   const ownerId = useSelector((state) => state.ACCOUNT.ownerId);
 
-
   const fetchUserByToken = async (token) => {
     console.log("Fetching user by token:", token);
     try {
@@ -53,7 +52,7 @@ function App() {
   const refreshToken = async () => {
     try {
       const refreshToken = sessionStorage.getItem("refreshToken");
-    
+
       if (refreshToken) {
         const res = await AccountServices.refreshToken(refreshToken);
         console.log("Refresh response:", res);
@@ -62,6 +61,8 @@ function App() {
           sessionStorage.setItem("refreshToken", res.data.refreshToken);
           return res.data.accessToken;
         } else {
+          message.warning("Đăng nhập lại!!");
+          navigate("/login");
           throw new Error("Invalid response data");
         }
       } else {
@@ -72,11 +73,11 @@ function App() {
       throw new Error("Failed to refresh token");
     }
   };
-  
+
   const authenticateUser = async () => {
     try {
       let accessToken = sessionStorage.getItem("accessToken");
-  
+
       if (accessToken && !isTokenExpired(accessToken)) {
         await fetchUserByToken(accessToken);
       } else {
@@ -90,7 +91,6 @@ function App() {
       // navigate("/login");
     }
   };
-  
 
   useEffect(() => {
     authenticateUser();

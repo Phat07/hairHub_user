@@ -542,7 +542,7 @@ function SystemBarberPage(props) {
               <GoogleMap
                 mapContainerStyle={mapContainerStyle}
                 center={currentLocation}
-                zoom={10}
+                zoom={8}
               >
                 {/* {salonList.map((salon) => (
                     <Marker
