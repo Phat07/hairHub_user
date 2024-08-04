@@ -57,18 +57,20 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
     Longitude: "",
     Latitude: "",
   });
+  const userName = useSelector((state) => state.ACCOUNT.userName);
+  const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
+  const ownerId = useSelector((state) => state.ACCOUNT.idOwner);
+  const uid = useSelector((state) => state.ACCOUNT.uid);
+  // const auth = useAuthUser();
 
-  const auth = useAuthUser();
-
-  const ownerId = auth?.idOwner;
-  console.log(ownerId, "ownerId");
+  // const ownerId = auth?.idOwner;
   const salonDetail = useSelector(
     (state) => state.SALONINFORMATION.getSalonByOwnerId
   );
   useEffect(() => {
     dispatch(actGetSalonInformationByOwnerId(ownerId));
   }, []);
-  console.log("auth", auth);
+
 
   // Monitor Google Maps API loading state
   useEffect(() => {
@@ -176,7 +178,7 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
       return;
     }
     const convertedSchedules = convertScheduleFormat(formattedSchedules);
-    formData.append("OwnerId", auth?.idOwner);
+    formData.append("OwnerId", ownerId);
     formData.append("Name", upperCaseName);
     formData.append("Address", location);
     formData.append("Description", description);
@@ -207,7 +209,6 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
       try {
         // Await the dispatch call to ensure it completes before moving on
         await dispatch(actPostCreateSalonInformation(formData));
-
         // After the dispatch completes, navigate to the "/list_shop" route
         setTimeout(() => {
           navigate("/list_shop");

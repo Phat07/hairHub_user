@@ -61,7 +61,6 @@ const ListSalon = () => {
         .then((res) => {
           setSalonList(res.data.items);
           setTotalPages(res.data.totalPages);
-          console.log("res", res);
         })
         .catch((err) => {
           console.log(err, "errors");
