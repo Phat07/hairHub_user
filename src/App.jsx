@@ -17,6 +17,7 @@ import useAuth from "./hooks/useAuth";
 import { AccountServices } from "./services/accountServices";
 import { fetchUserByTokenApi } from "./store/account/action";
 import { message } from "antd";
+import ChatBox from "./components/ChatBox";
 
 function App() {
   const navigate = useNavigate();
@@ -113,6 +114,7 @@ function App() {
   return (
     <>
       {sessionStorage.getItem("refreshToken") ? <Header /> : <HeaderUnAuth />}
+      <ChatBox />
     </>
   );
 }
