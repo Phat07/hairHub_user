@@ -405,7 +405,7 @@ function SystemBarberPage(props) {
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth <= 480) {
-        setMapStyle({ height: '200px', width: '100%' });
+        setMapStyle({ height: '250px', width: '100%' });
       } else if (window.innerWidth <= 768) {
         setMapStyle({ height: '300px', width: '100%' });
       } else {
