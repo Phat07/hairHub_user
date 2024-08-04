@@ -8,8 +8,8 @@ const refresh = createRefresh({
   interval: 50, // Default interval; it will be adjusted based on token expiration time
   refreshApiCallback: async (param) => {
     try {
-      const accessToken = sessionStorage.getItem("accessToken");
-      const refreshToken = sessionStorage.getItem("refreshToken");
+      const accessToken = localStorage.getItem("accessToken");
+      const refreshToken = localStorage.getItem("refreshToken");
       
       if (!accessToken || !refreshToken) {
         throw new Error("No tokens available in session storage.");
@@ -33,8 +33,8 @@ const refresh = createRefresh({
 
         if (response.data) {
           // Store the new tokens in session storage
-          sessionStorage.setItem("accessToken", response.data.accessToken);
-          sessionStorage.setItem("refreshToken", response.data.refreshToken);
+          localStorage.setItem("accessToken", response.data.accessToken);
+          localStorage.setItem("refreshToken", response.data.refreshToken);
 
           // Fetch user by token after refreshing the token
           const userResponse = await AccountServices.fetchUserByToken(response.data.accessToken);

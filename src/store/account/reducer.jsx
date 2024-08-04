@@ -14,8 +14,8 @@ const initialState = {
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case LOGIN_ACCOUNT:
-      sessionStorage.setItem("refreshToken", action.payload.refreshToken);
-      sessionStorage.setItem("accessToken", action.payload.accessToken);
+      localStorage.setItem("refreshToken", action.payload.refreshToken);
+      localStorage.setItem("accessToken", action.payload.accessToken);
       
       return {
         ...state,

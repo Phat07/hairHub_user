@@ -53,13 +53,13 @@ function App() {
 
   const refreshToken = async () => {
     try {
-      const refreshToken = sessionStorage.getItem("refreshToken");
+      const refreshToken = localStorage.getItem("refreshToken");
 
       if (refreshToken) {
         const res = await AccountServices.refreshToken(refreshToken);
         if (res.data && res.data.accessToken) {
-          sessionStorage.setItem("accessToken", res.data.accessToken);
-          sessionStorage.setItem("refreshToken", res.data.refreshToken);
+          localStorage.setItem("accessToken", res.data.accessToken);
+          localStorage.setItem("refreshToken", res.data.refreshToken);
           return res.data.accessToken;
         } else {
           message.warning("Đăng nhập lại!!, quá phiên đăng nhập");
@@ -78,7 +78,7 @@ function App() {
 
   const authenticateUser = async () => {
     try {
-      let accessToken = sessionStorage.getItem("accessToken");
+      let accessToken = localStorage.getItem("accessToken");
 
       if (accessToken && !isTokenExpired(accessToken)) {
         await dispatch(fetchUserByTokenApi(accessToken, navigate));
@@ -117,7 +117,7 @@ function App() {
 
   return (
     <>
-      {sessionStorage.getItem("refreshToken") ? <Header /> : <HeaderUnAuth />}
+      {localStorage.getItem("refreshToken") ? <Header /> : <HeaderUnAuth />}
       <ChatBox />
       {/* <ChatComponent /> */}
     </>

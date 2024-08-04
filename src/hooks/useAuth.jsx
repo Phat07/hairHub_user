@@ -25,11 +25,11 @@ const useAuth = () => {
 
   const refreshToken = async () => {
     try {
-      const refreshToken = sessionStorage.getItem("refreshToken");
+      const refreshToken = localStorage.getItem("refreshToken");
       if (refreshToken) {
         const res = await AccountServices.refreshToken(refreshToken);
-        sessionStorage.setItem("accessToken", res.data.accessToken);
-        sessionStorage.setItem("refreshToken", res.data.refreshToken);
+        localStorage.setItem("accessToken", res.data.accessToken);
+        localStorage.setItem("refreshToken", res.data.refreshToken);
         return res.data.accessToken;
       } else {
         throw new Error("No refresh token found");
@@ -45,7 +45,7 @@ const useAuth = () => {
       if (res && res.data) {
         signIn({
           auth: {
-            token: sessionStorage.getItem("accessToken"),
+            token: localStorage.getItem("accessToken"),
             type: "Bearer",
           },
           userState: {
@@ -68,7 +68,7 @@ const useAuth = () => {
 
   const authenticateUser = async () => {
     try {
-      let accessToken = sessionStorage.getItem("accessToken");
+      let accessToken = localStorage.getItem("accessToken");
 
       if (!accessToken) {
         accessToken = await refreshToken();

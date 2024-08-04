@@ -47,8 +47,8 @@ function Header(props) {
   }, [idOwner]);
 
   const handleSignOut = () => {
-    sessionStorage.removeItem("refreshToken");
-    sessionStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("accessToken");
     message.success("Đăng xuất thành công");
     navigate("/");
   };

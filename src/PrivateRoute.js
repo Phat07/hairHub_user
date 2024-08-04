@@ -5,7 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 const RequireAuth = ({ children, fallbackPath }) => {
   // const isAuthenticated = useSelector((state) => state.ACCOUNT.uid);
-  const isAuthenticated = sessionStorage.getItem("refreshToken");
+  const isAuthenticated = localStorage.getItem("refreshToken");
   const navigate = useNavigate();
   const location = useLocation();
 

@@ -302,8 +302,8 @@ function SalonDetail(props) {
     }
     if (
       userName === undefined ||
-      !sessionStorage.getItem("refreshToken") ||
-      !sessionStorage.getItem("accessToken")
+      !localStorage.getItem("refreshToken") ||
+      !localStorage.getItem("accessToken")
     ) {
       navigate("/login");
       message.warning("Vui lòng đăng ký hoặc đăng nhập để đặt lịch");
