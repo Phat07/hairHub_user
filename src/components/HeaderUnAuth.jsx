@@ -127,6 +127,11 @@ function HeaderUnAuth(props) {
                     Hệ thống cửa hàng
                   </Link>
                 </li>
+                <li className="navbar-item">
+                  <Link to={"/login"} className="navbar-link" data-nav-link>
+                    Đăng nhập
+                  </Link>
+                </li>
               </ul>
             </nav>
             <button
