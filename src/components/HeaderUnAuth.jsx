@@ -113,9 +113,7 @@ function HeaderUnAuth(props) {
               <IoMenu />
             </button>
             <Link to={"/login"} className="btn has-before btn-login">
-              <a className="btn has-before btn-login">
                 <span>Đăng nhập</span>
-              </a>
             </Link>
           </div>
         </div>
