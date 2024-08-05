@@ -8,7 +8,12 @@ import { motion } from "framer-motion";
 import { LiaCutSolid } from "react-icons/lia";
 import { FaArrowRight } from "react-icons/fa";
 import { PiHairDryerBold } from "react-icons/pi";
-import { BsFillBagCheckFill, BsFillCupHotFill, BsFillEarFill, BsFillPencilFill } from "react-icons/bs";
+import {
+  BsFillBagCheckFill,
+  BsFillCupHotFill,
+  BsFillEarFill,
+  BsFillPencilFill,
+} from "react-icons/bs";
 import { IoMenu } from "react-icons/io5";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -427,7 +432,6 @@ function HomePage(props) {
           </Modal>
         </article>
       </main>
-      <Footer />
     </div>
   );
 }

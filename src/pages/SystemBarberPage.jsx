@@ -36,22 +36,19 @@ const mapContainerStyle = {
   width: "850px",
 };
 const responsiveMapContainerStyle = {
-  '@media (max-width: 768px)': {
+  "@media (max-width: 768px)": {
     height: "300px", // Adjust height for smaller screens
-    width: "50px",   // Full width for smaller screens
+    width: "50px", // Full width for smaller screens
   },
-  '@media (max-width: 480px)': {
+  "@media (max-width: 480px)": {
     height: "200px", // Further adjustment for very small screens
-    width: "50px",   // Full width for very small screens
+    width: "50px", // Full width for very small screens
   },
 };
 const combinedMapContainerStyle = {
   ...mapContainerStyle,
   ...responsiveMapContainerStyle,
 };
-
-
-
 
 const defaultCenter = {
   lat: 10.8231, // Default to Ho Chi Minh City
@@ -398,25 +395,25 @@ function SystemBarberPage(props) {
     navigate(`/system_shop?${searchParams.toString()}`);
   };
   const [mapStyle, setMapStyle] = useState({
-    height: '500px',
-    width: '850px',
+    height: "500px",
+    width: "850px",
   });
 
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth <= 480) {
-        setMapStyle({ height: '250px', width: '100%' });
+        setMapStyle({ height: "250px", width: "100%" });
       } else if (window.innerWidth <= 768) {
-        setMapStyle({ height: '300px', width: '100%' });
+        setMapStyle({ height: "300px", width: "100%" });
       } else {
-        setMapStyle({ height: '500px', width: '850px' });
+        setMapStyle({ height: "500px", width: "850px" });
       }
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
     handleResize(); // Initial call
 
-    return () => window.removeEventListener('resize', handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
   return (
     // <div className="system-salon__container">
@@ -648,28 +645,23 @@ function SystemBarberPage(props) {
     // </div>
     <div className="system-salon__container">
       <div className="flex justify-between">
-        <div className="left-content text-left">
+        <div className="left-content text-left button-container">
           <Button type="primary" onClick={handleSearch}>
             <>Tìm salon gần bạn</>
           </Button>
-        </div>
-        <div className="flex right-content text-right mr-5 mt-2">
-          <div className="mr-3 text-center">
-            <Select
-              value={selectedProvince || "Tỉnh/Thành phố"}
-              style={{ width: 200 }}
-              onChange={handleChange}
-              options={provinces}
-            />
-          </div>
-          <div className="text-center">
-            <Select
-              value={selectedDistrict || "Quận/Huyện"}
-              style={{ width: 200 }}
-              onChange={handleChangeDistrict}
-              options={selectedProvince ? districts : <Empty />}
-            />
-          </div>
+          <Select
+            value={selectedProvince || "Tỉnh/Thành phố"}
+            style={{ width: 200 }}
+            onChange={handleChange}
+            options={provinces}
+          />
+
+          <Select
+            value={selectedDistrict || "Quận/Huyện"}
+            style={{ width: 200 }}
+            onChange={handleChangeDistrict}
+            options={selectedProvince ? districts : <Empty />}
+          />
         </div>
       </div>
       <div className="list-map-container mt-5">
@@ -725,7 +717,7 @@ function SystemBarberPage(props) {
                       {salon.name}
                     </h4>
                     <p style={{ margin: "0" }}>{salon.address}</p>
-                    <div className="salon-buttons">
+                    <div>
                       <Button
                         size="small"
                         className="mr-2"
@@ -770,6 +762,7 @@ function SystemBarberPage(props) {
               total={totalPages}
               pageSize={pageSize}
               onChange={handlePageChange}
+              style={{ display: "flex", justifyContent: "center" }}
             />
           </Spin>
         </div>
