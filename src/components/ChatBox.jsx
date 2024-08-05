@@ -1,43 +1,60 @@
 import React, { useState } from "react";
-import { MessageList, Input, Button } from "react-chat-elements";
-import "react-chat-elements/dist/main.css";
+import {
+  MainContainer,
+  ChatContainer,
+  ConversationHeader,
+  MessageList,
+  Message,
+  MessageInput,
+  Avatar,
+  TypingIndicator,
+  VoiceCallButton,
+  VideoCallButton,
+  InfoButton,
+} from "@chatscope/chat-ui-kit-react";
+import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
+import "../css/ChatComponent.css";
 import { FaTimes, FaComments } from "react-icons/fa";
 import logo from "../assets/images/hairHubLogo.png";
 
 const ChatBox = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
-  const [currentMessage, setCurrentMessage] = useState("");
-  const [isOnline, setIsOnline] = useState(true);
 
   const toggleChatBox = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleMessageChange = (e) => {
-    setCurrentMessage(e.target.value);
-  };
+  const handleSend = async (message) => {
+    if (message.trim() === "") return;
 
-  const handleSendMessage = () => {
-    if (currentMessage.trim()) {
-      setMessages([
-        ...messages,
-        {
-          position: "right",
-          type: "text",
-          text: currentMessage,
-          date: new Date(),
-        },
-      ]);
-      setCurrentMessage("");
-    }
-  };
+    const userMessage = {
+      text: message,
+      direction: "outgoing",
+      avatar: { logo },
+      sender: "User",
+      sentTime: "Just now",
+    };
+    setMessages((prevMessages) => [...prevMessages, userMessage]);
 
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      handleSendMessage();
-    }
+    // Gửi tin nhắn tới API Gemini và nhận phản hồi
+    const response = await fetch("/api/gemini", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ message }),
+    });
+    const data = await response.json();
+
+    const replyMessage = {
+      text: data.reply,
+      direction: "incoming",
+      avatar: { logo },
+      sender: "Hairhub",
+      sentTime: "Just now",
+    };
+    setMessages((prevMessages) => [...prevMessages, userMessage, replyMessage]);
   };
 
   return (
@@ -69,101 +86,61 @@ const ChatBox = () => {
       </button>
 
       {isOpen && (
-        <div
-          style={{
-            position: "fixed",
-            bottom: "80px", // Điều chỉnh vị trí để không bị che bởi nút
-            right: "20px",
-            width: "35rem", // Tăng chiều rộng
-            height: "40rem", // Tăng chiều cao
-            border: "1px solid #ccc",
-            borderRadius: "10px",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            backgroundColor: "white",
-            boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
-            zIndex: 1000,
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              padding: "10px",
-              borderBottom: "1px solid #ccc",
-              backgroundColor: "#007bff",
-              borderRadius: "10px 10px 0 0",
-            }}
+        <MainContainer>
+          <ChatContainer
+            className="cs-main-container"
+            style={{ height: "400px", width: "35rem" }}
           >
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <img
-                src={logo}
-                alt="Logo"
-                style={{
-                  width: "30px",
-                  height: "30px",
-                  marginRight: "10px",
-                  borderRadius: "50%",
-                }}
+            <ConversationHeader>
+              <Avatar name="Hairhub" src={logo} />
+              <ConversationHeader.Content
+                info="Active 10 mins ago"
+                userName="Hairhub"
               />
-              <span style={{ color: "white", fontWeight: "bold" }}>
-                Hairhub
-              </span>
-              <span
-                style={{
-                  marginLeft: "10px",
-                  width: "10px",
-                  height: "10px",
-                  borderRadius: "50%",
-                  backgroundColor: isOnline ? "green" : "red",
-                }}
-              ></span>
-            </div>
-            <button
-              style={{
-                backgroundColor: "transparent",
-                border: "none",
-                cursor: "pointer",
-              }}
-              onClick={toggleChatBox}
-            >
-              <FaTimes size={16} color="white" />
-            </button>
-          </div>
-          <div style={{ padding: "10px", overflowY: "auto", flex: 1 }}>
+              <ConversationHeader.Actions>
+                <VoiceCallButton />
+                <VideoCallButton />
+                <InfoButton />
+              </ConversationHeader.Actions>
+            </ConversationHeader>
             <MessageList
-              className="message-list"
-              lockable={true}
-              toBottomHeight={"100%"}
-              dataSource={messages}
-            />
-          </div>
-          <div
+              typingIndicator={<TypingIndicator content="Hairhub is typing" />}
+              className="cs-message-list" // Áp dụng class CSS để kiểm soát thanh cuộn
+            >
+              {messages.map((msg, i) => (
+                <Message
+                  key={i}
+                  model={{
+                    direction: msg.direction,
+                    message: msg.text,
+                    position: "single",
+                    sender: msg.sender,
+                    sentTime: msg.sentTime,
+                  }}
+                >
+                  {msg.direction === "incoming" && (
+                    <Avatar name={msg.sender} src={msg.avatar} />
+                  )}
+                </Message>
+              ))}
+            </MessageList>
+            <MessageInput placeholder="Type message here" onSend={handleSend} />
+          </ChatContainer>
+
+          <button
             style={{
-              display: "flex",
-              padding: "10px",
-              borderTop: "1px solid #ccc",
+              position: "absolute",
+              top: "10px",
+              right: "10px",
+              backgroundColor: "transparent",
+              border: "none",
+              cursor: "pointer",
             }}
+            onClick={toggleChatBox}
           >
-            <Input
-              placeholder="Điền vào đây..."
-              multiline={false}
-              value={currentMessage}
-              onChange={handleMessageChange}
-              onKeyPress={handleKeyPress}
-              rightButtons={
-                <Button
-                  color="white"
-                  backgroundColor="#007bff"
-                  text="Gửi"
-                  onClick={handleSendMessage}
-                />
-              }
-            />
-          </div>
-        </div>
+            <FaTimes size={16} color="black" />
+          </button>
+        </MainContainer>
       )}
     </div>
   );
