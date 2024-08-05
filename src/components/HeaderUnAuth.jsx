@@ -96,7 +96,7 @@ function HeaderUnAuth(props) {
                   </Link>
                 </li>
                 {menuActive && (
-                  <li className="navbar-item">
+                  <li className="navbar-item btn-login">
                     <Link to={"/login"} className="navbar-link" data-nav-link>
                       Đăng nhập
                     </Link>
@@ -112,7 +112,7 @@ function HeaderUnAuth(props) {
             >
               <IoMenu />
             </button>
-            <Link to={"/login"}>
+            <Link to={"/login"} className="btn has-before btn-login">
               <a className="btn has-before btn-login">
                 <span>Đăng nhập</span>
               </a>
