@@ -19,6 +19,7 @@ import { fetchUserByTokenApi } from "./store/account/action";
 import { message } from "antd";
 import ChatBox from "./components/ChatBox";
 import ChatComponent from "./components/chat/ChatComponent";
+import Footer from "./components/Footer";
 
 function App() {
   const navigate = useNavigate();
@@ -120,6 +121,7 @@ function App() {
       {localStorage.getItem("refreshToken") ? <Header /> : <HeaderUnAuth />}
       <ChatBox />
       {/* <ChatComponent /> */}
+      <Footer />
     </>
   );
 }
