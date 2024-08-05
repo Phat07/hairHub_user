@@ -87,29 +87,30 @@
 
   .nav-toggle-btn {
     margin-left: auto;
+  }
 
-    .grid-list {
-      display: flex;
-      flex-direction: row;
-      overflow-x: auto;
-      gap: 1rem;
-      padding: 1rem;
-      /* Ẩn thanh cuộn */
-      -ms-overflow-style: none; /* IE and Edge */
-      scrollbar-width: none; /* Firefox */
-    }
+  .grid-list {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 1rem;
+    padding: 1rem;
+    /* Ẩn thanh cuộn */
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
 
-    .grid-list::-webkit-scrollbar {
-      display: none; /* Chrome, Safari, Opera */
-    }
+  .grid-list::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
 
-    .service-card {
-      flex: 0 0 auto;
-      min-width: 300px;
-    }
+  .service-card {
+    flex: 0 0 auto;
+    min-width: 300px;
+  }
 
-    .containerServiceList {
-      padding: 10px;
-    }
+  .containerServiceList {
+    padding: 10px;
   }
 }
+/* } */
