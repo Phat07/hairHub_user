@@ -38,3 +38,39 @@
 .header-avatar {
   background-color: #5382d5;
 }
+
+.logo-header {
+  display: flex;
+  align-items: center;
+}
+
+.logo-header-img {
+  width: 6.5rem;
+  border-radius: 50%;
+  margin-right: 1rem;
+}
+
+.logo-header-title-1 {
+  margin: 0;
+  padding: 0;
+  font-size: 2.8rem;
+  line-height: 1.5rem;
+}
+
+.logo-header-title-2 {
+  font-size: 1.15rem;
+  color: #888;
+  line-height: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0;
+  }
+
+  .logo-header-img {
+    width: 6.5rem;
+    border-radius: 50%;
+    margin-right: 0;
+  }
+}
