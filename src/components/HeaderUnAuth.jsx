@@ -64,47 +64,15 @@ function HeaderUnAuth(props) {
       <header className="header fixed-header">
         <div className="header-bottom" style={{ height: "10rem" }} data-header>
           <div className="container">
-            <Link
-              to={"/"}
-              className="logo"
-              style={{ display: "flex", alignItems: "center" }}
-            >
+            <Link to={"/"} className="logo logo-header">
               <img
-                style={{
-                  width: "6.5rem",
-                  borderRadius: "50%",
-                  marginRight: "1rem",
-                }}
+                className="logo-header-img"
                 src={hairHubLogo}
                 alt="HairHub Logo"
               />
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  width: "15rem",
-                }}
-              >
-                <h1
-                  style={{
-                    margin: 0,
-                    padding: 0,
-                    fontSize: "2.8rem",
-                    lineHeight: "1.5rem",
-                  }}
-                >
-                  HairHub
-                </h1>
-                <span
-                  style={{
-                    fontSize: "1.15rem",
-                    color: "#888",
-                    lineHeight: "1.5rem",
-                  }}
-                >
-                  Salon | Barber Shop
-                </span>
+              <div>
+                <h1 className="logo-header-title-1">HairHub</h1>
+                <span className="logo-header-title-2">Salon | Barber Shop</span>
               </div>
             </Link>
             <nav
@@ -145,8 +113,8 @@ function HeaderUnAuth(props) {
               <IoMenu />
             </button>
             <Link to={"/login"}>
-              <a className="btn has-before" style={{ textAlign: "center" }}>
-                <span className="span min-w-14 max-h-36 w-36">Đăng nhập</span>
+              <a className="btn has-before btn-login">
+                <span>Đăng nhập</span>
               </a>
             </Link>
           </div>

@@ -944,9 +944,7 @@ function SalonDetail(props) {
       <Header />
       <div
         style={{
-          marginTop: "130px",
-          marginLeft: "250px",
-          marginRight: "250px",
+          marginTop: "10rem",
         }}
       ></div>
       <div>
@@ -956,7 +954,8 @@ function SalonDetail(props) {
               <Col
                 xs={24}
                 md={10}
-                style={{ marginBottom: "16px", marginLeft: "20rem" }}
+                style={{ marginBottom: "16px"}}
+                className="detail-salon-col-1"
               >
                 <div>
                   {/* <div className="rating-overlay">
@@ -1687,10 +1686,10 @@ function SalonDetail(props) {
                 <div
                   style={{
                     padding: "24px",
-                    marginLeft: "5rem",
                     background: "#fff",
                     borderRadius: "8px",
                   }}
+                  className="detail-salon-col-2"
                 >
                   <div>
                     <Title level={4}>Địa chỉ</Title>
