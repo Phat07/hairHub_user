@@ -2,12 +2,23 @@
 .registerSteps .ant-steps-item-icon {
   font-size: 12px; /* Adjust the font size */
 }
-  
+
 .registerSteps .ant-steps-item-icon .ant-steps-icon {
   font-size: 16px; /* Adjust the size of the icon inside the step */
   padding: 8px; /* Adjust the padding */
 }
 
-.login-form-page{
+.login-form-page {
   /* display: block; */
+}
+
+@media (max-width: 768px) {
+  .register-img {
+    width: 15rem;
+    height: 15rem;
+  }
+
+  .register-child-img {
+    height: 15rem;
+  }
 }
