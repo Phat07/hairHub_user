@@ -41,6 +41,7 @@ const { Title, Text } = Typography;
 import { useDispatch, useSelector } from "react-redux";
 import { actGetAllSalonInformation } from "../store/salonInformation/action";
 import { actGetStatusPayment } from "../store/salonPayment/action";
+import { EmptyComponent } from "../components/EmptySection/DisplayEmpty";
 
 function HomePage(props) {
   const navigate = useNavigate();
@@ -194,64 +195,68 @@ function HomePage(props) {
               <div className="scroll-wrapper" ref={scrollContainerRef}>
                 <Title className="customTitle">Những tiệm Barber gần đây</Title>
                 <div className="scroll-content mt-12">
-                  {recommendedSalons?.map((item, index) => (
-                    <Card
-                      hoverable
-                      style={{ width: "25rem" }}
-                      key={item.id}
-                      className="small-card"
-                      cover={
-                        <img
-                          style={{
-                            objectFit: "cover", //display image in card
-                            height: "15rem",
-                            width: "100%",
-                            cursor: "default",
-                          }}
-                          alt={item.name}
-                          src={item.img}
-                        />
-                      }
-                      actions={
-                        heartButton[index]
-                          ? [
-                              <HeartFilled
-                                onClick={() => handleHeartButton(item, index)}
-                                style={{ color: "red" }}
-                                key="heart"
-                              />,
-                            ]
-                          : [
-                              <HeartOutlined
-                                onClick={() => handleHeartButton(item, index)}
-                                key="heart"
-                              />,
-                            ]
-                      }
-                    >
-                      <Card.Meta
-                        onClick={() => navigate(`/salon_detail/${item.id}`)}
-                        title={
-                          <>
-                            <Title level={4}>{item.name}</Title>
-                          </>
+                  {recommendedSalons?.length > 0 ? (
+                    recommendedSalons?.map((item, index) => (
+                      <Card
+                        hoverable
+                        style={{ width: "25rem" }}
+                        key={item.id}
+                        className="small-card"
+                        cover={
+                          <img
+                            style={{
+                              objectFit: "cover", //display image in card
+                              height: "15rem",
+                              width: "100%",
+                              cursor: "default",
+                            }}
+                            alt={item.name}
+                            src={item.img}
+                          />
                         }
-                        description={
-                          <div className="h-[12rem]">
-                            {/* <Rate
+                        actions={
+                          heartButton[index]
+                            ? [
+                                <HeartFilled
+                                  onClick={() => handleHeartButton(item, index)}
+                                  style={{ color: "red" }}
+                                  key="heart"
+                                />,
+                              ]
+                            : [
+                                <HeartOutlined
+                                  onClick={() => handleHeartButton(item, index)}
+                                  key="heart"
+                                />,
+                              ]
+                        }
+                      >
+                        <Card.Meta
+                          onClick={() => navigate(`/salon_detail/${item.id}`)}
+                          title={
+                            <>
+                              <Title level={4}>{item.name}</Title>
+                            </>
+                          }
+                          description={
+                            <div className="h-[12rem]">
+                              {/* <Rate
                               disabled
                               defaultValue="5.0"
                               style={{ fontSize: 12 }}
                             /> */}
-                            <Text>{item.reviews}</Text>
-                            <Text>
-                              <EnvironmentOutlined /> {item.address}
-                            </Text>
-                          </div>
-                        }
-                      />
-                    </Card>
-                  ))}
+                              <Text>{item.reviews}</Text>
+                              <Text>
+                                <EnvironmentOutlined /> {item.address}
+                              </Text>
+                            </div>
+                          }
+                        />
+                      </Card>
+                    ))
+                  ) : (
+                    <EmptyComponent description={"Hiện không có salon nào!"} />
+                  )}
                 </div>
               </div>
             </div>
