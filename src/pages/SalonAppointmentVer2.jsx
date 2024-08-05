@@ -12,6 +12,7 @@ import {
   message,
   Modal,
   Pagination,
+  Spin,
   Typography,
   Upload,
 } from "antd";
@@ -19,7 +20,7 @@ import moment from "moment";
 import { actCreateReportSalon } from "../store/report/action";
 import { AppointmentService } from "../services/appointmentServices";
 import { EmptyComponent } from "../components/EmptySection/DisplayEmpty";
-import "../css/salonAppointmentV2.css"
+import "../css/salonAppointmentV2.css";
 const { Text, Title } = Typography;
 function SalonAppointmentVer2(props) {
   const dispatch = useDispatch();
@@ -33,6 +34,7 @@ function SalonAppointmentVer2(props) {
   const [fileList, setFileList] = useState([]);
   const [reportDescription, setReportDescription] = useState("");
   const [itemReport, setItemReport] = useState({});
+  const [loading, setLoading] = useState(false);
   const pageSize = 4;
 
   const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
@@ -62,17 +64,35 @@ function SalonAppointmentVer2(props) {
       return () => clearTimeout(timer);
     }
   }, [isModalVisible]);
+  // useEffect(() => {
+  //   if (salonInformationByOwnerId || status) {
+  //     dispatch(
+  //       actGetAppointmentBySalonId(
+  //         currentPage,
+  //         pageSize,
+  //         salonInformationByOwnerId?.id,
+  //         status
+  //       )
+  //     );
+  //   }
+  // }, [salonInformationByOwnerId, status, currentPage]);
   useEffect(() => {
-    if (salonInformationByOwnerId || status) {
-      dispatch(
-        actGetAppointmentBySalonId(
-          currentPage,
-          pageSize,
-          salonInformationByOwnerId?.id,
-          status
-        )
-      );
-    }
+    const fetchAppointments = async () => {
+      if (salonInformationByOwnerId || status) {
+        setLoading(true);
+        await dispatch(
+          actGetAppointmentBySalonId(
+            salonInformationByOwnerId?.id,
+            currentPage,
+            pageSize,
+            status
+          )
+        );
+        setLoading(false);
+      }
+    };
+
+    fetchAppointments();
   }, [salonInformationByOwnerId, status, currentPage]);
 
   const statusDisplayNames = {
@@ -158,7 +178,6 @@ function SalonAppointmentVer2(props) {
     setIsReportModalVisible(false);
   };
   const handleReportOk = () => {
-    console.log(itemReport);
     const formData = new FormData();
     formData.append("SalonId", itemReport?.salonInformation?.id); // Replace with actual value
     formData.append("CustomerId", itemReport?.customer?.id);
@@ -207,15 +226,11 @@ function SalonAppointmentVer2(props) {
     setIsModalVisible(false);
   };
   return (
-    <div
-     className="salon-appointment-container"
-    >
+    <div className="salon-appointment-container">
       <div className="header">
         <Title level={2}>Cuộc hẹn của salon</Title>
       </div>
-      <div
-        className="status-filter"
-      >
+      <div className="status-filter">
         {Object.keys(statusDisplayNames).map((statusKey, index) => (
           <button
             key={statusKey}
@@ -239,122 +254,64 @@ function SalonAppointmentVer2(props) {
           </button>
         ))}
       </div>
-      {salonAppointments.length === 0 ? (
-        <EmptyComponent description={"Hiện tại không có lịch hẹn nào!"} />
-      ) : (
-        <div  className="appointment-list">
-          {salonAppointments.map((appointment, key) => {
-            const startTime = moment(
-              appointment.appointmentDetails[0]?.startTime
-            );
-            const startDate = moment(appointment.startDate);
-            const currentTime = moment();
+      <Spin spinning={loading}>
+        {salonAppointments.length === 0 ? (
+          <EmptyComponent description={"Hiện tại không có lịch hẹn nào!"} />
+        ) : (
+          <div className="appointment-list">
+            {salonAppointments.map((appointment, key) => {
+              const startTime = moment(
+                appointment.appointmentDetails[0]?.startTime
+              );
+              const startDate = moment(appointment.startDate);
+              const currentTime = moment();
 
-            // Kiểm tra nếu ngày của startDate là ngày hôm nay
-            const isSameDay = startDate.isSame(currentTime, "day");
+              // Kiểm tra nếu ngày của startDate là ngày hôm nay
+              const isSameDay = startDate.isSame(currentTime, "day");
 
-            // Kiểm tra nếu currentTime không trễ hơn startTime (và cũng không sớm hơn)
-            const isReportButtonVisible =
-              isSameDay && currentTime.isSameOrAfter(startTime);
-            return (
-              <>
-                <div
-                  key={appointment.id}
-                  // style={{
-                  //   border: "1px solid #ccc",
-                  //   borderRadius: "5px",
-                  //   padding: "1rem",
-                  //   width: "calc(25% - 1rem)",
-                  //   boxSizing: "border-box",
-                  //   color:"black"
-                  // }}
-                  className="appointment-item"
-                  // style={{
-                  //   width: "calc(25% - 1rem)",
-                  //   boxSizing: "border-box",
-                  //   padding: "1rem",
-                  //   border: "1px solid #ccc",
-                  //   borderRadius: "5px",
-                  // }}
-                >
-                  <h3>{appointment.customer.fullName}</h3>
-                  <p>Ngày đặt: {formatDate(appointment.startDate)}</p>
-                  <p>
-                    Thời gian bắt đầu:{" "}
-                    {moment(
-                      appointment.appointmentDetails[0]?.startTime
-                    ).format("HH:mm")}
-                  </p>
-                  <p>
-                    Tổng tiền: {appointment.totalPrice.toLocaleString()} VND
-                  </p>
-                  <Button
-                    onClick={() => showModal(appointment)}
-                    className="mr-3"
-                  >
-                    Cuộc hẹn
-                  </Button>
-                  {isReportButtonVisible && (
-                    <Button onClick={() => handleReport(appointment)}>
-                      {/* {appointment?.status === "SUCCESSED" ||
+              // Kiểm tra nếu currentTime không trễ hơn startTime (và cũng không sớm hơn)
+              const isReportButtonVisible =
+                isSameDay && currentTime.isSameOrAfter(startTime);
+              return (
+                <>
+                  <div key={appointment.id} className="appointment-item">
+                    <h3>{appointment.customer.fullName}</h3>
+                    <p>Ngày đặt: {formatDate(appointment.startDate)}</p>
+                    <p>
+                      Thời gian bắt đầu:{" "}
+                      {moment(
+                        appointment.appointmentDetails[0]?.startTime
+                      ).format("HH:mm")}
+                    </p>
+                    <p>
+                      Tổng tiền: {appointment.totalPrice.toLocaleString()} VND
+                    </p>
+                    <Button
+                      onClick={() => showModal(appointment)}
+                      className="mr-3"
+                    >
+                      Cuộc hẹn
+                    </Button>
+                    {isReportButtonVisible && (
+                      <Button onClick={() => handleReport(appointment)}>
+                        {/* {appointment?.status === "SUCCESSED" ||
                       appointment?.status === "BOOKING" ? (
                         "Đánh giá"
                       ) : ( */}
-                      {appointment?.isReportBySalon === true
-                        ? "Đã báo cáo cho admin"
-                        : "Báo cáo"}
-                      {/* )} */}
-                    </Button>
-                  )}
-                </div>
-                <Modal
-                  title="Báo cáo vấn đề"
-                  visible={isReportModalVisible}
-                  onOk={handleReportOk}
-                  onCancel={handleReportCancel}
-                  okText="Gửi báo cáo"
-                  outsideClickClosable={false}
-                  wrapClassName="no-close-on-outside-click"
-                  cancelText="Đóng"
-                >
-                  <p>
-                    Bạn có thể tải lên hình ảnh để minh chứng cho báo cáo của
-                    bạn.
-                  </p>
-                  <Upload
-                    listType="picture"
-                    onChange={handleUploadChange}
-                    maxCount={1}
-                    fileList={fileList}
-                    beforeUpload={() => false}
-                  >
-                    <Button>Tải lên</Button>
-                  </Upload>
-                  {reportImage && (
-                    <div style={{ marginTop: "10px" }}>
-                      <Image
-                        width={200}
-                        src={uploadedImageUrl}
-                        alt="Uploaded report"
-                      />
-                    </div>
-                  )}
-                  <Input.TextArea
-                    placeholder="Nhập lý do báo cáo..."
-                    value={reportDescription}
-                    onChange={(e) => setReportDescription(e.target.value)}
-                    rows={4}
-                    style={{ marginTop: "10px" }}
-                  />
-                </Modal>
-              </>
-            );
-          })}
-        </div>
-      )}
-      <div
-        className="pagination"
-      >
+                        {appointment?.isReportBySalon === true
+                          ? "Đã báo cáo cho admin"
+                          : "Báo cáo"}
+                        {/* )} */}
+                      </Button>
+                    )}
+                  </div>
+                </>
+              );
+            })}
+          </div>
+        )}
+      </Spin>
+      <div className="pagination">
         <Pagination
           current={currentPage}
           total={totalPages * pageSize}
@@ -462,6 +419,39 @@ function SalonAppointmentVer2(props) {
             </p>
           </>
         )}
+      </Modal>
+      <Modal
+        title="Báo cáo vấn đề"
+        visible={isReportModalVisible}
+        onOk={handleReportOk}
+        onCancel={handleReportCancel}
+        okText="Gửi báo cáo"
+        outsideClickClosable={false}
+        wrapClassName="no-close-on-outside-click"
+        cancelText="Đóng"
+      >
+        <p>Bạn có thể tải lên hình ảnh để minh chứng cho báo cáo của bạn.</p>
+        <Upload
+          listType="picture"
+          onChange={handleUploadChange}
+          maxCount={1}
+          fileList={fileList}
+          beforeUpload={() => false}
+        >
+          <Button>Tải lên</Button>
+        </Upload>
+        {reportImage && (
+          <div style={{ marginTop: "10px" }}>
+            <Image width={200} src={uploadedImageUrl} alt="Uploaded report" />
+          </div>
+        )}
+        <Input.TextArea
+          placeholder="Nhập lý do báo cáo..."
+          value={reportDescription}
+          onChange={(e) => setReportDescription(e.target.value)}
+          rows={4}
+          style={{ marginTop: "10px" }}
+        />
       </Modal>
     </div>
   );

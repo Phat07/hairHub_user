@@ -46,7 +46,7 @@ import { EmptyComponent } from "../components/EmptySection/DisplayEmpty";
 function HomePage(props) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const salonList = useSelector((state) => state.SALONINFORMATION.getAllSalon);
+  const salonList = useSelector((state) => state.SALONINFORMATION.getSalonSuggestion);
   const [heartButton, setHeartButton] = useState(
     Array(salonList.length).fill(false)
   );

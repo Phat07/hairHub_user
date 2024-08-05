@@ -5,6 +5,7 @@ import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import { useDispatch, useSelector } from "react-redux";
 import {
   actGetAllSalonInformation,
+  actGetAllSalonSuggestionInformation,
   actGetSalonInformationByOwnerId,
 } from "./store/salonInformation/action";
 import { actGetAllServicesBySalonId } from "./store/salonEmployees/action";
@@ -79,7 +80,7 @@ function App() {
 
   const authenticateUser = async () => {
     try {
-      let accessToken = localStorage.getItem("accessToken");
+      let accessToken = await localStorage.getItem("accessToken");
 
       if (accessToken && !isTokenExpired(accessToken)) {
         await dispatch(fetchUserByTokenApi(accessToken, navigate));
@@ -103,11 +104,12 @@ function App() {
   useEffect(() => {
     if (ownerId) {
       dispatch(actGetSalonInformationByOwnerId(ownerId));
+      dispatch(actGetAllPaymentList(ownerId, 1, 10));
     }
-    dispatch(actGetAllPaymentList(ownerId, 1, 10));
   }, [dispatch, ownerId]);
   useEffect(() => {
     dispatch(actGetAllSalonInformation());
+    dispatch(actGetAllSalonSuggestionInformation());
   }, []);
 
   useEffect(() => {

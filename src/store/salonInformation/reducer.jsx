@@ -1,10 +1,12 @@
 import {
   CREATE_SALON_INFORMATION,
   GET_ALL_SALON,
+  GET_ALL_SALON_SUGGESTION,
   GET_SALON_OWNERID,
 } from "./action";
 
 const initialState = {
+  getSalonSuggestion: [],
   salonInformation: {},
   getSalonByOwnerId: "",
   getAllSalon: [],
@@ -29,6 +31,12 @@ const reducer = (state = initialState, action) => {
         ...state,
         getAllSalon: action.payload,
       };
+    case GET_ALL_SALON_SUGGESTION:
+      return {
+        ...state,
+        getSalonSuggestion: action.payload,
+      };
+
     default:
       return state;
   }
