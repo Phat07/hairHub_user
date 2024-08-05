@@ -15,6 +15,7 @@ import {
   ConfigProvider,
   Space,
   Rate,
+  Spin,
 } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -34,18 +35,10 @@ import Loader from "../components/Loader";
 
 function BookingAppointmentCustomerPage() {
   const dispatch = useDispatch();
-  const userName = useSelector(
-    (state) => state.ACCOUNT.userName
-  );
-  const userIdCustomer = useSelector(
-    (state) => state.ACCOUNT.idCustomer
-  );
-  const idOwner = useSelector(
-    (state) => state.ACCOUNT.idOwner
-  );
-  const uid = useSelector(
-    (state) => state.ACCOUNT.uid
-  );
+  const userName = useSelector((state) => state.ACCOUNT.userName);
+  const userIdCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
+  const idOwner = useSelector((state) => state.ACCOUNT.idOwner);
+  const uid = useSelector((state) => state.ACCOUNT.uid);
   // const userAuth = useAuthUser();
   const [selectedStatus, setSelectedStatus] = useState("BOOKING");
   // const userIdCustomer = userAuth?.idCustomer;
@@ -59,6 +52,7 @@ function BookingAppointmentCustomerPage() {
   const [uploadedImageUrl, setUploadedImageUrl] = useState(null); // State để lưu URL của hình ảnh đã tải lên
   const [reportDescription, setReportDescription] = useState("");
   const [fileList, setFileList] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [isRatingModalVisible, setIsRatingModalVisible] = useState(false);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
@@ -153,7 +147,6 @@ function BookingAppointmentCustomerPage() {
       setListData(filteredAppointments);
     }
   }, [selectedStatus, listAppoinment, listAppoinmentHistory]);
-  console.log("listData", listData);
 
   function formatVND(amount) {
     return String(amount).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -376,211 +369,215 @@ function BookingAppointmentCustomerPage() {
           </Button>
         ))}
       </div>
-      {listData?.length > 0 ? (
-        <div className="cards-container">
-          {listData.map((appointment) => {
-            const appointmentDate = moment(appointment.startDate);
-            const appointmentTime = moment(
-              appointment.appointmentDetails[0]?.startTime,
-              "HH:mm"
-            );
-            const currentDate = moment();
-            const currentTime = moment();
+      <Spin spinning={loading}>
+        {listData?.length > 0 ? (
+          <div className="cards-container">
+            {listData.map((appointment) => {
+              const appointmentDate = moment(appointment.startDate);
+              const appointmentTime = moment(
+                appointment.appointmentDetails[0]?.startTime,
+                "HH:mm"
+              );
+              const currentDate = moment();
+              const currentTime = moment();
 
-            // Kiểm tra điều kiện để cho phép hủy cuộc hẹn
-            const canCancel =
-              appointmentDate.isAfter(currentDate, "day") ||
-              (appointmentDate.isSame(currentDate, "day") &&
-                appointmentTime.isAfter(currentTime));
+              const canCancel =
+                appointmentDate.isAfter(currentDate, "day") ||
+                (appointmentDate.isSame(currentDate, "day") &&
+                  appointmentTime.isAfter(currentTime));
 
-            return (
-              <div
-                key={appointment.id}
-                className={`card ${appointment.status}`}
-              >
-                <Flex
-                  onClick={() => handleDetail(appointment)}
-                  gap={4}
-                  wrap
-                  align="start"
-                  justify="start"
+              return (
+                <div
+                  key={appointment.id}
+                  className={`card ${appointment.status}`}
                 >
-                  <Avatar src={appointment.customer.img} />
-                  <Title level={3}>{appointment.customer.fullName}</Title>
-                </Flex>
-                <Typography
-                  className="whitespace-nowrap overflow-hidden text-ellipsis"
-                  style={{ maxWidth: "100%" }}
-                >
-                  <Title level={4} strong>
-                    {appointment.salonInformation.name}
-                  </Title>
-                </Typography>
-                <Text strong>
-                  Ngày:
-                  <Text style={{ display: "inline" }}>
-                    {moment(appointment.startDate).format("DD/MM/YYYY")}
+                  <Flex
+                    onClick={() => handleDetail(appointment)}
+                    gap={4}
+                    wrap
+                    align="start"
+                    justify="start"
+                  >
+                    <Avatar src={appointment.customer.img} />
+                    <Title level={3}>{appointment.customer.fullName}</Title>
+                  </Flex>
+                  <Typography
+                    className="whitespace-nowrap overflow-hidden text-ellipsis"
+                    style={{ maxWidth: "100%" }}
+                  >
+                    <Title level={4} strong>
+                      {appointment.salonInformation.name}
+                    </Title>
+                  </Typography>
+                  <Text strong>
+                    Ngày:
+                    <Text style={{ display: "inline" }}>
+                      {moment(appointment.startDate).format("DD/MM/YYYY")}
+                    </Text>
                   </Text>
-                </Text>
-                <Text strong>
-                  Giờ: &nbsp;
-                  <Text style={{ display: "inline" }}>
-                    {moment(
-                      appointment.appointmentDetails[0]?.startTime
-                    ).format("HH:mm")}
+                  <Text strong>
+                    Giờ: &nbsp;
+                    <Text style={{ display: "inline" }}>
+                      {moment(
+                        appointment.appointmentDetails[0]?.startTime
+                      ).format("HH:mm")}
+                    </Text>
                   </Text>
-                </Text>
-                <Text strong>
-                  Tổng: &nbsp;
-                  <Text style={{ display: "inline" }}>
-                    {formatVND(appointment.totalPrice)}vnđ
+                  <Text strong>
+                    Tổng: &nbsp;
+                    <Text style={{ display: "inline" }}>
+                      {formatVND(appointment.totalPrice)}vnđ
+                    </Text>
                   </Text>
-                </Text>
-                <Space>
-                  {appointment.status === "SUCCESSED" && (
-                    <ConfigProvider
-                      theme={{
-                        components: {
-                          Button: {
-                            colorPrimary: `linear-gradient(116deg,  ${colors3.join(
-                              ", "
-                            )})`,
-                            colorPrimaryHover: `linear-gradient(116deg, ${getHoverColors(
-                              colors3
-                            ).join(", ")})`,
-                            colorPrimaryActive: `linear-gradient(116deg, ${getActiveColors(
-                              colors3
-                            ).join(", ")})`,
-                            lineWidth: 0,
+                  <Space>
+                    {appointment.status === "SUCCESSED" && (
+                      <ConfigProvider
+                        theme={{
+                          components: {
+                            Button: {
+                              colorPrimary: `linear-gradient(116deg,  ${colors3.join(
+                                ", "
+                              )})`,
+                              colorPrimaryHover: `linear-gradient(116deg, ${getHoverColors(
+                                colors3
+                              ).join(", ")})`,
+                              colorPrimaryActive: `linear-gradient(116deg, ${getActiveColors(
+                                colors3
+                              ).join(", ")})`,
+                              lineWidth: 0,
+                            },
                           },
-                        },
-                      }}
-                    >
-                      <Button
-                        type={appointment?.isFeedback ? "" : "primary"}
-                        size="medium"
-                        onClick={() =>
-                          handleRating(appointment.id, appointment)
-                        }
-                        disabled={appointment?.isFeedback}
+                        }}
                       >
-                        {appointment?.isFeedback ? "Đã đánh giá" : "Đánh giá"}
-                      </Button>
-                    </ConfigProvider>
-                  )}
-                  <Space className="mt-3" size={5}>
-                    {appointment.status === "SUCCESSED" ? (
+                        <Button
+                          type={appointment?.isFeedback ? "" : "primary"}
+                          size="medium"
+                          onClick={() =>
+                            handleRating(appointment.id, appointment)
+                          }
+                          disabled={appointment?.isFeedback}
+                        >
+                          {appointment?.isFeedback ? "Đã đánh giá" : "Đánh giá"}
+                        </Button>
+                      </ConfigProvider>
+                    )}
+                    <Space className="mt-3" size={5}>
+                      {appointment.status === "SUCCESSED" ? (
+                        <Button
+                          danger
+                          onClick={() =>
+                            handleReport(appointment.id, appointment)
+                          }
+                          disabled={appointment.isReportByCustomer}
+                        >
+                          {appointment.isReportByCustomer
+                            ? "Đã báo cáo"
+                            : "Báo cáo"}
+                        </Button>
+                      ) : (
+                        <></>
+                      )}
+                    </Space>
+                    {canCancel && appointment.status === "BOOKING" && (
                       <Button
                         danger
-                        onClick={() =>
-                          handleReport(appointment.id, appointment)
-                        }
-                        disabled={appointment.isReportByCustomer}
+                        onClick={() => handleCancel(appointment.id)}
                       >
-                        {appointment.isReportByCustomer
-                          ? "Đã báo cáo"
-                          : "Báo cáo"}
+                        Hủy cuộc hẹn
                       </Button>
-                    ) : (
-                      <></>
                     )}
                   </Space>
-                  {canCancel && appointment.status === "BOOKING" && (
-                    <Button danger onClick={() => handleCancel(appointment.id)}>
-                      Hủy cuộc hẹn
-                    </Button>
-                  )}
-                </Space>
-              </div>
-            );
-          })}
-          <Modal
-            title="Báo cáo vấn đề"
-            visible={isReportModalVisible}
-            onOk={handleReportOk}
-            onCancel={handleReportCancel}
-            okText="Gửi báo cáo"
-            cancelText="Đóng"
-          >
-            <p>
-              Bạn có thể tải lên hình ảnh để minh chứng cho báo cáo của bạn.
-            </p>
-            <Upload
-              listType="picture"
-              onChange={handleUploadChange}
-              maxCount={1}
-              fileList={fileList}
-              beforeUpload={() => false}
+                </div>
+              );
+            })}
+            <Modal
+              title="Báo cáo vấn đề"
+              visible={isReportModalVisible}
+              onOk={handleReportOk}
+              onCancel={handleReportCancel}
+              okText="Gửi báo cáo"
+              cancelText="Đóng"
             >
-              <Button>Tải lên</Button>
-            </Upload>
-            {reportImage && (
-              <div style={{ marginTop: "10px" }}>
-                <Image
-                  width={200}
-                  src={uploadedImageUrl}
-                  alt="Uploaded report"
+              <p>
+                Bạn có thể tải lên hình ảnh để minh chứng cho báo cáo của bạn.
+              </p>
+              <Upload
+                listType="picture"
+                onChange={handleUploadChange}
+                maxCount={1}
+                fileList={fileList}
+                beforeUpload={() => false}
+              >
+                <Button>Tải lên</Button>
+              </Upload>
+              {reportImage && (
+                <div style={{ marginTop: "10px" }}>
+                  <Image
+                    width={200}
+                    src={uploadedImageUrl}
+                    alt="Uploaded report"
+                  />
+                </div>
+              )}
+              <Input.TextArea
+                placeholder="Nhập lý do báo cáo..."
+                value={reportDescription}
+                onChange={(e) => setReportDescription(e.target.value)}
+                rows={4}
+                style={{ marginTop: "10px" }}
+              />
+            </Modal>
+            <Modal
+              title="Chi tiết cuộc hẹn"
+              visible={isDetailModalVisible}
+              onCancel={handleDetailModalClose}
+              footer={[
+                <Button key="close" onClick={handleDetailModalClose}>
+                  Đóng
+                </Button>,
+              ]}
+            >
+              {renderAppointmentDetail()}
+            </Modal>
+            <Modal
+              title="Đánh giá dịch vụ"
+              visible={isRatingModalVisible}
+              onOk={handleRatingOk}
+              onCancel={handleRatingCancel}
+              okText="Gửi"
+              cancelText="Hủy"
+            >
+              <div>
+                <Rate
+                  value={rating}
+                  onChange={(value) => setRating(value)}
+                  style={{ fontSize: 24 }}
                 />
               </div>
-            )}
-            <Input.TextArea
-              placeholder="Nhập lý do báo cáo..."
-              value={reportDescription}
-              onChange={(e) => setReportDescription(e.target.value)}
-              rows={4}
-              style={{ marginTop: "10px" }}
-            />
-          </Modal>
-          <Modal
-            title="Chi tiết cuộc hẹn"
-            visible={isDetailModalVisible}
-            onCancel={handleDetailModalClose}
-            footer={[
-              <Button key="close" onClick={handleDetailModalClose}>
-                Đóng
-              </Button>,
-            ]}
-          >
-            {renderAppointmentDetail()}
-          </Modal>
-          <Modal
-            title="Đánh giá dịch vụ"
-            visible={isRatingModalVisible}
-            onOk={handleRatingOk}
-            onCancel={handleRatingCancel}
-            okText="Gửi"
-            cancelText="Hủy"
-          >
-            <div>
-              <Rate
-                value={rating}
-                onChange={(value) => setRating(value)}
-                style={{ fontSize: 24 }}
+              <Input.TextArea
+                rows={4}
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                placeholder="Nhập bình luận"
               />
-            </div>
-            <Input.TextArea
-              rows={4}
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-              placeholder="Nhập bình luận"
-            />
-            <Upload
-              multiple
-              fileList={feedbackFileList}
-              onChange={handleFeedbackUploadChange}
-              listType="picture-card"
-              beforeUpload={() => false}
-              className="mt-3"
-            >
-              <Button icon={<UploadOutlined />}></Button>
-            </Upload>
-          </Modal>
-        </div>
-      ) : (
-        <div className="mt-14">
-          <EmptyComponent description={"Hiện không có lịch hẹn nào!"} />
-        </div>
-      )}
+              <Upload
+                multiple
+                fileList={feedbackFileList}
+                onChange={handleFeedbackUploadChange}
+                listType="picture-card"
+                beforeUpload={() => false}
+                className="mt-3"
+              >
+                <Button icon={<UploadOutlined />}></Button>
+              </Upload>
+            </Modal>
+          </div>
+        ) : (
+          <div className="mt-14">
+            <EmptyComponent description={"Hiện không có lịch hẹn nào!"} />
+          </div>
+        )}
+      </Spin>
 
       <div className="pagination-container">
         <Pagination

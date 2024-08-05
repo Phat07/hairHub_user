@@ -12,6 +12,9 @@ export const SalonInformationServices = {
       },
     });
   },
+  getAllSalonSuggestionInformation() {
+    return API.get("/saloninformations/GetAllSalonInformation");
+  },
   getAllSalonInformationNotPaging() {
     return API.get("/saloninformations/GetAllSalonInformationNoPaging")
   },

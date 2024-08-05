@@ -39,10 +39,12 @@ function Header(props) {
   const account = useSelector((state) => state.ACCOUNT.username);
 
   useEffect(() => {
-    try {
-      dispatch(actGetSalonInformationByOwnerId(idOwner));
-    } catch (err) {
-      console.log(err, "errors");
+    if (idOwner) {
+      try {
+        dispatch(actGetSalonInformationByOwnerId(idOwner));
+      } catch (err) {
+        console.log(err, "errors");
+      }
     }
   }, [idOwner]);
 
@@ -104,17 +106,21 @@ function Header(props) {
       <header className="header fixed-header">
         <div className="header-bottom" style={{ height: "10rem" }} data-header>
           <div className="container">
-            <div><Link to={"/"} className="logo logo-header">
-              <img
-                className="logo-header-img"
-                src={hairHubLogo}
-                alt="HairHub Logo"
-              />
-              <div>
-                <h1 className="logo-header-title-1">HairHub</h1>
-                <span className="logo-header-title-2">Salon | Barber Shop</span>
-              </div>
-            </Link></div>
+            <div>
+              <Link to={"/"} className="logo logo-header">
+                <img
+                  className="logo-header-img"
+                  src={hairHubLogo}
+                  alt="HairHub Logo"
+                />
+                <div>
+                  <h1 className="logo-header-title-1">HairHub</h1>
+                  <span className="logo-header-title-2">
+                    Salon | Barber Shop
+                  </span>
+                </div>
+              </Link>
+            </div>
 
             <nav
               className={`navbar ${menuActive ? "active" : ""}`}

@@ -1,7 +1,7 @@
 import { API } from "./api";
 
 export const AppointmentService = {
-  GetAppointmentSalonByStatus(page, size, salonId, status) {
+  GetAppointmentSalonByStatus(salonId,page, size, status) {
     return API.get(`/appointments/GetAppointmentSalonByStatus/${salonId}`, {
       params: {
         page,

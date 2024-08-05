@@ -40,34 +40,58 @@ export const GetAppointmentSalonByStatus =
     }
   };
 
+// export function actGetAppointmentBySalonId(salonId, page, size, status) {
+//   return async (dispatch) => {
+//     const result = await AppointmentService.GetAppointmentSalonByStatus(
+//       salonId,
+//       page,
+//       size,
+//       status
+//     );
+//     await result
+//       .then((response) => {
+//         if (response.status === 200 || response.status === 201) {
+//           dispatch(
+//             allSalonAppoinmentByStatus(
+//               response.data.items,
+//               response.data.totalPages
+//             )
+//           );
+//         } else {
+//           message.error("No salon appointment!!!!");
+//         }
+//       })
+//       .catch((error) => {
+//         // Xử lý lỗi nếu có
+//         console.error(
+//           "Error while fetching salon appointment by status:",
+//           error
+//         );
+//       });
+//   };
+// }
 export function actGetAppointmentBySalonId(salonId, page, size, status) {
   return async (dispatch) => {
-    const result = AppointmentService.GetAppointmentSalonByStatus(
-      salonId,
-      page,
-      size,
-      status
-    );
-    await result
-      .then((response) => {
-        if (response.status === 200 || response.status === 201) {
-          dispatch(
-            allSalonAppoinmentByStatus(
-              response.data.items,
-              response.data.totalPages
-            )
-          );
-        } else {
-          message.error("No salon appointment!!!!");
-        }
-      })
-      .catch((error) => {
-        // Xử lý lỗi nếu có
-        console.error(
-          "Error while fetching salon appointment by status:",
-          error
+    try {
+      const response = await AppointmentService.GetAppointmentSalonByStatus(
+        salonId,
+        page,
+        size,
+        status
+      );
+      if (response.status === 200 || response.status === 201) {
+        dispatch(
+          allSalonAppoinmentByStatus(
+            response.data.items,
+            response.data.totalPages
+          )
         );
-      });
+      } else {
+        message.error("No salon appointment!!!!");
+      }
+    } catch (error) {
+      console.error("Error while fetching salon appointment by status:", error);
+    }
   };
 }
 

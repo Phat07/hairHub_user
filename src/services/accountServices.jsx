@@ -1,14 +1,14 @@
 import { API } from "./api";
 
 export const AccountServices = {
-    loginUser(userData) {
-      return API.post("/auth/Login", userData);
-    },
+  loginUser(userData) {
+    return API.post("/auth/Login", userData);
+  },
   registerUser(userData) {
     return API.post("/accounts/RegisterAccount", userData);
   },
   refreshToken: (refreshToken) => {
-    return API.post('/auth/RefreshToken', { refreshToken });
+    return API.post("/auth/RefreshToken", { refreshToken });
   },
   fetchUserByToken(token) {
     return API.get(`/auth/FetchUser/${token}`, {
@@ -20,4 +20,7 @@ export const AccountServices = {
   GetInformationAccount(id) {
     return API.get(`/accounts/GetAccountById/${id}`);
   },
+  checkInByCustomer(data) {
+    return API.put(`/customers/CheckInByCustomer`, data);
+  }
 };
