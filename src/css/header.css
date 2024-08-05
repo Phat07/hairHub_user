@@ -65,7 +65,7 @@
 
 @media (max-width: 768px) {
   .container {
-    padding: 0;
+    padding: 2rem;
   }
 
   .logo-header-img {
@@ -80,5 +80,9 @@
 
   .logo-header-title-2 {
     display: none;
+  }
+
+  .nav-toggle-btn {
+    margin-left: auto;
   }
 }
