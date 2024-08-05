@@ -28,7 +28,7 @@ function ResendCode({ isOtpModalOpen, form }) {
     const email = form.getFieldValue("email");
     let fullName = "demo";
     axios
-      .post("https://gahonghac.net/api/v1/otps/SendOTPToEmail", {
+      .post("https://api.gahonghac.net/api/v1/otps/SendOTPToEmail", {
         email,
         fullName,
       })

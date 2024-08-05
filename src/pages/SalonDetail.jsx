@@ -190,7 +190,7 @@ function SalonDetail(props) {
     setListVoucher(listVoucherNotPaging);
   }, [listVoucherNotPaging]);
   const SALONDETAIL_URL =
-    "https://gahonghac.net/api/v1/saloninformations/GetSalonInformationById/";
+    "https://api.gahonghac.net/api/v1/saloninformations/GetSalonInformationById/";
 
   const handleScroll = (direction, containerRef) => {
     const maxScroll =
@@ -335,7 +335,7 @@ function SalonDetail(props) {
       try {
         const response = await axios
           .post(
-            "https://gahonghac.net/api/v1/appointments/GetAvailableTime",
+            "https://api.gahonghac.net/api/v1/appointments/GetAvailableTime",
             postData
           )
           .then((res) => {
@@ -454,7 +454,7 @@ function SalonDetail(props) {
     try {
       const response = await axios
         .post(
-          "https://gahonghac.net/api/v1/appointments/GetAvailableTime",
+          "https://api.gahonghac.net/api/v1/appointments/GetAvailableTime",
           postData
         )
         .then((res) => {
@@ -493,7 +493,7 @@ function SalonDetail(props) {
       setDataBooking(requestBody); //serviceHairId, salonEmployeeId
       axios
         .post(
-          "https://gahonghac.net/api/v1/appointments/BookAppointment",
+          "https://api.gahonghac.net/api/v1/appointments/BookAppointment",
           requestBody
         )
         .then((response) => {
@@ -582,7 +582,7 @@ function SalonDetail(props) {
 
     axios
       .post(
-        "https://gahonghac.net/api/v1/appointments/BookAppointment",
+        "https://api.gahonghac.net/api/v1/appointments/BookAppointment",
         requestBody
       )
       .then((response) => {
@@ -781,7 +781,7 @@ function SalonDetail(props) {
 
     axios
       .post(
-        "https://gahonghac.net/api/v1/appointments/BookAppointment",
+        "https://api.gahonghac.net/api/v1/appointments/BookAppointment",
         requestBody
       )
       .then((response) => {
