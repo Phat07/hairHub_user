@@ -124,6 +124,7 @@ function SalonDetail(props) {
   const indexOfLastFeedback = currentPage * pageSize;
   const indexOfFirstFeedback = indexOfLastFeedback - pageSize;
 
+
   const [isReportModalVisible, setIsReportModalVisible] = useState(false);
   const currentDate = new Date();
 
@@ -355,6 +356,7 @@ function SalonDetail(props) {
     if (isServiceAlreadySelected) {
       // Hiển thị thông báo nếu dịch vụ đã được chọn
       setIsBookingModalVisible(true);
+      setIsBookingModalVisible(true);
       message.warning("Dịch vụ này đã được chọn trước đó.");
     } else {
       // Thêm dịch vụ vào mảng additionalServices nếu chưa được chọn
@@ -468,6 +470,7 @@ function SalonDetail(props) {
           //   tui muốn kiểm tra xem thời gian chọn là selectedTimeSlot nằm trong khoảng của res?.data.availableTimes.map((e)=>e.timeSlot xem selectedTimeSlot có nhỏ hơn hay vượt quá không nếu có thì setSelectedTimeSlot lại null)
         })
         .catch((err) => {
+          setSelectedDate(null);
           setSelectedDate(null);
           // setSelectedTimeSlot(null)
           message.warning(err?.response?.data?.message);
@@ -935,6 +938,7 @@ function SalonDetail(props) {
     setVoucherSelected(updatedVouchers);
   };
 
+
   const sortedSchedules = salonDetail?.schedules?.sort((a, b) => {
     return daysOrder.indexOf(a.dayOfWeek) - daysOrder.indexOf(b.dayOfWeek);
   });
@@ -949,12 +953,12 @@ function SalonDetail(props) {
       ></div>
       <div>
         <Layout>
-          <Content style={{ padding: "0 50px" }}>
+          <Content className="container">
             <Row gutter={16}>
               <Col
                 xs={24}
                 md={10}
-                style={{ marginBottom: "16px"}}
+                style={{ marginBottom: "16px" }}
                 className="detail-salon-col-1"
               >
                 <div>
@@ -981,6 +985,7 @@ function SalonDetail(props) {
                     style={{
                       fontSize: "2rem",
                       fontWeight: "bold",
+                      margin: 0,
                     }}
                   >
                     {salonDetail?.name}
@@ -1596,17 +1601,18 @@ function SalonDetail(props) {
                 </div>
                 <div className="rating-stats-container">
                   <div className="rating-summary">
-                    <h3>
+                    <h3 className="rating">
                       <span>
                         {averageRating !== "NaN" ? (
                           <>{averageRating}</>
                         ) : (
-                          <>0</>
+                          <h3>0</h3>
                         )}
                       </span>
                       /5
+                      {renderStars(parseFloat(averageRating))}
                     </h3>
-                    {renderStars(parseFloat(averageRating))}
+
                     <p>Dựa trên {listFeedback.length || 0} đánh giá</p>
                   </div>
                   <div className="divider-line"></div>
@@ -1673,12 +1679,14 @@ function SalonDetail(props) {
                       </List.Item>
                     )}
                   />
-                  <Pagination
-                    current={currentPage}
-                    total={totalPagesFeedback}
-                    pageSize={pageSize}
-                    onChange={(page) => setCurrentPage(page)}
-                  />
+                  <div className="rating">
+                    <Pagination
+                      current={currentPage}
+                      total={totalPagesFeedback}
+                      pageSize={pageSize}
+                      onChange={(page) => setCurrentPage(page)}
+                    />
+                  </div>
                 </div>
               </Col>
               <div></div>
