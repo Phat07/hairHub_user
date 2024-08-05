@@ -1,44 +1,42 @@
 /* ChatComponent.css */
 .cs-message__content {
-  font-size: 12px;
+  font-size: 14px; 
 }
+
 .cs-main-container {
-  font-size: 1.4rem;
-  width: 50%;
-  left: 50%;
-  height: 80%;
-  margin-top: 20%;
-  overflow: hidden;
-  /* position: fixed; */
-  transform: translateX(-50%); /* Căn giữa chính xác */
+  font-size: 1.2rem; /* Tăng kích thước chữ chung trong chatbox */
+  width: 35rem; /* Điều chỉnh kích thước tùy theo nhu cầu */
+  height: 40rem; /* Điều chỉnh chiều cao tùy theo nhu cầu */
+  position: fixed; /* Đảm bảo MainContainer nằm cố định trên màn hình */
+  bottom: 10rem; /* Khoảng cách từ đáy */
+  right: 20px; /* Khoảng cách từ bên phải */
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: white;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   z-index: 1000;
+  overflow: hidden; /* Ẩn thanh cuộn */
 }
 
-.close-button {
-  overflow: hidden;
-  /* position: fixed; */
-  bottom: 20px;
-  right: 20px;
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-  border: none;
-  border-radius: 5px;
-  background-color: #007bff;
-  color: white;
+.cs-message-list {
+  overflow-y: auto; /* Hiển thị thanh cuộn dọc nếu cần */
 }
 
+/* Nút mở chat */
 .open-button {
   position: fixed;
-  bottom: 100px;
+  bottom: 20px;
   right: 20px;
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-  border: none;
-  border-radius: 5px;
   background-color: #007bff;
-  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .open-button {
@@ -46,5 +44,11 @@
 }
 
 .close-button {
-  background-color: #dc3545;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: black;
 }
