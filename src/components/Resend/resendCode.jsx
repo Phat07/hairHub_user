@@ -6,7 +6,6 @@ function ResendCode({ isOtpModalOpen, form }) {
   const [timer, setTimer] = useState(120);
   const [loading, setLoading] = useState(false);
   const [otp, setOtp] = useState("");
-  console.log();
   useEffect(() => {
     let interval = null;
     if (isOtpModalOpen && timer > 0) {

@@ -89,12 +89,14 @@ const LoginPage = () => {
   const [role, setRole] = useState("");
   const [id, setId] = useState(0);
   const [emailVerified, setEmailVerified] = useState(false);
+  const [emailVerifiedNew, setEmailVerifiedNew] = useState(false);
   const [otp, setOtp] = useState("");
   const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [timer, setTimer] = useState(120);
   const dispatch = useDispatch();
   const [submitting, setSubmitting] = useState(false);
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const submitButtonRef = useRef(null);
 
   const renderInput = (props) => (
@@ -108,23 +110,6 @@ const LoginPage = () => {
       }}
     />
   );
-
-  // 2 minutes countdown
-
-  // useEffect(() => {
-  //   if (isOtpModalOpen && timer > 0) {
-  //     const interval = setInterval(() => {
-  //       setTimer((prevTimer) => prevTimer - 1);
-  //     }, 1000);
-
-  //     return () => clearInterval(interval);
-  //   }
-  // }, [isOtpModalOpen, timer]);
-  const formatTime = (time) => {
-    const minutes = Math.floor(time / 60);
-    const seconds = time % 60;
-    return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
-  };
 
   const sendOtp = async () => {
     setLoading(true);
@@ -153,7 +138,6 @@ const LoginPage = () => {
 
   const verifyOtp = () => {
     const email = form.getFieldValue("email");
-    // const otp = form.getFieldValue("otp");
 
     axios
       .post("https://gahonghac.net/api/v1/otps/checkOtp", {
@@ -198,7 +182,7 @@ const LoginPage = () => {
             }
           })
           .catch((err) => {
-            message.error("Thất bại trong việc kiểm tra email đã tồn tại!");
+            message.error("Thất bại trong việc đăng ký!");
           })
           .finally(() => {
             setLoading(false);
@@ -207,6 +191,44 @@ const LoginPage = () => {
         setLoading(false);
         message.error(error);
       }
+    }
+  };
+
+
+  const showOtpNewPasswordModal = async () => {
+    setLoading(true);
+    const email = form.getFieldValue("email");
+    if (!email || !emailPattern.test(email)) {
+      setLoading(false);
+      message.error("Email chưa đúng hoặc chưa điền!");
+    } else {
+      setLoading(false);
+      setIsOtpModalOpen(true);
+      // try {
+      //   const response = await axios
+      //     .post("https://gahonghac.net/api/v1/otps/CheckExistEmail", {
+      //       email,
+      //     })
+      //     .then((res) => {
+      //       if (res.data == "Email đã tồn tại trên hệ thống!") {
+      //         setLoading(false);
+      //         setIsOtpModalOpen(true);
+      //       } else {
+      //         message.error("Email này chưa đăng ký vào hệ thống!!!")
+      //         setLoading(false);
+      //         // sendOtp();
+      //       }
+      //     })
+      //     .catch((err) => {
+      //       message.error("Lấy lại mật khẩu thất bại. Thử lại sau!!!");
+      //     })
+      //     .finally(() => {
+      //       setLoading(false);
+      //     });
+      // } catch (error) {
+      //   setLoading(false);
+      //   message.error(error);
+      // }
     }
   };
 
@@ -249,6 +271,14 @@ const LoginPage = () => {
       </Typography>
     </span>
   );
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      if (submitButtonRef.current) {
+        submitButtonRef.current.click();
+      }
+    }
+  };
 
   const steps = [
     {
@@ -315,8 +345,6 @@ const LoginPage = () => {
             }}
           >
             <Form.Item
-              // hasFeedback={emailVerified}
-              // validateStatus="success"
               label="Email:"
               name="email"
               rules={[
@@ -477,10 +505,9 @@ const LoginPage = () => {
 
     if (accessType === "login") {
       dispatch(loginAccount(values, navigate));
-      
     } else {
-      setIsModalOpen(true)
-      setAccessType('register');
+      setIsModalOpen(true);
+      setAccessType("register");
       // Đăng ký tài khoản
       // AccountServices.registerUser(values)
       //   .then((res) => {
@@ -492,14 +519,6 @@ const LoginPage = () => {
     }
   };
 
-  const handleKeyDown = (event) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      if (submitButtonRef.current) {
-        submitButtonRef.current.click();
-      }
-    }
-  };
   return (
     <>
       <div
@@ -508,6 +527,94 @@ const LoginPage = () => {
           height: "100vh",
         }}
       >
+         <Modal
+          title="Quên mật khẩu"
+          visible={isPasswordModalOpen}
+          onOk={() => verifyOtpResetPassword(otp)}
+          onCancel={() => setIsPasswordModalOpen(false)}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginBottom: "1rem",
+            }}
+          >
+            <Card>
+              <Form
+                {...formItemLayout}
+                layout="horizontal"
+                labelCol={{ span: 6 }}
+                wrapperCol={{ span: 18 }}
+                style={{ maxWidth: 600 }}
+                form={form}
+                // onFinish={onFinish}
+                // onFinishFailed={onFinishFailed}
+                initialValues={{
+                  remember: true,
+                }}
+              >
+                <Form.Item
+                  label="Email:"
+                  name="email"
+                  rules={[
+                    { required: true, message: "This fields is required!" },
+                    {
+                      pattern: emailPattern,
+                      message: "Please input email include @!",
+                    },
+                  ]}
+                  tooltip="example@gmail.com"
+                >
+                  <Space>
+                    <Input
+                      placeholder="example@gmail.com"
+                      readOnly={emailVerified}
+                    />
+                  </Space>
+                </Form.Item>
+                {!emailVerifiedNew && (
+                  <Button
+                    loading={loading}
+                    type="primary"
+                    onClick={showOtpNewPasswordModal}
+                  >
+                    Gửi OTP
+                  </Button>
+                )}
+                {emailVerifiedNew && (
+                  <>
+                    <Form.Item
+                      label="Pass mới:"
+                      name="newPassword"
+                      rules={[
+                        { required: true, message: "Vui lòng không bỏ trống!" },
+                        {
+                          pattern: pwdPattern,
+                          message:
+                            "Chữ cái đầu phải viết hoa và có từ 8 đến 40 ký tự!",
+                        },
+                      ]}
+                    >
+                      <Input.Password />
+                    </Form.Item>
+                    {/* <Button
+                      style={{ width: "100%" }}
+                      type="primary"
+                      htmlType="submit"
+                    >
+                      Tạo
+                    </Button> */}
+                  </>
+                )}
+              </Form>
+            </Card>
+          </div>
+
+          {/* <Button type="link" onClick={handleResendCode} disabled={timer > 0}>
+            Gửi lại OTP {timer > 0 && `(${formatTime(timer)})`}
+          </Button> */}
+        </Modal>
         <Modal
           title="Enter OTP"
           visible={isOtpModalOpen}
@@ -565,11 +672,6 @@ const LoginPage = () => {
               ref: submitButtonRef,
             }, // uncomment this line
           }}
-          // onKeyDown={handleKeyDown}
-          // onFinish={(values, errors, event) => {
-          //   event.preventDefault(); // <--- Add this line
-          //   handleFinish(values, errors);
-          // }}
           onKeyDown={handleKeyDown}
           onFinish={handleFinish}
           backgroundImageUrl="https://res.cloudinary.com/dtlvihfka/image/upload/v1719936805/xov2xoo8jqppdas53kva.png"
@@ -802,7 +904,9 @@ const LoginPage = () => {
               <a
                 style={{
                   float: "right",
+                  cursor: "pointer",
                 }}
+                onClick={() => setIsPasswordModalOpen(true)}
               >
                 Quên mật khẩu
               </a>
