@@ -116,7 +116,8 @@ import "../../css/ChatComponent.css";
 const ChatComponent = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
-
+  console.log("message", messages);
+  
   const handleSend = async (message) => {
     if (message.trim() === '') return;
 
@@ -143,7 +144,7 @@ const ChatComponent = () => {
       text: data.reply,
       direction: 'incoming',
       avatar: 'https://chatscope.io/storybook/react/assets/emily-xzL8sDL2.svg',
-      sender: 'Emily',
+      sender: 'HairHub',
       sentTime: 'Just now'
     };
     setMessages((prevMessages) => [...prevMessages, userMessage, replyMessage]);
@@ -163,17 +164,17 @@ const ChatComponent = () => {
           <ChatContainer style={{ height: '400px' }}>
             <ConversationHeader>
               <Avatar
-                name="Emily"
+                name="HairHub"
                 src="https://chatscope.io/storybook/react/assets/emily-xzL8sDL2.svg"
               />
-              <ConversationHeader.Content info="Active 10 mins ago" userName="Emily" />
+              <ConversationHeader.Content info="Active 10 mins ago" userName="HairHub" />
               <ConversationHeader.Actions>
-                <VoiceCallButton />
-                <VideoCallButton />
-                <InfoButton />
+                <VoiceCallButton disabled />
+                <VideoCallButton disabled />
+                <InfoButton disabled />
               </ConversationHeader.Actions>
             </ConversationHeader>
-            <MessageList typingIndicator={<TypingIndicator content="Emily is typing" />}>
+            <MessageList typingIndicator={<TypingIndicator content="HairHub is typing" />}>
               <MessageSeparator content="Saturday, 30 November 2019" />
               {messages.map((msg, i) => (
                 <Message
