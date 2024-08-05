@@ -106,8 +106,8 @@ function HeaderUnAuth(props) {
               <IoMenu />
             </button>
             <Link to={"/login"}>
-              <a className="btn has-before" style={{ textAlign: "center" }}>
-                <span className="span min-w-14 max-h-36 w-36">Đăng nhập</span>
+              <a className="btn has-before btn-login">
+                <span>Đăng nhập</span>
               </a>
             </Link>
           </div>
