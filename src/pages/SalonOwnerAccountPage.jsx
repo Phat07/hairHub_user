@@ -116,7 +116,7 @@ function SalonOwnerAccountPage() {
 
   const [salonData, setSalonData] = useState({});
   const [showScanner, setShowScanner] = useState(false);
-
+  const [isNotified, setIsNotified] = useState(false);
   useEffect(() => {
     AccountServices.GetInformationAccount(id)
       .then((res) => {
@@ -141,22 +141,30 @@ function SalonOwnerAccountPage() {
       AccountServices.checkInByCustomer(mappingData)
         .then((res) => {
           setShowScanner(false);
-          message.success("Quét qr check in thành công");
+          if (!isNotified) {
+            // Kiểm tra trạng thái thông báo
+            message.success("Quét qr check in thành công");
+            setIsNotified(true); // Đặt trạng thái thông báo đã được hiển thị
+          }
         })
         .catch((err) => {
           setShowScanner(false);
-          message.error("Quét qr check in thất bại!");
+          if (!isNotified) {
+            // Kiểm tra trạng thái thông báo
+            message.error("Quét qr check in thất bại!");
+            setIsNotified(true); // Đặt trạng thái thông báo đã được hiển thị
+          }
         })
-        .finally((err) => {
+        .finally(() => {
           setShowScanner(false);
-          // message.error("Failed to send QR data!");
+          // Không cần xử lý ở đây nếu chỉ thông báo một lần
         });
     }
   };
 
   const handleError = (err) => {
     console.error(err);
-    message.error("Error scanning QR code!");
+    message.error("Không truy cập máy ảnh!");
   };
 
   const previewStyle = {

@@ -20,6 +20,7 @@
   background-color: #fff; /* Màu nền */
   width: 100%;
   box-sizing: border-box;
+  margin-top: 0.5rem;
 }
 
 .salon-img {

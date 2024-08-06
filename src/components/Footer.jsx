@@ -14,7 +14,7 @@ const Footer = () => {
       </div>
       <Row justify="space-between" className="footer-content">
         <Col span={12}>
-          <h2>LIÊN HỆ</h2>
+          <h3>LIÊN HỆ</h3>
           <p>
             Điền vào biểu mẫu dưới đây để gửi cho chúng tôi một tin nhắn và
             chúng tôi sẽ trả lời bạn sớm nhất có thể.
@@ -33,7 +33,7 @@ const Footer = () => {
               </Col>
             </Row>
             <Form.Item name="message">
-              <Input.TextArea placeholder="Tin nhắn" rows={4} />
+              <Input.TextArea placeholder="Tin nhắn" rows={2} />
             </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit">
@@ -43,7 +43,7 @@ const Footer = () => {
           </Form>
         </Col>
         <Col span={10} className="contact-info">
-          <h2>Thông tin liên hệ</h2>
+          <h3>Thông tin liên hệ</h3>
           <p>
             <strong>Địa chỉ:</strong> Lô E2a-7, Đường D1, Đ. D1, Long Thạnh Mỹ,
             Thành Phố Thủ Đức, Thành phố Hồ Chí Minh 700000

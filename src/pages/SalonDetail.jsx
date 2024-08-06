@@ -49,6 +49,8 @@ import {
 import RandomIcon from "@rsuite/icons/Random";
 import { actGetAllFeedbackBySalonId } from "../store/ratingCutomer/action";
 import Loader from "../components/Loader";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 import useSignIn from "react-auth-kit/hooks/useSignIn";
 import jwt_decode from "jwt-decode";
 import { AccountServices } from "../services/accountServices";
@@ -81,7 +83,8 @@ const reportOptions = [
   "Hate speech or graphic violence",
   "Harassment or bullying",
 ];
-
+dayjs.extend(utc);
+dayjs.extend(timezone);
 function renderStars(stars) {
   const filledStars = Math.floor(stars);
   const hasHalfStar = stars % 1 !== 0;
@@ -191,7 +194,7 @@ function SalonDetail(props) {
     setListVoucher(listVoucherNotPaging);
   }, [listVoucherNotPaging]);
   const SALONDETAIL_URL =
-    "https://api.gahonghac.net/api/v1/saloninformations/GetSalonInformationById/";
+    "https://hairhub.gahonghac.net/api/v1/saloninformations/GetSalonInformationById/";
 
   const handleScroll = (direction, containerRef) => {
     const maxScroll =
@@ -336,7 +339,7 @@ function SalonDetail(props) {
       try {
         const response = await axios
           .post(
-            "https://api.gahonghac.net/api/v1/appointments/GetAvailableTime",
+            "https://hairhub.gahonghac.net/api/v1/appointments/GetAvailableTime",
             postData
           )
           .then((res) => {
@@ -455,7 +458,7 @@ function SalonDetail(props) {
     try {
       const response = await axios
         .post(
-          "https://api.gahonghac.net/api/v1/appointments/GetAvailableTime",
+          "https://hairhub.gahonghac.net/api/v1/appointments/GetAvailableTime",
           postData
         )
         .then((res) => {
@@ -494,7 +497,7 @@ function SalonDetail(props) {
       setDataBooking(requestBody); //serviceHairId, salonEmployeeId
       axios
         .post(
-          "https://api.gahonghac.net/api/v1/appointments/BookAppointment",
+          "https://hairhub.gahonghac.net/api/v1/appointments/BookAppointment",
           requestBody
         )
         .then((response) => {
@@ -583,7 +586,7 @@ function SalonDetail(props) {
 
     axios
       .post(
-        "https://api.gahonghac.net/api/v1/appointments/BookAppointment",
+        "https://hairhub.gahonghac.net/api/v1/appointments/BookAppointment",
         requestBody
       )
       .then((response) => {
@@ -781,7 +784,7 @@ function SalonDetail(props) {
 
     axios
       .post(
-        "https://api.gahonghac.net/api/v1/appointments/BookAppointment",
+        "https://hairhub.gahonghac.net/api/v1/appointments/BookAppointment",
         requestBody
       )
       .then((response) => {
@@ -819,7 +822,7 @@ function SalonDetail(props) {
 
         setAdditionalServices(updatedAdditionalServices);
         setShowServiceList(false);
-        console.log("Appointment booked successfully!", response.data);
+
         // Cập nhật state hoặc hiển thị thông báo thành công
       })
       .catch((error) => {
@@ -1244,7 +1247,6 @@ function SalonDetail(props) {
                                               timeParts.length > 1
                                                 ? parseInt(timeParts[1], 10)
                                                 : 0;
-
                                             // Xử lý hiển thị theo định dạng giờ và phút
                                             if (minutes === 0) {
                                               timeString = `${hour} giờ`;
@@ -1259,6 +1261,14 @@ function SalonDetail(props) {
                                             const slotTime = dayjs()
                                               .hour(hour)
                                               .minute(minutes);
+                                            const formattedSlotTime =
+                                              slotTime.format("HH:mm");
+
+                                            console.log(
+                                              "slotTime:",
+                                              formattedSlotTime
+                                            );
+
                                             const isDisabled =
                                               selectedDate &&
                                               dayjs(selectedDate).isSame(
@@ -1287,6 +1297,81 @@ function SalonDetail(props) {
                                             );
                                           }
                                         )}
+                                        {/* {timeSlots?.availableTimes?.map(
+                                          (slot, index) => {
+                                            // Tạo biến timeString để lưu chuỗi thời gian hiển thị
+                                            let timeString = "";
+                                            const timeParts = slot?.timeSlot
+                                              ?.toString()
+                                              .split(".");
+                                            const hour = parseInt(
+                                              timeParts[0],
+                                              10
+                                            );
+                                            const minutes =
+                                              timeParts.length > 1
+                                                ? parseInt(timeParts[1], 10) *
+                                                  15
+                                                : 0; // Chuyển đổi phút từ phần thập phân
+
+                                            // Xử lý hiển thị theo định dạng giờ và phút
+                                            if (minutes === 0) {
+                                              timeString = `${hour} giờ`;
+                                            } else if (minutes === 15) {
+                                              timeString = `${hour} giờ 15 phút`;
+                                            } else if (minutes === 30) {
+                                              timeString = `${hour} giờ 30 phút`;
+                                            } else if (minutes === 45) {
+                                              timeString = `${hour} giờ 45 phút`;
+                                            }
+
+                                            // Thời gian hiện tại theo múi giờ Việt Nam
+                                            const currentTime =
+                                              dayjs().tz("Asia/Ho_Chi_Minh");
+                                            // Thời gian slot theo múi giờ Việt Nam
+                                            const slotTime = dayjs()
+                                              .tz("Asia/Ho_Chi_Minh")
+                                              .hour(hour)
+                                              .minute(minutes);
+
+                                            // Định dạng thời gian slot
+                                            const formattedSlotTime =
+                                              slotTime.format("HH:mm");
+                                            console.log(
+                                              "slotTime:",
+                                              formattedSlotTime
+                                            );
+
+                                            // Xác định xem thời gian slot có bị disable hay không
+                                            const isDisabled =
+                                              selectedDate &&
+                                              dayjs(selectedDate).isSame(
+                                                dayjs(),
+                                                "day"
+                                              ) &&
+                                              slotTime.isBefore(currentTime);
+
+                                            return (
+                                              <Button
+                                                key={index}
+                                                onClick={() =>
+                                                  handleTimeSlotSelect(
+                                                    slot?.timeSlot
+                                                  )
+                                                }
+                                                className={
+                                                  selectedTimeSlot ===
+                                                  slot?.timeSlot
+                                                    ? "selected"
+                                                    : ""
+                                                }
+                                                disabled={isDisabled}
+                                              >
+                                                {timeString}
+                                              </Button>
+                                            );
+                                          }
+                                        )} */}
                                       </div>
                                     </div>
                                     <button
