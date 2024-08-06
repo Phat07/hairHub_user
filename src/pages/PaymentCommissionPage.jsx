@@ -61,7 +61,7 @@ function PaymentCommissionPage() {
           error
         );
       });
-  }, []);
+  }, [idOwner]);
 
   const handleNextClick = () => {
     // Call the next API when the button is clicked
