@@ -31,7 +31,7 @@ const Layout = () => {
     }, [auth, dispatch, navigate, ownerId]);
   
     useEffect(() => {
-      dispatch(actGetAllServicesBySalonId(salonDetail?.id));
+      dispatch(actGetAllServicesBySalonId(salonDetail?.id, localStorage.getItem("currentPage"),localStorage.getItem("pageSize")));
     }, [salonDetail]);
     return <>{auth ? <Header /> : <HeaderUnAuth />}</>;
 };

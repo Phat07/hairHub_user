@@ -1,26 +1,23 @@
+import jwtDecode from "jwt-decode"; // Ensure jwtDecode is imported
 import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import "./App.css";
 import Header from "./components/Header";
-import useAuthUser from "react-auth-kit/hooks/useAuthUser";
-import { useDispatch, useSelector } from "react-redux";
+import HeaderUnAuth from "./components/HeaderUnAuth";
+import { actGetAllPaymentList } from "./store/config/action";
+import { actGetAllServicesBySalonId, actGetAllServicesBySalonIdNoPaging } from "./store/salonEmployees/action";
 import {
   actGetAllSalonInformation,
   actGetAllSalonSuggestionInformation,
   actGetSalonInformationByOwnerId,
 } from "./store/salonInformation/action";
-import { actGetAllServicesBySalonId } from "./store/salonEmployees/action";
-import { actGetAllPaymentList } from "./store/config/action";
-import HeaderUnAuth from "./components/HeaderUnAuth";
-import { useNavigate } from "react-router-dom";
-import jwtDecode from "jwt-decode"; // Ensure jwtDecode is imported
 
-import useAuth from "./hooks/useAuth";
-import { AccountServices } from "./services/accountServices";
-import { fetchUserByTokenApi } from "./store/account/action";
 import { message } from "antd";
 import ChatBox from "./components/ChatBox";
-import ChatComponent from "./components/chat/ChatComponent";
 import Footer from "./components/Footer";
+import { AccountServices } from "./services/accountServices";
+import { fetchUserByTokenApi } from "./store/account/action";
 
 function App() {
   const navigate = useNavigate();
@@ -48,52 +45,61 @@ function App() {
       const currentTime = Date.now() / 1000; // Convert milliseconds to seconds
       return decodedToken.exp < currentTime;
     } catch (error) {
-      console.error("Error decoding token:", error);
       return true;
     }
   };
 
+  // const refreshToken = async () => {
+  //   try {
+  //     const refreshToken = localStorage.getItem("refreshToken");
+
+  //     if (refreshToken) {
+  //       const res = await AccountServices.refreshToken(refreshToken);
+  //       if (res.data && res.data.accessToken) {
+  //         localStorage.setItem("accessToken", res.data.accessToken);
+  //         localStorage.setItem("refreshToken", res.data.refreshToken);
+  //         return res.data.accessToken;
+  //       } else {
+  //         message.warning("Đăng nhập lại!!, quá phiên đăng nhập");
+  //         navigate("/login");
+  //       }
+  //     } else {
+  //       return;
+  //     }
+  //   } catch (error) {}
+  // };
   const refreshToken = async () => {
     try {
       const refreshToken = localStorage.getItem("refreshToken");
-
       if (refreshToken) {
         const res = await AccountServices.refreshToken(refreshToken);
-        if (res.data && res.data.accessToken) {
+        if (res.data?.accessToken) {
           localStorage.setItem("accessToken", res.data.accessToken);
           localStorage.setItem("refreshToken", res.data.refreshToken);
           return res.data.accessToken;
         } else {
           message.warning("Đăng nhập lại!!, quá phiên đăng nhập");
           navigate("/login");
-          throw new Error("Invalid response data");
         }
-      } else {
-        return;
-        throw new Error("No refresh token found");
       }
     } catch (error) {
-      console.error("Error refreshing token:", error);
-      throw new Error("Failed to refresh token");
+      // message.error("Có lỗi xảy ra khi làm mới token");
     }
   };
 
   const authenticateUser = async () => {
     try {
-      let accessToken = await localStorage.getItem("accessToken");
-
+      let accessToken = localStorage.getItem("accessToken");
       if (accessToken && !isTokenExpired(accessToken)) {
         await dispatch(fetchUserByTokenApi(accessToken, navigate));
-        // await fetchUserByToken(accessToken);
       } else {
-        // let refreshToken = sessionStorage.getItem("refreshToken");
         accessToken = await refreshToken();
-        await dispatch(fetchUserByTokenApi(accessToken, navigate));
+        if (accessToken) {
+          await dispatch(fetchUserByTokenApi(accessToken, navigate));
+        }
       }
     } catch (error) {
-      console.error("Authentication error:", error);
-      // message.error("Session expired. Please log in again.");
-      // navigate("/login");
+      message.error("Lỗi xác thực người dùng");
     }
   };
 
@@ -107,14 +113,17 @@ function App() {
       dispatch(actGetAllPaymentList(ownerId, 1, 10));
     }
   }, [dispatch, ownerId]);
+
   useEffect(() => {
     dispatch(actGetAllSalonInformation());
     dispatch(actGetAllSalonSuggestionInformation());
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (salonDetail?.id) {
-      dispatch(actGetAllServicesBySalonId(salonDetail.id));
+      dispatch(actGetAllServicesBySalonIdNoPaging(salonDetail.id));
+
+      // dispatch(actGetAllServicesBySalonId(salonDetail.id, localStorage.getItem("currentPage"),localStorage.getItem("pageSize")));
     }
   }, [salonDetail, dispatch]);
 

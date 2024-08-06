@@ -47,7 +47,7 @@ export function actGetAllAppointmentByCustomerId(id, page, size) {
       })
       .catch((error) => {
         // Xử lý lỗi nếu có
-        console.error("Error while fetching all config money:", error);
+        // console.error("Error while fetching all config money:", error);
       });
   };
 }
@@ -70,7 +70,7 @@ export function actGetAllAppointmentHistoryByCustomerId(id, page, size) {
       })
       .catch((error) => {
         // Xử lý lỗi nếu có
-        console.error("Error while fetching all config money:", error);
+        // console.error("Error while fetching all config money:", error);
       });
   };
 }
@@ -92,7 +92,7 @@ export function actDeleteAppointmentByCustomerId(id, customerId) {
       })
       .catch((error) => {
         // Xử lý lỗi nếu có
-        console.error("Error while fetching all config money:", error);
+        // console.error("Error while fetching all config money:", error);
       });
   };
 }

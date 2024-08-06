@@ -30,7 +30,7 @@ export function actGetVoucherBySalonId(page, size, id) {
       })
       .catch((error) => {
         // Xử lý lỗi nếu có
-        console.error("Error while fetching all config money:", error);
+        // console.error("Error while fetching all config money:", error);
       });
   };
 }
@@ -40,7 +40,6 @@ export function actGetVoucherBySalonIdNotPaging(id) {
       .getVoucherBySalonIdNotPaging(id)
       .then((response) => {
         if (response.status === 200 || response.status === 201) {
-          console.log("res", response);
           dispatch(getVoucherBySalonIdNotPaging(response.data));
         } else {
           message.error("Do not have any voucher!!!");
@@ -48,7 +47,7 @@ export function actGetVoucherBySalonIdNotPaging(id) {
       })
       .catch((error) => {
         // Xử lý lỗi nếu có
-        console.error("Error while fetching all config money:", error);
+        // console.error("Error while fetching all config money:", error);
       });
   };
 }

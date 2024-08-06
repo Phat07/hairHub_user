@@ -62,27 +62,24 @@ export function actGetAllSalonInformation() {
       })
       .catch((error) => {
         // Xử lý lỗi nếu có
-        console.error("Error while fetching all config money:", error);
+        // console.error("Error while fetching all config money:", error);
       });
   };
 }
 
 export function actPostCreateSalonInformation(data) {
-  return (dispatch) => {
-    SalonInformationServices.createSalonInformation(data)
-      .then((response) => {
-        if (response.status === 200 || response.status === 201) {
-          console.log();
-          message.success("Create salon information successfully");
-          dispatch(postCreateSalonInformation(response.data));
-        } else {
-          message.error("No create salon information!!!!");
-        }
-      })
-      .catch((error) => {
-        // Xử lý lỗi nếu có
-        console.error("Error while fetching all config money:", error);
-      });
+  return async (dispatch) => {
+    try {
+      const response = await SalonInformationServices.createSalonInformation(data);
+      if (response.status === 200 || response.status === 201) {
+        dispatch(postCreateSalonInformation(response.data));
+      } else {
+        // message.error("No create salon information!!!!");
+      }
+    } catch (error) {
+      // message.error("An error occurred while creating salon information");
+      // console.error("Error while creating salon information:", error);
+    }
   };
 }
 
@@ -99,7 +96,7 @@ export function actGetAllSalonSuggestionInformation() {
       })
       .catch((error) => {
         // Xử lý lỗi nếu có
-        console.error("Error", error);
+        // console.error("Error", error);
       });
   };
 }

@@ -204,11 +204,11 @@ const AddServiceForm = ({ salonInformationId, status }) => {
     "http://14.225.218.91:8080/api/v1/servicehairs/CreateServiceHair";
 
   const onFinish = async (values) => {
-    console.log(values, "values Services");
+
     const { serviceName, description } = values;
     const imageFile = fileList.length > 0 ? fileList[0].originFileObj : null;
     // console.log(services, "servicesss");
-    console.log(imageFile, "imageFileee");
+
 
     if (
       !imageFile ||
@@ -298,7 +298,7 @@ const AddServiceForm = ({ salonInformationId, status }) => {
       }
     }
   };
-  console.log(serviceTime, "serviceTime");
+
   const formatCurrency = (value) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",

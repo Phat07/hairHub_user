@@ -428,6 +428,7 @@ import {
   Col,
   Descriptions,
   Space,
+  Pagination,
 } from "antd";
 import axios from "axios";
 import {
@@ -454,27 +455,32 @@ function ListBarberEmployees() {
   const [open, setOpen] = useState(false);
   const [detailEmployee, setDetailEmployee] = useState("");
   const [serviceModalVisible, setServiceModalVisible] = useState(false);
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(4);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const listEmployee = useSelector(
     (state) => state.SALONEMPLOYEES.listEmployee
   );
+  const totalPages = useSelector((state) => state.SALONEMPLOYEES.totalPages);
 
 
-
-  const idCustomer = useSelector(
-    (state) => state.ACCOUNT.idCustomer
-  );
-  const ownerId = useSelector(
-    (state) => state.ACCOUNT.idOwner
-  );
+  const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
+  const ownerId = useSelector((state) => state.ACCOUNT.idOwner);
 
   useEffect(() => {
-    dispatch(actGetSalonInformationByOwnerId(ownerId));
-    dispatch(actGetAllEmployees(id));
-  }, [dispatch, id, ownerId]);
-
+    if (ownerId) {
+      dispatch(actGetSalonInformationByOwnerId(ownerId));
+    }
+  }, [dispatch, ownerId]);
+  useEffect(() => {
+    if (id || currentPage) {
+      dispatch(actGetAllEmployees(id, currentPage, pageSize));
+    }
+  }, [id, currentPage]);
+  const onPageChange = (page) => {
+    setCurrentPage(page);
+  };
   const handleDelete = (employee) => {
     axios
       .put(
@@ -531,12 +537,6 @@ function ListBarberEmployees() {
           marginRight: "250px",
         }}
       >
-        {/* {listEmployee.length === 0 ? (
-          <Typography.Title level={3}>
-            Your employees list is empty!
-          </Typography.Title>
-        ) :
-         ( */}
         <>
           <div className="p-6 bg-green-100 border rounded-xl flex justify-around items-center">
             <Button
@@ -618,8 +618,14 @@ function ListBarberEmployees() {
               </List.Item>
             )}
           />
+          <Pagination
+            current={currentPage}
+            pageSize={pageSize}
+            total={totalPages}
+            onChange={onPageChange}
+            // showSizeChanger
+          />
         </>
-        {/* )} */}
       </div>
       {detailEmployee && (
         <Modal
@@ -651,7 +657,10 @@ function ListBarberEmployees() {
                   }
                   bordered
                 >
-                  <Descriptions.Item label="Số điện thoại">
+                  <Descriptions.Item
+                    style={{ fontSize: "1.2rem" }}
+                    label="Số điện thoại"
+                  >
                     {detailEmployee.phone}
                   </Descriptions.Item>
                   <Descriptions.Item
@@ -681,8 +690,13 @@ function ListBarberEmployees() {
                 <Descriptions title="Lịch trình" bordered>
                   {detailEmployee.schedules.map((schedule, index) => (
                     <Descriptions.Item key={index} label={schedule.dayOfWeek}>
-                      {schedule.startTime.slice(0, 5)}am -{" "}
-                      {schedule.endTime.slice(0, 5)}pm
+                      {schedule?.startTime?.slice(0, 5) === "00:00" &&
+                      schedule?.endTime?.slice(0, 5) === "00:00"
+                        ? "Không có lịch làm việc"
+                        : `${schedule?.startTime?.slice(
+                            0,
+                            5
+                          )} am - ${schedule?.endTime?.slice(0, 5)} pm`}
                     </Descriptions.Item>
                   ))}
                 </Descriptions>

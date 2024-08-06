@@ -114,7 +114,9 @@ function SalonDetail(props) {
   const userId = useSelector((state) => state.ACCOUNT.idOwner);
   const uid = useSelector((state) => state.ACCOUNT.uid);
   useEffect(() => {
-    dispatch(actGetAllSalonInformation());
+    if (id) {
+      dispatch(actGetAllSalonInformation());
+    }
   }, [id]);
   // const userAuth = useAuthUser();
   // const userId = userAuth?.idOwner;
@@ -123,7 +125,6 @@ function SalonDetail(props) {
   const pageSize = 5; // Số lượng phản hồi trên mỗi trang
   const indexOfLastFeedback = currentPage * pageSize;
   const indexOfFirstFeedback = indexOfLastFeedback - pageSize;
-
 
   const [isReportModalVisible, setIsReportModalVisible] = useState(false);
   const currentDate = new Date();
@@ -242,7 +243,7 @@ function SalonDetail(props) {
     );
 
     //Hair Services
-    ServiceHairServices.getServiceHairBySalonInformationId(id)
+    ServiceHairServices.getServiceHairBySalonNotPaging(id)
       .then((res) => {
         setData(res?.data);
       })
@@ -776,7 +777,6 @@ function SalonDetail(props) {
       salonId: id, // Thay bằng id của salon
       bookingDetail: databooking,
     };
-    console.log(databooking);
     setDataBooking(databooking); //serviceHairId, salonEmployeeId
 
     axios
@@ -938,10 +938,10 @@ function SalonDetail(props) {
     setVoucherSelected(updatedVouchers);
   };
 
-
   const sortedSchedules = salonDetail?.schedules?.sort((a, b) => {
     return daysOrder.indexOf(a.dayOfWeek) - daysOrder.indexOf(b.dayOfWeek);
   });
+  console.log("detail", salonDetail);
 
   return (
     <div>
@@ -1715,6 +1715,11 @@ function SalonDetail(props) {
 
                   <div>
                     <Title level={4}>Thông tin</Title>
+                    <Text>{salonDetail.description}</Text>
+                    <Divider />
+                  </div>
+                  <div>
+                    <Title level={4}>Nhân viên</Title>
                     <Text>{salonDetail.description}</Text>
                     <Divider />
                   </div>

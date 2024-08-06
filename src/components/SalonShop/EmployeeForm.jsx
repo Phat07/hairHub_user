@@ -1,26 +1,25 @@
-import React, { useEffect, useState } from "react";
-import {
-  Form,
-  Input,
-  Button,
-  Space,
-  Select,
-  DatePicker,
-  Upload,
-  TimePicker,
-  Checkbox,
-  message,
-  Image,
-  Divider,
-} from "antd";
 import { ClockCircleOutlined, UploadOutlined } from "@ant-design/icons";
-import { useParams } from "react-router-dom";
-import axios from "axios";
+import {
+  Button,
+  Checkbox,
+  DatePicker,
+  Divider,
+  Form,
+  Image,
+  Input,
+  message,
+  Select,
+  Space,
+  TimePicker,
+  Upload,
+} from "antd";
 import dayjs from "dayjs";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { actPostCreateSalonEmployees } from "../../store/salonEmployees/action";
-import { ServiceHairServices } from "../../services/servicesHairServices";
+import { useParams } from "react-router-dom";
 import "../../css/ListSalon.css";
+import { ServiceHairServices } from "../../services/servicesHairServices";
+import { actPostCreateSalonEmployees } from "../../store/salonEmployees/action";
 import { emailPattern, fullNamePattern, phonePattern } from "../Regex/Patterns";
 
 const { Option } = Select;
@@ -48,10 +47,9 @@ const AddEmployeeForm = ({
   const dispatch = useDispatch();
   const { id } = useParams();
   const formatTime = "HH:mm";
-  const initialTimeValue = dayjs("07:00", formatTime);
 
   useEffect(() => {
-    ServiceHairServices.getServiceHairBySalonInformationId(id)
+    ServiceHairServices.getServiceHairBySalonNotPaging(id)
       .then((response) => {
         setServices(response.data);
       })
@@ -162,14 +160,30 @@ const AddEmployeeForm = ({
     try {
       dispatch(actPostCreateSalonEmployees(formData, id));
       isOpen(false);
-      console.log(formData, "Employee Added");
+      setDayOff({
+        Monday: false,
+        Tuesday: false,
+        Wednesday: false,
+        Thursday: false,
+        Friday: false,
+        Saturday: false,
+        Sunday: false,
+      });
       form.resetFields();
       setFileList([]);
     } catch (err) {
       console.log(err);
     }
+    setDayOff({
+      Monday: false,
+      Tuesday: false,
+      Wednesday: false,
+      Thursday: false,
+      Friday: false,
+      Saturday: false,
+      Sunday: false,
+    });
     isOpen(false);
-    console.log(formData, "Employee Added");
     form.resetFields();
     setFileList([]);
   };
@@ -200,9 +214,6 @@ const AddEmployeeForm = ({
     if (day === "Saturday") return "Thứ Bảy";
     if (day === "Sunday") return "Chủ Nhật";
   };
-  const Monday = "Monday";
-
-  console.log(convertDayFromEngToVi(Monday, "convert"));
 
   const handleTimeChange = (day) => {
     setTimeout(() => {
@@ -248,7 +259,6 @@ const AddEmployeeForm = ({
     "Saturday",
     "Sunday",
   ];
-  console.log("salon Infor", salonInformation);
 
   return (
     <Form form={form} onFinish={onFinish} layout="vertical">

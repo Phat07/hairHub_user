@@ -4,9 +4,14 @@ export const SalonEmployeesServices = {
   createSalonEmployees(data) {
     return API.post("/salonemployees/CreateSalonEmployee", data);
   },
-  getSalonEmployeeBySalonInformationId(salonId) {
+  getSalonEmployeeBySalonInformationId(salonId, page, size) {
     return API.get(
-      `/salonemployees/GetSalonEmployeeBySalonInformationId/${salonId}`
+      `/salonemployees/GetSalonEmployeeBySalonInformationId/${salonId}`, {
+        params: {
+          page,
+          size
+        },
+      }
     );
   },
   getSalonEmployeeById(id) {

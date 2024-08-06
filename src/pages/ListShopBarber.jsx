@@ -387,9 +387,11 @@ function ListShopBarber(props) {
     setList(filteredList);
   };
   useEffect(() => {
-    dispatch(actGetAllServicesBySalonId(salonDetail?.id));
+    dispatch(actGetAllServicesBySalonId(salonDetail.id, localStorage.getItem("currentPage"),localStorage.getItem("pageSize")));
   }, []);
-  const listService = useSelector((state) => state.SALONEMPLOYEES.listService);
+  const listService = useSelector((state) => state.SALONEMPLOYEES.salonServicesList);
+  console.log("list", listService);
+  
   const checkEmployeeListExist = () => {
     if (listService?.length === 0) {
       navigate(`/list_service/${salonDetail.id}`);

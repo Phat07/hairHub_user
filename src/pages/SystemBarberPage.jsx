@@ -84,7 +84,7 @@ const vietnamProvinces = [
   { name: "Hà Tĩnh", lat: 18.355, lng: 105.8877 },
   { name: "Hải Dương", lat: 20.938, lng: 106.3161 },
   { name: "Hậu Giang", lat: 9.784, lng: 105.4701 },
-  { name: "Hòa Bình", lat: 20.8133, lng: 105.3376 },
+  { name: "Hoà Bình", lat: 20.7087838, lng: 105.0167035 },
   { name: "Hưng Yên", lat: 20.6468, lng: 106.0511 },
   { name: "Khánh Hòa", lat: 12.2586, lng: 109.0526 },
   { name: "Kiên Giang", lat: 10.0159, lng: 105.0809 },
@@ -180,7 +180,7 @@ function SystemBarberPage(props) {
           setTotalPages(res.data.totalPages);
         })
         .catch((err) => {
-          console.log(err, "errors");
+          // console.log(err, "errors");
         });
     } else {
       setCurrentLocationUser("");
@@ -192,7 +192,6 @@ function SystemBarberPage(props) {
         pageSize
       ).then((res) => {
         setLoading(false);
-        console.log("ressFound", res);
         setSalonList(res.data.items);
         setTotalPages(res.data.totalPages);
       });
@@ -258,6 +257,7 @@ function SystemBarberPage(props) {
     const province = vietnamProvinces.find(
       (province) => province.name === value
     );
+
     if (province) {
       setCurrentLocation({ lat: province.lat, lng: province.lng });
     } else {
@@ -282,7 +282,6 @@ function SystemBarberPage(props) {
     ).then((res) => {
       navigate(`/system_shop?location=${value}`);
       setLoading(false);
-      console.log("ressFound", res);
       setSalonList(res.data.items);
       setTotalPages(res.data.totalPages);
     });
@@ -301,20 +300,31 @@ function SystemBarberPage(props) {
       content: "Bạn có muốn cho phép truy cập vào vị trí của bạn?",
       async onOk() {
         if ("geolocation" in navigator) {
+          setSelectedProvince("");
+          await searchParams.delete("salonName");
+          await searchParams.delete("location");
+          const newUrl = `${
+            window.location.pathname
+          }?${searchParams.toString()}`;
+          window.history.replaceState(null, "", newUrl);
           setLoading(true);
           navigator.geolocation.getCurrentPosition(
             async (pos) => {
               const { latitude, longitude } = pos.coords;
               const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${
                 import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
-              }`;
+              }&loading=async`;
 
               try {
                 const res = await fetch(url);
                 const data = await res.json();
 
                 if (data.status === "OK") {
+                  console.log("data", data);
+
                   const address = data.results[0].formatted_address;
+                  console.log("addre", address);
+
                   setCurrentLocationUser(address);
                   message.success("Cảm ơn bạn đã kích hoạt dịch vụ định vị.");
                   const salonRes =
