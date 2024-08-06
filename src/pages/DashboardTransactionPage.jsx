@@ -10,12 +10,13 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { message, Table } from "antd";
+import { Button, message, Table } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import { actGetSalonInformationByOwnerIdAsync } from "../store/salonAppointments/action";
 import { actGetAppointmentTransaction } from "../store/salonTransaction/action";
 import "../css/dashboardTransaction.css";
+import { Link } from "react-router-dom";
 
 ChartJS.register(
   CategoryScale,
@@ -189,6 +190,9 @@ console.log("av",salonInformationByOwnerId);
               {unpaidCommission?.toLocaleString() || 0}vnd
             </span>
           </p>
+          <Link to="/payment_commission">
+            <Button type="primary">Thanh toán</Button>
+          </Link>
         </div>
       </div>
       <div style={{ marginTop: "2rem" }}>

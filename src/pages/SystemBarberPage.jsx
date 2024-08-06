@@ -21,6 +21,8 @@ import {
   InfoWindow,
   MarkerF,
   useJsApiLoader,
+  DirectionsService,
+  DirectionsRenderer,
 } from "@react-google-maps/api";
 
 import "../css/baber.css";
@@ -135,6 +137,7 @@ function SystemBarberPage(props) {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
   const [currentLocationUser, setCurrentLocationUser] = useState("");
+  const [directions, setDirections] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
   const searchParams = new URLSearchParams(location.search);
@@ -290,8 +293,29 @@ function SystemBarberPage(props) {
   const handleChangeDistrict = (value) => {
     setSelectedDistrict(value);
   };
+  // const handleMarkerClick = (salon) => {
+  //   setSelectedSalon(salon);
+  // };
   const handleMarkerClick = (salon) => {
     setSelectedSalon(salon);
+    const directionsService = new window.google.maps.DirectionsService();
+    directionsService.route(
+      {
+        origin: defaultCenter, // Replace with the current location if available
+        destination: {
+          lat: parseFloat(salon.latitude),
+          lng: parseFloat(salon.longitude),
+        },
+        travelMode: window.google.maps.TravelMode.DRIVING,
+      },
+      (result, status) => {
+        if (status === window.google.maps.DirectionsStatus.OK) {
+          setDirections(result);
+        } else {
+          console.error(`error fetching directions ${result}`);
+        }
+      }
+    );
   };
   const handleSearch = async () => {
     document.body.style.overflow = "hidden";
@@ -425,234 +449,9 @@ function SystemBarberPage(props) {
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+  console.log("direc", directions);
+
   return (
-    // <div className="system-salon__container">
-    //   <div className="flex justify-between">
-    //     <div class="left-content text-left">
-    //       <Button type="primary" onClick={handleSearch}>
-    //         <>Tìm salon gần bạn</>
-    //       </Button>
-    //     </div>
-    //     <div class="flex right-content text-right mr-5 mt-2">
-    //       <div className="mr-3 text-center">
-    //         <Select
-    //           value={selectedProvince || "Tỉnh/Thành phố"}
-    //           style={{ width: 200 }}
-    //           onChange={handleChange}
-    //           options={provinces}
-    //         />
-    //       </div>
-    //       <div className="text-center">
-    //         <Select
-    //           value={selectedDistrict || "Quận/Huyện"}
-    //           style={{ width: 200 }}
-    //           onChange={handleChangeDistrict}
-    //           options={selectedProvince ? districts : <Empty />}
-    //         />
-    //       </div>
-    //     </div>
-    //   </div>
-    //   <div className="flex justify-between mt-5">
-    //     <div>
-    //       <div>
-    //         <motion.div
-    //           variants={{
-    //             hidden: { y: "-100vh", opacity: 0 },
-    //             visible: {
-    //               y: "-1px",
-    //               opacity: 1,
-    //               transition: {
-    //                 delay: 0.5,
-    //                 type: "spring",
-    //                 stiffness: 30,
-    //               },
-    //             },
-    //           }}
-    //           initial="hidden"
-    //           animate="visible"
-    //         >
-    //           <Input
-    //             prefix={<SearchOutlined />}
-    //             placeholder="Nhập tên tiệm baber"
-    //             style={{
-    //               width: "80%",
-    //             }}
-    //             size="large"
-    //             className="search-input"
-    //             value={searchTerm}
-    //             onChange={(e) => setSearchTerm(e.target.value)}
-    //           />
-    //           <Button
-    //             type="primary"
-    //             style={{
-    //               marginTop: "8px",
-    //               width: "80%",
-    //               marginBottom: "16px",
-    //             }}
-    //             onClick={handleFoundBaber}
-    //           >
-    //             Tìm kiếm baber
-    //           </Button>
-    //         </motion.div>
-    //       </div>
-    //       <Spin spinning={loading}>
-    //         <List
-    //           itemLayout="horizontal"
-    //           dataSource={salonList}
-    //           renderItem={(salon) => (
-    //             <List.Item>
-    //               <img
-    //                 src={salon.img}
-    //                 alt={salon.name}
-    //                 style={{
-    //                   width: "80px",
-    //                   height: "80px",
-    //                   marginRight: "20px",
-    //                 }}
-    //               />
-    //               <div>
-    //                 <h4 style={{ margin: "0", marginBottom: "8px" }}>
-    //                   {salon.name}
-    //                 </h4>
-    //                 <p style={{ margin: "0" }}>{salon.address}</p>
-    //                 <div>
-    //                   <Button
-    //                     size="small"
-    //                     className="mr-2"
-    //                     onClick={() => navigate(`/salon_detail/${salon.id}`)}
-    //                   >
-    //                     Đặt lịch
-    //                   </Button>
-    //                   <Button
-    //                     size="small"
-    //                     onClick={() => {
-    //                       navigator.geolocation.getCurrentPosition(
-    //                         (position) => {
-    //                           const { latitude, longitude } = position.coords;
-    //                           window.open(
-    //                             `https://www.google.com/maps/dir/?api=1&origin=${latitude},${longitude}&destination=${salon.latitude},${salon.longitude}`,
-    //                             "_blank"
-    //                           );
-    //                         }
-    //                       );
-    //                     }}
-    //                   >
-    //                     Chỉ đường
-    //                   </Button>
-    //                 </div>
-    //               </div>
-    //             </List.Item>
-    //           )}
-    //           locale={{
-    //             emptyText: (
-    //               <Empty
-    //                 description={
-    //                   currentLocationUser
-    //                     ? "Không có salon nào gần bạn"
-    //                     : "Không có salon nào"
-    //                 }
-    //               />
-    //             ),
-    //           }}
-    //         />
-    //         <Pagination
-    //           current={currentPage}
-    //           total={totalPages}
-    //           pageSize={pageSize}
-    //           onChange={handlePageChange}
-    //         />
-    //       </Spin>
-    //     </div>
-    //     <div className="ml-5">
-    //       <LoadScript
-    //         // googleMapsApiKey={
-    //         //   import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
-    //         // }
-    //         googleMapsApiKey={`${
-    //           import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
-    //         }&loading=async`}
-    //         onLoad={() => {
-    //           if (scriptLoaded) {
-    //             console.clear(); // Clear console to remove previous logs
-    //           }
-    //           setScriptLoaded(true);
-    //         }}
-    //       >
-    //         {/* {scriptLoaded ? ( */}
-    //         {/* {salonList ? ( */}
-    //         <GoogleMap
-    //           mapContainerStyle={mapContainerStyle}
-    //           center={currentLocation}
-    //           zoom={8}
-    //         >
-    //           {/* {salonList.map((salon) => (
-    //                 <Marker
-    //                   key={salon.id}
-    //                   position={{
-    //                     lat: parseFloat(salon.latitude),
-    //                     lng: parseFloat(salon.longitude),
-    //                   }}
-    //                   // icon={{
-    //                   //   url: salon.img, // URL của hình ảnh salon
-    //                   //   scaledSize: new window.google.maps.Size(50, 50), // kích thước hình ảnh marker
-    //                   //   origin: new window.google.maps.Point(0.25, 0), // gốc của hình ảnh
-    //                   //   anchor: new window.google.maps.Point(25, 25) // vị trí neo của hình ảnh
-    //                   // }}
-    //                   onClick={() => handleMarkerClick(salon)}
-    //                 />
-    //               ))} */}
-    //           {salonList &&
-    //             salonList.map((salon) => {
-    //               const lat = parseFloat(salon.latitude);
-    //               const lng = parseFloat(salon.longitude);
-
-    //               if (isNaN(lat) || isNaN(lng)) {
-    //                 console.error(
-    //                   `Invalid coordinates for salon ${salon.id}: (${salon.latitude}, ${salon.longitude})`
-    //                 );
-    //                 return null;
-    //               }
-
-    //               return (
-    //                 <MarkerF
-    //                   key={salon.id}
-    //                   position={{ lat, lng }}
-    //                   onClick={() => handleMarkerClick(salon)}
-    //                 />
-    //               );
-    //             })}
-    //           {selectedSalon && (
-    //             <InfoWindow
-    //               position={{
-    //                 lat: parseFloat(selectedSalon.latitude),
-    //                 lng: parseFloat(selectedSalon.longitude),
-    //               }}
-    //               onCloseClick={() => setSelectedSalon(null)}
-    //             >
-    //               <div>
-    //                 <h3>{selectedSalon.name}</h3>
-    //                 <p>{selectedSalon.address}</p>
-    //                 <a
-    //                   href={`https://www.google.com/maps/dir/?api=1&destination=${selectedSalon.latitude},${selectedSalon.longitude}`}
-    //                   target="_blank"
-    //                   rel="noopener noreferrer"
-    //                 >
-    //                   Chỉ đường
-    //                 </a>
-    //               </div>
-    //             </InfoWindow>
-    //           )}
-    //         </GoogleMap>
-    //         {/* ) : (
-    //             <Loader />
-    //           )} */}
-    //         {/* ) : (
-    //             <Loader />
-    //           )} */}
-    //       </LoadScript>
-    //     </div>
-    //   </div>
-    // </div>
     <div className="system-salon__container">
       <div className="flex justify-between">
         <div className="left-content text-left button-container">
@@ -837,6 +636,7 @@ function SystemBarberPage(props) {
                   </div>
                 </InfoWindow>
               )}
+              {/* {directions && <DirectionsRenderer directions={directions} />} */}
             </GoogleMap>
           </LoadScript>
         </div>

@@ -53,6 +53,7 @@ import { ProConfigProvider } from "@ant-design/pro-components";
 import PackagePage from "./pages/PackagePage.jsx";
 import PackageSuccessPage from "./pages/PackageSuccessPage.jsx";
 import DashboardTransactionPage from "./pages/DashboardTransactionPage.jsx";
+import PaymentCommissionPage from "./pages/PaymentCommissionPage.jsx";
 import ChatComponent from "./components/chat/ChatComponent.jsx";
 
 const router = createBrowserRouter([
@@ -251,6 +252,11 @@ const router = createBrowserRouter([
             <DashboardTransactionPage />
           </RequireAuth>
         ),
+      },
+      {
+        path: `payment_commission`,
+        element: <PaymentCommissionPage />,
+        errorElement: <ErrorPage />,
       },
       {
         path: "system_shop",
