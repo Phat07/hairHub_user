@@ -21,6 +21,8 @@ import {
   InfoWindow,
   MarkerF,
   useJsApiLoader,
+  DirectionsService,
+  DirectionsRenderer,
 } from "@react-google-maps/api";
 
 import "../css/baber.css";
@@ -135,6 +137,7 @@ function SystemBarberPage(props) {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
   const [currentLocationUser, setCurrentLocationUser] = useState("");
+  const [directions, setDirections] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
   const searchParams = new URLSearchParams(location.search);
@@ -290,8 +293,29 @@ function SystemBarberPage(props) {
   const handleChangeDistrict = (value) => {
     setSelectedDistrict(value);
   };
+  // const handleMarkerClick = (salon) => {
+  //   setSelectedSalon(salon);
+  // };
   const handleMarkerClick = (salon) => {
     setSelectedSalon(salon);
+    const directionsService = new window.google.maps.DirectionsService();
+    directionsService.route(
+      {
+        origin: center, // Replace with the current location if available
+        destination: {
+          lat: parseFloat(salon.latitude),
+          lng: parseFloat(salon.longitude),
+        },
+        travelMode: window.google.maps.TravelMode.DRIVING,
+      },
+      (result, status) => {
+        if (status === window.google.maps.DirectionsStatus.OK) {
+          setDirections(result);
+        } else {
+          console.error(`error fetching directions ${result}`);
+        }
+      }
+    );
   };
   const handleSearch = async () => {
     document.body.style.overflow = "hidden";
@@ -837,6 +861,7 @@ function SystemBarberPage(props) {
                   </div>
                 </InfoWindow>
               )}
+              {directions && <DirectionsRenderer directions={directions} />}
             </GoogleMap>
           </LoadScript>
         </div>
