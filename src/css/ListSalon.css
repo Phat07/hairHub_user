@@ -1,3 +1,15 @@
+.list-salon-contain-repo {
+  margin-left: 20rem;
+  font-family: Lora;
+  color: black;
+}
+
+@media (max-width: 768px) {
+  .list-salon-contain-repo {
+    margin-left: 0px;
+  }
+}
+
 .carousel-container {
   position: relative;
   display: flex;
@@ -33,19 +45,19 @@
 }
 
 .small-card {
-  width: 220px;  
+  width: 220px;
 }
 
 .small-card .ant-card-body {
-  padding: 10px;  
+  padding: 10px;
 }
 
 .small-card .ant-card-meta-title {
-  font-size: 16px;  
+  font-size: 16px;
 }
 
 .small-card .ant-card-meta-description {
-  font-size: 11px;  
+  font-size: 11px;
 }
 
 .small-card .ant-card-actions li {
@@ -93,13 +105,70 @@
   transition: background-color 0.3s ease;
 }
 
-
-.ButtonHoverable:hover{
-  background: rgb(255,255,255, 0.10);
+.ButtonHoverable:hover {
+  background: rgb(255, 255, 255, 0.1);
   color: black;
 }
 
-:where(.css-dev-only-do-not-override-17seli4).ant-rate .ant-rate-star:not(:last-child) {
+:where(.css-dev-only-do-not-override-17seli4).ant-rate
+  .ant-rate-star:not(:last-child) {
   margin-inline-end: 0;
 }
 
+.search-container {
+  width: 115rem;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap; /* Để hỗ trợ xếp chồng nhau trên màn hình nhỏ */
+  gap: 16px; /* Khoảng cách giữa các phần tử */
+}
+
+.search-container .search-input {
+  width: 100%; /* Đảm bảo các input chiếm hết chiều rộng của cột */
+}
+
+.list-salon-pagi {
+  width: 115rem;
+  text-align: center;
+}
+
+.list-salon-tilte {
+  font-size: 4rem;
+  font-weight: bold;
+  margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+  .search-container {
+    margin-left: 3rem;
+    margin-right: 3rem;
+    flex-direction: column;
+    width: 27.5rem; /* Chuyển sang dạng cột khi màn hình nhỏ */
+  }
+
+  .search-container > * {
+    margin-bottom: 16px; /* Khoảng cách giữa các phần tử khi xếp chồng nhau */
+  }
+
+  .list-salon-divider {
+    margin-left: 3rem;
+    margin-right: 3rem;
+    width: 28rem;
+  }
+
+  .list-salon-list {
+    margin-left: 1rem;
+    margin-right: 1rem;
+    width: 31.8rem;
+  }
+
+  .list-salon-pagi {
+    width: 34rem;
+  }
+
+  .list-salon-tilte {
+    margin-left: 2rem;
+    margin-right: 2rem;
+    font-size: 2rem;
+  }
+}

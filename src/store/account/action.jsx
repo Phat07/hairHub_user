@@ -26,13 +26,14 @@ export function loginAccount(data, navigate) {
           dispatch(LOGIN(response.data));
           message.success("Đăng nhập thành công");
           navigate("/");
-        } else {
-          message.error("Đăng nhập không thành công");
+        } else if (response.status === 401) {
+          // console.log('err',response);
+          // message.error("Đăng nhập không thành công");
         }
       })
       .catch((error) => {
+        message.error(error.response.data.message);
         // Xử lý lỗi nếu có
-        console.error("feedback:", error);
       });
   };
 }

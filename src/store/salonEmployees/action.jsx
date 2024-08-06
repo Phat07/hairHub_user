@@ -6,6 +6,7 @@ import { ServiceHairServices } from "../../services/servicesHairServices";
 export const CREATE_SALON_INFORMATION = "CREATE_SALON_INFORMATION";
 export const GET_ALL_EMPLOYEE = "GET_ALL_EMPLOYEE";
 export const GET_ALL_SERVICE = "GET_ALL_SERVICE";
+export const GET_ALL_SERVICE_NOT = "GET_ALL_SERVICE_NOT";
 export const postCreateSalonEmployees = (list) => {
   return {
     type: CREATE_SALON_INFORMATION,
@@ -24,14 +25,31 @@ export const getAllService = (list, totalPages) => {
     payload: { list: list, totalPages: totalPages },
   };
 };
+export const getAllServiceList = (list) => {
+  return {
+    type: GET_ALL_SERVICE_NOT,
+    payload: list,
+  };
+};
 
 export function actGetAllServicesBySalonId(id, currentPage, pageSize) {
   return (dispatch) => {
-    ServiceHairServices.getServiceHairBySalonInformationId(id, currentPage, pageSize)
+    ServiceHairServices.getServiceHairBySalonInformationId(
+      id,
+      currentPage,
+      pageSize
+    )
       .then((res) => {
-        console.log("res",res);
-        
         dispatch(getAllService(res?.data?.items, res?.data?.totalPages));
+      })
+      .catch((err) => console.log(err, "errors"));
+  };
+}
+export function actGetAllServicesBySalonIdNoPaging(id) {
+  return (dispatch) => {
+    ServiceHairServices.getServiceHairBySalonNotPaging(id)
+      .then((res) => {
+        dispatch(getAllServiceList(res?.data));
       })
       .catch((err) => console.log(err, "errors"));
   };
@@ -42,7 +60,13 @@ export function actPostCreateSalonService(data, id) {
       .then((response) => {
         if (response.status === 200 || response.status === 201) {
           message.success("Thêm dịch vụ thành công!");
-          dispatch(actGetAllServicesBySalonId(id));
+          dispatch(
+            actGetAllServicesBySalonId(
+              id,
+              localStorage.getItem("currentPage"),
+              localStorage.getItem("pageSize")
+            )
+          );
         } else {
           message.error("Dịch vụ chưa được tạo!");
         }

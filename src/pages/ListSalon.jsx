@@ -206,13 +206,7 @@ const ListSalon = () => {
         // onLoad={() => setIsApiLoaded(true)}
       />
       {isApiLoaded ? (
-        <div
-          style={{
-            marginLeft: "20rem",
-            fontFamily: "Lora",
-            color: "black",
-          }}
-        >
+        <div className="list-salon-contain-repo">
           <motion.div
             variants={{
               hidden: { y: "-100vh", opacity: 0 },
@@ -231,10 +225,10 @@ const ListSalon = () => {
           >
             <div className="search-container">
               <Row gutter={16} style={{ width: "100%" }}>
-                <Col span={4}>
+                <Col xs={24} sm={24} md={8} lg={8}>
                   <Input
                     prefix={<SearchOutlined />}
-                    placeholder="Nhập tên tiệm baber"
+                    placeholder="Nhập tên tiệm barber"
                     size="large"
                     className="search-input"
                     value={searchTerm}
@@ -244,15 +238,14 @@ const ListSalon = () => {
                     type="primary"
                     style={{
                       marginTop: "8px",
-                      width: "80%",
-                      marginLeft: "50px",
+                      width: "100%",
                     }}
                     onClick={handleFoundBaber}
                   >
-                    Tìm kiếm baber
+                    Tìm kiếm barber
                   </Button>
                 </Col>
-                <Col span={8}>
+                <Col xs={24} sm={24} md={8} lg={8}>
                   <StandaloneSearchBox
                     onLoad={(ref) => (searchBoxRef.current = ref)}
                     onPlacesChanged={handlePlacesChanged}
@@ -288,26 +281,31 @@ const ListSalon = () => {
                     Bật quyền truy cập vị trí
                   </Button>
                 </Col>
-                <Col span={12}>
+                <Col xs={24} sm={24} md={8} lg={8}>
                   <DatePicker
                     suffixIcon={<ClockCircleOutlined />}
                     placeholder="When?"
                     size="large"
                     className="search-input"
-                    style={{ width: "30%" }}
+                    style={{ width: "100%" }}
                   />
                 </Col>
               </Row>
             </div>
           </motion.div>
-          <Typography.Title className="mt-12" level={2}>
+          <div className="list-salon-tilte" >
             Tiệm barber ở {locationSalon || "Hồ Chí Minh"} | Đang có hơn{" "}
             {salonList.length} tiệm
-          </Typography.Title>
-          <div style={{ width: "110.5rem" }}>
+          </div>
+          <div
+            className="list-salon-divider"
+            //  style={{ width: "115rem" }}
+          >
             <Divider />
           </div>
-          <div style={{ width: "110.5rem" }}>
+          <div
+          // style={{ width: "110.5rem" }}
+          >
             <List
               grid={{ gutter: 16, column: 3 }}
               dataSource={salonList}
@@ -316,16 +314,17 @@ const ListSalon = () => {
                   <Card
                     hoverable
                     onClick={() => navigate(`/salon_detail/${item.id}`)}
+                    className="list-salon-list"
                     cover={
                       <img
-                        style={{ width: "100%", height: 200 }}
+                        style={{ width: "115rem", height: 200 }}
                         alt={item.name}
                         src={item.img}
                       />
                     }
                   >
                     <Meta
-                      style={{ width: "30rem", height: "15rem" }} //width, height of Card content
+                      // style={{ width: "30rem", height: "15rem" }} //width, height of Card content
                       title={
                         <>
                           <Typography.Title level={4}>
@@ -358,7 +357,8 @@ const ListSalon = () => {
               pageSize={pageSize}
               total={totalPages}
               onChange={handlePageChange}
-              style={{ textAlign: "center", marginTop: "2rem" }}
+              className="list-salon-pagi"
+              // style={{ textAlign: "center", marginTop: "2rem" }}
             />
           </div>
         </div>

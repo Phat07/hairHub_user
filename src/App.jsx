@@ -6,7 +6,7 @@ import "./App.css";
 import Header from "./components/Header";
 import HeaderUnAuth from "./components/HeaderUnAuth";
 import { actGetAllPaymentList } from "./store/config/action";
-import { actGetAllServicesBySalonId } from "./store/salonEmployees/action";
+import { actGetAllServicesBySalonId, actGetAllServicesBySalonIdNoPaging } from "./store/salonEmployees/action";
 import {
   actGetAllSalonInformation,
   actGetAllSalonSuggestionInformation,
@@ -121,7 +121,9 @@ function App() {
 
   useEffect(() => {
     if (salonDetail?.id) {
-      dispatch(actGetAllServicesBySalonId(salonDetail.id));
+      dispatch(actGetAllServicesBySalonIdNoPaging(salonDetail.id));
+
+      // dispatch(actGetAllServicesBySalonId(salonDetail.id, localStorage.getItem("currentPage"),localStorage.getItem("pageSize")));
     }
   }, [salonDetail, dispatch]);
 

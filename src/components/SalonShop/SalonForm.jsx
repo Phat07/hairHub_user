@@ -13,6 +13,7 @@ import {
   Flex,
   Image,
   Typography,
+  Spin,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import moment from "moment";
@@ -48,6 +49,7 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
   const [fileList, setFileList] = useState([]);
   const [dayOff, setDayOff] = useState({});
   const [isApiLoaded, setIsApiLoaded] = useState(false);
+  const [loading, setLoading] = useState(false);
   const searchBoxRef = useRef(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -71,7 +73,6 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
     dispatch(actGetSalonInformationByOwnerId(ownerId));
   }, []);
 
-
   // Monitor Google Maps API loading state
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -82,7 +83,7 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
 
     return () => clearTimeout(timeoutId);
   }, [isApiLoaded]);
-  console.log("salonDetail", salonDetail);
+
   useEffect(() => {
     if (id && salonDetail.img) {
       setFileList([
@@ -206,16 +207,16 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
     });
 
     const asyncOnFinish = async () => {
+      setLoading(true);
       try {
-        // Await the dispatch call to ensure it completes before moving on
-        await dispatch(actPostCreateSalonInformation(formData));
-        // After the dispatch completes, navigate to the "/list_shop" route
-        setTimeout(() => {
-          navigate("/list_shop");
-        }, 4000);
+        await dispatch(actPostCreateSalonInformation(formData)).then((res)=>{
+          message.success('Tạo salon thành công')
+          navigate('/list_shop')
+        });
       } catch (error) {
-        // Handle any errors that might occur during dispatch
-        console.error("Error creating salon information:", error);
+        console.error("Error occurred:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -362,13 +363,15 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
       return false;
     },
   };
-  console.log("fileList", fileList);
+
   return (
     <div
       style={{ marginTop: "120px", marginLeft: "250px", marginRight: "250px" }}
     >
       <LoadScript
-        googleMapsApiKey={`${import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY}&loading=async`}
+        googleMapsApiKey={`${
+          import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
+        }&loading=async`}
         libraries={libraries}
         loadingElement={
           <div className="overlay">
@@ -415,68 +418,70 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
               </Flex>
             }
           >
-            <Form form={form} onFinish={onFinish} layout="vertical">
-              <Form.Item
-                name="image"
-                label="Tải hình ảnh lên"
-                rules={[{ required: true }]}
-                tooltip="Add only one Image!"
-              >
-                <Upload
-                  {...uploadProps}
-                  // multiple
-                  listType="picture"
-                  // fileList={fileList} //array added image
-                  // onChange={handleUploadChange}
-                  // beforeUpload={() => false}
-                >
-                  <Button icon={<UploadOutlined />}>Tải lên</Button>
-                </Upload>
-              </Form.Item>
-              <Form.Item
-                name="name"
-                label="Tên Salon"
-                rules={[
-                  { required: true },
-                  {
-                    pattern: fullNamePattern,
-                    message:
-                      "Tên salon của bạn phải ít hơn 26 ký tự và không có ký tự đặc biệt!",
-                  },
-                ]}
-              >
-                <Input placeholder="Điền tên Salon" />
-              </Form.Item>
-              <StandaloneSearchBox
-                onLoad={(ref) => (searchBoxRef.current = ref)}
-                onPlacesChanged={handlePlacesChanged}
-              >
+            <Spin spinning={loading}>
+              <Form form={form} onFinish={onFinish} layout="vertical">
                 <Form.Item
-                  name="location"
-                  label="Địa chỉ"
+                  name="image"
+                  label="Tải hình ảnh lên"
+                  rules={[{ required: true }]}
+                  tooltip="Add only one Image!"
+                >
+                  <Upload
+                    {...uploadProps}
+                    // multiple
+                    listType="picture"
+                    // fileList={fileList} //array added image
+                    // onChange={handleUploadChange}
+                    // beforeUpload={() => false}
+                  >
+                    <Button icon={<UploadOutlined />}>Tải lên</Button>
+                  </Upload>
+                </Form.Item>
+                <Form.Item
+                  name="name"
+                  label="Tên Salon"
+                  rules={[
+                    { required: true },
+                    {
+                      pattern: fullNamePattern,
+                      message:
+                        "Tên salon của bạn phải ít hơn 26 ký tự và không có ký tự đặc biệt!",
+                    },
+                  ]}
+                >
+                  <Input placeholder="Điền tên Salon" />
+                </Form.Item>
+                <StandaloneSearchBox
+                  onLoad={(ref) => (searchBoxRef.current = ref)}
+                  onPlacesChanged={handlePlacesChanged}
+                >
+                  <Form.Item
+                    name="location"
+                    label="Địa chỉ"
+                    rules={[{ required: true }]}
+                  >
+                    <Input placeholder="Điền vị trí" />
+                  </Form.Item>
+                </StandaloneSearchBox>
+                <Form.Item
+                  name="description"
+                  label="Mô tả"
                   rules={[{ required: true }]}
                 >
-                  <Input placeholder="Điền vị trí" />
+                  <Input.TextArea placeholder="Điền mô tả" />
                 </Form.Item>
-              </StandaloneSearchBox>
-              <Form.Item
-                name="description"
-                label="Mô tả"
-                rules={[{ required: true }]}
-              >
-                <Input.TextArea placeholder="Điền mô tả" />
-              </Form.Item>
-              {renderTimePickers()}
-              <Form.Item>
-                <Button
-                  style={{ width: "100%" }}
-                  type="primary"
-                  htmlType="submit"
-                >
-                  {id ? "Chỉnh Salon" : "Tạo Salon"}
-                </Button>
-              </Form.Item>
-            </Form>
+                {renderTimePickers()}
+                <Form.Item>
+                  <Button
+                    style={{ width: "100%" }}
+                    type="primary"
+                    htmlType="submit"
+                  >
+                    {id ? "Chỉnh Salon" : "Tạo Salon"}
+                  </Button>
+                </Form.Item>
+              </Form>
+            </Spin>
           </Card>
         )}
       </LoadScript>

@@ -114,7 +114,9 @@ function SalonDetail(props) {
   const userId = useSelector((state) => state.ACCOUNT.idOwner);
   const uid = useSelector((state) => state.ACCOUNT.uid);
   useEffect(() => {
-    dispatch(actGetAllSalonInformation());
+    if (id) {
+      dispatch(actGetAllSalonInformation());
+    }
   }, [id]);
   // const userAuth = useAuthUser();
   // const userId = userAuth?.idOwner;
@@ -123,7 +125,6 @@ function SalonDetail(props) {
   const pageSize = 5; // Số lượng phản hồi trên mỗi trang
   const indexOfLastFeedback = currentPage * pageSize;
   const indexOfFirstFeedback = indexOfLastFeedback - pageSize;
-
 
   const [isReportModalVisible, setIsReportModalVisible] = useState(false);
   const currentDate = new Date();
@@ -190,7 +191,7 @@ function SalonDetail(props) {
     setListVoucher(listVoucherNotPaging);
   }, [listVoucherNotPaging]);
   const SALONDETAIL_URL =
-    "https://157.15.86.92:8444/api/v1/saloninformations/GetSalonInformationById/";
+    "https://api.gahonghac.net/api/v1/saloninformations/GetSalonInformationById/";
 
   const handleScroll = (direction, containerRef) => {
     const maxScroll =
@@ -242,7 +243,7 @@ function SalonDetail(props) {
     );
 
     //Hair Services
-    ServiceHairServices.getServiceHairBySalonInformationId(id)
+    ServiceHairServices.getServiceHairBySalonNotPaging(id)
       .then((res) => {
         setData(res?.data);
       })
@@ -335,7 +336,7 @@ function SalonDetail(props) {
       try {
         const response = await axios
           .post(
-            "https://157.15.86.92:8444/api/v1/appointments/GetAvailableTime",
+            "https://api.gahonghac.net/api/v1/appointments/GetAvailableTime",
             postData
           )
           .then((res) => {
@@ -454,7 +455,7 @@ function SalonDetail(props) {
     try {
       const response = await axios
         .post(
-          "https://157.15.86.92:8444/api/v1/appointments/GetAvailableTime",
+          "https://api.gahonghac.net/api/v1/appointments/GetAvailableTime",
           postData
         )
         .then((res) => {
@@ -493,7 +494,7 @@ function SalonDetail(props) {
       setDataBooking(requestBody); //serviceHairId, salonEmployeeId
       axios
         .post(
-          "https://157.15.86.92:8444/api/v1/appointments/BookAppointment",
+          "https://api.gahonghac.net/api/v1/appointments/BookAppointment",
           requestBody
         )
         .then((response) => {
@@ -582,7 +583,7 @@ function SalonDetail(props) {
 
     axios
       .post(
-        "https://157.15.86.92:8444/api/v1/appointments/BookAppointment",
+        "https://api.gahonghac.net/api/v1/appointments/BookAppointment",
         requestBody
       )
       .then((response) => {
@@ -776,12 +777,11 @@ function SalonDetail(props) {
       salonId: id, // Thay bằng id của salon
       bookingDetail: databooking,
     };
-    console.log(databooking);
     setDataBooking(databooking); //serviceHairId, salonEmployeeId
 
     axios
       .post(
-        "https://157.15.86.92:8444/api/v1/appointments/BookAppointment",
+        "https://api.gahonghac.net/api/v1/appointments/BookAppointment",
         requestBody
       )
       .then((response) => {
@@ -938,12 +938,11 @@ function SalonDetail(props) {
     setVoucherSelected(updatedVouchers);
   };
 
-
   const sortedSchedules = salonDetail?.schedules?.sort((a, b) => {
     return daysOrder.indexOf(a.dayOfWeek) - daysOrder.indexOf(b.dayOfWeek);
   });
   console.log("detail", salonDetail);
-  
+
   return (
     <div>
       <Header />

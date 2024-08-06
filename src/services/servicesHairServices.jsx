@@ -10,14 +10,16 @@ export const ServiceHairServices = {
     });
   },
   getServiceHairBySalonInformationId(salonId, page, size) {
+    return API.get(`/servicehairs/GetServiceHairBySalonIdPaging/${salonId}`, {
+      params: {
+        page,
+        size,
+      },
+    });
+  },
+  getServiceHairBySalonNotPaging(salonId) {
     return API.get(
-      `/servicehairs/GetServiceHairBySalonInformationId/${salonId}`,
-      {
-        params: {
-          page,
-          size,
-        },
-      }
+      `/servicehairs/GetServiceHairBySalonInformationId/${salonId}`
     );
   },
   getServiceHairById(id) {

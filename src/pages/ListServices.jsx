@@ -57,31 +57,53 @@ function ListServices() {
   const [isUpdateModalService, setisUpdateModalService] = useState(false);
   const [currencyValueUpdate, setCurrencyValueUpdate] = useState(null);
   const timeFormat = "HH:mm";
-  
+
   const [serviceTime, setServiceTime] = useState(dayjs("00:00", timeFormat));
   // const [fileList, setFileList] = useState([]);
   const [imageFile, setImageFile] = useState({});
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(1);
-
+  const [currentPage, setCurrentPage] = useState(
+    localStorage.getItem("currentPage") || 1
+  );
+  const [pageSize, setPageSize] = useState(
+    localStorage.getItem("pageSize") || 4
+  );
 
   const [status, setStatus] = useState(false);
   const dispatch = useDispatch();
 
   const listService = useSelector((state) => state.SALONEMPLOYEES.listService);
-  const totalPages = useSelector((state) => state.SALONEMPLOYEES.totalPagesServices);
-console.log("list", listService);
-
+  const totalPages = useSelector(
+    (state) => state.SALONEMPLOYEES.totalPagesServices
+  );
 
   useEffect(() => {
-    if (id) {
+    const savedCurrentPage = localStorage.getItem("currentPage");
+    const savedPageSize = localStorage.getItem("pageSize");
+
+    if (savedCurrentPage && savedPageSize) {
+      setCurrentPage(Number(savedCurrentPage));
+      setPageSize(Number(savedPageSize));
+    } else {
+      setCurrentPage(1);
+      setPageSize(1);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Lưu trạng thái trang hiện tại vào local storage
+    localStorage.setItem("currentPage", currentPage);
+    localStorage.setItem("pageSize", pageSize);
+  }, [currentPage, pageSize]);
+
+  useEffect(() => {
+    if (id && currentPage && pageSize) {
       dispatch(actGetAllServicesBySalonId(id, currentPage, pageSize));
       // setIsLoading(false);
     }
   }, [id, currentPage, pageSize]);
 
-
+  console.log("pageSize", pageSize);
 
   //delete Service
   const handleDelete = (service) => {
@@ -140,8 +162,6 @@ console.log("list", listService);
     }
   };
 
-
-
   //Convert service time from BE to dayjs
   function convertServiceTimeFromBe(serviceTime) {
     // Extract hours and minutes
@@ -198,7 +218,13 @@ console.log("list", listService);
           message.success(`Bạn đã cập nhật dịch vụ ${serviceName} thành công!`);
           form.resetFields();
           setisUpdateModalService(false);
-          dispatch(actGetAllServicesBySalonId(id));
+          dispatch(
+            actGetAllServicesBySalonId(
+              salonDetail.id,
+              localStorage.getItem("currentPage"),
+              localStorage.getItem("pageSize")
+            )
+          );
         })
         .catch((err) => {
           console.log(err, "errors");
@@ -219,7 +245,13 @@ console.log("list", listService);
           message.success(`Bạn đã cập nhật dịch vụ ${serviceName} thành công!`);
           form.resetFields();
           setisUpdateModalService(false);
-          dispatch(actGetAllServicesBySalonId(id));
+          dispatch(
+            actGetAllServicesBySalonId(
+              salonDetail.id,
+              localStorage.getItem("currentPage"),
+              localStorage.getItem("pageSize")
+            )
+          );
         })
         .catch((err) => {
           console.log(err, "errors");
@@ -301,8 +333,11 @@ console.log("list", listService);
       setImageUrl(imageUrl);
     });
   };
-  const onPageChange = (page) => {
+  const onPageChange = (page, pageSize) => {
     setCurrentPage(page);
+    setPageSize(pageSize);
+    localStorage.setItem("currentPage", page);
+    localStorage.setItem("pageSize", pageSize);
   };
   return (
     <>
@@ -499,12 +534,12 @@ console.log("list", listService);
           )}
         />
         <Pagination
-            current={currentPage}
-            pageSize={pageSize}
-            total={totalPages}
-            onChange={onPageChange}
-            // showSizeChanger
-          />
+          current={currentPage}
+          pageSize={pageSize}
+          total={totalPages}
+          onChange={onPageChange}
+          // showSizeChanger
+        />
         {/* <Flex justify="center" align="center">
           {listService && !isLoading && (
             <Button

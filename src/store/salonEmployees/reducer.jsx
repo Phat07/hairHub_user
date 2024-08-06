@@ -2,12 +2,14 @@ import {
   CREATE_SALON_INFORMATION,
   GET_ALL_EMPLOYEE,
   GET_ALL_SERVICE,
+  GET_ALL_SERVICE_NOT,
 } from "./action";
 
 const initialState = {
   totalPages: 1,
   totalPagesServices: 1,
   salonEmployees: {},
+  salonServicesList: {},
   listEmployee: [],
   listService: [],
 };
@@ -31,6 +33,11 @@ const reducer = (state = initialState, action) => {
         ...state,
         listService: action.payload.list,
         totalPagesServices: action.payload.totalPages,
+      };
+    case GET_ALL_SERVICE_NOT:
+      return {
+        ...state,
+        salonServicesList: action.payload,
       };
 
     default:
