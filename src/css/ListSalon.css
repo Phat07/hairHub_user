@@ -158,8 +158,8 @@
 
   .list-salon-list {
     margin-left: 1rem;
-    margin-right: 1rem;
-    width: 31.8rem;
+    /* margin-right: 1rem; */
+    width: 30.8rem;
   }
 
   .list-salon-pagi {
