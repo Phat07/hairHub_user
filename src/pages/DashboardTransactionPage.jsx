@@ -52,7 +52,7 @@ function DashboardTransactionPage(props) {
   const [filterDays, setFilterDays] = useState(7);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5;
-console.log("av",salonInformationByOwnerId);
+
 
   useEffect(() => {
     if (salonInformationByOwnerId || idOwner) {

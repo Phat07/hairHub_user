@@ -38,13 +38,14 @@ function PackageSuccessPage(props) {
   const listPayment = useSelector(
     (state) => state.CONFIGREDUCER.getAllPaymentList
   );
+  
   const totalPackages = useSelector(
     (state) => state.CONFIGREDUCER.totalPagesList
   );
 
   useEffect(() => {
     dispatch(actGetAllPaymentList(ownerId, currentPage, pageSize));
-  }, [currentPage]);
+  }, [ ownerId, currentPage]);
 
   const handleSelectPackage = async (pkg) => {
     setSelectedPackage(pkg);

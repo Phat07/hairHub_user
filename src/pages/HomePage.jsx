@@ -107,8 +107,10 @@ function HomePage(props) {
       salonOWnerID: ownerId,
     };
     dispatch(actGetStatusPayment(dataMapping, orderCode, ownerId))
-      .then(() => {
-        navigate("/listPayment");
+      .then((res) => {
+        console.log("res", res);
+        
+        // navigate("/listPayment");
       })
       .catch((e) => {
         console.log("Lỗi không lưu được trạng thái thanh toán xuống database");

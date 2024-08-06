@@ -88,17 +88,17 @@ const ListSalon = () => {
       });
   }, []);
   const navigate = useNavigate();
-  const searchBoxRef = useRef(null);
+  // const searchBoxRef = useRef(null);
 
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (!isApiLoaded) {
-        window.location.reload();
-      }
-    }, 1000); // 5 seconds timeout
+  // useEffect(() => {
+  //   const timeoutId = setTimeout(() => {
+  //     if (!isApiLoaded) {
+  //       window.location.reload();
+  //     }
+  //   }, 1000); // 5 seconds timeout
 
-    return () => clearTimeout(timeoutId);
-  }, [isApiLoaded]);
+  //   return () => clearTimeout(timeoutId);
+  // }, [isApiLoaded]);
 
   const handlePageChange = (page, pageSize) => {
     setCurrentPage(page);
@@ -114,61 +114,61 @@ const ListSalon = () => {
     }
   };
 
-  const handleEnableLocation = () => {
-    document.body.style.overflow = "hidden";
+  // const handleEnableLocation = () => {
+  //   document.body.style.overflow = "hidden";
 
-    Modal.confirm({
-      title: "Bật vị trí hiện tại",
-      content: "Bạn có muốn cho phép truy cập vào vị trí của bạn?",
-      onOk() {
-        setLoading(true);
+  //   Modal.confirm({
+  //     title: "Bật vị trí hiện tại",
+  //     content: "Bạn có muốn cho phép truy cập vào vị trí của bạn?",
+  //     onOk() {
+  //       setLoading(true);
 
-        if ("geolocation" in navigator) {
-          navigator.geolocation.getCurrentPosition(
-            (pos) => {
-              const { latitude, longitude } = pos.coords;
-              const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${
-                import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
-              }&loading=async`;
+  //       if ("geolocation" in navigator) {
+  //         navigator.geolocation.getCurrentPosition(
+  //           (pos) => {
+  //             const { latitude, longitude } = pos.coords;
+  //             const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${
+  //               import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
+  //             }&loading=async`;
 
-              fetch(url)
-                .then((res) => res.json())
-                .then((data) => {
-                  console.log("Geocode API response:", data);
-                  if (data.status === "OK") {
-                    message.success("Cảm ơn bạn đã kích hoạt dịch vụ định vị.");
-                    const address = data.results[0].formatted_address;
-                    setCurrentLocation(address);
-                    setSearchLocation(address);
-                  } else {
-                    message.error("Không thể lấy được vị trí!");
-                  }
-                })
-                .finally(() => {
-                  setLoading(false);
-                  document.body.style.overflow = "";
-                });
-            },
-            (error) => {
-              message.error("Bạn đã từ chối quyền truy cập vị trí!");
-              setLoading(false);
-              document.body.style.overflow = "";
-            }
-          );
-        } else {
-          message.error(
-            "Định vị địa lý không được trình duyệt của bạn hỗ trợ."
-          );
-          setLoading(false);
-          document.body.style.overflow = "";
-        }
-      },
-      onCancel() {
-        message.error("Chưa cấp quyền truy cập vị trí.");
-        document.body.style.overflow = "";
-      },
-    });
-  };
+  //             fetch(url)
+  //               .then((res) => res.json())
+  //               .then((data) => {
+  //                 console.log("Geocode API response:", data);
+  //                 if (data.status === "OK") {
+  //                   message.success("Cảm ơn bạn đã kích hoạt dịch vụ định vị.");
+  //                   const address = data.results[0].formatted_address;
+  //                   setCurrentLocation(address);
+  //                   setSearchLocation(address);
+  //                 } else {
+  //                   message.error("Không thể lấy được vị trí!");
+  //                 }
+  //               })
+  //               .finally(() => {
+  //                 setLoading(false);
+  //                 document.body.style.overflow = "";
+  //               });
+  //           },
+  //           (error) => {
+  //             message.error("Bạn đã từ chối quyền truy cập vị trí!");
+  //             setLoading(false);
+  //             document.body.style.overflow = "";
+  //           }
+  //         );
+  //       } else {
+  //         message.error(
+  //           "Định vị địa lý không được trình duyệt của bạn hỗ trợ."
+  //         );
+  //         setLoading(false);
+  //         document.body.style.overflow = "";
+  //       }
+  //     },
+  //     onCancel() {
+  //       message.error("Chưa cấp quyền truy cập vị trí.");
+  //       document.body.style.overflow = "";
+  //     },
+  //   });
+  // };
 
   const handleFoundBaber = () => {
     if (!searchTerm) {
@@ -192,7 +192,7 @@ const ListSalon = () => {
           marginRight: "250px",
         }}
       ></div>
-      <LoadScript
+      {/* <LoadScript
         googleMapsApiKey={`${
           import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
         }&loading=async`}
@@ -203,9 +203,8 @@ const ListSalon = () => {
           }
           setIsApiLoaded(true);
         }}
-        // onLoad={() => setIsApiLoaded(true)}
-      />
-      {isApiLoaded ? (
+      /> */}
+      {/* {isApiLoaded ? ( */}
         <div className="list-salon-contain-repo">
           <motion.div
             variants={{
@@ -223,7 +222,7 @@ const ListSalon = () => {
             initial="hidden"
             animate="visible"
           >
-            <div className="search-container">
+            <div className="search-container mb-3">
               <Row gutter={16} style={{ width: "100%" }}>
                 <Col xs={24} sm={24} md={8} lg={8}>
                   <Input
@@ -245,7 +244,7 @@ const ListSalon = () => {
                     Tìm kiếm barber
                   </Button>
                 </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
+                {/* <Col xs={24} sm={24} md={8} lg={8}>
                   <StandaloneSearchBox
                     onLoad={(ref) => (searchBoxRef.current = ref)}
                     onPlacesChanged={handlePlacesChanged}
@@ -280,8 +279,8 @@ const ListSalon = () => {
                   >
                     Bật quyền truy cập vị trí
                   </Button>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
+                </Col> */}
+                {/* <Col xs={24} sm={24} md={8} lg={8}>
                   <DatePicker
                     suffixIcon={<ClockCircleOutlined />}
                     placeholder="When?"
@@ -289,20 +288,20 @@ const ListSalon = () => {
                     className="search-input"
                     style={{ width: "100%" }}
                   />
-                </Col>
+                </Col> */}
               </Row>
             </div>
           </motion.div>
-          <div className="list-salon-tilte" >
+          {/* <div className="list-salon-tilte" >
             Tiệm barber ở {locationSalon || "Hồ Chí Minh"} | Đang có hơn{" "}
             {salonList.length} tiệm
-          </div>
-          <div
+          </div> */}
+          {/* <div
             className="list-salon-divider"
             //  style={{ width: "115rem" }}
           >
             <Divider />
-          </div>
+          </div> */}
           <div
           // style={{ width: "110.5rem" }}
           >
@@ -362,11 +361,11 @@ const ListSalon = () => {
             />
           </div>
         </div>
-      ) : (
+      {/* ) : (
         <div className="overlay">
           <Loader />
         </div>
-      )}
+      )} */}
     </div>
   );
 };

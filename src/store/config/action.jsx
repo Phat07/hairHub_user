@@ -46,7 +46,6 @@ export function actGetAllPaymentList(id, page, size) {
     const result = ConfigService.GetAllPaymentByOwnerId(id, page, size);
     await result
       .then((response) => {
-        console.log("responePaymentOwnerId", response.data);
         if (response.status === 200 || response.status === 201) {
           dispatch(getAllConfigPaymentByOwnerId(response.data));
         } else {

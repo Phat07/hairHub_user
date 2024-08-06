@@ -1,21 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Button, Row, Col, Table } from "antd";
+import { Button, Row, Col, Table, Spin, message } from "antd";
 import { Link } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import "../css/PaymentCommissionPage.css";
 import { SalonPayment } from "../services/salonPayment";
-import { useSelector } from "react-redux";
-
-const dataSource = [
-  {
-    key: "1",
-    package: "Gia hạn Premium VPS D4 x 1 tháng",
-    description:
-      "Gia hạn Premium VPS 157.15.86.92 từ 2024-09-03 đến 2024-10-03",
-    price: "$16.00 (400.000 đ)",
-    total: "$16.00 (400.000 đ)",
-  },
-];
+import { useDispatch, useSelector } from "react-redux";
+import dayjs from "dayjs";
+import { actGetSalonInformationByOwnerIdAsync } from "../store/salonAppointments/action";
+import { actGetAllConfig } from "../store/config/action";
 
 const columns = [
   {
@@ -44,16 +36,34 @@ function PaymentCommissionPage() {
   const [data, setData] = useState("");
 
   const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
+  const [dataSource, setDataSource] = useState("");
   const idOwner = useSelector((state) => state.ACCOUNT.idOwner);
+  const [loading, setLoading] = useState(false);
+  const config = useSelector((state) => state.CONFIGREDUCER.getAllPackage);
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(actGetAllConfig(1, 10));
+  }, []);
   const uid = useSelector((state) => state.ACCOUNT.uid);
+  function formatVND(number) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " VND";
+  }
   useEffect(() => {
     // Call the initial API to get payment information
     SalonPayment.getInforPaymetOwnerId(idOwner)
       .then((response) => {
-        console.log("res", response);
-
+        console.log("res", response.data);
+        const paymentData = {
+          key: "1",
+          package: response?.data?.config?.pakageName,
+          description: response?.data?.description,
+          price: formatVND(response?.data?.totalAmount),
+          total: formatVND(response?.data?.totalAmount),
+        };
         // Set the data from the API response
         setData(response.data);
+        setDataSource([paymentData]);
       })
       .catch((error) => {
         console.error(
@@ -64,82 +74,105 @@ function PaymentCommissionPage() {
   }, [idOwner]);
 
   const handleNextClick = () => {
-    // Call the next API when the button is clicked
-    axios
-      .post("https://your-api-endpoint.com/api/next-step", {
-        // Include any necessary data here
-      })
+    const data = {
+      configId: config[0]?.id,
+      salonOwnerID: idOwner,
+      description: "Thanh toán gói dịch vụ",
+    };
+  
+    SalonPayment.createPaymentPackageByOwnerId(data)
       .then((response) => {
-        // Handle the response from the API
-        console.log("Next step response:", response.data);
+        console.log("Response:", response);
+        if (response.status === 200 || response.status === 201) {
+          setLoading(true);
+          message.info("Vui lòng đợi trong giây lát...");
+          const paymentLink = response.data.checkoutUrl;
+  
+          if (paymentLink) {
+            console.log("Redirecting to:", paymentLink);
+            window.location.href = paymentLink; // Chuyển hướng đến trang thanh toán
+          } else {
+            message.error("Không thể thanh toán");
+          }
+        } else {
+          message.error("Thanh toán không thành công!!!!");
+        }
       })
-      .catch((error) => {
-        console.error("There was an error processing the next step!", error);
+      .catch((err) => {
+        console.error("Error:", err);
+        setLoading(false);
+      })
+      .finally(() => {
+        setLoading(false);
       });
+    // Call the next API when the button is clicked
   };
+  
   return (
     <div className="payment-commission-container">
-      <div className="invoice-container">
-        <div className="back-button">
-          <Link to="/dashboardTransaction">
-            <Button
-              type="link"
-              icon={<ArrowLeftOutlined />}
-              className="back-link-button"
-              style={{ padding: "0" }}
-            >
-              Back
+      <Spin spinning={loading}>
+        <div className="invoice-container">
+          <div className="back-button">
+            <Link to="/dashboardTransaction">
+              <Button
+                type="link"
+                icon={<ArrowLeftOutlined />}
+                className="back-link-button"
+                style={{ padding: "0" }}
+              >
+                Back
+              </Button>
+            </Link>
+          </div>
+          <Row justify="space-between">
+            <Col span={12}>
+              <p className="commiss-tiltle">Mã hoá đơn:</p>
+              <p className="invoice-id">{data?.paymentCode}</p>
+              <p className="commiss-p" style={{ marginTop: "0" }}>
+                {dayjs().format("DD-MM-YYYY")}
+              </p>
+            </Col>
+            <Col span={12} style={{ textAlign: "right" }}>
+              <p className="commiss-tiltle">Cần thanh toán:</p>
+              <p className="payment-amount"> {dataSource[0]?.price}</p>
+              {/* <p className="commiss-p" style={{ marginTop: "0" }}>
+              {dataSource[0]?.price}
+              </p> */}
+            </Col>
+          </Row>
+          <Row justify="space-between" className="recipient-payer-info">
+            <Col span={12}>
+              <p className="commiss-tiltle">Bên nhận:</p>
+              <p className="host-money">Hairhub Company</p>
+            </Col>
+            <Col span={12} style={{ textAlign: "right" }}>
+              <p className="commiss-tiltle">Bên thanh toán:</p>
+              <p className="host-money">{data?.salonOwners?.fullName}</p>
+            </Col>
+          </Row>
+          <Table
+            dataSource={dataSource}
+            columns={columns}
+            pagination={false}
+            className="invoice-table"
+          />
+          <Row justify="center" className="action-buttons">
+            <Button onClick={handleNextClick} type="primary">
+              TIẾP THEO
             </Button>
-          </Link>
+            <Button type="default" danger>
+              HỦY HOÁ ĐƠN
+            </Button>
+          </Row>
+          <Row className="invoice-summary">
+            <Col span={8}>
+              <p className="commiss-p">Subtotal: {dataSource[0]?.price}</p>
+              <p className="commiss-p">VAT (0%): 0.00 (0 đ)</p>
+              <p className="total-amount">Total: {dataSource[0]?.price}</p>
+            </Col>
+          </Row>
         </div>
-        <Row justify="space-between">
-          <Col span={12}>
-            <p className="commiss-tiltle">Mã hoá đơn:</p>
-            <p className="invoice-id">LEV405828</p>
-            <p className="commiss-p" style={{ marginTop: "0" }}>
-              2024-08-06
-            </p>
-          </Col>
-          <Col span={12} style={{ textAlign: "right" }}>
-            <p className="commiss-tiltle">Cần thanh toán:</p>
-            <p className="payment-amount">$16.00</p>
-            <p className="commiss-p" style={{ marginTop: "0" }}>
-              400.000 đ
-            </p>
-          </Col>
-        </Row>
-        <Row justify="space-between" className="recipient-payer-info">
-          <Col span={12}>
-            <p className="commiss-tiltle">Bên nhận:</p>
-            <p className="host-money">Hairhub Company</p>
-          </Col>
-          <Col span={12} style={{ textAlign: "right" }}>
-            <p className="commiss-tiltle">Bên thanh toán:</p>
-            <p className="host-money">Trần Xuân Tiến</p>
-          </Col>
-        </Row>
-        <Table
-          dataSource={dataSource}
-          columns={columns}
-          pagination={false}
-          className="invoice-table"
-        />
-        <Row justify="center" className="action-buttons">
-          <Button onClick={handleNextClick} type="primary">
-            TIẾP THEO
-          </Button>
-          <Button type="default" danger>
-            HỦY HOÁ ĐƠN
-          </Button>
-        </Row>
-        <Row className="invoice-summary">
-          <Col span={8}>
-            <p className="commiss-p">Subtotal: $16.00 (400.000 đ)</p>
-            <p className="commiss-p">VAT (0%): $0.00 (0 đ)</p>
-            <p className="total-amount">Total: $16.00 (400.000 đ)</p>
-          </Col>
-        </Row>
-      </div>
+      </Spin>
     </div>
   );
 }

@@ -3,7 +3,7 @@ import Header from "../components/Header";
 import { Card, Typography, Button } from "antd";
 import { CheckCircleFilled, CheckCircleOutlined } from "@ant-design/icons";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { actGetStatusPayment } from "../store/salonPayment/action";
 import { useNavigate } from "react-router-dom";
 
@@ -12,19 +12,19 @@ const { Title, Text } = Typography;
 function SucessPayment(props) {
   // Lấy URL hiện tại
   const url = new URL(window.location.href);
-  const auth = useAuthUser();
+  // const auth = useAuthUser();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const ownerId = auth?.idOwner;
-  console.log(ownerId, "ownerId");
+  const ownerId = useSelector((state) => state.ACCOUNT.idOwner);
+
   // Lấy giá trị của tham số orderCode
   const orderCode = url.searchParams.get("orderCode");
   const amount = url.searchParams.get("amount");
   const configId = url.searchParams.get("configId");
   const id = url.searchParams.get("id");
-  console.log("orderCode", orderCode);
+
   // Hiển thị orderCode
-  console.log(orderCode);
+
   function formatVND(number) {
     // Chuyển đổi số thành chuỗi
     let numberString = number?.toString();
@@ -40,7 +40,7 @@ function SucessPayment(props) {
       salonOWnerID: ownerId,
     };
     dispatch(actGetStatusPayment(dataMapping, orderCode, ownerId))
-      .then(() => {
+      .then((res) => {        
         navigate("/listPayment");
       })
       .catch((e) => {
@@ -102,7 +102,7 @@ function SucessPayment(props) {
             style={{ marginTop: "24px" }}
             onClick={handleClick}
           >
-            Quay về lịch sử thanh toán thành công
+            Vui lòng nhấn vào đây để xác nhận thành công
           </Button>
         </Card>
       </div>
