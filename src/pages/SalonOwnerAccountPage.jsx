@@ -156,7 +156,7 @@ function SalonOwnerAccountPage() {
 
   const handleError = (err) => {
     console.error(err);
-    message.error("Error scanning QR code!");
+    message.error("Không truy cập máy ảnh!");
   };
 
   const previewStyle = {
