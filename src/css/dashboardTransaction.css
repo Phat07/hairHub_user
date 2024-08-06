@@ -1,0 +1,30 @@
+.dashboard-container {
+  margin-top: 15rem;
+  margin-left: 20rem;
+  margin-right: 20rem;
+}
+
+.dashboard-money-1 {
+  font-size: 1.7rem;
+  font-weight: bold;
+  color: #3fadf3;
+}
+
+.dashboard-money-2 {
+  font-size: 1.7rem;
+  font-weight: bold;
+  color: lightcoral;
+}
+
+@media (max-width: 767px) {
+  .dashboard-container {
+    margin-top: 15rem;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .dashboard-money {
+    margin-left: 1rem;
+    margin-right: 1rem;
+    font-size: 1.3rem;
+  }
+}

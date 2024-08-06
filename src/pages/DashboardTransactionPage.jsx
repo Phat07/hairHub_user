@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from "react-redux";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import { actGetSalonInformationByOwnerIdAsync } from "../store/salonAppointments/action";
 import { actGetAppointmentTransaction } from "../store/salonTransaction/action";
+import "../css/dashboardTransaction.css";
 
 ChartJS.register(
   CategoryScale,
@@ -50,11 +51,12 @@ function DashboardTransactionPage(props) {
   const [filterDays, setFilterDays] = useState(7);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5;
+console.log("av",salonInformationByOwnerId);
 
   useEffect(() => {
     if (salonInformationByOwnerId || idOwner) {
       try {
-        dispatch(actGetAppointmentTransaction(idOwner, filterDays));
+        dispatch(actGetAppointmentTransaction(salonInformationByOwnerId.id, filterDays));
       } catch (err) {
         message.error("Không thể lấy dữ liệu!");
       }
@@ -158,29 +160,22 @@ function DashboardTransactionPage(props) {
     }));
 
   return (
-    <div
-      style={{ marginTop: "20rem", marginLeft: "10rem", marginRight: "10rem" }}
-    >
+    <div className="dashboard-container">
       <div
         style={{
           display: "flex",
           justifyContent: "space-between",
-          padding: "20px 10rem",
-          marginTop: "20rem",
+          marginTop: "10rem",
         }}
       >
         <div style={{ flex: 1 }}>
-          <p
-            style={{ fontSize: "1.7rem", fontWeight: "bold", color: "#3FADF3" }}
-          >
+          <p className="dashboard-money dashboard-money-1">
             Tổng doanh thu:{" "}
             <span style={{ fontWeight: "normal", display: "inline" }}>
               {totalRevenue?.toLocaleString() || 0}vnd
             </span>
           </p>
-          <p
-            style={{ fontSize: "1.7rem", fontWeight: "bold", color: "#3FADF3" }}
-          >
+          <p className="dashboard-money dashboard-money-1">
             Tổng hoa hồng:{" "}
             <span style={{ fontWeight: "normal", display: "inline" }}>
               {totalCommission?.toLocaleString() || 0}vnd
@@ -188,13 +183,7 @@ function DashboardTransactionPage(props) {
           </p>
         </div>
         <div style={{ flex: 1, textAlign: "right" }}>
-          <p
-            style={{
-              fontSize: "1.7rem",
-              fontWeight: "bold",
-              color: "lightcoral",
-            }}
-          >
+          <p className="dashboard-money dashboard-money-2">
             Hoa hồng chưa đóng:{" "}
             <span style={{ fontWeight: "normal", display: "inline" }}>
               {unpaidCommission?.toLocaleString() || 0}vnd
@@ -202,9 +191,7 @@ function DashboardTransactionPage(props) {
           </p>
         </div>
       </div>
-      <div
-        style={{ marginTop: "2rem", marginLeft: "20rem", marginRight: "20rem" }}
-      >
+      <div style={{ marginTop: "2rem" }}>
         <Line data={chartData} />
       </div>
       <div
@@ -212,7 +199,6 @@ function DashboardTransactionPage(props) {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          padding: "0 10rem",
           marginTop: "3rem",
           marginBottom: "1rem",
         }}
@@ -234,7 +220,7 @@ function DashboardTransactionPage(props) {
           <select
             onChange={handleFilterChange}
             defaultValue="7"
-            style={{ width: "200px" }}
+            // style={{ width: "200px" }}
           >
             <option value="7">7 ngày gần đây</option>
             <option value="30">30 ngày gần đây</option>
@@ -246,7 +232,6 @@ function DashboardTransactionPage(props) {
           dataSource={dataSource}
           columns={columns}
           rowKey="key"
-          style={{ marginLeft: "10rem", marginRight: "10rem" }}
           pagination={{
             current: currentPage,
             pageSize: pageSize,
