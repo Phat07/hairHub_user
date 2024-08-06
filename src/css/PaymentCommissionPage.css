@@ -4,6 +4,14 @@
   margin-right: 20rem;
 }
 
+@media (max-width: 767px) {
+  .payment-commission-container {
+    /* margin-top: 10rem; */
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
 .back-button {
   margin-bottom: 1rem;
 }
@@ -28,7 +36,7 @@
 }
 
 .commiss-p {
-    font-size: 1.5rem;
+  font-size: 1.5rem;
 }
 
 .host-money {
