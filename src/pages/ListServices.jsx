@@ -1,22 +1,3 @@
-import React, { useEffect, useState } from "react";
-import {
-  List,
-  Avatar,
-  Image,
-  Button,
-  Flex,
-  Modal,
-  message,
-  Popconfirm,
-  Typography,
-  Space,
-  Form,
-  Input,
-  InputNumber,
-  TimePicker,
-  Upload,
-} from "antd";
-import axios from "axios";
 import {
   BackwardOutlined,
   DeleteOutlined,
@@ -26,16 +7,35 @@ import {
   UploadOutlined,
   UserAddOutlined,
 } from "@ant-design/icons";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { BsPeople } from "react-icons/bs";
-import AddServiceForm from "../components/SalonShop/ServiceForm";
-import { ServiceHairServices } from "../services/servicesHairServices";
-import { useDispatch, useSelector } from "react-redux";
-import { actGetAllServicesBySalonId } from "../store/salonEmployees/action";
-import "../css/manageVoucher.css";
-import { formatCurrency } from "../components/formatCheckValue/formatCurrency";
+import {
+  Avatar,
+  Button,
+  Flex,
+  Form,
+  Image,
+  Input,
+  InputNumber,
+  List,
+  message,
+  Modal,
+  Pagination,
+  Popconfirm,
+  Space,
+  TimePicker,
+  Typography,
+  Upload,
+} from "antd";
+import axios from "axios";
 import dayjs from "dayjs";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import { isEmptyObject } from "../components/formatCheckValue/checkEmptyObject";
+import { formatCurrency } from "../components/formatCheckValue/formatCurrency";
+import AddServiceForm from "../components/SalonShop/ServiceForm";
+import "../css/manageVoucher.css";
+import { ServiceHairServices } from "../services/servicesHairServices";
+import { actGetAllServicesBySalonId } from "../store/salonEmployees/action";
 
 function ListServices() {
   const [form] = Form.useForm();
@@ -45,7 +45,7 @@ function ListServices() {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [modalText, setModalText] = useState("Content of the modal");
   const [servicesList, setServicesList] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
   const [imageUrl, setImageUrl] = useState(null);
   const SERVICES_URL =
     "http://14.225.218.91:8080/api/v1/servicehairs/GetServiceHairBySalonInformationId/";
@@ -57,53 +57,31 @@ function ListServices() {
   const [isUpdateModalService, setisUpdateModalService] = useState(false);
   const [currencyValueUpdate, setCurrencyValueUpdate] = useState(null);
   const timeFormat = "HH:mm";
-  const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
+  
   const [serviceTime, setServiceTime] = useState(dayjs("00:00", timeFormat));
   // const [fileList, setFileList] = useState([]);
   const [imageFile, setImageFile] = useState({});
 
-  const [page, setPage] = useState(1);
-  const limit = 5;
-  const [concatList, setConcatList] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(1);
+
+
   const [status, setStatus] = useState(false);
   const dispatch = useDispatch();
-  // const messageAddSuccess = message.success("Service has been added!!!");
 
-  // useEffect(() => {
-  //   axios.get(SERVICES_URL + id).then((res) => {
-  //     setServicesList(res.data);
-  //     setIsLoading(false);
-  //     console.log(res.data, "ServiceList");
-  //   });
-  // }, [status]);
   const listService = useSelector((state) => state.SALONEMPLOYEES.listService);
- 
+  const totalPages = useSelector((state) => state.SALONEMPLOYEES.totalPagesServices);
+console.log("list", listService);
+
+
   useEffect(() => {
     if (id) {
-      dispatch(actGetAllServicesBySalonId(id));
-      setIsLoading(false);
+      dispatch(actGetAllServicesBySalonId(id, currentPage, pageSize));
+      // setIsLoading(false);
     }
-  }, [id]);
+  }, [id, currentPage, pageSize]);
 
-  const handleUploadChange = ({ imageFile }) => setImageFile(imageFile);
 
-  const onLoadMore = () => {
-    const nextPage = page + 1;
-    setTimeout(() => {
-      axios
-        .get(SERVICES_URL + `?page=${nextPage}&limit=${limit}`)
-        .then((res) => {
-          // const nextData = servicesList.concat(res.data);
-          console.log(res, nextPage, limit, "resssss");
-          const concatData = [...servicesList, ...res.data.items];
-          setServicesList(concatData);
-          console.log(concatData);
-          setPage(nextPage);
-          window.dispatchEvent(new Event("resize"));
-        })
-        .catch((err) => console.log(err, "error"));
-    }, 1000);
-  };
 
   //delete Service
   const handleDelete = (service) => {
@@ -126,7 +104,6 @@ function ListServices() {
       .catch((err) => console.log(err, "errors"));
   };
 
-  //format currency to be
   function roundUpToNearestIncrement(number, increment) {
     const roundedValue = Math.ceil(number / increment) * increment; //Math.ceil làm tròn lên, 1 * increment
     return roundedValue === number
@@ -136,16 +113,10 @@ function ListServices() {
   const onTimeChange = (time) => {
     const { $H, $m, ...rest } = time;
     const serviceTimeString = parseFloat(`${$H}.${$m}`); //convert string to float number
-    // console.log(serviceTimeString, "timeString");
-    // console.log(roundUpToNearestIncrement(serviceTimeString, 0.5));
     const rounded15 = roundUpToNearestIncrement(serviceTimeString, 0.25); //0.25
     const rounded30 = roundUpToNearestIncrement(serviceTimeString, 0.5); //0.5
     const rounded45 = roundUpToNearestIncrement(serviceTimeString, 0.75); //0.75
     const rounded1 = roundUpToNearestIncrement(serviceTimeString, 1);
-    // console.log(serviceTimeString + 0.1, "15minutes");
-    // console.log(serviceTimeString + 0.2, "30minutes");
-    // console.log(serviceTimeString + 0.3, "45minutes");
-    // console.log(Number.isInteger(0.1)); //check integer
     for (let i = 0; i < 10; i++) {
       //chọn khoảng thời gian cho phép làm tóc 10 = 10 tiếng :))
       if (serviceTimeString + 0.1 === i + 0.25) {
@@ -169,14 +140,7 @@ function ListServices() {
     }
   };
 
-  //Config service time to be
-  function mapInput(input) {
-    if (input === 1) {
-      return 1;
-    } else {
-      return input * 0.6;
-    }
-  }
+
 
   //Convert service time from BE to dayjs
   function convertServiceTimeFromBe(serviceTime) {
@@ -212,75 +176,13 @@ function ListServices() {
 
   //Confirm update service
   const handleUpdateOk = async () => {
-    // form
-    //   .validateFields()
-    //   .then((values) => {
-    //     const {
-    //       description,
-    //       id,
-    //       img,
-    //       isActive,
-    //       price,
-    //       salonInformationId,
-    //       serviceName,
-    //       time,
-    //     } = values;
-    //     const configDiscountPercentageUpdate = discountPercentageUpdate / 100;
-    //     const updatedVoucher = {
-    //       ...voucherUpdate,
-    //       description: descriptionUpdate,
-    //       minimumOrderAmount: minimumOrderAmountUpdate,
-    //       discountPercentage: configDiscountPercentageUpdate,
-    //       expiryDate: expiryDateUpdate,
-    //     };
-    //     voucherServices
-    //       .updateVoucherById(voucherUpdate?.id, updatedVoucher)
-    //       .then((res) => {
-    //         console.log(res, "res");
-    //         message.success(
-    //           `Update voucher ${voucherUpdate.description} sucessfully!`
-    //         );
-    //       })
-    //       .catch((err) => console.log(err, "errors"));
-    //     // Call API or perform update operation
-    //     console.log("Updated Voucher Data:", updatedVoucher);
-    //     setIsUpdateModalVisible(false); // Close modal after update
-    //     form.resetFields(); // Reset form fields
-    //   })
-    //   .catch((error) => {
-    //     console.error("Validation Failed:", error);
-    //   });
-
     const serviceName = await form.getFieldValue("serviceName");
     const description = await form.getFieldValue("description");
     const price = await form.getFieldValue("price");
     const time = await form.getFieldValue("time");
-    const img = await form.getFieldValue("img");
-
-    const convertedTime = await dayjs(time).format(timeFormat); //HH:mm
-    const formServiceUpdate = {
-      ...updateService,
-      serviceName: serviceName,
-      description: description,
-      price: price,
-      time: time,
-    };
-
-    // const imageFile = imageFile.length > 0 ? imageFile[0].originFileObj : null;
     const formDataUpdate = new FormData();
-    console.log(form.name);
-    console.log("Time", time);
-    // const { $H, $m, ...rest } = time;
-    // console.log("hour", $H);
-    // console.log("minute", $m);
-    // const serviceTimeString = parseFloat(`${$H}.${$m}`); //convert string to float number
-    // console.log(
-    //   "timeString",
-    //   roundUpToNearestIncrement(serviceTimeString, 0.5)
-    // );
 
     const formattedTime = await onTimeChange(time);
-    console.log(img);
     if (isEmptyObject(imageFile)) {
       await formDataUpdate.append("ServiceName", serviceName);
       await formDataUpdate.append("Description", description);
@@ -289,11 +191,10 @@ function ListServices() {
       await formDataUpdate.append("IsActive", true);
 
       await ServiceHairServices.updateServiceHairById(
-        updateService.id,
+        updateService?.id,
         formDataUpdate
       )
         .then(() => {
-          console.log("Thanh cong roi ne hihi");
           message.success(`Bạn đã cập nhật dịch vụ ${serviceName} thành công!`);
           form.resetFields();
           setisUpdateModalService(false);
@@ -315,7 +216,6 @@ function ListServices() {
         formDataUpdate
       )
         .then(() => {
-          console.log("Thanh cong roi ne hihi");
           message.success(`Bạn đã cập nhật dịch vụ ${serviceName} thành công!`);
           form.resetFields();
           setisUpdateModalService(false);
@@ -326,28 +226,6 @@ function ListServices() {
         });
     }
   };
-
-  // useEffect(() => {
-  //   const {
-  //     description,
-  //     id,
-  //     img,
-  //     isActive,
-  //     price,
-  //     salonInformationId,
-  //     serviceName,
-  //     time,
-  //   } = serviceUpdate;
-
-  //   if (isUpdateModalService && updateService) {
-  //     form.setFieldsValue({
-  //       descriptionUpdate: description,
-  //       minimumOrderAmountUpdate: minimumOrderAmount,
-  //       discountPercentageUpdate: configDiscountPercentage,
-  //       expiryDateUpdate: dayjs(expiryDate), // Use moment to format date
-  //     });
-  //   }
-  // }, [isUpdateModalVisible, voucherUpdate]);
 
   const showAddServiceModal = () => {
     setOpen(true);
@@ -370,14 +248,12 @@ function ListServices() {
     setStatus(true);
   };
   const confirm = (e) => {
-    console.log(e);
     message.success("Click on Yes");
   };
   const cancel = (e) => {
-    console.log(e);
-    message.error("Click on No");
+    message.error("Không xóa!");
   };
-  console.log(servicesList, "Concat");
+
   const formatTime = (decimalHours) => {
     const hours = Math.floor(decimalHours);
 
@@ -410,12 +286,6 @@ function ListServices() {
     }).format(price);
   };
 
-  // const getBase64 = (file, callback) => {
-  //   const reader = new FileReader();
-  //   reader.addEventListener("load", () => callback(reader.result));
-  //   reader.readAsDataURL(file);
-  // };
-
   const getBase64 = (file, callback) => {
     const reader = new FileReader();
     reader.readAsDataURL(file); //mấu chốt ở đây!
@@ -429,10 +299,11 @@ function ListServices() {
 
     getBase64(info.file, (imageUrl) => {
       setImageUrl(imageUrl);
-      console.log(imageUrl);
     });
   };
-
+  const onPageChange = (page) => {
+    setCurrentPage(page);
+  };
   return (
     <>
       <div
@@ -488,21 +359,12 @@ function ListServices() {
               isOpen={(e) => {
                 setOpen(e); //e is False from serviceForm component pass value to ListBarberServices
               }}
-              // onAddServices={(service) => {
-              //   // const newServiceList = servicesList.concat(service);
-              //   const concatNewData = [...servicesList, ...service];
-              //   setServicesList(concatNewData);
-              //   setConcatList(concatNewData);
-              //   console.log("concatList", concatList);
-              //   setOpen(false);
-              // }}
               salonInformationId={id}
             />
           </Modal>
         </Flex>
         <List
-          // loadMore={onLoadMore}
-          loading={isLoading}
+          // loading={isLoading}
           itemLayout="horizontal"
           dataSource={listService}
           renderItem={(item) => (
@@ -546,11 +408,6 @@ function ListServices() {
                     </Space>
                   }
                 />
-                {/* <Link to={`/account_details/${item?.id}`}>
-                  <Button icon={<EditOutlined />} type="text">
-                    Edit
-                  </Button>
-                </Link> */}
                 <Space size={"small"}>
                   <Button
                     onClick={() => handleUpdate(item)}
@@ -623,7 +480,6 @@ function ListServices() {
                     <Upload
                       listType="picture"
                       beforeUpload={() => false}
-                      // fileList={fileList} //fileList thì mới có cái này, vì nó receive array
                       onChange={handleImageChange}
                       showUploadList={false} // Hide default list
                     >
@@ -642,7 +498,14 @@ function ListServices() {
             </>
           )}
         />
-        <Flex justify="center" align="center">
+        <Pagination
+            current={currentPage}
+            pageSize={pageSize}
+            total={totalPages}
+            onChange={onPageChange}
+            // showSizeChanger
+          />
+        {/* <Flex justify="center" align="center">
           {listService && !isLoading && (
             <Button
               icon={<PlusCircleOutlined />}
@@ -652,7 +515,7 @@ function ListServices() {
               More
             </Button>
           )}
-        </Flex>
+        </Flex> */}
       </div>
     </>
   );

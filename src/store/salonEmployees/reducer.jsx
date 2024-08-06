@@ -1,9 +1,15 @@
-import { CREATE_SALON_INFORMATION, GET_ALL_EMPLOYEE, GET_ALL_SERVICE } from "./action";
+import {
+  CREATE_SALON_INFORMATION,
+  GET_ALL_EMPLOYEE,
+  GET_ALL_SERVICE,
+} from "./action";
 
 const initialState = {
+  totalPages: 1,
+  totalPagesServices: 1,
   salonEmployees: {},
-  listEmployee:[],
-  listService:[]
+  listEmployee: [],
+  listService: [],
 };
 
 const reducer = (state = initialState, action) => {
@@ -17,12 +23,14 @@ const reducer = (state = initialState, action) => {
     case GET_ALL_EMPLOYEE:
       return {
         ...state,
-        listEmployee: action.payload,
+        totalPages: action.payload.totalPages,
+        listEmployee: action.payload.list,
       };
-      case GET_ALL_SERVICE:
+    case GET_ALL_SERVICE:
       return {
         ...state,
-        listService: action.payload,
+        listService: action.payload.list,
+        totalPagesServices: action.payload.totalPages,
       };
 
     default:

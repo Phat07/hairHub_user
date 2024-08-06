@@ -31,7 +31,7 @@ export function actGetAllReportCustomerId(id, page, size, status) {
       })
       .catch((error) => {
         // Xử lý lỗi nếu có
-        console.error("Error while fetching all config money:", error);
+        // console.error("Error while fetching all config money:", error);
       });
   };
 }
@@ -49,7 +49,7 @@ export function actGetAllReportSalonId(id, page, size, status) {
       })
       .catch((error) => {
         // Xử lý lỗi nếu có
-        console.error("Error while fetching all config money:", error);
+        // console.error("Error while fetching all config money:", error);
       });
   };
 }
@@ -85,8 +85,8 @@ export function actCreateReportCustomer(data) {
       
       return response; // Return the response or any other value you want
     } catch (error) {
-      console.error("Error while fetching all config money:", error);
-      throw error; // Rethrow the error so that the promise is rejected
+      // console.error("Error while fetching all config money:", error);
+      // throw error; 
     }
   };
 }

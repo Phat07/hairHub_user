@@ -24,7 +24,7 @@ export function actGetAllPaymentByOwnerId(id, page, size) {
       })
       .catch((error) => {
         // Xử lý lỗi nếu có
-        console.error("Error while fetching all config money:", error);
+        // console.error("Error while fetching all config money:", error);
       });
   };
 }
@@ -41,8 +41,8 @@ export function actGetStatusPayment(data, ordercode, id) {
       return result;
     } catch (error) {
       // Xử lý lỗi nếu có
-      console.error("Error while fetching all config money:", error);
-      throw error;
+      // console.error("Error while fetching all config money:", error);
+      // throw error;
     }
   };
 }
@@ -68,7 +68,7 @@ export function actCreatePaymentPackageByOwnerId(data) {
       })
       .catch((error) => {
         // Xử lý lỗi nếu có
-        console.error("Error while fetching all config money:", error);
+        // console.error("Error while fetching all config money:", error);
       });
   };
 }

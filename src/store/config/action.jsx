@@ -31,12 +31,12 @@ export function actGetAllConfig(page, size) {
         if (response.status === 200 || response.status === 201) {
           dispatch(getAllConfigPayment(response.data));
         } else {
-          message.error("No feedback for salon!!!!");
+          // message.error("No feedback for salon!!!!");
         }
       })
       .catch((error) => {
         // Xử lý lỗi nếu có
-        console.error("feedback:", error);
+        // console.error("feedback:", error);
       });
   };
 }
@@ -50,12 +50,12 @@ export function actGetAllPaymentList(id, page, size) {
         if (response.status === 200 || response.status === 201) {
           dispatch(getAllConfigPaymentByOwnerId(response.data));
         } else {
-          message.error("No payment for ownerId!!!!");
+          // message.error("");
         }
       })
       .catch((error) => {
         // Xử lý lỗi nếu có
-        console.error("error:", error);
+        // console.error("error:", error);
       });
   };
 }

@@ -116,7 +116,7 @@ const LoginPage = () => {
     const email = form.getFieldValue("email");
     try {
       await axios
-        .post("https://api.gahonghac.net/api/v1/otps/SendOTPToEmail", {
+        .post("https://157.15.86.92:8444/api/v1/api/v1/otps/SendOTPToEmail", {
           email,
         })
         .then((res) => {
@@ -140,7 +140,7 @@ const LoginPage = () => {
     const email = form.getFieldValue("email");
 
     axios
-      .post("https://api.gahonghac.net/api/v1/otps/checkOtp", {
+      .post("https://157.15.86.92:8444/api/v1/otps/checkOtp", {
         otpRequest: otp,
         email: email,
       })
@@ -169,7 +169,7 @@ const LoginPage = () => {
     } else {
       try {
         const response = await axios
-          .post("https://api.gahonghac.net/api/v1/otps/CheckExistEmail", {
+          .post("https://157.15.86.92:8444/api/v1/otps/CheckExistEmail", {
             email,
           })
           .then((res) => {

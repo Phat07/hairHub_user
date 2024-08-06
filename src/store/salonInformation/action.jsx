@@ -62,7 +62,7 @@ export function actGetAllSalonInformation() {
       })
       .catch((error) => {
         // Xử lý lỗi nếu có
-        console.error("Error while fetching all config money:", error);
+        // console.error("Error while fetching all config money:", error);
       });
   };
 }
@@ -81,7 +81,7 @@ export function actPostCreateSalonInformation(data) {
       })
       .catch((error) => {
         // Xử lý lỗi nếu có
-        console.error("Error while fetching all config money:", error);
+        // console.error("Error while fetching all config money:", error);
       });
   };
 }
@@ -99,7 +99,7 @@ export function actGetAllSalonSuggestionInformation() {
       })
       .catch((error) => {
         // Xử lý lỗi nếu có
-        console.error("Error", error);
+        // console.error("Error", error);
       });
   };
 }

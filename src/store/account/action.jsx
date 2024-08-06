@@ -59,21 +59,17 @@ export function loginAccount(data, navigate) {
 
 export function fetchUserByTokenApi(data, navigate) {
   return async (dispatch) => {
-    const result = AccountServices.fetchUserByToken(data);
-    await result
-      .then((response) => {
-        if (response.status === 200 || response.status === 201) {
-          dispatch(fetchUser(response.data));
-          // dispatch(getAllConfigPaymentByOwnerId(response.data));
-        } else {
-          message.error("Session hết hạn");
-          // navigate("/login");
-        }
-      })
-      .catch((error) => {
-        // Xử lý lỗi nếu có
-        console.error("error:", error);
-      });
+    try {
+      const response = await AccountServices.fetchUserByToken(data);
+      if (response.status === 200 || response.status === 201) {
+        dispatch(fetchUser(response.data));
+      } else {
+        message.error("Session hết hạn");
+        navigate("/login");
+      }
+    } catch (error) {
+      // message.error("Lỗi khi fetch user bằng token");
+    }
   };
 }
 

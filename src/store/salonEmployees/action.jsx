@@ -12,24 +12,26 @@ export const postCreateSalonEmployees = (list) => {
     payload: list,
   };
 };
-export const getAllEmployee = (list) => {
+export const getAllEmployee = (list, totalPages) => {
   return {
     type: GET_ALL_EMPLOYEE,
-    payload: list,
+    payload: { list: list, totalPages: totalPages },
   };
 };
-export const getAllService = (list) => {
+export const getAllService = (list, totalPages) => {
   return {
     type: GET_ALL_SERVICE,
-    payload: list,
+    payload: { list: list, totalPages: totalPages },
   };
 };
 
-export function actGetAllServicesBySalonId(id) {
+export function actGetAllServicesBySalonId(id, currentPage, pageSize) {
   return (dispatch) => {
-    ServiceHairServices.getServiceHairBySalonInformationId(id)
+    ServiceHairServices.getServiceHairBySalonInformationId(id, currentPage, pageSize)
       .then((res) => {
-        dispatch(getAllService(res.data));
+        console.log("res",res);
+        
+        dispatch(getAllService(res?.data?.items, res?.data?.totalPages));
       })
       .catch((err) => console.log(err, "errors"));
   };
@@ -47,15 +49,19 @@ export function actPostCreateSalonService(data, id) {
       })
       .catch((error) => {
         // Xử lý lỗi nếu có
-        console.error("Error while fetching all config money:", error);
+        // console.error("Error while fetching all config money:", error);
       });
   };
 }
-export function actGetAllEmployees(id) {
+export function actGetAllEmployees(id, currentPage, pageSize) {
   return (dispatch) => {
-    SalonEmployeesServices.getSalonEmployeeBySalonInformationId(id)
+    SalonEmployeesServices.getSalonEmployeeBySalonInformationId(
+      id,
+      currentPage,
+      pageSize
+    )
       .then((res) => {
-        dispatch(getAllEmployee(res.data.items));
+        dispatch(getAllEmployee(res?.data?.items, res?.data?.totalPages));
       })
       .catch((err) => console.log(err, "errors"));
   };
@@ -74,7 +80,7 @@ export function actPostCreateSalonEmployees(data, id) {
       })
       .catch((error) => {
         // Xử lý lỗi nếu có
-        console.error("Error while fetching all config money:", error);
+        // console.error("Error while fetching all config money:", error);
       });
   };
 }

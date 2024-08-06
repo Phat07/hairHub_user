@@ -190,7 +190,7 @@ function SalonDetail(props) {
     setListVoucher(listVoucherNotPaging);
   }, [listVoucherNotPaging]);
   const SALONDETAIL_URL =
-    "https://api.gahonghac.net/api/v1/saloninformations/GetSalonInformationById/";
+    "https://157.15.86.92:8444/api/v1/saloninformations/GetSalonInformationById/";
 
   const handleScroll = (direction, containerRef) => {
     const maxScroll =
@@ -335,7 +335,7 @@ function SalonDetail(props) {
       try {
         const response = await axios
           .post(
-            "https://api.gahonghac.net/api/v1/appointments/GetAvailableTime",
+            "https://157.15.86.92:8444/api/v1/appointments/GetAvailableTime",
             postData
           )
           .then((res) => {
@@ -454,7 +454,7 @@ function SalonDetail(props) {
     try {
       const response = await axios
         .post(
-          "https://api.gahonghac.net/api/v1/appointments/GetAvailableTime",
+          "https://157.15.86.92:8444/api/v1/appointments/GetAvailableTime",
           postData
         )
         .then((res) => {
@@ -493,7 +493,7 @@ function SalonDetail(props) {
       setDataBooking(requestBody); //serviceHairId, salonEmployeeId
       axios
         .post(
-          "https://api.gahonghac.net/api/v1/appointments/BookAppointment",
+          "https://157.15.86.92:8444/api/v1/appointments/BookAppointment",
           requestBody
         )
         .then((response) => {
@@ -582,7 +582,7 @@ function SalonDetail(props) {
 
     axios
       .post(
-        "https://api.gahonghac.net/api/v1/appointments/BookAppointment",
+        "https://157.15.86.92:8444/api/v1/appointments/BookAppointment",
         requestBody
       )
       .then((response) => {
@@ -781,7 +781,7 @@ function SalonDetail(props) {
 
     axios
       .post(
-        "https://api.gahonghac.net/api/v1/appointments/BookAppointment",
+        "https://157.15.86.92:8444/api/v1/appointments/BookAppointment",
         requestBody
       )
       .then((response) => {
@@ -942,7 +942,8 @@ function SalonDetail(props) {
   const sortedSchedules = salonDetail?.schedules?.sort((a, b) => {
     return daysOrder.indexOf(a.dayOfWeek) - daysOrder.indexOf(b.dayOfWeek);
   });
-
+  console.log("detail", salonDetail);
+  
   return (
     <div>
       <Header />
@@ -1715,6 +1716,11 @@ function SalonDetail(props) {
 
                   <div>
                     <Title level={4}>Thông tin</Title>
+                    <Text>{salonDetail.description}</Text>
+                    <Divider />
+                  </div>
+                  <div>
+                    <Title level={4}>Nhân viên</Title>
                     <Text>{salonDetail.description}</Text>
                     <Divider />
                   </div>

@@ -34,7 +34,6 @@ export function actGetAllFeedbackBySalonId(id, page, size, rating) {
     const result = RatingService.GetFeedbackBySalonId(id, page, size, rating);
     await result
       .then((response) => {
-        console.log("responeFeedback", response.data);
         if (response.status === 200 || response.status === 201) {
           dispatch(getAllFeedbackBySalonId(response.data));
         } else {

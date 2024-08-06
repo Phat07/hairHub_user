@@ -57,9 +57,9 @@ function AccountPage() {
   const ACCOUNT_URL =
     "http://14.225.218.91:8080/api/v1/accounts/GetAccountById/";
 
-  const auth = useAuthUser();
-  const authUserId = auth?.uid;
-  console.log(authUserId, "authAccountId");
+  // const auth = useAuthUser();
+  // const authUserId = auth?.uid;
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -151,7 +151,6 @@ function AccountPage() {
           //   schedules.reduce((acc, cur) => ({ ...acc, ...cur }), {}),
           //   "schedulessss"
           // );
-         
 
           form.setFieldsValue({
             fullName: userData.fullName,
@@ -170,7 +169,7 @@ function AccountPage() {
           });
           setSelectedServices(serviceHairs);
         } else {
-          console.log("Chạy cl");
+          // console.log("Chạy cl");
         }
         // setSalonId(res.data.salonInformationId);
       })
@@ -180,13 +179,10 @@ function AccountPage() {
     ServiceHairServices.getServiceHairBySalonInformationId(id)
       .then((res) => {
         setServicesList(res.data);
-        console.log(res.data, "servicehair salon");
       })
       .catch((err) => {
         console.log(err, "errrors");
       });
-
-    // axios
     //   .get(
     //     employeeId === accountEmployeeDetail?.id
     //       ? ACCOUNT_URL
@@ -314,7 +310,6 @@ function AccountPage() {
     //   console.log(err, "errors");
     // });
   }, [employeeId]);
-  console.log(schedules);
 
   const convertScheduleFormat = (scheduleData) => {
     const daysOfWeek = [
@@ -382,7 +377,6 @@ function AccountPage() {
       .catch((err) => message.error(err));
   };
 
-  // console.log(user, "user Ne");
   const handleEdit = async () => {
     const imageFile = fileList.length > 0 ? fileList[0].originFileObj : null;
     const formData = new FormData();
@@ -401,7 +395,6 @@ function AccountPage() {
         navigate(`/list_barber_employees/${id}`);
         dispatch(actGetAllEmployees(id));
         message.success("Chỉnh sửa thông tin nhân viên thành công");
-        console.log(res, "res neeeee");
       })
       .catch((err) => message.error(err));
   };
@@ -417,14 +410,12 @@ function AccountPage() {
           marginRight: "250px",
         }}
       >
-        {/* <AccountForm id={id} user={user} /> */}
-        {/* if id === accountDetail.id, Employee Account will be rendered */}
         <>
-          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          {/* <div style={{ display: "flex", justifyContent: "flex-end" }}>
             <Button onClick={handleEdit} type="primary">
               Chỉnh sửa nhưng không chỉnh sửa lịch làm
             </Button>
-          </div>
+          </div> */}
           <Flex justify="center">
             <Card className="bg-slate-100">
               <Space
@@ -636,10 +627,15 @@ function AccountPage() {
                       </Space>
                     </Space>
                   ))}
+                  <Form.Item>
+                    <Button onClick={handleEdit} type="primary">
+                      Chỉnh sửa nhưng không chỉnh sửa lịch làm
+                    </Button>
+                  </Form.Item>
 
                   <Form.Item>
                     <Button type="primary" htmlType="submit">
-                      Hoàn tất
+                      Chỉnh sửa
                     </Button>
                   </Form.Item>
                 </Form>
