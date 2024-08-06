@@ -720,7 +720,10 @@ function SystemBarberPage(props) {
               itemLayout="horizontal"
               dataSource={salonList}
               renderItem={(salon) => (
-                <List.Item className="salon-list-item">
+                <List.Item
+                  className="salon-list-item"
+                  style={{ display: "flex", justifyContent: "flex-start" }}
+                >
                   <img src={salon.img} alt={salon.name} className="salon-img" />
                   <div className="salon-details">
                     <h4 style={{ margin: "0", marginBottom: "8px" }}>
