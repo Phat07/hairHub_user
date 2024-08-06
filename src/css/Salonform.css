@@ -1,0 +1,52 @@
+.container_list {
+    margin-top: 120px;
+    margin-left: 250px;
+    margin-right: 250px;
+  }
+.container_title {
+  font-size: 5rem;
+  font-weight: bold;
+}
+.service_title{
+  font-size: 2rem;
+  font-weight: bold;
+  background-color:#DDF0FF;
+  word-wrap: break-word;
+  word-break: break-all;
+  white-space: normal;
+  overflow-wrap: break-word;
+  border-radius: 1rem;
+  padding: 5px;
+}
+.avatar-col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-responsive {
+  width: 100%;
+  max-width: 10rem; /* Đảm bảo không vượt quá chiều rộng của Col */
+  border-radius: 50%; /* Đảm bảo hình dạng tròn */
+  object-fit: cover; /* Đảm bảo ảnh không bị biến dạng */
+}
+
+
+  @media (max-width: 768px) {
+    .container_list {
+        margin-top: 120px;
+        margin-left: 10px;
+        margin-right: 10px;
+      }
+      .container_title {
+        font-size: 3rem;
+        font-weight: bold;
+      }
+      .service_title{
+        font-size: 1rem;
+      }
+      .service-actions {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }

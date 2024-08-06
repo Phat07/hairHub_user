@@ -306,7 +306,10 @@ import {
   Space,
   Image,
   Divider,
+  Menu,
+  Dropdown,
 } from "antd";
+import "../css/listShopBarber.css";
 import Header from "../components/Header";
 import { Link, useNavigate } from "react-router-dom";
 import AddServiceForm from "../components/SalonShop/ServiceForm";
@@ -317,6 +320,7 @@ import {
   EditFilled,
   EditOutlined,
   LineOutlined,
+  MenuOutlined,
   MoreOutlined,
   PlusCircleOutlined,
 } from "@ant-design/icons";
@@ -341,12 +345,8 @@ function ListShopBarber(props) {
   const [page, setPage] = useState(1);
   // const auth = useAuthUser();
   // const ownerId = auth?.idOwner;
-  const idCustomer = useSelector(
-    (state) => state.ACCOUNT.idCustomer
-  );
-  const ownerId = useSelector(
-    (state) => state.ACCOUNT.idOwner
-  );
+  const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
+  const ownerId = useSelector((state) => state.ACCOUNT.idOwner);
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
@@ -387,11 +387,19 @@ function ListShopBarber(props) {
     setList(filteredList);
   };
   useEffect(() => {
-    dispatch(actGetAllServicesBySalonId(salonDetail.id, localStorage.getItem("currentPage"),localStorage.getItem("pageSize")));
+    dispatch(
+      actGetAllServicesBySalonId(
+        salonDetail.id,
+        localStorage.getItem("currentPage"),
+        localStorage.getItem("pageSize")
+      )
+    );
   }, []);
-  const listService = useSelector((state) => state.SALONEMPLOYEES.salonServicesList);
+  const listService = useSelector(
+    (state) => state.SALONEMPLOYEES.salonServicesList
+  );
   console.log("list", listService);
-  
+
   const checkEmployeeListExist = () => {
     if (listService?.length === 0) {
       navigate(`/list_service/${salonDetail.id}`);
@@ -435,45 +443,89 @@ function ListShopBarber(props) {
   };
 
   const sortSchedules = (schedules) => {
-    const dayOrder = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-    return schedules.sort((a, b) => dayOrder.indexOf(a.dayOfWeek) - dayOrder.indexOf(b.dayOfWeek));
+    const dayOrder = [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+    ];
+    return schedules.sort(
+      (a, b) => dayOrder.indexOf(a.dayOfWeek) - dayOrder.indexOf(b.dayOfWeek)
+    );
   };
+
+  const [dropdownVisible, setDropdownVisible] = useState(false);
+
+  const handleMenuClick = ({ key }) => {
+    if (key === "employeeList") {
+      checkEmployeeListExist();
+    } else if (key === "serviceList") {
+      navigate(`/list_service/${salonDetail.id}`);
+    } else if (key === "voucherList") {
+      navigate(`/list_voucher/${salonDetail.id}`);
+    }
+    setDropdownVisible(false);
+  };
+
+  const menu = (
+    <Menu onClick={handleMenuClick}>
+      <Menu.Item key="employeeList">Danh sách nhân viên</Menu.Item>
+      <Menu.Item key="serviceList">Danh sách dịch vụ</Menu.Item>
+      <Menu.Item key="voucherList">Danh sách các voucher</Menu.Item>
+    </Menu>
+  );
 
   return (
     <div>
-      <div
-        style={{
-          marginTop: "140px",
-          marginLeft: "60px",
-          marginRight: "60px",
-        }}
-      >
+      <div className="container_list">
         {!isEmptyObject(salonDetail) ? (
           <>
             <Card
               title="Thông tin Salon"
+              className="responsive-card"
               style={{ width: "100%", height: "100%", margin: "20px auto" }}
             >
-              <Row gutter={16}>
-                <Col span={6}>
+              <Row
+                gutter={16}
+                className="responsive-row"
+                style={{ display: "flex" }}
+              >
+                <Col className="responsive-col">
                   <Image size={300} src={salonDetail.img} />
                 </Col>
-                <Col span={18}>
+                <Col span={18} xs={24} className="responsive-col1">
                   <Descriptions
                     title={
                       <Flex justify="space-between" align="center">
-                        <Flex className="bg-blue-600 p-3 w-max border border-red-300 rounded-md cursor-pointer">
+                        {/* <Flex className="bg-blue-600 p-3 w-max border border-red-300 rounded-md cursor-pointer salon-title">
                           <Typography.Title
                             style={{ color: "rgb(241 245 249)" }}
                             level={3}
-                            onClick={()=>{
-                              navigate(`/create_shop/${salonDetail?.id}`)
+                            onClick={() => {
+                              navigate(`/create_shop/${salonDetail?.id}`);
                             }}
                           >
                             {salonDetail.name}
                           </Typography.Title>
-                        </Flex>
-                        <Flex gap={"middle"} align="base-line">
+                        </Flex> */}
+                        <Button
+                          type="primary"
+                          style={{ color: "rgb(241 245 249)" }}
+                          onClick={() => {
+                            navigate(`/create_shop/${salonDetail?.id}`);
+                          }}
+                          className="salon-title"
+                        >
+                          {salonDetail.name}
+                        </Button>
+                        <Flex
+                          gap={"middle"}
+                          align="base-line"
+                          className="dropdown-btns"
+                        >
                           <Button
                             type="primary"
                             onClick={() => checkEmployeeListExist()}
@@ -497,9 +549,21 @@ function ListShopBarber(props) {
                             Danh sách các voucher
                           </Button>
                         </Flex>
+                        <Dropdown
+                          overlay={menu}
+                          trigger={["click"]}
+                          visible={dropdownVisible}
+                          onVisibleChange={(flag) => setDropdownVisible(flag)}
+                        >
+                          <MenuOutlined
+                            className="dropdown-icon"
+                            style={{ fontSize: "24px" }}
+                          />
+                        </Dropdown>
                       </Flex>
                     }
                     bordered
+                    className="responsive-descriptions"
                   >
                     <Descriptions.Item span={1} label="Địa chỉ">
                       {salonDetail.address}
@@ -544,28 +608,34 @@ function ListShopBarber(props) {
               <Row gutter={16} style={{ marginTop: "20px" }}>
                 <Col span={24}>
                   <Descriptions title="Lịch trình" bordered>
-                    {salonDetail?.schedules && sortSchedules(salonDetail?.schedules).map((schedule, index) => (
-                      <Descriptions.Item
-                        key={index}
-                        label={convertDayOfWeekToVietnamese(schedule.dayOfWeek)}
-                      >
-                        {schedule.startTime === "00:00:00" && schedule.endTime === "00:00:00" ? (
-                          <Typography.Text strong style={{ color: "red" }}>
-                            Không hoạt động
-                          </Typography.Text>
-                        ) : (
-                          <Space size={10}>
-                            <Typography.Text strong>
-                              {schedule.startTime.slice(0, 5)} AM
-                            </Typography.Text>
-                            <LineOutlined />
-                            <Typography.Text strong>
-                              {schedule.endTime.slice(0, 5)} PM
-                            </Typography.Text>
-                          </Space>
-                        )}
-                      </Descriptions.Item>
-                    ))}
+                    {salonDetail?.schedules &&
+                      sortSchedules(salonDetail?.schedules).map(
+                        (schedule, index) => (
+                          <Descriptions.Item
+                            key={index}
+                            label={convertDayOfWeekToVietnamese(
+                              schedule.dayOfWeek
+                            )}
+                          >
+                            {schedule.startTime === "00:00:00" &&
+                            schedule.endTime === "00:00:00" ? (
+                              <Typography.Text strong style={{ color: "red" }}>
+                                Không hoạt động
+                              </Typography.Text>
+                            ) : (
+                              <Space size={10}>
+                                <Typography.Text strong className="small-text">
+                                  {schedule.startTime.slice(0, 5)} AM
+                                </Typography.Text>
+                                <LineOutlined />
+                                <Typography.Text strong className="small-text">
+                                  {schedule.endTime.slice(0, 5)} PM
+                                </Typography.Text>
+                              </Space>
+                            )}
+                          </Descriptions.Item>
+                        )
+                      )}
                   </Descriptions>
                 </Col>
               </Row>

@@ -1577,3 +1577,20 @@
    padding: 1.5rem;
    border-radius: 1rem;
  }
+
+ @media (max-width: 768px) {
+  .scroll-content {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+
+  .scroll-content::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari, Opera */
+  }
+
+  .small-card {
+    flex: 0 0 auto; /* Ngăn các thẻ co lại hoặc giãn ra */
+  }
+}

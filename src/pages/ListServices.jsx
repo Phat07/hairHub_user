@@ -36,6 +36,7 @@ import AddServiceForm from "../components/SalonShop/ServiceForm";
 import "../css/manageVoucher.css";
 import { ServiceHairServices } from "../services/servicesHairServices";
 import { actGetAllServicesBySalonId } from "../store/salonEmployees/action";
+import "../css/Salonform.css";
 
 function ListServices() {
   const [form] = Form.useForm();
@@ -341,29 +342,21 @@ function ListServices() {
   };
   return (
     <>
-      <div
-        style={{
-          marginTop: "140px",
-          marginLeft: "250px",
-          marginRight: "250px",
-        }}
-      >
+      <div className="container_list">
         <Flex
           className="p-6 bg-green-100 border rounded-xl"
           justify="space-around"
           align="center"
         >
-          <Button
+          {/* <Button
             icon={<BackwardOutlined />}
             // type=""
             danger
             onClick={() => navigate(-1)}
           >
             Quay về
-          </Button>
-          <Typography.Title className="pr-[15rem] pl-[15rem]">
-            Danh sách các dịch vụ
-          </Typography.Title>
+          </Button> */}
+          <div className="container_title">Danh sách các dịch vụ</div>
           <Button
             className="addButtonStyle"
             icon={<UserAddOutlined />}
@@ -415,7 +408,7 @@ function ListServices() {
                       {/* <Typography.Text strong>{item?.id}</Typography.Text> */}
                       <Avatar
                         size={{
-                          xs: 24,
+                          xs: 64,
                           sm: 32,
                           md: 40,
                           lg: 64,
@@ -432,7 +425,7 @@ function ListServices() {
                     </Typography.Title>
                   }
                   description={
-                    <Space size={"large"}>
+                    <Space size={"large"} className="service-actions">
                       <Typography.Text>{item?.description}</Typography.Text>
                       <Typography.Text>
                         {formatPrice(item?.price)}
@@ -443,7 +436,7 @@ function ListServices() {
                     </Space>
                   }
                 />
-                <Space size={"small"}>
+                <Space size={"small"} className="service-actions">
                   <Button
                     onClick={() => handleUpdate(item)}
                     className="editButtonStyle"
