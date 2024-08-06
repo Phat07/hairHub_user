@@ -31,6 +31,7 @@ import "dayjs/locale/vi"; // Import German locale
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { actGetVoucherBySalonId } from "../store/manageVoucher/action";
+import "../css/Salonform.css";
 
 function ManageVoucher(props) {
   const { id } = useParams(); //salonId
@@ -471,15 +472,15 @@ function ManageVoucher(props) {
   };
 
   return (
-    <div>
-      <Header />
-      <div
+    <div className="container_list">
+      {/* <Header /> */}
+      {/* <div
         style={{
           marginTop: "140px",
           marginLeft: "250px",
           marginRight: "250px",
         }}
-      ></div>
+      ></div> */}
       <div
         style={{
           textAlign: "center",

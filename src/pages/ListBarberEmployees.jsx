@@ -442,6 +442,7 @@ import {
   WomanOutlined,
   ArrowUpOutlined,
 } from "@ant-design/icons";
+import "../css/Salonform.css";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import AddEmployeeForm from "../components/SalonShop/EmployeeForm";
 import { useDispatch, useSelector } from "react-redux";
@@ -463,7 +464,6 @@ function ListBarberEmployees() {
     (state) => state.SALONEMPLOYEES.listEmployee
   );
   const totalPages = useSelector((state) => state.SALONEMPLOYEES.totalPages);
-
 
   const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
   const ownerId = useSelector((state) => state.ACCOUNT.idOwner);
@@ -530,25 +530,17 @@ function ListBarberEmployees() {
 
   return (
     <>
-      <div
-        style={{
-          marginTop: "140px",
-          marginLeft: "250px",
-          marginRight: "250px",
-        }}
-      >
+      <div className="container_list">
         <>
           <div className="p-6 bg-green-100 border rounded-xl flex justify-around items-center">
-            <Button
+            {/* <Button
               icon={<BackwardOutlined />}
               danger
               onClick={() => navigate(-1)}
             >
               Quay lại
-            </Button>
-            <Typography.Title className="pr-[15rem] pl-[15rem]">
-              Danh sách nhân viên
-            </Typography.Title>
+            </Button> */}
+            <div className="container_title">Danh sách nhân viên</div>
             <Button
               className="addButtonStyle"
               icon={<UserAddOutlined />}
@@ -587,8 +579,16 @@ function ListBarberEmployees() {
                       style={{ cursor: "pointer" }}
                     />
                   }
-                  title={employeeList.fullName}
-                  description={employeeList.email}
+                  title={
+                    <span className="text-lg md:text-xl">
+                      {employeeList.fullName}
+                    </span>
+                  }
+                  description={
+                    <span className="text-sm md:text-base">
+                      {employeeList.email}
+                    </span>
+                  }
                 />
                 <Space size={"small"}>
                   <Link to={`account_details/${employeeList.id}`}>
@@ -634,23 +634,20 @@ function ListBarberEmployees() {
           width="1000px"
           onCancel={() => setDetailEmployee(null)}
           footer={null}
-          bodyStyle={{ height: "600px" }}
+          bodyStyle={{ height: "100%" }}
         >
           <Card
             title={`Thông tin nhân viên ${detailEmployee.fullName}`}
             style={{ width: "100%", height: "100%", margin: "20px auto" }}
           >
             <Row gutter={16}>
-              <Col span={6}>
-                <Avatar size={200} src={detailEmployee.img} />
+              <Col span={6} className="avatar-col">
+                <img className="avatar-responsive" src={detailEmployee.img} />
               </Col>
               <Col span={18}>
                 <Descriptions
                   title={
-                    <div
-                      className="bg-blue-400 p-3 w-max border border-red-200 rounded-md text-slate-100 cursor-pointer"
-                      onClick={handleServiceModal}
-                    >
+                    <div className="service_title" onClick={handleServiceModal}>
                       Dịch vụ của nhân viên {detailEmployee.fullName}{" "}
                       <ArrowUpOutlined />
                     </div>

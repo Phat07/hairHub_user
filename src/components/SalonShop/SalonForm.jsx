@@ -15,6 +15,7 @@ import {
   Typography,
   Spin,
 } from "antd";
+import "../../css/Salonform.css";
 import { UploadOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { LoadScript, StandaloneSearchBox } from "@react-google-maps/api";
@@ -209,9 +210,9 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
     const asyncOnFinish = async () => {
       setLoading(true);
       try {
-        await dispatch(actPostCreateSalonInformation(formData)).then((res)=>{
-          message.success('Tạo salon thành công')
-          navigate('/list_shop')
+        await dispatch(actPostCreateSalonInformation(formData)).then((res) => {
+          message.success("Tạo salon thành công");
+          navigate("/list_shop");
         });
       } catch (error) {
         console.error("Error occurred:", error);
@@ -365,9 +366,7 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
   };
 
   return (
-    <div
-      style={{ marginTop: "120px", marginLeft: "250px", marginRight: "250px" }}
-    >
+    <div className="container_list">
       <LoadScript
         googleMapsApiKey={`${
           import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
@@ -387,38 +386,37 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
               <Flex justify="space-between" align="center">
                 {/* -translate-y-1: căng thêm trên dưới vì trục y, scale-105: phóng to content thêm 5 vì 100 là cơ bản, dưới 100 thì thu nhỏ  */}
                 <Typography.Title
-                  level={2}
+                  level={4}
                   className="bg-slate-300 p-3 mt-3 border border2 rounded-md text-slate-500 hover:text-blue-500 transition ease-in-out hover:-translate-y-1 hover:scale-105 duration-300"
                 >
                   {salonDetail ? "CHỈNH SỬA TIỆM CỦA BẠN" : "TẠO TIỆM CỦA BẠN"}
                 </Typography.Title>
-
-                {fileList.map((file) => (
-                  <div
-                    key={file.uid}
-                    style={{
-                      maxHeight: "50rem",
-                      maxWidth: "50rem",
-                      marginTop: "2rem",
-                    }}
-                  >
-                    <Image
-                      width={400}
-                      // key={file.uid} //because div already have key, don't need here
-                      src={
-                        file.url ||
-                        (file.originFileObj
-                          ? URL.createObjectURL(file.originFileObj)
-                          : null)
-                      }
-                      alt={file.name}
-                    />
-                  </div>
-                ))}
               </Flex>
             }
           >
             <Spin spinning={loading}>
+              {fileList.map((file) => (
+                <div
+                  key={file.uid}
+                  style={{
+                    maxHeight: "50rem",
+                    maxWidth: "50rem",
+                    marginTop: "2rem",
+                  }}
+                >
+                  <Image
+                    width={"100%"}
+                    // key={file.uid} //because div already have key, don't need here
+                    src={
+                      file.url ||
+                      (file.originFileObj
+                        ? URL.createObjectURL(file.originFileObj)
+                        : null)
+                    }
+                    alt={file.name}
+                  />
+                </div>
+              ))}
               <Form form={form} onFinish={onFinish} layout="vertical">
                 <Form.Item
                   name="image"
