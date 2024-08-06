@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Row, Col, Table } from "antd";
 import { Link } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import "../css/PaymentCommissionPage.css";
+import { SalonPayment } from "../services/salonPayment";
+import { useSelector } from "react-redux";
 
 const dataSource = [
   {
@@ -39,6 +41,42 @@ const columns = [
 ];
 
 function PaymentCommissionPage() {
+  const [data, setData] = useState("");
+
+  const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
+  const idOwner = useSelector((state) => state.ACCOUNT.idOwner);
+  const uid = useSelector((state) => state.ACCOUNT.uid);
+  useEffect(() => {
+    // Call the initial API to get payment information
+    SalonPayment.getInforPaymetOwnerId(idOwner)
+      .then((response) => {
+        console.log("res", response);
+
+        // Set the data from the API response
+        setData(response.data);
+      })
+      .catch((error) => {
+        console.error(
+          "There was an error fetching the payment information!",
+          error
+        );
+      });
+  }, []);
+
+  const handleNextClick = () => {
+    // Call the next API when the button is clicked
+    axios
+      .post("https://your-api-endpoint.com/api/next-step", {
+        // Include any necessary data here
+      })
+      .then((response) => {
+        // Handle the response from the API
+        console.log("Next step response:", response.data);
+      })
+      .catch((error) => {
+        console.error("There was an error processing the next step!", error);
+      });
+  };
   return (
     <div className="payment-commission-container">
       <div className="invoice-container">
@@ -87,7 +125,9 @@ function PaymentCommissionPage() {
           className="invoice-table"
         />
         <Row justify="center" className="action-buttons">
-          <Button type="primary">TIẾP THEO</Button>
+          <Button onClick={handleNextClick} type="primary">
+            TIẾP THEO
+          </Button>
           <Button type="default" danger>
             HỦY HOÁ ĐƠN
           </Button>

@@ -191,7 +191,7 @@ function SalonDetail(props) {
     setListVoucher(listVoucherNotPaging);
   }, [listVoucherNotPaging]);
   const SALONDETAIL_URL =
-    "https://api.gahonghac.net/api/v1/saloninformations/GetSalonInformationById/";
+    "https://hairhub.gahonghac.net/api/v1/saloninformations/GetSalonInformationById/";
 
   const handleScroll = (direction, containerRef) => {
     const maxScroll =
@@ -336,7 +336,7 @@ function SalonDetail(props) {
       try {
         const response = await axios
           .post(
-            "https://api.gahonghac.net/api/v1/appointments/GetAvailableTime",
+            "https://hairhub.gahonghac.net/api/v1/appointments/GetAvailableTime",
             postData
           )
           .then((res) => {
@@ -455,7 +455,7 @@ function SalonDetail(props) {
     try {
       const response = await axios
         .post(
-          "https://api.gahonghac.net/api/v1/appointments/GetAvailableTime",
+          "https://hairhub.gahonghac.net/api/v1/appointments/GetAvailableTime",
           postData
         )
         .then((res) => {
@@ -494,7 +494,7 @@ function SalonDetail(props) {
       setDataBooking(requestBody); //serviceHairId, salonEmployeeId
       axios
         .post(
-          "https://api.gahonghac.net/api/v1/appointments/BookAppointment",
+          "https://hairhub.gahonghac.net/api/v1/appointments/BookAppointment",
           requestBody
         )
         .then((response) => {
@@ -583,7 +583,7 @@ function SalonDetail(props) {
 
     axios
       .post(
-        "https://api.gahonghac.net/api/v1/appointments/BookAppointment",
+        "https://hairhub.gahonghac.net/api/v1/appointments/BookAppointment",
         requestBody
       )
       .then((response) => {
@@ -781,7 +781,7 @@ function SalonDetail(props) {
 
     axios
       .post(
-        "https://api.gahonghac.net/api/v1/appointments/BookAppointment",
+        "https://hairhub.gahonghac.net/api/v1/appointments/BookAppointment",
         requestBody
       )
       .then((response) => {
@@ -819,7 +819,7 @@ function SalonDetail(props) {
 
         setAdditionalServices(updatedAdditionalServices);
         setShowServiceList(false);
-        console.log("Appointment booked successfully!", response.data);
+
         // Cập nhật state hoặc hiển thị thông báo thành công
       })
       .catch((error) => {
