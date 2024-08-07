@@ -112,21 +112,13 @@ function AccountPage() {
     SalonEmployeesServices.getSalonEmployeeById(employeeId)
       .then((res) => {
         setAccountEmployeeDetail(res.data);
-        console.log(res.data, "account employee");
         setSchedules(res.data.schedules);
         // const userAccount = res.data.id === id;
         const userData = res.data;
-        console.log(userData, "userData");
         setUser(res.data);
-        // console.log(res.data);
         if (userData) {
-          const birthDay = dayjs(userData.dayOfBirth); //set the value type to the value type of DatePicker component ant design, Date Library in Ant design config by dayjs library
-          console.log(userData.schedules);
-          // userData.schedules.forEach((day, index) => {
-          //   console.log(`This is ${day} and index ${index}`);
-          // });
+          const birthDay = dayjs(userData.dayOfBirth);
           const schedules = {};
-
           // Format schedule times using dayjs
           for (const day in userData) {
             schedules[day.toLowerCase()] = {
@@ -136,21 +128,13 @@ function AccountPage() {
           }
 
           const formattedSchedules = convertScheduleFormat(schedules);
-          console.log(formattedSchedules);
-          // const serviceHairs = userData.serviceHairs.map(
-          //   ({ serviceName }) => serviceName
-          // );
+
           const serviceHairs = userData.serviceHairs.map(
             ({ id, serviceName }) => ({
               id,
               serviceName,
             })
           );
-          console.log(serviceHairs, "serviceHairsss");
-          // console.log(
-          //   schedules.reduce((acc, cur) => ({ ...acc, ...cur }), {}),
-          //   "schedulessss"
-          // );
 
           form.setFieldsValue({
             fullName: userData.fullName,
@@ -176,139 +160,15 @@ function AccountPage() {
       .catch((err) => {
         console.log(err, "errors");
       });
-    ServiceHairServices.getServiceHairBySalonInformationId(id)
+    ServiceHairServices.getServiceHairBySalonNotPaging(id)
       .then((res) => {
+        console.log("resSer", res);
+
         setServicesList(res.data);
       })
       .catch((err) => {
         console.log(err, "errrors");
       });
-    //   .get(
-    //     employeeId === accountEmployeeDetail?.id
-    //       ? ACCOUNT_URL
-    //       : EMPLOYEESDETAILS_URL + employeeId
-    //   ).then((res) => {
-    //     // const userAccount = res.data.id === id;
-    //     const userData = res.data;
-    //     setUser(res.data);
-    //     // console.log(res.data);
-    //     if (userData) {
-    //       const birthDay = dayjs(userData.dayOfBirth); //set the value type to the value type of DatePicker component ant design, Date Library in Ant design config by dayjs library
-    //       // console.log(birthDay, "birthDay");
-    //       // const schedules = userData.schedules.map(
-    //       //   ({ dayOfWeek }) => dayOfWeek
-    //       // );
-    //       const convertedSchedule = [];
-    //       schedules.dayOfWeek.forEach((day) => {
-    //         const dayData = {
-    //           DayOfWeek: day,
-    //           StartTime: "00:00",
-    //           EndTime: "00:00",
-    //           IsActive: false,
-    //         };
-
-    //         const dayInfo = schedules.dayOfWeek[day.toLowerCase()];
-    //         if (
-    //           dayInfo &&
-    //           dayInfo.start !== "00:00" &&
-    //           dayInfo.end !== "00:00"
-    //         ) {
-    //           dayData.StartTime = dayInfo.start;
-    //           dayData.EndTime = dayInfo.end;
-    //           dayData.IsActive = true;
-    //         }
-
-    //         convertedSchedule.push(dayData);
-    //       });
-
-    //       const serviceHairs = userData.serviceHairs.map(
-    //         ({ description }) => description
-    //       );
-    //       console.log(serviceHairs, "serviceHairsss");
-    //       console.log(
-    //         schedules.reduce((acc, cur) => ({ ...acc, ...cur }), {}),
-    //         "schedulessss"
-    //       );
-    //       form.setFieldsValue({
-    //         fullName: userData.fullName,
-    //         email: userData.email,
-    //         gender: userData.gender,
-    //         phone: userData.phone,
-    //         address: userData.address,
-    //         dayOfBirth: birthDay,
-    //         avatar: userData.avatar,
-    //         serviceHairs:
-    //           serviceHairs === null ? "Did not have any service" : serviceHairs,
-    //         // schedules:
-    //         //   schedules === null ? "Did not have any service" : schedules,
-    //         ...schedules.reduce((acc, cur) => ({ ...acc, ...cur }), {}),
-    //       });
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     console.log(err, "errors");
-    //   });
-    // .then((res) => {
-    //   // const userAccount = res.data.id === id;
-    //   const userData = res.data;
-    //   setUser(res.data);
-    //   // console.log(res.data);
-    //   if (userData) {
-    //     const birthDay = dayjs(userData.dayOfBirth); //set the value type to the value type of DatePicker component ant design, Date Library in Ant design config by dayjs library
-    //     // console.log(birthDay, "birthDay");
-    //     // const schedules = userData.schedules.map(
-    //     //   ({ dayOfWeek }) => dayOfWeek
-    //     // );
-    //     const convertedSchedule = [];
-    //     schedules.dayOfWeek.forEach((day) => {
-    //       const dayData = {
-    //         DayOfWeek: day,
-    //         StartTime: "00:00",
-    //         EndTime: "00:00",
-    //         IsActive: false,
-    //       };
-
-    //       const dayInfo = schedules.dayOfWeek[day.toLowerCase()];
-    //       if (
-    //         dayInfo &&
-    //         dayInfo.start !== "00:00" &&
-    //         dayInfo.end !== "00:00"
-    //       ) {
-    //         dayData.StartTime = dayInfo.start;
-    //         dayData.EndTime = dayInfo.end;
-    //         dayData.IsActive = true;
-    //       }
-
-    //       convertedSchedule.push(dayData);
-    //     });
-
-    //     const serviceHairs = userData.serviceHairs.map(
-    //       ({ description }) => description
-    //     );
-    //     console.log(serviceHairs, "serviceHairsss");
-    //     console.log(
-    //       schedules.reduce((acc, cur) => ({ ...acc, ...cur }), {}),
-    //       "schedulessss"
-    //     );
-    //     form.setFieldsValue({
-    //       fullName: userData.fullName,
-    //       email: userData.email,
-    //       gender: userData.gender,
-    //       phone: userData.phone,
-    //       address: userData.address,
-    //       dayOfBirth: birthDay,
-    //       avatar: userData.avatar,
-    //       serviceHairs:
-    //         serviceHairs === null ? "Did not have any service" : serviceHairs,
-    //       // schedules:
-    //       //   schedules === null ? "Did not have any service" : schedules,
-    //       ...schedules.reduce((acc, cur) => ({ ...acc, ...cur }), {}),
-    //     });
-    //   }
-    // })
-    // .catch((err) => {
-    //   console.log(err, "errors");
-    // });
   }, [employeeId]);
 
   const convertScheduleFormat = (scheduleData) => {

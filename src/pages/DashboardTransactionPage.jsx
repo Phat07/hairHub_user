@@ -53,16 +53,18 @@ function DashboardTransactionPage(props) {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5;
 
-
   useEffect(() => {
     if (salonInformationByOwnerId || idOwner) {
       try {
-        dispatch(actGetAppointmentTransaction(salonInformationByOwnerId.id, filterDays));
+        dispatch(
+          actGetAppointmentTransaction(salonInformationByOwnerId.id, filterDays)
+        );
       } catch (err) {
         message.error("Không thể lấy dữ liệu!");
       }
     }
   }, [salonInformationByOwnerId, filterDays]);
+  console.log("salonTransaction", salonTransaction);
 
   const handleFilterChange = (event) => {
     const value = event.target.value;

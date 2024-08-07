@@ -27,12 +27,13 @@
 
 .appointment-list {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  /* flex-wrap: wrap;
+  justify-content: space-between; */
 }
 
 .appointment-item {
   width: calc(25% - 1rem);
+  margin-right: 2rem;
   margin-bottom: 20px;
   padding: 20px;
   border: 1px solid #ccc;

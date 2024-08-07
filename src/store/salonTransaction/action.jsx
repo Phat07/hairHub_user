@@ -20,7 +20,6 @@ export function actGetAppointmentTransaction(salonId, numberOfDay) {
       .then((response) => {
         // console.log("salonTransaction", response);
         if (response.status === 200 || response.status === 201) {
-          console.log("salonTransaction", response.data);
           dispatch(getAllSalonTransaction(response.data));
         } else {
           message.error("No salon transaction!!!!");
