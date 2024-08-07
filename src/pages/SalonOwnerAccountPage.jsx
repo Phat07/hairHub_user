@@ -99,17 +99,25 @@ import {
   Typography,
   Button,
   Space,
+  Form,
+  Input,
+  Select,
+  DatePicker,
+  Upload,
+  Modal,
 } from "antd";
-import { UserOutlined } from "@ant-design/icons";
+import { UploadOutlined, UserOutlined } from "@ant-design/icons";
 import { AccountServices } from "../services/accountServices";
 import { Link, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import QrScanner from "react-qr-scanner";
 import "../css/SalonOwnerAccountPage.css";
+import dayjs from "dayjs";
+
+const { Option } = Select;
 
 function SalonOwnerAccountPage() {
   const { id } = useParams();
-  const userName = useSelector((state) => state.ACCOUNT.userName);
   const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
   const idOwner = useSelector((state) => state.ACCOUNT.idOwner);
   const uid = useSelector((state) => state.ACCOUNT.uid);
@@ -117,10 +125,26 @@ function SalonOwnerAccountPage() {
   const [salonData, setSalonData] = useState({});
   const [showScanner, setShowScanner] = useState(false);
   const [isNotified, setIsNotified] = useState(false);
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [form] = Form.useForm();
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [passwordForm] = Form.useForm();
+
   useEffect(() => {
     AccountServices.GetInformationAccount(id)
       .then((res) => {
         setSalonData(res.data);
+        setAvatarUrl(res.data.img);
+        form.setFieldsValue({
+          fullName: res.data.fullName,
+          phone: res.data.phone,
+          email: res.data.email,
+          dayOfBirth: res.data.dayOfBirth ? dayjs(res.data.dayOfBirth) : null,
+          gender: res.data.gender,
+          address: res.data.address,
+          password: maskPassword(res.data.password),
+          avatar: res.data.img,
+        });
       })
       .catch((err) => {
         message.warning("Loading!!!");
@@ -133,7 +157,6 @@ function SalonOwnerAccountPage() {
 
   const handleScan = (data) => {
     if (data) {
-      // Call your API with the scanned data
       const mappingData = {
         customerId: idCustomer,
         dataString: data.text,
@@ -142,22 +165,19 @@ function SalonOwnerAccountPage() {
         .then((res) => {
           setShowScanner(false);
           if (!isNotified) {
-            // Kiểm tra trạng thái thông báo
             message.success("Quét qr check in thành công");
-            setIsNotified(true); // Đặt trạng thái thông báo đã được hiển thị
+            setIsNotified(true);
           }
         })
         .catch((err) => {
           setShowScanner(false);
           if (!isNotified) {
-            // Kiểm tra trạng thái thông báo
             message.error("Quét qr check in thất bại!");
-            setIsNotified(true); // Đặt trạng thái thông báo đã được hiển thị
+            setIsNotified(true);
           }
         })
         .finally(() => {
           setShowScanner(false);
-          // Không cần xử lý ở đây nếu chỉ thông báo một lần
         });
     }
   };
@@ -172,54 +192,309 @@ function SalonOwnerAccountPage() {
     width: 320,
   };
 
+  const maskPassword = (password) => {
+    if (!password) return "";
+    return "*".repeat(password.length - 2) + password.slice(-2);
+  };
+
+  const handleSave = (values) => {
+    const formData = new FormData();
+
+    formData.append("roleId", idCustomer);
+    formData.append("phone", values.phone || salonData.phone);
+    formData.append("password", salonData.password);
+    formData.append("fullName", values.fullName || salonData.fullName);
+    formData.append(
+      "dayOfBirth",
+      values.dayOfBirth
+        ? values.dayOfBirth.format("YYYY-MM-DD")
+        : salonData.dayOfBirth
+    );
+    formData.append("gender", values.gender || salonData.gender);
+    formData.append("email", values.email || salonData.email);
+    formData.append("address", values.address || salonData.address);
+
+    if (avatarFile) {
+      formData.append("img", avatarFile);
+    }
+
+    AccountServices.updateUserById(id, formData)
+      .then((res) => {
+        message.success("Cập nhật tài khoản thành công");
+        AccountServices.GetInformationAccount(id)
+          .then((res) => {
+            setSalonData(res.data);
+            setAvatarUrl(res.data.img);
+            form.setFieldsValue({
+              fullName: res.data.fullName,
+              phone: res.data.phone,
+              email: res.data.email,
+              dayOfBirth: res.data.dayOfBirth
+                ? dayjs(res.data.dayOfBirth)
+                : null,
+              gender: res.data.gender,
+              address: res.data.address,
+              password: maskPassword(res.data.password),
+              avatar: res.data.img,
+            });
+          })
+          .catch((err) => {
+            message.warning("Loading!!!");
+          });
+      })
+      .catch((err) => {
+        message.warning("Cập nhật thất bại, vui lòng thử lại sau!!!");
+      });
+  };
+
+  const [avatarUrl, setAvatarUrl] = useState(null);
+  console.log(avatarUrl);
+  console.log(avatarUrl);
+
+  const handleAvatarChange = (info) => {
+    const isLt5M = info.file.size / 1024 / 1024 < 5;
+    if (!isLt5M) {
+      message.error("Ảnh phải nhỏ hơn 5MB!");
+      return;
+    }
+    const file = info.file;
+    console.log("File info:", info.file);
+    console.log("Origin File Object:", info.file.originFileObj);
+    if (file) {
+      console.log("File selected:", file); // Debugging log
+      setAvatarFile(file);
+      const url = URL.createObjectURL(file);
+      setAvatarUrl(url);
+      form.setFieldsValue({ avatar: url });
+    } else {
+      console.log("No file selected or invalid file");
+    }
+  };
+
+  const showChangePasswordModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleChangePassword = (values) => {
+    console.log("Change Password Form Values:", values);
+    AccountServices.updatePasswordUserById(id, values)
+      .then((res) => {
+        message.success("Thay đổi mật khẩu thành công");
+        AccountServices.GetInformationAccount(id)
+          .then((res) => {
+            setSalonData(res.data);
+            setAvatarUrl(res.data.img);
+            form.setFieldsValue({
+              fullName: res.data.fullName,
+              phone: res.data.phone,
+              email: res.data.email,
+              dayOfBirth: res.data.dayOfBirth
+                ? dayjs(res.data.dayOfBirth)
+                : null,
+              gender: res.data.gender,
+              address: res.data.address,
+              password: maskPassword(res.data.password),
+              avatar: res.data.img,
+            });
+          })
+          .catch((err) => {
+            message.warning("Loading!!!");
+          });
+      })
+      .catch((err) => {
+        const errorMessage = err.response?.data?.message || err.message;
+        message.warning(errorMessage);
+      });
+    passwordForm.resetFields();
+    setIsModalVisible(false);
+    ///api/v1/accounts/ChangePassword/{id}
+  };
+
   return (
     <div className="salon-owner-account">
       {uid ? (
-        <Card className="salon-card">
-          <Avatar
-            src={salonData.img || <UserOutlined />}
-            size={100}
-            className="salon-avatar"
-          />
-          <Descriptions className="salon-info" column={1}>
-            <Descriptions.Item>
-              <Typography.Text strong>{salonData?.fullName}</Typography.Text>
-            </Descriptions.Item>
-            <Descriptions.Item>{salonData?.phone}</Descriptions.Item>
-            <Descriptions.Item>{salonData?.email}</Descriptions.Item>
-          </Descriptions>
-          <div className="salon-buttons">
-            {idOwner && (
-              <>
-                <Link to="/salon_report">
-                  <Button type="primary">Danh sách báo cáo của bạn</Button>
-                </Link>
-                <Link to="/dashboardTransaction">
-                  <Button type="primary">Thống kê doanh thu</Button>
-                </Link>
-              </>
-            )}
-            {idCustomer && (
-              <>
-                <Link to="/customer_report">
-                  <Button type="primary">Danh sách báo cáo của bạn</Button>
-                </Link>
-                <Button onClick={() => setShowScanner(true)} type="primary">
-                  Bật quét Qr
-                </Button>
-              </>
-            )}
+        <div className="salon-layout">
+          <div className="salon-left">
+            <Card className="salon-card">
+              <Avatar
+                src={salonData.img || <UserOutlined />}
+                size={100}
+                className="salon-avatar"
+              />
+              <Descriptions className="salon-info" column={1}>
+                <Descriptions.Item
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    textAlign: "center",
+                  }}
+                >
+                  <Typography.Text strong>
+                    {salonData?.fullName}
+                  </Typography.Text>
+                </Descriptions.Item>
+              </Descriptions>
+
+              <div className="salon-buttons">
+                {idOwner && (
+                  <>
+                    <Link to="/salon_report">
+                      <Button type="primary">Danh sách báo cáo của bạn</Button>
+                    </Link>
+                    <Link to="/dashboardTransaction">
+                      <Button type="primary">Thống kê doanh thu</Button>
+                    </Link>
+                  </>
+                )}
+                {idCustomer && (
+                  <>
+                    <Link to="/customer_report">
+                      <Button type="primary">Danh sách báo cáo của bạn</Button>
+                    </Link>
+                    <Button onClick={() => setShowScanner(true)} type="primary">
+                      Bật quét Qr
+                    </Button>
+                  </>
+                )}
+              </div>
+              {showScanner && (
+                <QrScanner
+                  delay={300}
+                  onError={handleError}
+                  onScan={handleScan}
+                  style={previewStyle}
+                  facingMode="environment"
+                />
+              )}
+            </Card>
           </div>
-          {showScanner && (
-            <QrScanner
-              delay={300}
-              onError={handleError}
-              onScan={handleScan}
-              style={previewStyle}
-              facingMode="environment"
-            />
-          )}
-        </Card>
+          <div className="salon-right">
+            <Typography.Text strong>
+              Chỉnh sửa thông tin người dùng
+            </Typography.Text>
+            <Form form={form} layout="vertical" onFinish={handleSave}>
+              <Form.Item
+                label="Avatar"
+                name="avatar"
+                rules={[
+                  { required: true, message: "Avatar không được để trống" },
+                ]}
+              >
+                <Upload
+                  beforeUpload={() => false}
+                  onChange={handleAvatarChange}
+                  accept="image/*"
+                  showUploadList={false}
+                >
+                  <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
+                </Upload>
+              </Form.Item>
+              <Avatar
+                src={avatarUrl || salonData.img || <UserOutlined />}
+                size={100}
+                className="salon-avatar"
+              />
+              <Form.Item
+                label="Họ và tên"
+                name="fullName"
+                rules={[
+                  { required: true, message: "Họ và tên không được để trống" },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                label="Số điện thoại"
+                name="phone"
+                rules={[
+                  {
+                    required: true,
+                    message: "Số điện thoại không được để trống",
+                  },
+                  {
+                    pattern: /^\d{10}$/,
+                    message: "Số điện thoại phải đúng 10 số",
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                label="Email"
+                name="email"
+                rules={[
+                  { required: true, message: "Email không được để trống" },
+                  { type: "email", message: "Email không đúng định dạng" },
+                ]}
+              >
+                <Input disabled />
+              </Form.Item>
+              <Form.Item
+                label="Ngày sinh"
+                name="dayOfBirth"
+                rules={[
+                  { required: true, message: "Ngày sinh không được để trống" },
+                  {
+                    validator: (_, value) =>
+                      value && value.isAfter(dayjs())
+                        ? Promise.reject(
+                            new Error("Ngày sinh không được là ngày tương lai")
+                          )
+                        : Promise.resolve(),
+                  },
+                ]}
+              >
+                <DatePicker style={{ width: "100%" }} format="YYYY-MM-DD" />
+              </Form.Item>
+              <Form.Item
+                label="Giới tính"
+                name="gender"
+                rules={[
+                  { required: true, message: "Giới tính không được để trống" },
+                ]}
+              >
+                <Select>
+                  <Option value="male">Nam</Option>
+                  <Option value="female">Nữ</Option>
+                  <Option value="other">Khác</Option>
+                </Select>
+              </Form.Item>
+              <Form.Item
+                label="Địa chỉ"
+                name="address"
+                rules={[
+                  { required: true, message: "Địa chỉ không được để trống" },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item label="Mật khẩu" name="password">
+                <Input disabled />
+              </Form.Item>
+              <Button
+                type="link"
+                onClick={showChangePasswordModal}
+                style={{ marginBottom: "10px" }}
+              >
+                Thay đổi mật khẩu
+              </Button>
+              <Form.Item>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  style={{ width: "100%" }}
+                >
+                  Lưu thông tin
+                </Button>
+              </Form.Item>
+            </Form>
+          </div>
+        </div>
       ) : (
         <div className="salon-reload">
           <Space direction="vertical">
@@ -230,6 +505,59 @@ function SalonOwnerAccountPage() {
           </Space>
         </div>
       )}
+      <Modal
+        title="Thay đổi mật khẩu"
+        visible={isModalVisible}
+        onCancel={handleCancel}
+        footer={null}
+      >
+        <Form
+          form={passwordForm}
+          layout="vertical"
+          onFinish={handleChangePassword}
+        >
+          <Form.Item
+            label="Nhập mật khẩu cũ"
+            name="currentPassword"
+            rules={[{ required: true, message: "Vui lòng nhập mật khẩu cũ" }]}
+          >
+            <Input.Password />
+          </Form.Item>
+          <Form.Item
+            label="Nhập mật khẩu mới"
+            name="newPassword"
+            rules={[{ required: true, message: "Vui lòng nhập mật khẩu mới" }]}
+          >
+            <Input.Password />
+          </Form.Item>
+          <Form.Item
+            label="Nhập lại mật khẩu mới"
+            name="confirmNewPassword"
+            dependencies={["newPassword"]}
+            rules={[
+              { required: true, message: "Vui lòng nhập lại mật khẩu mới" },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue("newPassword") === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error("Mật khẩu không khớp!"));
+                },
+              }),
+            ]}
+          >
+            <Input.Password />
+          </Form.Item>
+          <Form.Item>
+            <Button style={{ marginRight: 8 }} onClick={handleCancel}>
+              Đóng
+            </Button>
+            <Button type="primary" htmlType="submit">
+              Thay đổi mật khẩu
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 }
