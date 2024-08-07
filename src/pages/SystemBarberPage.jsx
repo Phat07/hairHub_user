@@ -676,6 +676,10 @@ function SystemBarberPage(props) {
       </div>
       <div className="list-map-container mt-5">
         <div>
+          {/* <div className="btn-inp-address">
+            <Input style={{width: "30rem", marginRight: "1rem"}} placeholder="Nhập địa chỉ của bạn" />
+            <Button type="primary">Tìm kiếm</Button>
+          </div> */}
           <motion.div
             variants={{
               hidden: { y: "-100vh", opacity: 0 },
