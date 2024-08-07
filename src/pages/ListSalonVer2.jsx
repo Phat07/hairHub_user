@@ -22,6 +22,7 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import "../css/ListSalonVer2.css";
 import { SalonInformationServices } from "../services/salonInformationServices";
+import { ServiceHairServices } from "../services/servicesHairServices";
 
 function ListSalonVer2(props) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -105,23 +106,45 @@ function ListSalonVer2(props) {
   };
 
   const handleFilterSelect = (filter) => {
-    console.log("Selected filter:", filter);
     setFilterVisible(false);
   };
 
   useEffect(() => {
-    SalonInformationServices.getAllSalonInformation(currentPage, pageSize)
-      .then((res) => {
-        setSalonList(res.data.items);
-        setTotalPages(res.data.totalPages);
-        setTotal(res.data.total);
-      })
-      .catch((err) => {
-        console.log(err, "errors");
-      });
-  }, []);
-  console.log("SalonList", salonList);
+    const fetchSalonData = async () => {
+      try {
+        // Gọi API getAllSalonInformation
+        const salonRes = await SalonInformationServices.getAllSalonInformation(
+          currentPage,
+          pageSize
+        );
+        const salons = salonRes.data.items;
 
+        // Gọi API GetServiceHairBySalonInformationId cho từng salonId
+        const servicePromises = salons.map((salon) =>
+          ServiceHairServices.getServiceHairBySalonNotPaging(salon.id).then(
+            (serviceData) => ({
+              ...salon,
+              services: serviceData.data, // Giả sử serviceData có cấu trúc { data: ... }
+            })
+          )
+        );
+
+        // Đợi tất cả các promises hoàn thành
+        const salonsWithServices = await Promise.all(servicePromises);
+
+        // Cập nhật state
+        setSalonList(salonsWithServices);
+        setTotalPages(salonRes.data.totalPages);
+        setTotal(salonRes.data.total);
+      } catch (err) {
+        console.log(err, "errors");
+      }
+    };
+
+    fetchSalonData();
+  }, [currentPage]);
+  console.log("salonList", salonList);
+  
   return (
     <div className="list-salon-container">
       <div className="list-salon-header">
@@ -250,7 +273,8 @@ function ListSalonVer2(props) {
               >
                 <h3>{salon.name}</h3>
                 <p>{salon.description}</p>
-                <p>
+                <p>{salon.address}</p>
+                {/* <p>
                   <strong>Lịch trình:</strong>
                 </p>
                 <ul>
@@ -260,7 +284,7 @@ function ListSalonVer2(props) {
                       {schedule.endTime}
                     </li>
                   ))}
-                </ul>
+                </ul> */}
               </div>
             </div>
           ))}
