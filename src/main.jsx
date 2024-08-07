@@ -24,6 +24,7 @@ import SystemBarberPage from "./pages/SystemBarberPage.jsx";
 import ListShopBarber from "./pages/ListShopBarber.jsx";
 import SalonDetail from "./pages/SalonDetail.jsx";
 import ListSalon from "./pages/ListSalon.jsx";
+import ListSalonVer2 from "./pages/ListSalonVer2.jsx";
 import Footer from "./components/Footer.jsx";
 import ErrorPage from "./pages/ErrorPage.jsx";
 import { Provider, useDispatch } from "react-redux";
@@ -270,6 +271,11 @@ const router = createBrowserRouter([
       {
         path: "list_salon",
         element: <ListSalon />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "list_salon_ver2",
+        element: <ListSalonVer2 />,
         errorElement: <ErrorPage />,
       },
     ],
