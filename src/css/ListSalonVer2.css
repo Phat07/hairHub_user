@@ -1,0 +1,212 @@
+.list-salon-container {
+  margin-top: 15rem;
+  margin-left: 20rem;
+  margin-right: 20rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+  .list-salon-container {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+.list-salon-header {
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.list-salon-search {
+  /* margin-left: 20rem;
+  margin-right: 20rem; */
+  padding-top: 1rem;
+}
+
+.popover-overlay .ant-menu-item {
+  background-color: transparent;
+  color: #000;
+}
+
+.popover-overlay .ant-menu-item-active,
+.popover-overlay .ant-menu-item-selected {
+  background-color: transparent;
+  color: #000;
+}
+
+.popover-overlay .ant-menu-item:hover {
+  background-color: transparent;
+  color: #000;
+}
+
+.list-salon-service {
+  border-radius: 8px;
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* Centers items horizontally */
+}
+
+.service-item {
+  margin: 5px;
+  padding: 10px;
+  background-color: #ffffff;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.service-item:hover {
+  background-color: #e0e0e0;
+  cursor: pointer;
+}
+
+.list-salon-center {
+  margin-top: 2rem;
+}
+
+.list-salon-result {
+  font-size: 3rem;
+  font-weight: bolder;
+}
+
+.list-salon-scoll {
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  margin-top: 2rem;
+}
+
+.list-salon-cards-scroll {
+  display: flex;
+  overflow: auto;
+  scroll-behavior: smooth;
+  padding: 0 40px;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.list-salon-cards-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.list-salon-card-scroll {
+  display: inline-block;
+  width: 32rem;
+  margin-right: 1rem;
+  border-radius: 8px;
+  /* overflow: hidden; */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: #ffffff;
+  margin-bottom: 2rem;
+}
+
+.list-salon-card-scroll img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.list-salon-card-scroll p {
+  margin: 10px;
+  font-size: 1rem;
+  color: #333;
+  text-align: center;
+}
+
+.list-salon-card-scroll:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.list-salon-card-scroll:hover img {
+  filter: brightness(0.9);
+}
+
+.list-salon-arrow-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #ffffff;
+  border: 2px solid #ddd;
+  border-radius: 50%;
+  padding: 10px;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.list-salon-arrow-button.left {
+  left: 0;
+}
+
+.list-salon-arrow-button.right {
+  right: 0;
+}
+
+.list-salon-end {
+}
+
+.list-salon-actbtn {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+}
+
+.list-salon-filmap {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.filter-button,
+.sort-button,
+.view-map-button {
+  margin-right: 1rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.filter-button:hover,
+.sort-button:hover,
+.view-map-button:hover {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.view-map-button {
+  background-color: #007bff;
+  color: white;
+  margin-left: auto;
+}
+
+.list-salon-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.list-salon-item {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.list-salon-image img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.list-salon-info {
+  padding-left: 20px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
