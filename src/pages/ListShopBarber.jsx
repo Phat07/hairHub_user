@@ -398,7 +398,7 @@ function ListShopBarber(props) {
   const listService = useSelector(
     (state) => state.SALONEMPLOYEES.salonServicesList
   );
-  console.log("list", listService);
+
 
   const checkEmployeeListExist = () => {
     if (listService?.length === 0) {
@@ -477,7 +477,8 @@ function ListShopBarber(props) {
       <Menu.Item key="voucherList">Danh sách các voucher</Menu.Item>
     </Menu>
   );
-
+  console.log("salon", salonDetail);
+  
   return (
     <div>
       <div className="container_list">
