@@ -491,16 +491,8 @@ function ManageVoucher(props) {
       >
         Vouchers
       </div>
-      <div
-        style={{
-          marginTop: "5rem",
-          marginLeft: "200px",
-          marginRight: "200px",
-          display: "flex",
-          justifyContent: "space-between",
-        }}
-      >
-        <div style={{ flex: 1 }}>
+      <div className="container_search">
+        <div className="input-container" style={{ flex: 1 }}>
           <Input
             placeholder="Tìm kiếm voucher..."
             value={searchTerm}
@@ -515,10 +507,13 @@ function ManageVoucher(props) {
                 }}
               />
             }
-            style={{ width: "40rem", marginRight: 8 }}
+            style={{ width: "100%", marginRight: 8 }}
           />
         </div>
-        <div style={{ display: "flex", gap: "8px" }}>
+        <div
+          className="button-voucher-container"
+          style={{ display: "flex", gap: "8px" }}
+        >
           <Button onClick={reloadData}>Tải lại</Button>
           <Button
             className="addButtonStyle"
@@ -632,7 +627,6 @@ function ManageVoucher(props) {
             defaultValue="newest"
             className="custom-select"
             onChange={handleSortChange}
-            style={{ width: "18rem" }}
           >
             <Option value="newest">Ngày tạo mới nhất</Option>
             <Option value="oldest">Ngày tạo cũ nhất</Option>
@@ -643,22 +637,7 @@ function ManageVoucher(props) {
           </Select>
         </div>
       </div>
-      <div
-        style={{
-          marginLeft: "200px",
-          marginRight: "200px",
-          marginTop: "2rem",
-        }}
-      >
-        {/* <Table
-          columns={columns.map((col) => ({
-            ...col,
-            className: "custom-header",
-          }))}
-          dataSource={data}
-          pagination={{ pageSize: 5, position: ["bottomCenter"] }}
-          rowClassName="custom-row"
-        /> */}
+      <div className="container_search">
         <Table
           columns={columns.map((col) => ({
             ...col,
@@ -668,7 +647,6 @@ function ManageVoucher(props) {
           pagination={{
             current: pagination.page,
             pageSize: pagination.size,
-            // total: pagination.total,
             total: totalPages,
             onChange: handleChangePagination,
             showSizeChanger: true,
@@ -678,6 +656,7 @@ function ManageVoucher(props) {
             position: ["bottomCenter"],
           }}
           rowClassName="custom-row"
+          className="custom-table"
         />
         <Modal
           title="Update Voucher"
@@ -702,12 +681,12 @@ function ManageVoucher(props) {
                 style={{ width: "100%" }}
               />
             </Form.Item>
-            <Flex className="mt-3" gap={"small"}>
-              {<DollarCircleOutlined />}
+            <div className="mt-3" style={{ display: "flex", gap: "small" }}>
+              <DollarCircleOutlined />
               <Typography.Text strong>
                 Currency: {formatCurrency(currencyValueUpdate)}
               </Typography.Text>
-            </Flex>
+            </div>
             <Form.Item
               label="Discount Percentage (%)"
               name="discountPercentageUpdate"
