@@ -80,7 +80,7 @@ function HeaderUnAuth(props) {
               data-navbar
               style={{ marginLeft: "auto", marginRight: "1rem" }}
             >
-              {/* <ul className="navbar-list">
+              <ul className="navbar-list">
                 <li className="navbar-item">
                   <Link to={"/"} className="navbar-link" data-nav-link>
                     Trang chủ
@@ -102,7 +102,7 @@ function HeaderUnAuth(props) {
                     </Link>
                   </li>
                 )}
-              </ul> */}
+              </ul>
             </nav>
             <button
               className="nav-toggle-btn"
@@ -112,9 +112,9 @@ function HeaderUnAuth(props) {
             >
               <IoMenu />
             </button>
-            {/* <Link to={"/login"} className="btn has-before btn-login">
+            <Link to={"/login"} className="btn has-before btn-login">
                 <span>Đăng nhập</span>
-            </Link> */}
+            </Link>
           </div>
         </div>
       </header>
