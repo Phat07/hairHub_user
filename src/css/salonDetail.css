@@ -5,8 +5,31 @@
 .detail-salon-col-2 {
   margin-left: 5rem;
 }
-.container{
-  padding: "0 50px"
+.container {
+  padding: "0 50px";
+}
+/* customCheckbox.css */
+.custom-checkbox {
+  color: white; /* Đặt màu chữ */
+  background-color: #1A94AD; /* Đặt màu nền cho span */
+  padding: 5px 10px; /* Đặt padding cho span */
+  border-radius: 8px; /* Bo tròn các góc của span */
+  display: inline-block; /* Đặt span thành inline-block */
+  cursor: pointer; /* Thay đổi con trỏ khi hover */
+}
+
+.custom-checkbox.booked {
+  background-color: #28a745; /* Đặt màu nền cho "Booked" */
+}
+
+.custom-checkbox:hover {
+  background-color: #007bff; /* Đặt màu nền khi hover */
+}
+.no-close-btn .ant-modal-close {
+  display: none;
+}
+.close-button-close:hover {
+  transform: rotate(90deg);
 }
 @media (max-width: 768px) {
   .detail-salon-col-1 {
@@ -15,8 +38,8 @@
   .detail-salon-col-2 {
     margin-left: 0;
   }
-  .container{
-    padding: "0 10px"
+  .container {
+    padding: "0 10px";
   }
 }
 

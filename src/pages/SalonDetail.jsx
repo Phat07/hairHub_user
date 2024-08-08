@@ -1,60 +1,55 @@
-import React, { useEffect, useRef, useState } from "react";
-import Header from "../components/Header";
 import {
+  CloseOutlined,
+  HeartOutlined,
+  LeftOutlined,
+  RightOutlined,
+  ShareAltOutlined,
+  StarFilled,
+  StarOutlined,
+} from "@ant-design/icons";
+import {
+  Avatar,
   Button,
+  Card,
   Carousel,
   Checkbox,
   Col,
   Collapse,
   Divider,
+  Image,
   Layout,
   List,
   Modal,
   Pagination,
   Progress,
   Row,
-  Space,
-  Typography,
   Select,
+  Space,
+  Spin,
+  Typography,
   message,
-  Avatar,
-  Card,
-  Image,
 } from "antd";
 import { Content } from "antd/es/layout/layout";
-import {
-  ShareAltOutlined,
-  HeartOutlined,
-  StarFilled,
-  StarOutlined,
-  RightOutlined,
-  LeftOutlined,
-} from "@ant-design/icons";
-import { motion } from "framer-motion";
-import "../css/salonDetail.css";
-import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import useAuthUser from "react-auth-kit/hooks/useAuthUser";
-import { ServiceHairServices } from "../services/servicesHairServices";
-import { voucherServices } from "../services/voucherServices";
 import dayjs from "dayjs";
+import React, { useEffect, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import Header from "../components/Header";
+import "../css/salonDetail.css";
+import { ServiceHairServices } from "../services/servicesHairServices";
 
-import { SalonEmployeesServices } from "../services/salonEmployeesServices";
-import { AppointmentService } from "../services/appointmentServices";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  actGetVoucherBySalonId,
-  actGetVoucherBySalonIdNotPaging,
-} from "../store/manageVoucher/action";
 import RandomIcon from "@rsuite/icons/Random";
-import { actGetAllFeedbackBySalonId } from "../store/ratingCutomer/action";
-import Loader from "../components/Loader";
-import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
-import useSignIn from "react-auth-kit/hooks/useSignIn";
-import jwt_decode from "jwt-decode";
-import { AccountServices } from "../services/accountServices";
+import duration from "dayjs/plugin/duration";
+import utc from "dayjs/plugin/utc";
+import { useDispatch, useSelector } from "react-redux";
+import Loader from "../components/Loader";
+import { AppointmentService } from "../services/appointmentServices";
+import { SalonEmployeesServices } from "../services/salonEmployeesServices";
+import { actGetVoucherBySalonIdNotPaging } from "../store/manageVoucher/action";
+import { actGetAllFeedbackBySalonId } from "../store/ratingCutomer/action";
 import { actGetAllSalonInformation } from "../store/salonInformation/action";
+import { set } from "rsuite/esm/internals/utils/date";
 const { Panel } = Collapse;
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -85,6 +80,7 @@ const reportOptions = [
 ];
 dayjs.extend(utc);
 dayjs.extend(timezone);
+dayjs.extend(duration);
 function renderStars(stars) {
   const filledStars = Math.floor(stars);
   const hasHalfStar = stars % 1 !== 0;
@@ -116,16 +112,16 @@ function SalonDetail(props) {
   const userIdCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
   const userId = useSelector((state) => state.ACCOUNT.idOwner);
   const uid = useSelector((state) => state.ACCOUNT.uid);
-  useEffect(() => {
-    if (id) {
-      dispatch(actGetAllSalonInformation());
-    }
-  }, [id]);
+
   // const userAuth = useAuthUser();
   // const userId = userAuth?.idOwner;
   // const userIdCustomer = userAuth?.idCustomer;
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5; // Số lượng phản hồi trên mỗi trang
+  const [employees, setEmployees] = useState([]);
+  const [page, setPage] = useState(1);
+  const [pageSizeEmployee, setPageSizeEmployee] = useState(3);
+  const [total, setTotal] = useState(0);
   const indexOfLastFeedback = currentPage * pageSize;
   const indexOfFirstFeedback = indexOfLastFeedback - pageSize;
 
@@ -165,6 +161,7 @@ function SalonDetail(props) {
   const [salonDetail, setSalonDetail] = useState({});
   const [listVoucher, setListVoucher] = useState([]);
   const [selectedVouchers, setSelectedVouchers] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const [isPriceModalVisible, setIsPriceModalVisible] = useState(false);
   const [originalPrice, setOriginalPrice] = useState(0);
@@ -186,9 +183,33 @@ function SalonDetail(props) {
   );
 
   const totalPagesFeedback = useSelector((state) => state.RATING.totalPages);
+
   useEffect(() => {
-    dispatch(actGetAllFeedbackBySalonId(id, currentPage, pageSize));
-  }, []);
+    if (id) {
+      dispatch(actGetAllFeedbackBySalonId(id, currentPage, pageSize));
+      dispatch(actGetAllSalonInformation());
+      const fetchEmployees = async () => {
+        // setLoading(true);
+
+        await SalonEmployeesServices.getSalonEmployeeBySalonInformationId(
+          id,
+          page,
+          pageSizeEmployee
+        )
+          .then((response) => {
+            console.log("response.data.items", response.data.items);
+
+            setEmployees(response.data.items);
+            setTotal(response.data.totalPages);
+          })
+          .catch((err) => {});
+
+        // setLoading(false);
+      };
+
+      fetchEmployees();
+    }
+  }, [id, currentPage, page]);
 
   useEffect(() => {
     setListVoucher(listVoucherNotPaging);
@@ -618,26 +639,118 @@ function SalonDetail(props) {
   };
 
   const handleChangeStaffSecond = (service, value) => {
-    setSelectedStaff((prev) => ({
-      ...prev,
-      [service.id]: value,
-    }));
+    setAdditionalServices((prevServices) =>
+      prevServices.map((s) =>
+        s.id === service.id
+          ? {
+              ...s,
+              bookingDetail: {
+                ...s.bookingDetail,
+                salonEmployeeId: value,
+              },
+            }
+          : s
+      )
+    );
   };
 
   const handleCancel = () => {
     setIsModalVisible(false);
     setCurrentService(null);
   };
+  console.log("add", additionalServices);
 
-  const handleServiceSelect = (service) => {
-    setOneServiceData(service);
-    if (additionalServices.some((s) => s.id === service.id)) {
-      // Nếu dịch vụ đã tồn tại, loại bỏ nó khỏi danh sách
+  const handleServiceSelect = async (service) => {
+    setLoading(true);
+    const isChecked = additionalServices.some((s) => s.id === service.id);
+    if (isChecked) {
       setAdditionalServices(
         additionalServices.filter((s) => s.id !== service.id)
       );
+      setShowServiceList(false);
+      setLoading(false);
     } else {
-      setAdditionalServices([...additionalServices, service]);
+      // setAdditionalServices([...additionalServices, service]);
+      const formatDate = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0"); // Thêm số 0 vào trước tháng nếu cần
+        const day = String(date.getDate()).padStart(2, "0"); // Thêm số 0 vào trước ngày nếu cần
+        return `${year}-${month}-${day}`;
+      };
+      const dataMapping = [...additionalServices, service];
+
+      const databooking = await dataMapping?.map((e) => {
+        return {
+          serviceHairId: e?.id,
+          isAnyOne: true,
+          salonEmployeeId: e?.bookingDetailResponses?.employees?.id || null,
+        };
+      });
+
+      const formattedDate = formatDate(selectedDate);
+      const requestBody = {
+        day: formattedDate, // Thay bằng ngày bạn muốn book
+        availableSlot: selectedTimeSlot, // Thay bằng slot bạn muốn book
+        salonId: id, // Thay bằng id của salon
+        bookingDetail: databooking,
+      };
+      setDataBooking(databooking); //serviceHairId, salonEmployeeId
+
+      axios
+        .post(
+          "https://hairhub.gahonghac.net/api/v1/appointments/BookAppointment",
+          requestBody
+        )
+        .then((response) => {
+          console.log("bookRES", response.data);
+
+          // Xử lý kết quả từ server nếu cần
+          const updatedAdditionalServices = [...dataMapping];
+          let total = 0;
+          updatedAdditionalServices?.map((e) => {
+            total += e?.price;
+          });
+
+          const totalPriceMapping = listVoucherNotPaging?.filter(
+            (e) => e?.minimumOrderAmount <= total
+          );
+          // setListVoucher(totalPriceMapping);
+          setVoucherList(totalPriceMapping);
+          const updatedVoucherSelected = voucherSelected?.filter(
+            (voucher) => voucher?.minimumOrderAmount <= total
+          );
+
+          setVoucherSelected(updatedVoucherSelected);
+          // console.log("totalPriceMapping", totalPriceMapping);
+
+          for (const service of dataMapping) {
+            const matchingBookingDetailResponse =
+              response.data.bookingDetailResponses.find(
+                (responseDetail) =>
+                  responseDetail?.serviceHair?.id === service.id
+              );
+
+            if (matchingBookingDetailResponse) {
+              service.bookingDetailResponses = matchingBookingDetailResponse;
+            }
+          }
+
+          setAdditionalServices(updatedAdditionalServices);
+          setShowServiceList(false);
+          setLoading(false);
+          // Cập nhật state hoặc hiển thị thông báo thành công
+        })
+        .catch((error) => {
+          setShowServiceList(false);
+          message.warning(error?.response?.data?.message);
+          setLoading(true);
+          // Xử lý lỗi nếu có
+          // console.error("Error booking appointment:", error);
+          // Hiển thị thông báo lỗi cho người dùng nếu cần
+        })
+        .finally((err) => {
+          setLoading(false);
+        });
     }
   };
   function calculateTotal() {
@@ -703,7 +816,7 @@ function SalonDetail(props) {
               bookingDetail: {
                 serviceHairId: currentService.id,
                 isAnyOne: true,
-                salonEmployeeId: selectedStaff[currentService.id],
+                salonEmployeeId: s?.bookingDetail?.salonEmployeeId,
               },
             }
           : s
@@ -711,6 +824,14 @@ function SalonDetail(props) {
     );
     setIsModalVisible(false);
     setCurrentService(null);
+  };
+  const getSelectedEmployeeName = (serviceId) => {
+    const selectedService = additionalServices.find((s) => s.id === serviceId);
+    const selectedEmployeeId = selectedService?.bookingDetail?.salonEmployeeId;
+    const employee = currentService?.bookingDetailResponses?.employees.find(
+      (e) => e.id === selectedEmployeeId
+    );
+    return employee?.fullName;
   };
 
   const handleChangeStaff = (service) => {
@@ -794,9 +915,7 @@ function SalonDetail(props) {
         updatedAdditionalServices?.map((e) => {
           total += e?.price;
         });
-        console.log("updateService", updatedAdditionalServices);
-        // console.log("total", total);
-        // console.log("update", updatedAdditionalServices);
+
         const totalPriceMapping = listVoucherNotPaging?.filter(
           (e) => e?.minimumOrderAmount <= total
         );
@@ -828,7 +947,7 @@ function SalonDetail(props) {
       .catch((error) => {
         message.warning(error?.response?.data?.message);
         // Xử lý lỗi nếu có
-        console.error("Error booking appointment:", error);
+        // console.error("Error booking appointment:", error);
         // Hiển thị thông báo lỗi cho người dùng nếu cần
       });
   };
@@ -845,6 +964,11 @@ function SalonDetail(props) {
   };
 
   const handleBooking = async () => {
+    if (additionalServices.length === 0) {
+      message.info("Vui lòng chọn dịch vụ!!");
+      setIsPriceModalVisible(false);
+      return;
+    }
     // Function to format the date
     const formatDate = (date) => {
       const year = date.getFullYear();
@@ -894,6 +1018,12 @@ function SalonDetail(props) {
   };
 
   const handleConfirmBooking = async () => {
+    if (additionalServices.length === 0) {
+      message.info("Vui lòng chọn dịch vụ!!!");
+      setIsPriceModalVisible(false);
+      return;
+    }
+
     if (selectedTimeSlot === null) {
       message.warning("Vui lòng chọn giờ để đặt lịch");
       setIsPriceModalVisible(false);
@@ -944,8 +1074,19 @@ function SalonDetail(props) {
   const sortedSchedules = salonDetail?.schedules?.sort((a, b) => {
     return daysOrder.indexOf(a.dayOfWeek) - daysOrder.indexOf(b.dayOfWeek);
   });
-  console.log("detail", salonDetail);
+  const handlePageChangeEmployees = (page, pageSizeEmployee) => {
+    setPage(page);
+    setPageSizeEmployee(pageSizeEmployee);
+  };
+  const handleRemoveService = (serviceToRemove) => {
+    // Filter out the service that matches the ID of the serviceToRemove
+    const updatedServices = additionalServices.filter(
+      (service) => service.id !== serviceToRemove.id
+    );
 
+    // Update the state with the new array
+    setAdditionalServices(updatedServices);
+  };
   return (
     <div>
       <Header />
@@ -1079,225 +1220,252 @@ function SalonDetail(props) {
                   </Collapse>
                 </div>
                 <div>
-                  <Modal
-                    title="Đặt dịch vụ"
-                    visible={isBookingModalVisible}
-                    onCancel={() => {
-                      setIsBookingModalVisible(false);
-                      setShowServiceList(false);
-                    }}
-                    footer={null}
-                    width={800}
-                  >
-                    {showServiceList ? (
-                      <div>
-                        <Title level={4}>Thêm những dịch vụ khác</Title>
-                        <List
-                          itemLayout="horizontal"
-                          dataSource={data}
-                          renderItem={(service, index) => {
-                            // Kiểm tra nếu dịch vụ đã được chọn
-                            const isChecked = additionalServices.some(
-                              (s) => s.id === service.id
-                            );
+                  <Spin spinning={loading}>
+                    <Modal
+                      title="Đặt dịch vụ"
+                      visible={isBookingModalVisible}
+                      className={showServiceList ? "no-close-btn" : ""}
+                      onCancel={() => setIsBookingModalVisible(false)}
+                      footer={null}
+                      width={800}
+                    >
+                      {showServiceList ? (
+                        <>
+                          <Spin spinning={loading}>
+                            <div>
+                              <Title level={4}>Thêm những dịch vụ khác</Title>
+                              <List
+                                itemLayout="horizontal"
+                                dataSource={data}
+                                renderItem={(service, index) => {
+                                  // Kiểm tra nếu dịch vụ đã được chọn
+                                  const isChecked = additionalServices.some(
+                                    (s) => s.id === service.id
+                                  );
 
-                            return (
-                              <List.Item
-                                key={index} // Thêm thuộc tính key
-                                actions={[
-                                  <Checkbox
-                                    key={`checkbox-${index}`} // Thêm thuộc tính key cho Checkbox
-                                    checked={isChecked}
-                                    onChange={() =>
-                                      handleServiceSelect(service)
+                                  return (
+                                    <List.Item
+                                      key={index} // Thêm thuộc tính key
+                                      actions={[
+                                        // <Checkbox
+                                        //   className="custom-checkbox"
+                                        //   key={`checkbox-${index}`} // Thêm thuộc tính key cho Checkbox
+                                        //   checked={isChecked}
+                                        //   onChange={() =>
+                                        //     handleServiceSelect(service)
+                                        //   }
+                                        // >
+                                        //   Book
+                                        // </Checkbox>,
+                                        <div
+                                          className={`custom-checkbox ${
+                                            isChecked ? "booked" : ""
+                                          }`}
+                                          s
+                                          key={`checkbox-${index}`} // Thêm thuộc tính key
+                                          onClick={() =>
+                                            handleServiceSelect(service)
+                                          }
+                                        >
+                                          {isChecked ? "Đã đặt" : "Đặt lịch"}
+                                        </div>,
+                                      ]}
+                                    >
+                                      <List.Item.Meta
+                                        avatar={
+                                          <Avatar
+                                            size={{
+                                              xs: 24,
+                                              sm: 32,
+                                              md: 40,
+                                              lg: 64,
+                                              xl: 80,
+                                              xxl: 100,
+                                            }}
+                                            src={service?.img}
+                                          />
+                                        }
+                                        title={
+                                          <Title level={4}>
+                                            {service.serviceName}
+                                          </Title>
+                                        }
+                                        description={
+                                          <Typography className="w-fit">
+                                            <Text strong>
+                                              Mô tả: &nbsp;
+                                              <Text
+                                                style={{ display: "inline" }}
+                                              >
+                                                {service.description}
+                                              </Text>
+                                            </Text>
+                                            <Text strong>
+                                              Giá: &nbsp;
+                                              <Text
+                                                style={{ display: "inline" }}
+                                              >
+                                                {formatCurrency(service.price)}
+                                              </Text>
+                                            </Text>
+                                            <Text strong>
+                                              Thời gian: &nbsp;
+                                              <Text
+                                                style={{ display: "inline" }}
+                                              >
+                                                {formatTime(service.time)}
+                                              </Text>
+                                            </Text>
+                                          </Typography>
+                                        }
+                                      />
+                                    </List.Item>
+                                  );
+                                }}
+                                style={{ backgroundColor: "transparent" }}
+                              />
+                              <Button
+                                type="dashed"
+                                block
+                                style={{ marginTop: "16px" }}
+                                // onClick={() => setShowServiceList(false)}
+                                // onClick={handleChangeSelectedService}
+                                onClick={() => {
+                                  setShowServiceList(false);
+                                }}
+                              >
+                                Trở về
+                              </Button>
+                            </div>
+                          </Spin>
+                        </>
+                      ) : (
+                        <div>
+                          <Divider />
+                          <div className="scroll-container">
+                            <button
+                              className="arrow-button"
+                              onClick={() =>
+                                handleScroll("left", dateContainerRef)
+                              }
+                            >
+                              <LeftOutlined />
+                            </button>
+                            <div
+                              className="scroll-wrapper"
+                              ref={dateContainerRef}
+                            >
+                              <div className="scroll-content">
+                                {currentMonthDays.map((day, index) => (
+                                  <Button
+                                    key={index}
+                                    onClick={() => handleDateSelect(day)}
+                                    className={
+                                      selectedDate &&
+                                      selectedDate.toDateString() ===
+                                        day.toDateString()
+                                        ? "selected"
+                                        : ""
                                     }
                                   >
-                                    Thêm
-                                  </Checkbox>,
-                                ]}
-                              >
-                                <List.Item.Meta
-                                  avatar={
-                                    <Avatar
-                                      size={{
-                                        xs: 24,
-                                        sm: 32,
-                                        md: 40,
-                                        lg: 64,
-                                        xl: 80,
-                                        xxl: 100,
-                                      }}
-                                      src={service?.img}
-                                    />
-                                  }
-                                  title={
-                                    <Title level={4}>
-                                      {service.serviceName}
-                                    </Title>
-                                  }
-                                  description={
-                                    <Typography className="w-fit">
-                                      <Text strong>
-                                        Giá: &nbsp;
-                                        <Text style={{ display: "inline" }}>
-                                          {formatCurrency(service.price)}
-                                        </Text>
-                                      </Text>
-                                      <Text strong>
-                                        Thời gian: &nbsp;
-                                        <Text style={{ display: "inline" }}>
-                                          {formatTime(service.time)}
-                                        </Text>
-                                      </Text>
-                                    </Typography>
-                                  }
-                                />
-                              </List.Item>
-                            );
-                          }}
-                          style={{ backgroundColor: "transparent" }}
-                        />
-                        <Button
-                          type="dashed"
-                          block
-                          style={{ marginTop: "16px" }}
-                          // onClick={() => setShowServiceList(false)}
-                          onClick={handleChangeSelectedService}
-                        >
-                          Trở về
-                        </Button>
-                      </div>
-                    ) : (
-                      <div>
-                        <Divider />
-                        <div className="scroll-container">
-                          <button
-                            className="arrow-button"
-                            onClick={() =>
-                              handleScroll("left", dateContainerRef)
-                            }
-                          >
-                            <LeftOutlined />
-                          </button>
-                          <div
-                            className="scroll-wrapper"
-                            ref={dateContainerRef}
-                          >
-                            <div className="scroll-content">
-                              {currentMonthDays.map((day, index) => (
-                                <Button
-                                  key={index}
-                                  onClick={() => handleDateSelect(day)}
-                                  className={
-                                    selectedDate &&
-                                    selectedDate.toDateString() ===
-                                      day.toDateString()
-                                      ? "selected"
-                                      : ""
-                                  }
-                                >
-                                  {day.toDateString().slice(0, 10)}
-                                </Button>
-                              ))}
+                                    {day.toDateString().slice(0, 10)}
+                                  </Button>
+                                ))}
+                              </div>
                             </div>
+                            <button
+                              className="arrow-button"
+                              onClick={() =>
+                                handleScroll("right", dateContainerRef)
+                              }
+                            >
+                              <RightOutlined />
+                            </button>
                           </div>
-                          <button
-                            className="arrow-button"
-                            onClick={() =>
-                              handleScroll("right", dateContainerRef)
-                            }
-                          >
-                            <RightOutlined />
-                          </button>
-                        </div>
-                        <Divider />
+                          <Divider />
 
-                        {selectedDate && (
-                          <>
-                            <div className="time-picker">
-                              {timeSlots?.availableTimes?.length > 0 ? (
-                                <>
-                                  <Divider />
-                                  <div className="scroll-container">
-                                    <button
-                                      className="arrow-button"
-                                      onClick={() =>
-                                        handleScroll1("left", timeContainerRef)
-                                      }
-                                    >
-                                      <LeftOutlined />
-                                    </button>
-                                    <div
-                                      className="scroll-wrapper"
-                                      ref={timeContainerRef}
-                                    >
-                                      <div className="scroll-content">
-                                        {timeSlots?.availableTimes?.map(
-                                          (slot, index) => {
-                                            // Tạo biến timeString để lưu chuỗi thời gian hiển thị
-                                            let timeString = "";
-                                            const timeParts = slot?.timeSlot
-                                              ?.toString()
-                                              .split(".");
-                                            const hour = parseInt(
-                                              timeParts[0],
-                                              10
-                                            );
-                                            const minutes =
-                                              timeParts.length > 1
-                                                ? parseInt(timeParts[1], 10)
-                                                : 0;
-                                            // Xử lý hiển thị theo định dạng giờ và phút
-                                            if (minutes === 0) {
-                                              timeString = `${hour} giờ`;
-                                            } else if (minutes === 25) {
-                                              timeString = `${hour} giờ 15 phút`;
-                                            } else if (minutes === 5) {
-                                              timeString = `${hour} giờ 30 phút`;
-                                            } else if (minutes === 75) {
-                                              timeString = `${hour} giờ 45 phút`;
-                                            }
-                                            const currentTime = new Date();
-                                            const slotTime = dayjs()
-                                              .hour(hour)
-                                              .minute(minutes);
-                                            const formattedSlotTime =
-                                              slotTime.format("HH:mm");
+                          {selectedDate && (
+                            <>
+                              <div className="time-picker">
+                                {timeSlots?.availableTimes?.length > 0 ? (
+                                  <>
+                                    <Divider />
+                                    <div className="scroll-container">
+                                      <button
+                                        className="arrow-button"
+                                        onClick={() =>
+                                          handleScroll1(
+                                            "left",
+                                            timeContainerRef
+                                          )
+                                        }
+                                      >
+                                        <LeftOutlined />
+                                      </button>
+                                      <div
+                                        className="scroll-wrapper"
+                                        ref={timeContainerRef}
+                                      >
+                                        <div className="scroll-content">
+                                          {timeSlots?.availableTimes?.map(
+                                            (slot, index) => {
+                                              // Tạo biến timeString để lưu chuỗi thời gian hiển thị
+                                              let timeString = "";
+                                              const timeParts = slot?.timeSlot
+                                                ?.toString()
+                                                .split(".");
+                                              const hour = parseInt(
+                                                timeParts[0],
+                                                10
+                                              );
+                                              const minutes =
+                                                timeParts.length > 1
+                                                  ? parseInt(timeParts[1], 10)
+                                                  : 0;
+                                              // Xử lý hiển thị theo định dạng giờ và phút
+                                              if (minutes === 0) {
+                                                timeString = `${hour} giờ`;
+                                              } else if (minutes === 25) {
+                                                timeString = `${hour} giờ 15 phút`;
+                                              } else if (minutes === 5) {
+                                                timeString = `${hour} giờ 30 phút`;
+                                              } else if (minutes === 75) {
+                                                timeString = `${hour} giờ 45 phút`;
+                                              }
+                                              const currentTime = new Date();
+                                              const slotTime = dayjs()
+                                                .hour(hour)
+                                                .minute(minutes);
 
-                                            console.log(
-                                              "slotTime:",
-                                              formattedSlotTime
-                                            );
-
-                                            const isDisabled =
-                                              selectedDate &&
-                                              dayjs(selectedDate).isSame(
-                                                dayjs(),
-                                                "day"
-                                              ) &&
-                                              slotTime.isBefore(currentTime);
-                                            return (
-                                              <Button
-                                                key={index}
-                                                onClick={() =>
-                                                  handleTimeSlotSelect(
+                                              const isDisabled =
+                                                selectedDate &&
+                                                dayjs(selectedDate).isSame(
+                                                  dayjs(),
+                                                  "day"
+                                                ) &&
+                                                slotTime.isBefore(currentTime);
+                                              return (
+                                                <Button
+                                                  key={index}
+                                                  onClick={() =>
+                                                    handleTimeSlotSelect(
+                                                      slot?.timeSlot
+                                                    )
+                                                  }
+                                                  className={
+                                                    selectedTimeSlot ===
                                                     slot?.timeSlot
-                                                  )
-                                                }
-                                                className={
-                                                  selectedTimeSlot ===
-                                                  slot?.timeSlot
-                                                    ? "selected"
-                                                    : ""
-                                                }
-                                                disabled={isDisabled}
-                                              >
-                                                {timeString}
-                                              </Button>
-                                            );
-                                          }
-                                        )}
-                                        {/* {timeSlots?.availableTimes?.map(
+                                                      ? "selected"
+                                                      : ""
+                                                  }
+                                                  disabled={isDisabled}
+                                                >
+                                                  {timeString}
+                                                </Button>
+                                              );
+                                            }
+                                          )}
+                                          {/* {timeSlots?.availableTimes?.map(
                                           (slot, index) => {
                                             // Tạo biến timeString để lưu chuỗi thời gian hiển thị
                                             let timeString = "";
@@ -1372,233 +1540,266 @@ function SalonDetail(props) {
                                             );
                                           }
                                         )} */}
+                                        </div>
                                       </div>
-                                    </div>
-                                    <button
-                                      className="arrow-button"
-                                      onClick={() =>
-                                        handleScroll1("right", timeContainerRef)
-                                      }
-                                    >
-                                      <RightOutlined />
-                                    </button>
-                                  </div>
-                                </>
-                              ) : (
-                                <Title className="warning-title" level={3}>
-                                  Không tìm thấy dịch vụ nào trong khoảng thời
-                                  gian này!
-                                </Title>
-                              )}
-                            </div>
-                            <Divider />
-                          </>
-                        )}
-                        {additionalServices?.length > 0 && (
-                          <div>
-                            <Title level={4}>Thêm dịch vụ</Title>
-                            <List
-                              itemLayout="horizontal"
-                              dataSource={additionalServices}
-                              renderItem={(service) => {
-                                const data =
-                                  service?.bookingDetailResponses?.employees.find(
-                                    (e) =>
-                                      e?.id ===
-                                      service?.bookingDetail?.salonEmployeeId
-                                  ); // Define data if necessary
-                                return (
-                                  <List.Item
-                                    actions={[
-                                      <Button
-                                        key="change"
+                                      <button
+                                        className="arrow-button"
                                         onClick={() =>
-                                          handleChangeStaff(service)
+                                          handleScroll1(
+                                            "right",
+                                            timeContainerRef
+                                          )
                                         }
-                                        disabled={statusChangeStaff}
                                       >
-                                        Nhân viên
-                                      </Button>,
-                                    ]}
-                                  >
-                                    <List.Item.Meta
-                                      avatar={
-                                        <Avatar
-                                          size={{
-                                            xs: 24,
-                                            sm: 32,
-                                            md: 40,
-                                            lg: 64,
-                                            xl: 80,
-                                            xxl: 100,
-                                          }}
-                                          src={service?.img}
-                                        />
-                                      }
-                                      title={service.serviceName}
-                                      description={
-                                        <>
-                                          {`${service.price} vnđ • ${formatTime(
-                                            service.time
-                                          )}`}
-                                          <br />
-                                          <span>
-                                            Nhân viên:{" "}
-                                            {data ? (
-                                              <>
-                                                <Avatar
-                                                  size={{
-                                                    xs: 24,
-                                                    sm: 32,
-                                                    md: 40,
-                                                    lg: 34,
-                                                    xl: 40,
-                                                    xxl: 40,
-                                                  }}
-                                                  src={data?.img}
-                                                  style={{ marginRight: 8 }}
-                                                />
-                                                {data?.fullName}
-                                              </>
-                                            ) : (
-                                              <>
-                                                <RandomIcon /> Ngẫu nhiên
-                                              </>
-                                            )}
-                                          </span>
-                                        </>
-                                      }
-                                    />
-                                    {currentService && (
-                                      <Modal
-                                        title="Chọn nhân viên"
-                                        visible={isModalVisible}
-                                        onOk={handleModalOk}
-                                        onCancel={handleCancel}
-                                      >
-                                        <Select
-                                          placeholder="Lựa chọn 1 nhân viên"
-                                          style={{ width: "100%" }}
-                                          value={
-                                            selectedStaff[currentService.id]
-                                          }
-                                          onChange={(value) =>
-                                            handleChangeStaffSecond(
-                                              currentService,
-                                              value
-                                            )
-                                          }
-                                        >
-                                          {currentService?.bookingDetailResponses?.employees?.map(
-                                            (e) => (
-                                              <Option
-                                                key={e.id}
-                                                value={e.id || e.fullName}
-                                              >
-                                                {e.fullName}
-                                              </Option>
-                                            )
-                                          )}
-                                        </Select>
-                                      </Modal>
-                                    )}
-                                  </List.Item>
-                                );
-                              }}
-                            />
-                          </div>
-                        )}
-
-                        <Button
-                          type="dashed"
-                          block
-                          style={{ marginTop: "16px" }}
-                          // onClick={() => setShowServiceList(true)}
-                          onClick={handleAddServiceClick}
-                        >
-                          Thêm dịch vụ khác
-                        </Button>
-                        <Button
-                          type="dashed"
-                          block
-                          style={{ marginTop: "16px" }}
-                          onClick={handleDisplayVoucherList}
-                        >
-                          {displayVoucherList ? (
-                            <Text>Đóng</Text>
-                          ) : (
-                            <Text>Thêm voucher</Text>
+                                        <RightOutlined />
+                                      </button>
+                                    </div>
+                                  </>
+                                ) : (
+                                  <Title className="warning-title" level={3}>
+                                    Không tìm thấy dịch vụ nào trong khoảng thời
+                                    gian này!
+                                  </Title>
+                                )}
+                              </div>
+                              <Divider />
+                            </>
                           )}
-                        </Button>
-                        {displayVoucherList && (
-                          <List
-                            style={{ marginTop: "16px", background: "#ee22" }}
-                            size="middle"
-                            bordered
-                            dataSource={voucherList}
-                            renderItem={(item) => (
-                              <List.Item
-                                style={{ cursor: "pointer" }}
-                                onClick={() => handleSelectedVoucher(item)}
-                              >
-                                {item.description}
-                              </List.Item>
-                            )}
-                          />
-                        )}
-                        {/* Voucher added */}
-                        {voucherSelected &&
-                          voucherSelected?.map((e) => {
-                            return (
-                              <>
-                                <Card
-                                  title="Voucher đã chọn"
-                                  style={{
-                                    marginTop: "16px",
-                                    backgroundColor: "#fafafa",
-                                  }}
-                                  bordered={true}
-                                >
-                                  <p>
-                                    <Text strong>Mô tả:</Text> {e?.description}
-                                  </p>
-                                  <p>
-                                    <Text strong>Giá tối thiểu:</Text>{" "}
-                                    {formatCurrency(e?.minimumOrderAmount)}
-                                  </p>
-                                  <p>
-                                    <Text strong>Phần trăm giảm:</Text>
-                                    {formatDiscountPercentage(
-                                      e?.discountPercentage
-                                    )}
-                                    %
-                                  </p>
-                                  <p>
-                                    <Text strong>Ngày hết hạn:</Text>{" "}
-                                    {formattedDateUi(e?.expiryDate)}
-                                  </p>
-                                  <Button
-                                    type="primary"
-                                    danger
-                                    onClick={() => handleRemoveVoucher(e?.id)}
-                                  >
-                                    Xóa mã khuyến mãi
-                                  </Button>
-                                </Card>
-                              </>
-                            );
-                          })}
+                          {additionalServices?.length > 0 && (
+                            <div>
+                              <Title level={4}>Thêm dịch vụ</Title>
+                              <List
+                                itemLayout="horizontal"
+                                dataSource={additionalServices}
+                                renderItem={(service) => {
+                                  const data =
+                                    service?.bookingDetailResponses?.employees.find(
+                                      (e) =>
+                                        e?.id ===
+                                        service?.bookingDetail?.salonEmployeeId
+                                    ); // Define data if necessary
+                                  return (
+                                    <List.Item
+                                      actions={[
+                                        <Button
+                                          key="change"
+                                          onClick={() =>
+                                            handleChangeStaff(service)
+                                          }
+                                          disabled={statusChangeStaff}
+                                        >
+                                          Nhân viên
+                                        </Button>,
+                                        <Button
+                                          key="close"
+                                          type="text"
+                                          icon={<CloseOutlined />}
+                                          onClick={() =>
+                                            handleRemoveService(service)
+                                          }
+                                          className="close-button-close"
+                                          style={{
+                                            // position: "absolute",
+                                            top: -30,
+                                            right: 0,
+                                            color: "#000",
+                                            zIndex: 1,
+                                            transition: "transform 0.3s ease",
+                                          }} // Customize color if necessary
+                                        />,
+                                      ]}
+                                    >
+                                      <List.Item.Meta
+                                        avatar={
+                                          <Avatar
+                                            size={{
+                                              xs: 24,
+                                              sm: 32,
+                                              md: 40,
+                                              lg: 64,
+                                              xl: 80,
+                                              xxl: 100,
+                                            }}
+                                            src={service?.img}
+                                          />
+                                        }
+                                        title={service.serviceName}
+                                        description={
+                                          <>
+                                            {`${
+                                              service.price
+                                            } vnđ • ${formatTime(
+                                              service.time
+                                            )}`}
+                                            <br />
+                                            <span>
+                                              Nhân viên:{" "}
+                                              {data ? (
+                                                <>
+                                                  <Avatar
+                                                    size={{
+                                                      xs: 24,
+                                                      sm: 32,
+                                                      md: 40,
+                                                      lg: 34,
+                                                      xl: 40,
+                                                      xxl: 40,
+                                                    }}
+                                                    src={data?.img}
+                                                    style={{ marginRight: 8 }}
+                                                  />
+                                                  {data?.fullName}
+                                                </>
+                                              ) : (
+                                                <>
+                                                  <RandomIcon /> Ngẫu nhiên
+                                                </>
+                                              )}
+                                            </span>
+                                          </>
+                                        }
+                                      />
+                                      {currentService && (
+                                        <Modal
+                                          title="Chọn nhân viên"
+                                          visible={isModalVisible}
+                                          onOk={handleModalOk}
+                                          onCancel={handleCancel}
+                                        >
+                                          <Select
+                                            placeholder="Lựa chọn 1 nhân viên"
+                                            style={{ width: "100%" }}
+                                            // value={
+                                            //   selectedStaff[currentService.id]
+                                            // }
+                                            value={
+                                              getSelectedEmployeeName(
+                                                currentService.id
+                                              ) || undefined
+                                            }
+                                            onChange={(value) =>
+                                              handleChangeStaffSecond(
+                                                currentService,
+                                                value
+                                              )
+                                            }
+                                          >
+                                            {currentService?.bookingDetailResponses?.employees?.map(
+                                              (e) => (
+                                                <Option
+                                                  key={e.id}
+                                                  value={e.id || e.fullName}
+                                                >
+                                                  {e.fullName}
+                                                </Option>
+                                              )
+                                            )}
+                                          </Select>
+                                        </Modal>
+                                      )}
+                                    </List.Item>
+                                  );
+                                }}
+                              />
+                            </div>
+                          )}
 
-                        <div style={{ marginTop: "16px" }}>
-                          <Title level={4}>Tổng</Title>
-                          <p>{calculateTotal()}</p>
-                          <Button onClick={handleBooking} type="primary" block>
-                            Đặt lịch
+                          <Button
+                            type="dashed"
+                            block
+                            style={{ marginTop: "16px" }}
+                            // onClick={() => setShowServiceList(true)}
+                            onClick={handleAddServiceClick}
+                          >
+                            Thêm dịch vụ khác
                           </Button>
+                          <Button
+                            type="dashed"
+                            block
+                            style={{ marginTop: "16px" }}
+                            onClick={handleDisplayVoucherList}
+                          >
+                            {displayVoucherList ? (
+                              <Text>Đóng</Text>
+                            ) : (
+                              <Text>Thêm voucher</Text>
+                            )}
+                          </Button>
+                          {displayVoucherList && (
+                            <List
+                              style={{ marginTop: "16px", background: "#ee22" }}
+                              size="middle"
+                              bordered
+                              dataSource={voucherList}
+                              renderItem={(item) => (
+                                <List.Item
+                                  style={{ cursor: "pointer" }}
+                                  onClick={() => handleSelectedVoucher(item)}
+                                >
+                                  {item.description}
+                                </List.Item>
+                              )}
+                            />
+                          )}
+                          {/* Voucher added */}
+                          {voucherSelected &&
+                            voucherSelected?.map((e) => {
+                              return (
+                                <>
+                                  <Card
+                                    title="Voucher đã chọn"
+                                    style={{
+                                      marginTop: "16px",
+                                      backgroundColor: "#fafafa",
+                                    }}
+                                    bordered={true}
+                                  >
+                                    <p>
+                                      <Text strong>Mô tả:</Text>{" "}
+                                      {e?.description}
+                                    </p>
+                                    <p>
+                                      <Text strong>Giá tối thiểu:</Text>{" "}
+                                      {formatCurrency(e?.minimumOrderAmount)}
+                                    </p>
+                                    <p>
+                                      <Text strong>Phần trăm giảm:</Text>
+                                      {formatDiscountPercentage(
+                                        e?.discountPercentage
+                                      )}
+                                      %
+                                    </p>
+                                    <p>
+                                      <Text strong>Ngày hết hạn:</Text>{" "}
+                                      {formattedDateUi(e?.expiryDate)}
+                                    </p>
+                                    <Button
+                                      type="primary"
+                                      danger
+                                      onClick={() => handleRemoveVoucher(e?.id)}
+                                    >
+                                      Xóa mã khuyến mãi
+                                    </Button>
+                                  </Card>
+                                </>
+                              );
+                            })}
+
+                          <div style={{ marginTop: "16px" }}>
+                            <Title level={4}>Tổng</Title>
+                            <p>{calculateTotal()}</p>
+                            <Button
+                              onClick={handleBooking}
+                              type="primary"
+                              block
+                            >
+                              Đặt lịch
+                            </Button>
+                          </div>
                         </div>
-                      </div>
-                    )}
-                  </Modal>
+                      )}
+                    </Modal>
+                  </Spin>
                 </div>
                 {/* <div>
                   <div className="our-work-section">
@@ -1805,7 +2006,25 @@ function SalonDetail(props) {
                   </div>
                   <div>
                     <Title level={4}>Nhân viên</Title>
-                    <Text>{salonDetail.description}</Text>
+                    <List
+                      // loading={loading}
+                      dataSource={employees}
+                      renderItem={(employee) => (
+                        <List.Item key={employee.id}>
+                          <List.Item.Meta
+                            avatar={<Avatar src={employee?.img} />}
+                            title={<Text>{employee?.fullName}</Text>}
+                          />
+                        </List.Item>
+                      )}
+                    />
+                    <Pagination
+                      current={page}
+                      pageSize={pageSizeEmployee}
+                      total={total}
+                      onChange={handlePageChangeEmployees}
+                      // className={styles.pagination}
+                    />
                     <Divider />
                   </div>
 
@@ -1857,16 +2076,55 @@ function SalonDetail(props) {
                     cancelText="Hủy"
                   >
                     {additionalServices?.map((e) => {
+                      const startTime =
+                        e?.bookingDetailResponses?.serviceHair?.startTime;
+                      const endTime =
+                        e?.bookingDetailResponses?.serviceHair?.endTime;
+
+                      const formattedStartTime =
+                        dayjs(startTime).format("HH:mm");
+                      const formattedEndTime = dayjs(endTime).format("HH:mm");
+
+                      const totalTime = dayjs
+                        .duration(dayjs(endTime).diff(dayjs(startTime)))
+                        .asMinutes();
+                      const employee =
+                        e?.bookingDetailResponses?.employees.find(
+                          (emp) => emp.id === e?.bookingDetail?.salonEmployeeId
+                        );
                       return (
-                        // <p>
-                        //   <Text strong>Dịch vụ: {e?.serviceName} </Text>
-                        //   <Image width={150} src={e?.img}/>
-                        // </p>
                         <Card
                           key={e.id}
                           actions={[
                             <>
                               <Text strong>Dịch vụ: {e?.serviceName} </Text>
+                              <br />
+                              {employee ? (
+                                <>
+                                  <Avatar
+                                    src={employee.img}
+                                    style={{ marginRight: 8 }}
+                                  />
+                                  Nhân viên: {employee.fullName}
+                                </>
+                              ) : (
+                                <>
+                                  <Avatar
+                                    icon={<RandomIcon />}
+                                    style={{ marginRight: 8 }}
+                                  />
+                                  Nhân viên: Ngẫu nhiên
+                                </>
+                              )}
+                              <br />
+                              <Text strong>
+                                Thời gian: {formattedStartTime} -{" "}
+                                {formattedEndTime}
+                              </Text>
+                              <br />
+                              <Text strong>
+                                Tổng thời gian: {totalTime} phút
+                              </Text>
                               <Image width={150} src={e?.img} />
                             </>,
                           ]}

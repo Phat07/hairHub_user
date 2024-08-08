@@ -32,6 +32,7 @@ import { actCreateFeedbackCustomer } from "../store/ratingCutomer/action";
 import { TinyColor } from "@ctrl/tinycolor";
 import { EmptyComponent } from "../components/EmptySection/DisplayEmpty";
 import Loader from "../components/Loader";
+import { useNavigate } from "react-router-dom";
 
 function BookingAppointmentCustomerPage() {
   const dispatch = useDispatch();
@@ -307,63 +308,125 @@ function BookingAppointmentCustomerPage() {
   const handleDetailModalClose = () => {
     setIsDetailModalVisible(false);
   };
+
+  const navigate = useNavigate();
   const renderAppointmentDetail = () => {
     if (!selectedAppointmentDetail) return null;
 
     return (
-      <div className="p-5 bg-gray-100 rounded-lg shadow-md my-5">
-        <div className="flex items-center mb-4">
-          <Avatar
-            src={selectedAppointmentDetail.customer.img}
-            size={64}
-            alt="Customer Image"
-            className="mr-4"
-          />
-          <Text strong>
-            Name: {selectedAppointmentDetail.customer.fullName}
-          </Text>
-        </div>
-        <Text className="block mb-2">
-          Tiệm salon: {selectedAppointmentDetail.salonInformation.name}
-        </Text>
-        <Text className="block mb-2">
-          Địa chỉ: {selectedAppointmentDetail.salonInformation.address}
-        </Text>
-        <Text className="block">
-          <div className="space-y-2 mt-2">
-            {selectedAppointmentDetail?.appointmentDetails?.map(
-              (e, index, array) => (
-                <div key={index} className="flex items-center">
-                  <Avatar
-                    src={e?.salonEmployee?.img}
-                    size={48}
-                    alt="Employee Image"
-                    className="mr-2"
-                  />
-                  <Text>
-                    {e?.salonEmployee?.fullName} - {e?.serviceName} {"("}
-                    {dayjs(e.startTime).format("HH:mm")} -{" "}
-                    {dayjs(e.endTime).format("HH:mm")}
-                    {")"}
-                  </Text>
-                </div>
+      <div>
+        <p>
+          <Text strong>Thông tin Salon|Barber shop: </Text>
+          <div
+            onClick={() =>
+              navigate(
+                `/salon_detail/${selectedAppointmentDetail?.salonInformation.id}`
               )
-            )}
+            }
+            style={{
+              border: "1px solid #ccc",
+              padding: "10px",
+              marginBottom: "10px",
+            }}
+          >
+            <Image
+              src={selectedAppointmentDetail?.salonInformation.img}
+              preview={false}
+            />
+            <Text strong>Tên tiệm: </Text>
+            <Text>{selectedAppointmentDetail?.salonInformation.name}</Text>
+            <Text strong>Mô tả: </Text>
+            <Text>
+              {selectedAppointmentDetail?.salonInformation.description}
+            </Text>
+            <Text strong>Địa chỉ: </Text>
+            <Text>{selectedAppointmentDetail?.salonInformation.address}</Text>
           </div>
-        </Text>
+        </p>
+        <p>
+          <Text strong>Ngày: </Text>
+          <Text>
+            {moment(selectedAppointmentDetail.startDate).format("DD/MM/YYYY")}
+          </Text>
+        </p>
+        {/* <p>
+          <Text strong>Giờ: </Text>
+          <Text>
+            {moment(
+              selectedAppointmentDetail.appointmentDetails[0]?.startTime
+            ).format("HH:mm")}
+          </Text>
+        </p> */}
+        {/* <p>
+          <Text strong>Mã Qr xác nhận để thành công: </Text>
+          <Image src={selectedAppointmentDetail?.qrCodeImg} />
+        </p> */}
+        <p>
+          <Text strong>Dịch vụ: </Text>
+        </p>
+        {selectedAppointmentDetail.appointmentDetails.map((service) => (
+          <div
+            key={service.serviceHairId}
+            style={{
+              border: "1px solid #ccc",
+              padding: "10px",
+              marginBottom: "10px",
+            }}
+          >
+            <p>
+              <Text strong>Tên dịch vụ: </Text>
+              <Text>{service?.serviceName}</Text>
+            </p>
+            <p>
+              <Text strong>Giá: </Text>
+              <Text>{formatVND(service?.priceServiceHair)}</Text>
+              vnđ
+            </p>
+            <p>
+              <Text strong>Thời gian bắt đầu: </Text>
+              <Text>{moment(service?.startTime).format("HH:mm")}</Text>
+            </p>
+            <p>
+              <Text strong>Thời gian kết thúc: </Text>
+              <Text>{moment(service?.endTime).format("HH:mm")}</Text>
+            </p>
+            <p>
+              <Text strong>Nhân viên: </Text>
+              <Text>{service.salonEmployee.fullName}</Text>
+            </p>
+          </div>
+        ))}
+        <p>
+          <Text strong>Giá gốc: </Text>
+          <Text>{formatVND(selectedAppointmentDetail.originalPrice)}vnđ</Text>
+        </p>
+        <p>
+          <Text strong>Giảm: </Text>
+          <Text>{formatVND(selectedAppointmentDetail.discountedPrice)}vnđ</Text>
+        </p>
+        <p>
+          <Text strong>Tổng: </Text>
+          <Text>{formatVND(selectedAppointmentDetail.totalPrice)}vnđ</Text>
+        </p>
       </div>
     );
   };
   return (
-    <div>
-      <Header />
+    <div className="cus-appoint-container">
       <div className="status-buttons">
         {Object.entries(statusDisplayNames).map(([statusKey, displayName]) => (
           <Button
             key={statusKey}
             type={selectedStatus === statusKey ? "primary" : "default"}
             onClick={() => handleFilterChange(statusKey)}
-            style={{ marginRight: "10px", marginBottom: "10px" }}
+            style={{
+              flex: "1",
+              marginRight:
+                displayName !== Object.keys(statusDisplayNames).length - 1
+                  ? "1rem"
+                  : "0",
+              padding: "0.5rem 1rem",
+            }}
           >
             {displayName}
           </Button>
@@ -398,38 +461,28 @@ function BookingAppointmentCustomerPage() {
                     align="start"
                     justify="start"
                   >
-                    <Avatar src={appointment.customer.img} />
-                    <Title level={3}>{appointment.customer.fullName}</Title>
-                  </Flex>
-                  <Typography
-                    className="whitespace-nowrap overflow-hidden text-ellipsis"
-                    style={{ maxWidth: "100%" }}
-                  >
-                    <Title level={4} strong>
+                    <Title style={{ margin: "0" }} level={5} strong>
                       {appointment.salonInformation.name}
                     </Title>
-                  </Typography>
-                  <Text strong>
-                    Ngày:
-                    <Text style={{ display: "inline" }}>
+                    <Title style={{ margin: "0" }} level={5} strong>
+                      Ngày hẹn:{" "}
                       {moment(appointment.startDate).format("DD/MM/YYYY")}
-                    </Text>
-                  </Text>
-                  <Text strong>
-                    Giờ: &nbsp;
-                    <Text style={{ display: "inline" }}>
+                    </Title>
+                    <Title style={{ margin: "0" }} level={5} strong>
+                      Thời gian:{" "}
                       {moment(
                         appointment.appointmentDetails[0]?.startTime
                       ).format("HH:mm")}
-                    </Text>
-                  </Text>
-                  <Text strong>
-                    Tổng: &nbsp;
-                    <Text style={{ display: "inline" }}>
-                      {formatVND(appointment.totalPrice)}vnđ
-                    </Text>
-                  </Text>
-                  <Space>
+                    </Title>
+                    <Title style={{ margin: "0" }} level={5} strong>
+                      Tổng tiền:{" "}
+                      <Text style={{ display: "inline" }}>
+                        {formatVND(appointment.totalPrice)}vnđ
+                      </Text>
+                    </Title>
+                  </Flex>
+
+                  <Space className="mt-3">
                     {appointment.status === "SUCCESSED" && (
                       <ConfigProvider
                         theme={{
@@ -461,7 +514,7 @@ function BookingAppointmentCustomerPage() {
                         </Button>
                       </ConfigProvider>
                     )}
-                    <Space className="mt-3" size={5}>
+                    <Space size={5}>
                       {appointment.status === "SUCCESSED" ? (
                         <Button
                           danger
