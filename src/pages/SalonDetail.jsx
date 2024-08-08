@@ -1,59 +1,50 @@
-import React, { useEffect, useRef, useState } from "react";
-import Header from "../components/Header";
 import {
+  HeartOutlined,
+  LeftOutlined,
+  RightOutlined,
+  ShareAltOutlined,
+  StarFilled,
+  StarOutlined,
+} from "@ant-design/icons";
+import {
+  Avatar,
   Button,
+  Card,
   Carousel,
   Checkbox,
   Col,
   Collapse,
   Divider,
+  Image,
   Layout,
   List,
   Modal,
   Pagination,
   Progress,
   Row,
+  Select,
   Space,
   Typography,
-  Select,
   message,
-  Avatar,
-  Card,
-  Image,
 } from "antd";
 import { Content } from "antd/es/layout/layout";
-import {
-  ShareAltOutlined,
-  HeartOutlined,
-  StarFilled,
-  StarOutlined,
-  RightOutlined,
-  LeftOutlined,
-} from "@ant-design/icons";
-import { motion } from "framer-motion";
-import "../css/salonDetail.css";
-import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import useAuthUser from "react-auth-kit/hooks/useAuthUser";
-import { ServiceHairServices } from "../services/servicesHairServices";
-import { voucherServices } from "../services/voucherServices";
 import dayjs from "dayjs";
+import React, { useEffect, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import Header from "../components/Header";
+import "../css/salonDetail.css";
+import { ServiceHairServices } from "../services/servicesHairServices";
 
-import { SalonEmployeesServices } from "../services/salonEmployeesServices";
-import { AppointmentService } from "../services/appointmentServices";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  actGetVoucherBySalonId,
-  actGetVoucherBySalonIdNotPaging,
-} from "../store/manageVoucher/action";
 import RandomIcon from "@rsuite/icons/Random";
-import { actGetAllFeedbackBySalonId } from "../store/ratingCutomer/action";
-import Loader from "../components/Loader";
-import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
-import useSignIn from "react-auth-kit/hooks/useSignIn";
-import jwt_decode from "jwt-decode";
-import { AccountServices } from "../services/accountServices";
+import utc from "dayjs/plugin/utc";
+import { useDispatch, useSelector } from "react-redux";
+import Loader from "../components/Loader";
+import { AppointmentService } from "../services/appointmentServices";
+import { SalonEmployeesServices } from "../services/salonEmployeesServices";
+import { actGetVoucherBySalonIdNotPaging } from "../store/manageVoucher/action";
+import { actGetAllFeedbackBySalonId } from "../store/ratingCutomer/action";
 import { actGetAllSalonInformation } from "../store/salonInformation/action";
 const { Panel } = Collapse;
 const { Title, Text } = Typography;
@@ -116,16 +107,16 @@ function SalonDetail(props) {
   const userIdCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
   const userId = useSelector((state) => state.ACCOUNT.idOwner);
   const uid = useSelector((state) => state.ACCOUNT.uid);
-  useEffect(() => {
-    if (id) {
-      dispatch(actGetAllSalonInformation());
-    }
-  }, [id]);
+
   // const userAuth = useAuthUser();
   // const userId = userAuth?.idOwner;
   // const userIdCustomer = userAuth?.idCustomer;
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5; // Số lượng phản hồi trên mỗi trang
+  const [employees, setEmployees] = useState([]);
+  const [page, setPage] = useState(1);
+  const [pageSizeEmployee, setPageSizeEmployee] = useState(3);
+  const [total, setTotal] = useState(0);
   const indexOfLastFeedback = currentPage * pageSize;
   const indexOfFirstFeedback = indexOfLastFeedback - pageSize;
 
@@ -186,9 +177,33 @@ function SalonDetail(props) {
   );
 
   const totalPagesFeedback = useSelector((state) => state.RATING.totalPages);
+
   useEffect(() => {
-    dispatch(actGetAllFeedbackBySalonId(id, currentPage, pageSize));
-  }, []);
+    if (id) {
+      dispatch(actGetAllFeedbackBySalonId(id, currentPage, pageSize));
+      dispatch(actGetAllSalonInformation());
+      const fetchEmployees = async () => {
+        // setLoading(true);
+
+        await SalonEmployeesServices.getSalonEmployeeBySalonInformationId(
+          id,
+          page,
+          pageSizeEmployee
+        )
+          .then((response) => {
+            console.log("response.data.items", response.data.items);
+
+            setEmployees(response.data.items);
+            setTotal(response.data.totalPages);
+          })
+          .catch((err) => {});
+
+        // setLoading(false);
+      };
+
+      fetchEmployees();
+    }
+  }, [id, currentPage, page]);
 
   useEffect(() => {
     setListVoucher(listVoucherNotPaging);
@@ -944,7 +959,10 @@ function SalonDetail(props) {
   const sortedSchedules = salonDetail?.schedules?.sort((a, b) => {
     return daysOrder.indexOf(a.dayOfWeek) - daysOrder.indexOf(b.dayOfWeek);
   });
-  console.log("detail", salonDetail);
+  const handlePageChangeEmployees = (page, pageSizeEmployee) => {
+    setPage(page);
+    setPageSizeEmployee(pageSizeEmployee);
+  };
 
   return (
     <div>
@@ -1805,7 +1823,25 @@ function SalonDetail(props) {
                   </div>
                   <div>
                     <Title level={4}>Nhân viên</Title>
-                    <Text>{salonDetail.description}</Text>
+                    <List
+                      // loading={loading}
+                      dataSource={employees}
+                      renderItem={(employee) => (
+                        <List.Item key={employee.id}>
+                          <List.Item.Meta
+                            avatar={<Avatar src={employee?.img} />}
+                            title={<Text>{employee?.fullName}</Text>}
+                          />
+                        </List.Item>
+                      )}
+                    />
+                    <Pagination
+                      current={page}
+                      pageSize={pageSizeEmployee}
+                      total={total}
+                      onChange={handlePageChangeEmployees}
+                      // className={styles.pagination}
+                    />
                     <Divider />
                   </div>
 
