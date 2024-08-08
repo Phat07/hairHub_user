@@ -28,6 +28,9 @@
 .no-close-btn .ant-modal-close {
   display: none;
 }
+.close-button-close:hover {
+  transform: rotate(90deg);
+}
 @media (max-width: 768px) {
   .detail-salon-col-1 {
     margin-left: 0;

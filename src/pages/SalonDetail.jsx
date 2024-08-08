@@ -1,4 +1,5 @@
 import {
+  CloseOutlined,
   HeartOutlined,
   LeftOutlined,
   RightOutlined,
@@ -24,6 +25,7 @@ import {
   Row,
   Select,
   Space,
+  Spin,
   Typography,
   message,
 } from "antd";
@@ -46,6 +48,7 @@ import { SalonEmployeesServices } from "../services/salonEmployeesServices";
 import { actGetVoucherBySalonIdNotPaging } from "../store/manageVoucher/action";
 import { actGetAllFeedbackBySalonId } from "../store/ratingCutomer/action";
 import { actGetAllSalonInformation } from "../store/salonInformation/action";
+import { set } from "rsuite/esm/internals/utils/date";
 const { Panel } = Collapse;
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -156,6 +159,7 @@ function SalonDetail(props) {
   const [salonDetail, setSalonDetail] = useState({});
   const [listVoucher, setListVoucher] = useState([]);
   const [selectedVouchers, setSelectedVouchers] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const [isPriceModalVisible, setIsPriceModalVisible] = useState(false);
   const [originalPrice, setOriginalPrice] = useState(0);
@@ -655,12 +659,14 @@ function SalonDetail(props) {
   console.log("add", additionalServices);
 
   const handleServiceSelect = async (service) => {
+    setLoading(true);
     const isChecked = additionalServices.some((s) => s.id === service.id);
     if (isChecked) {
       setAdditionalServices(
         additionalServices.filter((s) => s.id !== service.id)
       );
       setShowServiceList(false);
+      setLoading(false);
     } else {
       // setAdditionalServices([...additionalServices, service]);
       const formatDate = (date) => {
@@ -670,7 +676,6 @@ function SalonDetail(props) {
         return `${year}-${month}-${day}`;
       };
       const dataMapping = [...additionalServices, service];
-      console.log("dataMap", dataMapping);
 
       const databooking = await dataMapping?.map((e) => {
         return {
@@ -725,19 +730,22 @@ function SalonDetail(props) {
               service.bookingDetailResponses = matchingBookingDetailResponse;
             }
           }
-          console.log("34444", updatedAdditionalServices);
 
           setAdditionalServices(updatedAdditionalServices);
           setShowServiceList(false);
-
+          setLoading(false);
           // Cập nhật state hoặc hiển thị thông báo thành công
         })
         .catch((error) => {
-          setShowServiceList(true);
+          setShowServiceList(false);
           message.warning(error?.response?.data?.message);
+          setLoading(true);
           // Xử lý lỗi nếu có
           // console.error("Error booking appointment:", error);
           // Hiển thị thông báo lỗi cho người dùng nếu cần
+        })
+        .finally((err) => {
+          setLoading(false);
         });
     }
   };
@@ -1001,6 +1009,12 @@ function SalonDetail(props) {
   };
 
   const handleConfirmBooking = async () => {
+    if (additionalServices.length === 0) {
+      message.info("Vui lòng chọn dịch vụ!!!");
+      setIsPriceModalVisible(false);
+      return;
+    }
+
     if (selectedTimeSlot === null) {
       message.warning("Vui lòng chọn giờ để đặt lịch");
       setIsPriceModalVisible(false);
@@ -1055,8 +1069,15 @@ function SalonDetail(props) {
     setPage(page);
     setPageSizeEmployee(pageSizeEmployee);
   };
-  console.log("render", showServiceList);
+  const handleRemoveService = (serviceToRemove) => {
+    // Filter out the service that matches the ID of the serviceToRemove
+    const updatedServices = additionalServices.filter(
+      (service) => service.id !== serviceToRemove.id
+    );
 
+    // Update the state with the new array
+    setAdditionalServices(updatedServices);
+  };
   return (
     <div>
       <Header />
@@ -1190,236 +1211,252 @@ function SalonDetail(props) {
                   </Collapse>
                 </div>
                 <div>
-                  <Modal
-                    title="Đặt dịch vụ"
-                    visible={isBookingModalVisible}
-                    className={showServiceList ? "no-close-btn" : ""}
-                    onCancel={() => setIsBookingModalVisible(false)}
-                    footer={null}
-                    width={800}
-                  >
-                    {showServiceList ? (
-                      <div>
-                        <Title level={4}>Thêm những dịch vụ khác</Title>
-                        <List
-                          itemLayout="horizontal"
-                          dataSource={data}
-                          renderItem={(service, index) => {
-                            // Kiểm tra nếu dịch vụ đã được chọn
-                            const isChecked = additionalServices.some(
-                              (s) => s.id === service.id
-                            );
+                  <Spin spinning={loading}>
+                    <Modal
+                      title="Đặt dịch vụ"
+                      visible={isBookingModalVisible}
+                      className={showServiceList ? "no-close-btn" : ""}
+                      onCancel={() => setIsBookingModalVisible(false)}
+                      footer={null}
+                      width={800}
+                    >
+                      {showServiceList ? (
+                        <>
+                          <Spin spinning={loading}>
+                            <div>
+                              <Title level={4}>Thêm những dịch vụ khác</Title>
+                              <List
+                                itemLayout="horizontal"
+                                dataSource={data}
+                                renderItem={(service, index) => {
+                                  // Kiểm tra nếu dịch vụ đã được chọn
+                                  const isChecked = additionalServices.some(
+                                    (s) => s.id === service.id
+                                  );
 
-                            return (
-                              <List.Item
-                                key={index} // Thêm thuộc tính key
-                                actions={[
-                                  // <Checkbox
-                                  //   className="custom-checkbox"
-                                  //   key={`checkbox-${index}`} // Thêm thuộc tính key cho Checkbox
-                                  //   checked={isChecked}
-                                  //   onChange={() =>
-                                  //     handleServiceSelect(service)
-                                  //   }
-                                  // >
-                                  //   Book
-                                  // </Checkbox>,
-                                  <div
-                                    className={`custom-checkbox ${
-                                      isChecked ? "booked" : ""
-                                    }`}
-                                    s
-                                    key={`checkbox-${index}`} // Thêm thuộc tính key
-                                    onClick={() => handleServiceSelect(service)}
-                                  >
-                                    {isChecked ? "Đã đặt" : "Đặt lịch"}
-                                  </div>,
-                                ]}
-                              >
-                                <List.Item.Meta
-                                  avatar={
-                                    <Avatar
-                                      size={{
-                                        xs: 24,
-                                        sm: 32,
-                                        md: 40,
-                                        lg: 64,
-                                        xl: 80,
-                                        xxl: 100,
-                                      }}
-                                      src={service?.img}
-                                    />
-                                  }
-                                  title={
-                                    <Title level={4}>
-                                      {service.serviceName}
-                                    </Title>
-                                  }
-                                  description={
-                                    <Typography className="w-fit">
-                                      <Text strong>
-                                        Mô tả: &nbsp;
-                                        <Text style={{ display: "inline" }}>
-                                          {service.description}
-                                        </Text>
-                                      </Text>
-                                      <Text strong>
-                                        Giá: &nbsp;
-                                        <Text style={{ display: "inline" }}>
-                                          {formatCurrency(service.price)}
-                                        </Text>
-                                      </Text>
-                                      <Text strong>
-                                        Thời gian: &nbsp;
-                                        <Text style={{ display: "inline" }}>
-                                          {formatTime(service.time)}
-                                        </Text>
-                                      </Text>
-                                    </Typography>
-                                  }
-                                />
-                              </List.Item>
-                            );
-                          }}
-                          style={{ backgroundColor: "transparent" }}
-                        />
-                        <Button
-                          type="dashed"
-                          block
-                          style={{ marginTop: "16px" }}
-                          // onClick={() => setShowServiceList(false)}
-                          // onClick={handleChangeSelectedService}
-                          onClick={() => {
-                            setShowServiceList(false);
-                          }}
-                        >
-                          Trở về
-                        </Button>
-                      </div>
-                    ) : (
-                      <div>
-                        <Divider />
-                        <div className="scroll-container">
-                          <button
-                            className="arrow-button"
-                            onClick={() =>
-                              handleScroll("left", dateContainerRef)
-                            }
-                          >
-                            <LeftOutlined />
-                          </button>
-                          <div
-                            className="scroll-wrapper"
-                            ref={dateContainerRef}
-                          >
-                            <div className="scroll-content">
-                              {currentMonthDays.map((day, index) => (
-                                <Button
-                                  key={index}
-                                  onClick={() => handleDateSelect(day)}
-                                  className={
-                                    selectedDate &&
-                                    selectedDate.toDateString() ===
-                                      day.toDateString()
-                                      ? "selected"
-                                      : ""
-                                  }
-                                >
-                                  {day.toDateString().slice(0, 10)}
-                                </Button>
-                              ))}
-                            </div>
-                          </div>
-                          <button
-                            className="arrow-button"
-                            onClick={() =>
-                              handleScroll("right", dateContainerRef)
-                            }
-                          >
-                            <RightOutlined />
-                          </button>
-                        </div>
-                        <Divider />
-
-                        {selectedDate && (
-                          <>
-                            <div className="time-picker">
-                              {timeSlots?.availableTimes?.length > 0 ? (
-                                <>
-                                  <Divider />
-                                  <div className="scroll-container">
-                                    <button
-                                      className="arrow-button"
-                                      onClick={() =>
-                                        handleScroll1("left", timeContainerRef)
-                                      }
-                                    >
-                                      <LeftOutlined />
-                                    </button>
-                                    <div
-                                      className="scroll-wrapper"
-                                      ref={timeContainerRef}
-                                    >
-                                      <div className="scroll-content">
-                                        {timeSlots?.availableTimes?.map(
-                                          (slot, index) => {
-                                            // Tạo biến timeString để lưu chuỗi thời gian hiển thị
-                                            let timeString = "";
-                                            const timeParts = slot?.timeSlot
-                                              ?.toString()
-                                              .split(".");
-                                            const hour = parseInt(
-                                              timeParts[0],
-                                              10
-                                            );
-                                            const minutes =
-                                              timeParts.length > 1
-                                                ? parseInt(timeParts[1], 10)
-                                                : 0;
-                                            // Xử lý hiển thị theo định dạng giờ và phút
-                                            if (minutes === 0) {
-                                              timeString = `${hour} giờ`;
-                                            } else if (minutes === 25) {
-                                              timeString = `${hour} giờ 15 phút`;
-                                            } else if (minutes === 5) {
-                                              timeString = `${hour} giờ 30 phút`;
-                                            } else if (minutes === 75) {
-                                              timeString = `${hour} giờ 45 phút`;
-                                            }
-                                            const currentTime = new Date();
-                                            const slotTime = dayjs()
-                                              .hour(hour)
-                                              .minute(minutes);
-
-                                            const isDisabled =
-                                              selectedDate &&
-                                              dayjs(selectedDate).isSame(
-                                                dayjs(),
-                                                "day"
-                                              ) &&
-                                              slotTime.isBefore(currentTime);
-                                            return (
-                                              <Button
-                                                key={index}
-                                                onClick={() =>
-                                                  handleTimeSlotSelect(
-                                                    slot?.timeSlot
-                                                  )
-                                                }
-                                                className={
-                                                  selectedTimeSlot ===
-                                                  slot?.timeSlot
-                                                    ? "selected"
-                                                    : ""
-                                                }
-                                                disabled={isDisabled}
-                                              >
-                                                {timeString}
-                                              </Button>
-                                            );
+                                  return (
+                                    <List.Item
+                                      key={index} // Thêm thuộc tính key
+                                      actions={[
+                                        // <Checkbox
+                                        //   className="custom-checkbox"
+                                        //   key={`checkbox-${index}`} // Thêm thuộc tính key cho Checkbox
+                                        //   checked={isChecked}
+                                        //   onChange={() =>
+                                        //     handleServiceSelect(service)
+                                        //   }
+                                        // >
+                                        //   Book
+                                        // </Checkbox>,
+                                        <div
+                                          className={`custom-checkbox ${
+                                            isChecked ? "booked" : ""
+                                          }`}
+                                          s
+                                          key={`checkbox-${index}`} // Thêm thuộc tính key
+                                          onClick={() =>
+                                            handleServiceSelect(service)
                                           }
-                                        )}
-                                        {/* {timeSlots?.availableTimes?.map(
+                                        >
+                                          {isChecked ? "Đã đặt" : "Đặt lịch"}
+                                        </div>,
+                                      ]}
+                                    >
+                                      <List.Item.Meta
+                                        avatar={
+                                          <Avatar
+                                            size={{
+                                              xs: 24,
+                                              sm: 32,
+                                              md: 40,
+                                              lg: 64,
+                                              xl: 80,
+                                              xxl: 100,
+                                            }}
+                                            src={service?.img}
+                                          />
+                                        }
+                                        title={
+                                          <Title level={4}>
+                                            {service.serviceName}
+                                          </Title>
+                                        }
+                                        description={
+                                          <Typography className="w-fit">
+                                            <Text strong>
+                                              Mô tả: &nbsp;
+                                              <Text
+                                                style={{ display: "inline" }}
+                                              >
+                                                {service.description}
+                                              </Text>
+                                            </Text>
+                                            <Text strong>
+                                              Giá: &nbsp;
+                                              <Text
+                                                style={{ display: "inline" }}
+                                              >
+                                                {formatCurrency(service.price)}
+                                              </Text>
+                                            </Text>
+                                            <Text strong>
+                                              Thời gian: &nbsp;
+                                              <Text
+                                                style={{ display: "inline" }}
+                                              >
+                                                {formatTime(service.time)}
+                                              </Text>
+                                            </Text>
+                                          </Typography>
+                                        }
+                                      />
+                                    </List.Item>
+                                  );
+                                }}
+                                style={{ backgroundColor: "transparent" }}
+                              />
+                              <Button
+                                type="dashed"
+                                block
+                                style={{ marginTop: "16px" }}
+                                // onClick={() => setShowServiceList(false)}
+                                // onClick={handleChangeSelectedService}
+                                onClick={() => {
+                                  setShowServiceList(false);
+                                }}
+                              >
+                                Trở về
+                              </Button>
+                            </div>
+                          </Spin>
+                        </>
+                      ) : (
+                        <div>
+                          <Divider />
+                          <div className="scroll-container">
+                            <button
+                              className="arrow-button"
+                              onClick={() =>
+                                handleScroll("left", dateContainerRef)
+                              }
+                            >
+                              <LeftOutlined />
+                            </button>
+                            <div
+                              className="scroll-wrapper"
+                              ref={dateContainerRef}
+                            >
+                              <div className="scroll-content">
+                                {currentMonthDays.map((day, index) => (
+                                  <Button
+                                    key={index}
+                                    onClick={() => handleDateSelect(day)}
+                                    className={
+                                      selectedDate &&
+                                      selectedDate.toDateString() ===
+                                        day.toDateString()
+                                        ? "selected"
+                                        : ""
+                                    }
+                                  >
+                                    {day.toDateString().slice(0, 10)}
+                                  </Button>
+                                ))}
+                              </div>
+                            </div>
+                            <button
+                              className="arrow-button"
+                              onClick={() =>
+                                handleScroll("right", dateContainerRef)
+                              }
+                            >
+                              <RightOutlined />
+                            </button>
+                          </div>
+                          <Divider />
+
+                          {selectedDate && (
+                            <>
+                              <div className="time-picker">
+                                {timeSlots?.availableTimes?.length > 0 ? (
+                                  <>
+                                    <Divider />
+                                    <div className="scroll-container">
+                                      <button
+                                        className="arrow-button"
+                                        onClick={() =>
+                                          handleScroll1(
+                                            "left",
+                                            timeContainerRef
+                                          )
+                                        }
+                                      >
+                                        <LeftOutlined />
+                                      </button>
+                                      <div
+                                        className="scroll-wrapper"
+                                        ref={timeContainerRef}
+                                      >
+                                        <div className="scroll-content">
+                                          {timeSlots?.availableTimes?.map(
+                                            (slot, index) => {
+                                              // Tạo biến timeString để lưu chuỗi thời gian hiển thị
+                                              let timeString = "";
+                                              const timeParts = slot?.timeSlot
+                                                ?.toString()
+                                                .split(".");
+                                              const hour = parseInt(
+                                                timeParts[0],
+                                                10
+                                              );
+                                              const minutes =
+                                                timeParts.length > 1
+                                                  ? parseInt(timeParts[1], 10)
+                                                  : 0;
+                                              // Xử lý hiển thị theo định dạng giờ và phút
+                                              if (minutes === 0) {
+                                                timeString = `${hour} giờ`;
+                                              } else if (minutes === 25) {
+                                                timeString = `${hour} giờ 15 phút`;
+                                              } else if (minutes === 5) {
+                                                timeString = `${hour} giờ 30 phút`;
+                                              } else if (minutes === 75) {
+                                                timeString = `${hour} giờ 45 phút`;
+                                              }
+                                              const currentTime = new Date();
+                                              const slotTime = dayjs()
+                                                .hour(hour)
+                                                .minute(minutes);
+
+                                              const isDisabled =
+                                                selectedDate &&
+                                                dayjs(selectedDate).isSame(
+                                                  dayjs(),
+                                                  "day"
+                                                ) &&
+                                                slotTime.isBefore(currentTime);
+                                              return (
+                                                <Button
+                                                  key={index}
+                                                  onClick={() =>
+                                                    handleTimeSlotSelect(
+                                                      slot?.timeSlot
+                                                    )
+                                                  }
+                                                  className={
+                                                    selectedTimeSlot ===
+                                                    slot?.timeSlot
+                                                      ? "selected"
+                                                      : ""
+                                                  }
+                                                  disabled={isDisabled}
+                                                >
+                                                  {timeString}
+                                                </Button>
+                                              );
+                                            }
+                                          )}
+                                          {/* {timeSlots?.availableTimes?.map(
                                           (slot, index) => {
                                             // Tạo biến timeString để lưu chuỗi thời gian hiển thị
                                             let timeString = "";
@@ -1494,238 +1531,266 @@ function SalonDetail(props) {
                                             );
                                           }
                                         )} */}
+                                        </div>
                                       </div>
-                                    </div>
-                                    <button
-                                      className="arrow-button"
-                                      onClick={() =>
-                                        handleScroll1("right", timeContainerRef)
-                                      }
-                                    >
-                                      <RightOutlined />
-                                    </button>
-                                  </div>
-                                </>
-                              ) : (
-                                <Title className="warning-title" level={3}>
-                                  Không tìm thấy dịch vụ nào trong khoảng thời
-                                  gian này!
-                                </Title>
-                              )}
-                            </div>
-                            <Divider />
-                          </>
-                        )}
-                        {additionalServices?.length > 0 && (
-                          <div>
-                            <Title level={4}>Thêm dịch vụ</Title>
-                            <List
-                              itemLayout="horizontal"
-                              dataSource={additionalServices}
-                              renderItem={(service) => {
-                                const data =
-                                  service?.bookingDetailResponses?.employees.find(
-                                    (e) =>
-                                      e?.id ===
-                                      service?.bookingDetail?.salonEmployeeId
-                                  ); // Define data if necessary
-                                return (
-                                  <List.Item
-                                    actions={[
-                                      <Button
-                                        key="change"
+                                      <button
+                                        className="arrow-button"
                                         onClick={() =>
-                                          handleChangeStaff(service)
+                                          handleScroll1(
+                                            "right",
+                                            timeContainerRef
+                                          )
                                         }
-                                        disabled={statusChangeStaff}
                                       >
-                                        Nhân viên
-                                      </Button>,
-                                    ]}
-                                  >
-                                    <List.Item.Meta
-                                      avatar={
-                                        <Avatar
-                                          size={{
-                                            xs: 24,
-                                            sm: 32,
-                                            md: 40,
-                                            lg: 64,
-                                            xl: 80,
-                                            xxl: 100,
-                                          }}
-                                          src={service?.img}
-                                        />
-                                      }
-                                      title={service.serviceName}
-                                      description={
-                                        <>
-                                          {`${service.price} vnđ • ${formatTime(
-                                            service.time
-                                          )}`}
-                                          <br />
-                                          <span>
-                                            Nhân viên:{" "}
-                                            {data ? (
-                                              <>
-                                                <Avatar
-                                                  size={{
-                                                    xs: 24,
-                                                    sm: 32,
-                                                    md: 40,
-                                                    lg: 34,
-                                                    xl: 40,
-                                                    xxl: 40,
-                                                  }}
-                                                  src={data?.img}
-                                                  style={{ marginRight: 8 }}
-                                                />
-                                                {data?.fullName}
-                                              </>
-                                            ) : (
-                                              <>
-                                                <RandomIcon /> Ngẫu nhiên
-                                              </>
-                                            )}
-                                          </span>
-                                        </>
-                                      }
-                                    />
-                                    {currentService && (
-                                      <Modal
-                                        title="Chọn nhân viên"
-                                        visible={isModalVisible}
-                                        onOk={handleModalOk}
-                                        onCancel={handleCancel}
-                                      >
-                                        <Select
-                                          placeholder="Lựa chọn 1 nhân viên"
-                                          style={{ width: "100%" }}
-                                          // value={
-                                          //   selectedStaff[currentService.id]
-                                          // }
-                                          value={
-                                            getSelectedEmployeeName(
-                                              currentService.id
-                                            ) || undefined
-                                          } 
-                                          onChange={(value) =>
-                                            handleChangeStaffSecond(
-                                              currentService,
-                                              value
-                                            )
-                                          }
-                                        >
-                                          {currentService?.bookingDetailResponses?.employees?.map(
-                                            (e) => (
-                                              <Option
-                                                key={e.id}
-                                                value={e.id || e.fullName}
-                                              >
-                                                {e.fullName}
-                                              </Option>
-                                            )
-                                          )}
-                                        </Select>
-                                      </Modal>
-                                    )}
-                                  </List.Item>
-                                );
-                              }}
-                            />
-                          </div>
-                        )}
-
-                        <Button
-                          type="dashed"
-                          block
-                          style={{ marginTop: "16px" }}
-                          // onClick={() => setShowServiceList(true)}
-                          onClick={handleAddServiceClick}
-                        >
-                          Thêm dịch vụ khác
-                        </Button>
-                        <Button
-                          type="dashed"
-                          block
-                          style={{ marginTop: "16px" }}
-                          onClick={handleDisplayVoucherList}
-                        >
-                          {displayVoucherList ? (
-                            <Text>Đóng</Text>
-                          ) : (
-                            <Text>Thêm voucher</Text>
+                                        <RightOutlined />
+                                      </button>
+                                    </div>
+                                  </>
+                                ) : (
+                                  <Title className="warning-title" level={3}>
+                                    Không tìm thấy dịch vụ nào trong khoảng thời
+                                    gian này!
+                                  </Title>
+                                )}
+                              </div>
+                              <Divider />
+                            </>
                           )}
-                        </Button>
-                        {displayVoucherList && (
-                          <List
-                            style={{ marginTop: "16px", background: "#ee22" }}
-                            size="middle"
-                            bordered
-                            dataSource={voucherList}
-                            renderItem={(item) => (
-                              <List.Item
-                                style={{ cursor: "pointer" }}
-                                onClick={() => handleSelectedVoucher(item)}
-                              >
-                                {item.description}
-                              </List.Item>
-                            )}
-                          />
-                        )}
-                        {/* Voucher added */}
-                        {voucherSelected &&
-                          voucherSelected?.map((e) => {
-                            return (
-                              <>
-                                <Card
-                                  title="Voucher đã chọn"
-                                  style={{
-                                    marginTop: "16px",
-                                    backgroundColor: "#fafafa",
-                                  }}
-                                  bordered={true}
-                                >
-                                  <p>
-                                    <Text strong>Mô tả:</Text> {e?.description}
-                                  </p>
-                                  <p>
-                                    <Text strong>Giá tối thiểu:</Text>{" "}
-                                    {formatCurrency(e?.minimumOrderAmount)}
-                                  </p>
-                                  <p>
-                                    <Text strong>Phần trăm giảm:</Text>
-                                    {formatDiscountPercentage(
-                                      e?.discountPercentage
-                                    )}
-                                    %
-                                  </p>
-                                  <p>
-                                    <Text strong>Ngày hết hạn:</Text>{" "}
-                                    {formattedDateUi(e?.expiryDate)}
-                                  </p>
-                                  <Button
-                                    type="primary"
-                                    danger
-                                    onClick={() => handleRemoveVoucher(e?.id)}
-                                  >
-                                    Xóa mã khuyến mãi
-                                  </Button>
-                                </Card>
-                              </>
-                            );
-                          })}
+                          {additionalServices?.length > 0 && (
+                            <div>
+                              <Title level={4}>Thêm dịch vụ</Title>
+                              <List
+                                itemLayout="horizontal"
+                                dataSource={additionalServices}
+                                renderItem={(service) => {
+                                  const data =
+                                    service?.bookingDetailResponses?.employees.find(
+                                      (e) =>
+                                        e?.id ===
+                                        service?.bookingDetail?.salonEmployeeId
+                                    ); // Define data if necessary
+                                  return (
+                                    <List.Item
+                                      actions={[
+                                        <Button
+                                          key="change"
+                                          onClick={() =>
+                                            handleChangeStaff(service)
+                                          }
+                                          disabled={statusChangeStaff}
+                                        >
+                                          Nhân viên
+                                        </Button>,
+                                        <Button
+                                          key="close"
+                                          type="text"
+                                          icon={<CloseOutlined />}
+                                          onClick={() =>
+                                            handleRemoveService(service)
+                                          }
+                                          className="close-button-close"
+                                          style={{
+                                            // position: "absolute",
+                                            top: -30,
+                                            right: 0,
+                                            color: "#000",
+                                            zIndex: 1,
+                                            transition: "transform 0.3s ease", 
+                                          }} // Customize color if necessary
+                                        />,
+                                      ]}
+                                    >
+                                      <List.Item.Meta
+                                        avatar={
+                                          <Avatar
+                                            size={{
+                                              xs: 24,
+                                              sm: 32,
+                                              md: 40,
+                                              lg: 64,
+                                              xl: 80,
+                                              xxl: 100,
+                                            }}
+                                            src={service?.img}
+                                          />
+                                        }
+                                        title={service.serviceName}
+                                        description={
+                                          <>
+                                            {`${
+                                              service.price
+                                            } vnđ • ${formatTime(
+                                              service.time
+                                            )}`}
+                                            <br />
+                                            <span>
+                                              Nhân viên:{" "}
+                                              {data ? (
+                                                <>
+                                                  <Avatar
+                                                    size={{
+                                                      xs: 24,
+                                                      sm: 32,
+                                                      md: 40,
+                                                      lg: 34,
+                                                      xl: 40,
+                                                      xxl: 40,
+                                                    }}
+                                                    src={data?.img}
+                                                    style={{ marginRight: 8 }}
+                                                  />
+                                                  {data?.fullName}
+                                                </>
+                                              ) : (
+                                                <>
+                                                  <RandomIcon /> Ngẫu nhiên
+                                                </>
+                                              )}
+                                            </span>
+                                          </>
+                                        }
+                                      />
+                                      {currentService && (
+                                        <Modal
+                                          title="Chọn nhân viên"
+                                          visible={isModalVisible}
+                                          onOk={handleModalOk}
+                                          onCancel={handleCancel}
+                                        >
+                                          <Select
+                                            placeholder="Lựa chọn 1 nhân viên"
+                                            style={{ width: "100%" }}
+                                            // value={
+                                            //   selectedStaff[currentService.id]
+                                            // }
+                                            value={
+                                              getSelectedEmployeeName(
+                                                currentService.id
+                                              ) || undefined
+                                            }
+                                            onChange={(value) =>
+                                              handleChangeStaffSecond(
+                                                currentService,
+                                                value
+                                              )
+                                            }
+                                          >
+                                            {currentService?.bookingDetailResponses?.employees?.map(
+                                              (e) => (
+                                                <Option
+                                                  key={e.id}
+                                                  value={e.id || e.fullName}
+                                                >
+                                                  {e.fullName}
+                                                </Option>
+                                              )
+                                            )}
+                                          </Select>
+                                        </Modal>
+                                      )}
+                                    </List.Item>
+                                  );
+                                }}
+                              />
+                            </div>
+                          )}
 
-                        <div style={{ marginTop: "16px" }}>
-                          <Title level={4}>Tổng</Title>
-                          <p>{calculateTotal()}</p>
-                          <Button onClick={handleBooking} type="primary" block>
-                            Đặt lịch
+                          <Button
+                            type="dashed"
+                            block
+                            style={{ marginTop: "16px" }}
+                            // onClick={() => setShowServiceList(true)}
+                            onClick={handleAddServiceClick}
+                          >
+                            Thêm dịch vụ khác
                           </Button>
+                          <Button
+                            type="dashed"
+                            block
+                            style={{ marginTop: "16px" }}
+                            onClick={handleDisplayVoucherList}
+                          >
+                            {displayVoucherList ? (
+                              <Text>Đóng</Text>
+                            ) : (
+                              <Text>Thêm voucher</Text>
+                            )}
+                          </Button>
+                          {displayVoucherList && (
+                            <List
+                              style={{ marginTop: "16px", background: "#ee22" }}
+                              size="middle"
+                              bordered
+                              dataSource={voucherList}
+                              renderItem={(item) => (
+                                <List.Item
+                                  style={{ cursor: "pointer" }}
+                                  onClick={() => handleSelectedVoucher(item)}
+                                >
+                                  {item.description}
+                                </List.Item>
+                              )}
+                            />
+                          )}
+                          {/* Voucher added */}
+                          {voucherSelected &&
+                            voucherSelected?.map((e) => {
+                              return (
+                                <>
+                                  <Card
+                                    title="Voucher đã chọn"
+                                    style={{
+                                      marginTop: "16px",
+                                      backgroundColor: "#fafafa",
+                                    }}
+                                    bordered={true}
+                                  >
+                                    <p>
+                                      <Text strong>Mô tả:</Text>{" "}
+                                      {e?.description}
+                                    </p>
+                                    <p>
+                                      <Text strong>Giá tối thiểu:</Text>{" "}
+                                      {formatCurrency(e?.minimumOrderAmount)}
+                                    </p>
+                                    <p>
+                                      <Text strong>Phần trăm giảm:</Text>
+                                      {formatDiscountPercentage(
+                                        e?.discountPercentage
+                                      )}
+                                      %
+                                    </p>
+                                    <p>
+                                      <Text strong>Ngày hết hạn:</Text>{" "}
+                                      {formattedDateUi(e?.expiryDate)}
+                                    </p>
+                                    <Button
+                                      type="primary"
+                                      danger
+                                      onClick={() => handleRemoveVoucher(e?.id)}
+                                    >
+                                      Xóa mã khuyến mãi
+                                    </Button>
+                                  </Card>
+                                </>
+                              );
+                            })}
+
+                          <div style={{ marginTop: "16px" }}>
+                            <Title level={4}>Tổng</Title>
+                            <p>{calculateTotal()}</p>
+                            <Button
+                              onClick={handleBooking}
+                              type="primary"
+                              block
+                            >
+                              Đặt lịch
+                            </Button>
+                          </div>
                         </div>
-                      </div>
-                    )}
-                  </Modal>
+                      )}
+                    </Modal>
+                  </Spin>
                 </div>
                 {/* <div>
                   <div className="our-work-section">

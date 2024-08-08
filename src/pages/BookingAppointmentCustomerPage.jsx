@@ -349,18 +349,18 @@ function BookingAppointmentCustomerPage() {
             {moment(selectedAppointmentDetail.startDate).format("DD/MM/YYYY")}
           </Text>
         </p>
-        <p>
+        {/* <p>
           <Text strong>Giờ: </Text>
           <Text>
             {moment(
               selectedAppointmentDetail.appointmentDetails[0]?.startTime
             ).format("HH:mm")}
           </Text>
-        </p>
-        <p>
+        </p> */}
+        {/* <p>
           <Text strong>Mã Qr xác nhận để thành công: </Text>
           <Image src={selectedAppointmentDetail?.qrCodeImg} />
-        </p>
+        </p> */}
         <p>
           <Text strong>Dịch vụ: </Text>
         </p>
