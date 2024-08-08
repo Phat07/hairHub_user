@@ -633,25 +633,112 @@ function SalonDetail(props) {
   };
 
   const handleChangeStaffSecond = (service, value) => {
-    setSelectedStaff((prev) => ({
-      ...prev,
-      [service.id]: value,
-    }));
+    setAdditionalServices((prevServices) =>
+      prevServices.map((s) =>
+        s.id === service.id
+          ? {
+              ...s,
+              bookingDetail: {
+                ...s.bookingDetail,
+                salonEmployeeId: value,
+              },
+            }
+          : s
+      )
+    );
   };
 
   const handleCancel = () => {
     setIsModalVisible(false);
     setCurrentService(null);
   };
+  console.log("add", additionalServices);
 
-  const handleServiceSelect = (service) => {
+  const handleServiceSelect = async (service) => {
     const isChecked = additionalServices.some((s) => s.id === service.id);
     if (isChecked) {
       setAdditionalServices(
         additionalServices.filter((s) => s.id !== service.id)
       );
+      setShowServiceList(false);
     } else {
-      setAdditionalServices([...additionalServices, service]);
+      // setAdditionalServices([...additionalServices, service]);
+      const formatDate = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0"); // Thêm số 0 vào trước tháng nếu cần
+        const day = String(date.getDate()).padStart(2, "0"); // Thêm số 0 vào trước ngày nếu cần
+        return `${year}-${month}-${day}`;
+      };
+      const dataMapping = [...additionalServices, service];
+      console.log("dataMap", dataMapping);
+
+      const databooking = await dataMapping?.map((e) => {
+        return {
+          serviceHairId: e?.id,
+          isAnyOne: true,
+          salonEmployeeId: e?.bookingDetailResponses?.employees?.id || null,
+        };
+      });
+
+      const formattedDate = formatDate(selectedDate);
+      const requestBody = {
+        day: formattedDate, // Thay bằng ngày bạn muốn book
+        availableSlot: selectedTimeSlot, // Thay bằng slot bạn muốn book
+        salonId: id, // Thay bằng id của salon
+        bookingDetail: databooking,
+      };
+      setDataBooking(databooking); //serviceHairId, salonEmployeeId
+
+      axios
+        .post(
+          "https://hairhub.gahonghac.net/api/v1/appointments/BookAppointment",
+          requestBody
+        )
+        .then((response) => {
+          // Xử lý kết quả từ server nếu cần
+          const updatedAdditionalServices = [...dataMapping];
+          let total = 0;
+          updatedAdditionalServices?.map((e) => {
+            total += e?.price;
+          });
+
+          const totalPriceMapping = listVoucherNotPaging?.filter(
+            (e) => e?.minimumOrderAmount <= total
+          );
+          // setListVoucher(totalPriceMapping);
+          setVoucherList(totalPriceMapping);
+          const updatedVoucherSelected = voucherSelected?.filter(
+            (voucher) => voucher?.minimumOrderAmount <= total
+          );
+
+          setVoucherSelected(updatedVoucherSelected);
+          // console.log("totalPriceMapping", totalPriceMapping);
+
+          for (const service of dataMapping) {
+            const matchingBookingDetailResponse =
+              response.data.bookingDetailResponses.find(
+                (responseDetail) =>
+                  responseDetail?.serviceHair?.id === service.id
+              );
+
+            if (matchingBookingDetailResponse) {
+              service.bookingDetailResponses = matchingBookingDetailResponse;
+            }
+          }
+          console.log("34444", updatedAdditionalServices);
+
+          setAdditionalServices(updatedAdditionalServices);
+          setShowServiceList(false);
+
+          // Cập nhật state hoặc hiển thị thông báo thành công
+        })
+        .catch((error) => {
+          setShowServiceList(true);
+          message.warning(error?.response?.data?.message);
+          // Xử lý lỗi nếu có
+          // console.error("Error booking appointment:", error);
+          // Hiển thị thông báo lỗi cho người dùng nếu cần
+        });
     }
   };
   function calculateTotal() {
@@ -717,7 +804,7 @@ function SalonDetail(props) {
               bookingDetail: {
                 serviceHairId: currentService.id,
                 isAnyOne: true,
-                salonEmployeeId: selectedStaff[currentService.id],
+                salonEmployeeId: s?.bookingDetail?.salonEmployeeId,
               },
             }
           : s
@@ -725,6 +812,14 @@ function SalonDetail(props) {
     );
     setIsModalVisible(false);
     setCurrentService(null);
+  };
+  const getSelectedEmployeeName = (serviceId) => {
+    const selectedService = additionalServices.find((s) => s.id === serviceId);
+    const selectedEmployeeId = selectedService?.bookingDetail?.salonEmployeeId;
+    const employee = currentService?.bookingDetailResponses?.employees.find(
+      (e) => e.id === selectedEmployeeId
+    );
+    return employee?.fullName;
   };
 
   const handleChangeStaff = (service) => {
@@ -1137,7 +1232,7 @@ function SalonDetail(props) {
                                     key={`checkbox-${index}`} // Thêm thuộc tính key
                                     onClick={() => handleServiceSelect(service)}
                                   >
-                                    {isChecked ? "Booked" : "Book"}
+                                    {isChecked ? "Đã đặt" : "Đặt lịch"}
                                   </div>,
                                 ]}
                               >
@@ -1193,7 +1288,10 @@ function SalonDetail(props) {
                           block
                           style={{ marginTop: "16px" }}
                           // onClick={() => setShowServiceList(false)}
-                          onClick={handleChangeSelectedService}
+                          // onClick={handleChangeSelectedService}
+                          onClick={() => {
+                            setShowServiceList(false);
+                          }}
                         >
                           Trở về
                         </Button>
@@ -1292,13 +1390,6 @@ function SalonDetail(props) {
                                             const slotTime = dayjs()
                                               .hour(hour)
                                               .minute(minutes);
-                                            const formattedSlotTime =
-                                              slotTime.format("HH:mm");
-
-                                            console.log(
-                                              "slotTime:",
-                                              formattedSlotTime
-                                            );
 
                                             const isDisabled =
                                               selectedDate &&
@@ -1510,9 +1601,14 @@ function SalonDetail(props) {
                                         <Select
                                           placeholder="Lựa chọn 1 nhân viên"
                                           style={{ width: "100%" }}
+                                          // value={
+                                          //   selectedStaff[currentService.id]
+                                          // }
                                           value={
-                                            selectedStaff[currentService.id]
-                                          }
+                                            getSelectedEmployeeName(
+                                              currentService.id
+                                            ) || undefined
+                                          } 
                                           onChange={(value) =>
                                             handleChangeStaffSecond(
                                               currentService,
