@@ -960,6 +960,11 @@ function SalonDetail(props) {
   };
 
   const handleBooking = async () => {
+    if (additionalServices.length === 0) {
+      message.info("Vui lòng chọn dịch vụ!!");
+      setIsPriceModalVisible(false);
+      return;
+    }
     // Function to format the date
     const formatDate = (date) => {
       const year = date.getFullYear();
@@ -1595,7 +1600,7 @@ function SalonDetail(props) {
                                             right: 0,
                                             color: "#000",
                                             zIndex: 1,
-                                            transition: "transform 0.3s ease", 
+                                            transition: "transform 0.3s ease",
                                           }} // Customize color if necessary
                                         />,
                                       ]}
