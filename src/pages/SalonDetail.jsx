@@ -40,6 +40,7 @@ import { ServiceHairServices } from "../services/servicesHairServices";
 
 import RandomIcon from "@rsuite/icons/Random";
 import timezone from "dayjs/plugin/timezone";
+import duration from "dayjs/plugin/duration";
 import utc from "dayjs/plugin/utc";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../components/Loader";
@@ -79,6 +80,7 @@ const reportOptions = [
 ];
 dayjs.extend(utc);
 dayjs.extend(timezone);
+dayjs.extend(duration);
 function renderStars(stars) {
   const filledStars = Math.floor(stars);
   const hasHalfStar = stars % 1 !== 0;
@@ -700,6 +702,8 @@ function SalonDetail(props) {
           requestBody
         )
         .then((response) => {
+          console.log("bookRES", response.data);
+
           // Xử lý kết quả từ server nếu cần
           const updatedAdditionalServices = [...dataMapping];
           let total = 0;
@@ -2072,16 +2076,55 @@ function SalonDetail(props) {
                     cancelText="Hủy"
                   >
                     {additionalServices?.map((e) => {
+                      const startTime =
+                        e?.bookingDetailResponses?.serviceHair?.startTime;
+                      const endTime =
+                        e?.bookingDetailResponses?.serviceHair?.endTime;
+
+                      const formattedStartTime =
+                        dayjs(startTime).format("HH:mm");
+                      const formattedEndTime = dayjs(endTime).format("HH:mm");
+
+                      const totalTime = dayjs
+                        .duration(dayjs(endTime).diff(dayjs(startTime)))
+                        .asMinutes();
+                      const employee =
+                        e?.bookingDetailResponses?.employees.find(
+                          (emp) => emp.id === e?.bookingDetail?.salonEmployeeId
+                        );
                       return (
-                        // <p>
-                        //   <Text strong>Dịch vụ: {e?.serviceName} </Text>
-                        //   <Image width={150} src={e?.img}/>
-                        // </p>
                         <Card
                           key={e.id}
                           actions={[
                             <>
                               <Text strong>Dịch vụ: {e?.serviceName} </Text>
+                              <br />
+                              {employee ? (
+                                <>
+                                  <Avatar
+                                    src={employee.img}
+                                    style={{ marginRight: 8 }}
+                                  />
+                                  Nhân viên: {employee.fullName}
+                                </>
+                              ) : (
+                                <>
+                                  <Avatar
+                                    icon={<RandomIcon />}
+                                    style={{ marginRight: 8 }}
+                                  />
+                                  Nhân viên: Ngẫu nhiên
+                                </>
+                              )}
+                              <br />
+                              <Text strong>
+                                Thời gian: {formattedStartTime} -{" "}
+                                {formattedEndTime}
+                              </Text>
+                              <br />
+                              <Text strong>
+                                Tổng thời gian: {totalTime} phút
+                              </Text>
                               <Image width={150} src={e?.img} />
                             </>,
                           ]}
