@@ -22,5 +22,15 @@ export const AccountServices = {
   },
   checkInByCustomer(data) {
     return API.put(`/customers/CheckInByCustomer`, data);
-  }
+  },
+  updateUserById(id, data) {
+    return API.put(`/accounts/UpdateAccount/${id}`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  },
+  updatePasswordUserById(id, data) {
+    return API.put(`/accounts/ChangePassword/${id}`, data);
+  },
 };

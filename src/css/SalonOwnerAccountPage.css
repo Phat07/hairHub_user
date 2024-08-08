@@ -1,4 +1,4 @@
-.salon-owner-account {
+/* .salon-owner-account {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -44,5 +44,72 @@
     display: flex;
     justify-content: center;
     gap: 16px;
+    align-items: center;
+  }
+   */
+
+   .salon-owner-account {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 0 20px;
+    margin: 12rem 0;
+  }
+  
+  .salon-layout {
+    display: flex;
+    width: 100%;
+    max-width: 1200px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .salon-left {
+    flex: 1;
+    margin-right: 10px;
+  }
+  
+  .salon-right {
+    flex: 2;
+  }
+  
+  .salon-avatar {
+    margin-bottom: 20px;
+  }
+  
+  .salon-info {
+    margin-bottom: 10px;
+  }
+  
+  .salon-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .salon-buttons .ant-btn {
+    width: 100%;
+  }
+  
+  .salon-reload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  @media (max-width: 768px) {
+    .salon-layout {
+      flex-direction: column;
+      margin-top: 3rem;
+      margin-bottom: 1rem;
+    }
+  
+    .salon-left, .salon-right {
+      flex: 1;
+      width: 100%;
+    }
   }
   
