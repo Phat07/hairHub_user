@@ -645,9 +645,8 @@ function SalonDetail(props) {
   };
 
   const handleServiceSelect = (service) => {
-    setOneServiceData(service);
-    if (additionalServices.some((s) => s.id === service.id)) {
-      // Nếu dịch vụ đã tồn tại, loại bỏ nó khỏi danh sách
+    const isChecked = additionalServices.some((s) => s.id === service.id);
+    if (isChecked) {
       setAdditionalServices(
         additionalServices.filter((s) => s.id !== service.id)
       );
@@ -961,6 +960,7 @@ function SalonDetail(props) {
     setPage(page);
     setPageSizeEmployee(pageSizeEmployee);
   };
+  console.log("render", showServiceList);
 
   return (
     <div>
@@ -1098,15 +1098,8 @@ function SalonDetail(props) {
                   <Modal
                     title="Đặt dịch vụ"
                     visible={isBookingModalVisible}
-                    onCancel={async () => {
-                      try {
-                        await handleChangeSelectedService();
-                        setShowServiceList(false); // Đặt thành false nếu không có lỗi
-                      } catch (error) {
-                        setShowServiceList(true); // Đặt thành true nếu có lỗi
-                        console.error("Error booking appointment:", error);
-                      }
-                    }}
+                    className={showServiceList ? "no-close-btn" : ""}
+                    onCancel={() => setIsBookingModalVisible(false)}
                     footer={null}
                     width={800}
                   >
@@ -1126,15 +1119,26 @@ function SalonDetail(props) {
                               <List.Item
                                 key={index} // Thêm thuộc tính key
                                 actions={[
-                                  <Checkbox
-                                    key={`checkbox-${index}`} // Thêm thuộc tính key cho Checkbox
-                                    checked={isChecked}
-                                    onChange={() =>
-                                      handleServiceSelect(service)
-                                    }
+                                  // <Checkbox
+                                  //   className="custom-checkbox"
+                                  //   key={`checkbox-${index}`} // Thêm thuộc tính key cho Checkbox
+                                  //   checked={isChecked}
+                                  //   onChange={() =>
+                                  //     handleServiceSelect(service)
+                                  //   }
+                                  // >
+                                  //   Book
+                                  // </Checkbox>,
+                                  <div
+                                    className={`custom-checkbox ${
+                                      isChecked ? "booked" : ""
+                                    }`}
+                                    s
+                                    key={`checkbox-${index}`} // Thêm thuộc tính key
+                                    onClick={() => handleServiceSelect(service)}
                                   >
-                                    Thêm
-                                  </Checkbox>,
+                                    {isChecked ? "Booked" : "Book"}
+                                  </div>,
                                 ]}
                               >
                                 <List.Item.Meta
