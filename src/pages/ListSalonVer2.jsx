@@ -144,7 +144,7 @@ function ListSalonVer2(props) {
     fetchSalonData();
   }, [currentPage]);
   console.log("salonList", salonList);
-  
+
   return (
     <div className="list-salon-container">
       <div className="list-salon-header">
@@ -274,17 +274,17 @@ function ListSalonVer2(props) {
                 <h3>{salon.name}</h3>
                 <p>{salon.description}</p>
                 <p>{salon.address}</p>
-                {/* <p>
-                  <strong>Lịch trình:</strong>
+                <p>
+                  <strong>Dịch vụ:</strong>
                 </p>
                 <ul>
-                  {salon.schedules.map((schedule, index) => (
+                  {salon.services.map((service, index) => (
                     <li key={index}>
-                      {schedule.dayOfWeek}: {schedule.startTime} -{" "}
-                      {schedule.endTime}
+                      {service.serviceName}: {service.description} -{" "}
+                      {service.price} Vnđ
                     </li>
                   ))}
-                </ul> */}
+                </ul>
               </div>
             </div>
           ))}
