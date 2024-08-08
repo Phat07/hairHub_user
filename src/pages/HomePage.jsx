@@ -210,7 +210,7 @@ function HomePage(props) {
             <div className="container">
               <div className="scroll-wrapper" ref={scrollContainerRef}>
                 <Title level={3} className="customTitle">
-                  Những tiệm Barber - Salon gợi ý cho bạn
+                  Những Barber Shop - Salon gợi ý cho bạn
                 </Title>
                 <div className="scroll-icons">
                   <LeftCircleOutlined
@@ -345,7 +345,7 @@ function HomePage(props) {
               <RightOutlined />
             </button> */}
           </Flex>
-          <div className="container location-card-container">
+          <div className="container" style={{ marginBlock: "10rem" }}>
             <Card bodyStyle={{ padding: 0 }} className="location-card">
               <Row>
                 <Col xs={24} md={16} className="location-card-col">
@@ -425,7 +425,7 @@ function HomePage(props) {
                 <Text
                   style={{
                     marginLeft: "1rem",
-                    fontSize: "1rem",
+                    fontSize: "1.5rem",
                     whiteSpace: "nowrap",
                     overflow: "hidden",
                     textOverflow: "ellipsis",
@@ -446,7 +446,7 @@ function HomePage(props) {
               </Text>
               <Text
                 style={{
-                  fontSize: "1.2rem",
+                  fontSize: "2rem",
                   fontWeight: "bold",
                   marginBottom: "1rem",
                   display: "block",
@@ -457,7 +457,7 @@ function HomePage(props) {
               </Text>
               <Text
                 style={{
-                  fontSize: "1.2rem",
+                  fontSize: "1.7rem",
                   marginBottom: "0.5rem",
                   display: "block",
                 }}
@@ -466,7 +466,7 @@ function HomePage(props) {
               </Text>
               <Text
                 style={{
-                  fontSize: "1.2rem",
+                  fontSize: "1.7rem",
                   marginBottom: "1rem",
                   display: "block",
                 }}
@@ -504,18 +504,18 @@ function HomePage(props) {
                       Tìm kiếm nhanh chóng, chỉ đường dễ dàng
                     </Title>
                     <Text className="text-card-homepage">
-                      -Hairhub giúp bạn tìm kiếm nhanh chóng các tiệm salon,
+                      - Hairhub giúp bạn tìm kiếm nhanh chóng các tiệm salon,
                       barber shop ở gần vị trí của bạn theo tên cửa tiệm tóc,
                       tên dịch vụ.{" "}
                     </Text>
                     <Text className="text-card-homepage">
-                      -Hairhub còn giúp chỉ đường cho bạn đến cửa tiệm tóc bằng
-                      bản đồ Google Map.{" "}
+                      - Hairhub còn giúp chỉ đường cho bạn đến cửa tiệm tóc bằng
+                      bản đồ Google Map dễ dàng.{" "}
                     </Text>
                   </div>
                 </Col>
                 <Col xs={24} md={10}>
-                  <div style={{ position: "relative", paddingTop: "56.25%" }}>
+                  <div style={{ position: "relative", paddingTop: "80%" }}>
                     <video
                       style={{
                         position: "absolute",
@@ -545,7 +545,7 @@ function HomePage(props) {
             <Card bodyStyle={{ padding: 0 }} className="card-homepage">
               <Row>
                 <Col xs={24} md={10}>
-                  <div style={{ position: "relative", paddingTop: "56.25%" }}>
+                  <div style={{ position: "relative", paddingTop: "80%" }}>
                     <video
                       style={{
                         position: "absolute",
@@ -613,7 +613,7 @@ function HomePage(props) {
                   </div>
                 </Col>
                 <Col xs={24} md={10}>
-                  <div style={{ position: "relative", paddingTop: "56.25%" }}>
+                  <div style={{ position: "relative", paddingTop: "80%" }}>
                     <video
                       style={{
                         position: "absolute",

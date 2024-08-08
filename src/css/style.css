@@ -200,7 +200,7 @@
  \*-----------------------------------*/
  
  .container {
-   padding-inline: 100px;
+   padding-inline: 10rem;
  }
  
  /* .section { padding-block: var(--section-padding); } */
@@ -1598,9 +1598,9 @@
   color: #bf9456;
 }
 
-.location-card-container{
+/* .location-card-container{
   margin: 10rem 0;
-}
+} */
 
 .location-card {
   border-radius: 2px;
@@ -1616,9 +1616,9 @@
   overflow: hidden;
   margin: 1rem 0;
   border-radius: 1rem;
-  background-color: #f4f2eb;
-  border-width: 3px;
-  border-color: #bf9456;
+  background-color: #ddf0ff;
+  /* border-width: 3px;
+  border-color: #bf9456; */
 }
 .location-card-col{
   padding: 1rem;
@@ -1681,6 +1681,7 @@
   font-weight: bold;
   margin-left: 1rem;
   display: block;
+  margin-bottom: 10rem;
 }
 
 .text-card-homepage{
