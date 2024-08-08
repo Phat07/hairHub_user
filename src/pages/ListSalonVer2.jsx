@@ -1,11 +1,9 @@
 import {
   SearchOutlined,
   EnvironmentOutlined,
-  CalendarOutlined,
   CloseCircleOutlined,
   RightOutlined,
   LeftOutlined,
-  FilterOutlined,
   SortAscendingOutlined,
 } from "@ant-design/icons";
 import {
@@ -272,16 +270,24 @@ function ListSalonVer2(props) {
                 style={{ width: "70%", paddingLeft: "16px" }}
               >
                 <h3>{salon.name}</h3>
-                <p>{salon.description}</p>
-                <p>{salon.address}</p>
-                <p>
-                  <strong>Dịch vụ:</strong>
+                <p style={{ fontSize: "1.5rem" }}>
+                  <strong>Mô tả:</strong> {salon.description}
+                </p>
+                <p style={{ fontSize: "1.5rem" }}>
+                  <strong>Địa chỉ:</strong> {salon.address}
                 </p>
                 <ul>
                   {salon.services.map((service, index) => (
-                    <li key={index}>
-                      {service.serviceName}: {service.description} -{" "}
-                      {service.price} Vnđ
+                    <li key={index} className="service-list-item">
+                      <div className="service-details">
+                        <span className="service-name">
+                          {service.serviceName}:
+                        </span>
+                        <span className="service-description">
+                          {service.description} - {service.price} Vnđ
+                        </span>
+                      </div>
+                      <Button className="book-button">Book</Button>
                     </li>
                   ))}
                 </ul>
