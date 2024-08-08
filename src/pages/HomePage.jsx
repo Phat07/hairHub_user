@@ -18,22 +18,33 @@ import { IoMenu } from "react-icons/io5";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import {
+  Avatar,
   Button,
   Card,
+  Col,
   Flex,
   message,
   Modal,
   Rate,
+  Row,
   Space,
   Typography,
 } from "antd";
 import heroBanner from "../assets/images/bannerHomePage.jpg";
+import locationPhone from "../assets/images/phoneMap.png";
+import bannerHomepage1 from "../assets/images/Hairhub mobile andoird app.png";
+import video from "../assets/images/Hairhub mobile andoird app (1).mp4";
+import video1 from "../assets/images/Hairhub mobile andoird app (4).mp4";
+import video2 from "../assets/images/Hairhub mobile andoird app (5).mp4";
+import logo from "../assets/images/hairHubIcon.png";
 import {
   CheckCircleOutlined,
   EnvironmentOutlined,
   HeartFilled,
   HeartOutlined,
+  LeftCircleOutlined,
   LeftOutlined,
+  RightCircleOutlined,
   RightOutlined,
 } from "@ant-design/icons";
 const { Title, Text } = Typography;
@@ -46,7 +57,9 @@ import { EmptyComponent } from "../components/EmptySection/DisplayEmpty";
 function HomePage(props) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const salonList = useSelector((state) => state.SALONINFORMATION.getSalonSuggestion);
+  const salonList = useSelector(
+    (state) => state.SALONINFORMATION.getSalonSuggestion
+  );
   const [heartButton, setHeartButton] = useState(
     Array(salonList.length).fill(false)
   );
@@ -54,6 +67,7 @@ function HomePage(props) {
   const ownerId = useSelector((state) => state.ACCOUNT.idOwner);
   const scrollContainerRef = useRef(null);
   const recommendedSalons = salonList;
+  console.log("recommendedSalons: ", recommendedSalons);
 
   const handleScroll = (direction) => {
     if (scrollContainerRef.current) {
@@ -109,7 +123,7 @@ function HomePage(props) {
     dispatch(actGetStatusPayment(dataMapping, orderCode, ownerId))
       .then((res) => {
         console.log("res", res);
-        
+
         // navigate("/listPayment");
       })
       .catch((e) => {
@@ -180,7 +194,7 @@ function HomePage(props) {
                 tốt nhất trên thị trường Việt Nam
               </Text>
               <Link to={"/list_salon"}>
-                <Text className="btn has-before text-white hover:text-blue-600">
+                <Text className="btn has-before text-white hover:text-white-600">
                   Khám phá những dịch vụ của chúng tôi
                 </Text>
               </Link>
@@ -195,13 +209,35 @@ function HomePage(props) {
             </button> */}
             <div className="container">
               <div className="scroll-wrapper" ref={scrollContainerRef}>
-                <Title className="customTitle">Những tiệm Barber gần đây</Title>
+                <Title level={3} className="customTitle">
+                  Những tiệm Barber - Salon gợi ý cho bạn
+                </Title>
+                <div className="scroll-icons">
+                  <LeftCircleOutlined
+                    className="scroll-icon"
+                    onClick={() => {
+                      const container = scrollContainerRef.current;
+                      container.scrollBy({ left: -250, behavior: "smooth" });
+                    }}
+                  />
+                  <RightCircleOutlined
+                    className="scroll-icon"
+                    onClick={() => {
+                      const container = scrollContainerRef.current;
+                      container.scrollBy({ left: 250, behavior: "smooth" });
+                    }}
+                  />
+                </div>
                 <div className="scroll-content mt-12">
                   {recommendedSalons?.length > 0 ? (
                     recommendedSalons?.map((item, index) => (
                       <Card
                         hoverable
-                        style={{ width: "25rem" }}
+                        style={{
+                          width: "25rem",
+                          position: "relative",
+                          backgroundColor: "#ece8de",
+                        }} // Add position: relative to parent
                         key={item.id}
                         className="small-card"
                         cover={
@@ -237,23 +273,63 @@ function HomePage(props) {
                           onClick={() => navigate(`/salon_detail/${item.id}`)}
                           title={
                             <>
-                              <Title level={4}>{item.name}</Title>
+                              <Title
+                                level={4}
+                                style={{
+                                  fontSize: "1.5rem",
+                                  whiteSpace: "nowrap",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  maxWidth: "23rem",
+                                }}
+                              >
+                                {item.name}
+                              </Title>
                             </>
                           }
                           description={
-                            <div className="h-[12rem]">
-                              {/* <Rate
-                              disabled
-                              defaultValue="5.0"
-                              style={{ fontSize: 12 }}
-                            /> */}
-                              <Text>{item.reviews}</Text>
-                              <Text>
+                            <div className="h-[7rem]">
+                              <Text
+                                style={{
+                                  fontSize: "1.2rem",
+                                }}
+                              >
                                 <EnvironmentOutlined /> {item.address}
                               </Text>
                             </div>
                           }
                         />
+                        <div
+                          style={{
+                            position: "absolute",
+                            top: 0,
+                            right: 0,
+                            display: "flex",
+                            flexDirection: "column",
+                          }}
+                        >
+                          <div
+                            style={{
+                              backgroundColor: "rgba(191, 148, 86, 0.8)",
+                              color: "white",
+                              padding: "1rem",
+                              borderRadius: "0 8px 0 8px",
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                              fontSize: "1rem",
+                            }}
+                          >
+                            {item.totalReviewer > 0 ? (
+                              <>
+                                <div>{item.totalRating}/5</div>
+                                <div>{item.totalReviewer} đánh giá</div>
+                              </>
+                            ) : (
+                              <div>Không có đánh giá</div>
+                            )}
+                          </div>
+                        </div>
                       </Card>
                     ))
                   ) : (
@@ -269,6 +345,299 @@ function HomePage(props) {
               <RightOutlined />
             </button> */}
           </Flex>
+          <div className="container location-card-container">
+            <Card bodyStyle={{ padding: 0 }} className="location-card">
+              <Row>
+                <Col xs={24} md={16} className="location-card-col">
+                  <div style={{ padding: "1rem" }}>
+                    <Title level={3}>Bật chức năng vị trí</Title>
+                    <Text>Để tìm kiếm cửa hàng gần bạn</Text>
+                    <div
+                      // style={{
+                      //   marginTop: "1rem",
+                      //   display: "flex",
+                      //   alignItems: "center",
+                      //   justifyContent: "center",
+                      // }}
+                      className="location-card-buton"
+                    >
+                      <Button
+                        // onClick={() => navigate("/search-near-you")}
+                        style={{
+                          borderWidth: "0",
+                        }}
+                        className="location-buton1"
+                      >
+                        Tìm kiếm gần bạn
+                      </Button>
+                      <Button
+                        style={{
+                          borderWidth: "0",
+                        }}
+                        className="location-buton2"
+                      >
+                        Không phải bây giờ
+                      </Button>
+                    </div>
+                  </div>
+                </Col>
+                <Col xs={24} md={8}>
+                  <img
+                    src={locationPhone}
+                    alt="locationPhone Banner"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      maxWidth: "30rem",
+                      maxHeight: "30rem",
+                      objectFit: "cover",
+                      borderRadius: "0 2px 2px 0",
+                    }}
+                  />
+                </Col>
+              </Row>
+            </Card>
+          </div>
+          <div
+            className="container"
+            style={{ maxWidth: "80rem", margin: "auto" }}
+          >
+            <Card
+              className="banner-card"
+              style={{ textAlign: "center", padding: "2rem" }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginBottom: "1rem",
+                }}
+              >
+                <Avatar
+                  size={50}
+                  shape="square"
+                  src={logo}
+                  style={{
+                    border: "2px solid #bf9456",
+                  }}
+                />
+                <Text
+                  style={{
+                    marginLeft: "1rem",
+                    fontSize: "1rem",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  Hairhub Mobile Android App
+                </Text>
+              </div>
+              <Text
+                style={{
+                  fontSize: "2.5rem",
+                  fontWeight: "bold",
+                  marginBottom: "1rem",
+                  display: "block",
+                }}
+              >
+                Tìm kiếm, đặt lịch tiện lợi hơn với ứng dụng di động
+              </Text>
+              <Text
+                style={{
+                  fontSize: "1.2rem",
+                  fontWeight: "bold",
+                  marginBottom: "1rem",
+                  display: "block",
+                }}
+              >
+                Sử dụng ứng dụng di động Hairhub để nhận được nhiều tính năng
+                thú vị và ưu đãi hấp dẫn:
+              </Text>
+              <Text
+                style={{
+                  fontSize: "1.2rem",
+                  marginBottom: "0.5rem",
+                  display: "block",
+                }}
+              >
+                Nhận được nhiều voucher giảm giá từ salon, hệ thống
+              </Text>
+              <Text
+                style={{
+                  fontSize: "1.2rem",
+                  marginBottom: "1rem",
+                  display: "block",
+                }}
+              >
+                Các tính năng nâng cấp như lưu giữ kiểu tóc người dùng
+              </Text>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center", // Căn giữa ảnh theo chiều ngang
+                  marginTop: "1rem",
+                }}
+              >
+                <img
+                  src={bannerHomepage1}
+                  alt="bannerHomepage1"
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                    maxWidth: "40rem",
+                    maxHeight: "40rem",
+                    objectFit: "contain",
+                    borderRadius: "0 2px 2px 0",
+                  }}
+                />
+              </div>
+            </Card>
+          </div>
+          <div className="container">
+            <Card bodyStyle={{ padding: 0 }} className="card-homepage">
+              <Row>
+                <Col xs={24} md={14} className="location-card-col">
+                  <div style={{ padding: "1rem" }}>
+                    <Title level={2} className="title-card-homepage">
+                      Tìm kiếm nhanh chóng, chỉ đường dễ dàng
+                    </Title>
+                    <Text className="text-card-homepage">
+                      -Hairhub giúp bạn tìm kiếm nhanh chóng các tiệm salon,
+                      barber shop ở gần vị trí của bạn theo tên cửa tiệm tóc,
+                      tên dịch vụ.{" "}
+                    </Text>
+                    <Text className="text-card-homepage">
+                      -Hairhub còn giúp chỉ đường cho bạn đến cửa tiệm tóc bằng
+                      bản đồ Google Map.{" "}
+                    </Text>
+                  </div>
+                </Col>
+                <Col xs={24} md={10}>
+                  <div style={{ position: "relative", paddingTop: "56.25%" }}>
+                    <video
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "contain",
+                      }}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      disablePictureInPicture
+                      controlsList="nodownload nofullscreen noremoteplayback"
+                    >
+                      <source src={video} type="video/mp4" />
+                      Your browser does not support the video tag.
+                    </video>
+                  </div>
+                </Col>
+              </Row>
+            </Card>
+          </div>
+
+          <div className="container">
+            <Card bodyStyle={{ padding: 0 }} className="card-homepage">
+              <Row>
+                <Col xs={24} md={10}>
+                  <div style={{ position: "relative", paddingTop: "56.25%" }}>
+                    <video
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "contain",
+                      }}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      disablePictureInPicture
+                      controlsList="nodownload nofullscreen noremoteplayback"
+                    >
+                      <source src={video1} type="video/mp4" />
+                      Your browser does not support the video tag.
+                    </video>
+                  </div>
+                </Col>
+                <Col xs={24} md={14} className="location-card-col">
+                  <div style={{ padding: "1rem" }}>
+                    <Title level={2} className="title-card-homepage">
+                      Đặt lịch tiện lợi, quản lý dễ dàng
+                    </Title>
+                    <Text className="text-card-homepage">
+                      -Bạn hoàn toàn có thể đặt lịch hẹn trực tuyến với cửa tiệm
+                      tóc chỉ vài thao tác đơn giản.
+                    </Text>
+                    <Text className="text-card-homepage">
+                      -Đặt lịch hẹn theo cửa tiệm tóc, khung giờ và dịch vụ giúp
+                      bạn tiết kiệm thời gian hơn mà không phải chờ đợi
+                    </Text>
+                    <Text className="text-card-homepage">
+                      -Bạn cũng có thể dễ dàng quản lý lịch hẹn sẽ giúp bạn có
+                      thể bám sát lịch trình rõ ràng hơn.
+                    </Text>
+                    <Text className="text-card-homepage">
+                      -Nhận được nhiều voucher hấp dẫn từ hệ thống và cửa tiệm
+                      tóc khi sử dụng ứng dụng Hairhub trên điện thoại.
+                    </Text>
+                  </div>
+                </Col>
+              </Row>
+            </Card>
+          </div>
+          <div className="container">
+            <Card bodyStyle={{ padding: 0 }} className="card-homepage">
+              <Row>
+                <Col xs={24} md={14} className="location-card-col">
+                  <div style={{ padding: "1rem" }}>
+                    <Title level={2} className="title-card-homepage">
+                      Check in tức thời, đánh giá thuận tiện
+                    </Title>
+                    <Text className="text-card-homepage">
+                      -Khi đến barber shop, salon hãy quét mã QR để check in
+                      nhanh chóng cho đơn đặt lịch của mình.
+                    </Text>
+                    <Text className="text-card-homepage">
+                      -Ngoài ra, sau khi hoàn thành đơn cắt tóc của mình, bạn
+                      cũng có thể đánh giá cho salon, barber shop và xem nó ở
+                      phần thông tin của cửa tiệm tóc trên Hairhub.
+                    </Text>
+                  </div>
+                </Col>
+                <Col xs={24} md={10}>
+                  <div style={{ position: "relative", paddingTop: "56.25%" }}>
+                    <video
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "contain",
+                      }}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      disablePictureInPicture
+                      controlsList="nodownload nofullscreen noremoteplayback"
+                    >
+                      <source src={video2} type="video/mp4" />
+                      Your browser does not support the video tag.
+                    </video>
+                  </div>
+                </Col>
+              </Row>
+            </Card>
+          </div>
           {/* SERVICE */}
           <section
             className="section service mt-32"
@@ -276,7 +645,7 @@ function HomePage(props) {
             aria-label="services"
           >
             <div className="container">
-              <Title className="section-title customTitle text-start">
+              <Title level={3} className="section-title customTitle text-start">
                 Những dịch vụ mà chúng tôi cung cấp
               </Title>
               {/* <Text className="section-text text-center text-4xl">
