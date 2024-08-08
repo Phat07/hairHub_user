@@ -809,9 +809,7 @@ function SalonDetail(props) {
         updatedAdditionalServices?.map((e) => {
           total += e?.price;
         });
-        console.log("updateService", updatedAdditionalServices);
-        // console.log("total", total);
-        // console.log("update", updatedAdditionalServices);
+
         const totalPriceMapping = listVoucherNotPaging?.filter(
           (e) => e?.minimumOrderAmount <= total
         );
@@ -843,7 +841,7 @@ function SalonDetail(props) {
       .catch((error) => {
         message.warning(error?.response?.data?.message);
         // Xử lý lỗi nếu có
-        console.error("Error booking appointment:", error);
+        // console.error("Error booking appointment:", error);
         // Hiển thị thông báo lỗi cho người dùng nếu cần
       });
   };
@@ -1100,9 +1098,14 @@ function SalonDetail(props) {
                   <Modal
                     title="Đặt dịch vụ"
                     visible={isBookingModalVisible}
-                    onCancel={() => {
-                      setIsBookingModalVisible(false);
-                      setShowServiceList(false);
+                    onCancel={async () => {
+                      try {
+                        await handleChangeSelectedService();
+                        setShowServiceList(false); // Đặt thành false nếu không có lỗi
+                      } catch (error) {
+                        setShowServiceList(true); // Đặt thành true nếu có lỗi
+                        console.error("Error booking appointment:", error);
+                      }
                     }}
                     footer={null}
                     width={800}
@@ -1155,6 +1158,12 @@ function SalonDetail(props) {
                                   }
                                   description={
                                     <Typography className="w-fit">
+                                      <Text strong>
+                                        Mô tả: &nbsp;
+                                        <Text style={{ display: "inline" }}>
+                                          {service.description}
+                                        </Text>
+                                      </Text>
                                       <Text strong>
                                         Giá: &nbsp;
                                         <Text style={{ display: "inline" }}>
