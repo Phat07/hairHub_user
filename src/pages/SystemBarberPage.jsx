@@ -192,7 +192,10 @@ function SystemBarberPage(props) {
         locationSalon ? locationSalon : null,
         salonName ? salonName : null,
         currentPage,
-        pageSize
+        pageSize,
+        null,
+        null,
+        null
       ).then((res) => {
         setLoading(false);
         setSalonList(res.data.items);
@@ -281,7 +284,10 @@ function SystemBarberPage(props) {
       locationSalon || null,
       salonName || null,
       currentPage,
-      pageSize
+      pageSize,
+      null,
+      null,
+      null
     ).then((res) => {
       navigate(`/system_shop?location=${value}`);
       setLoading(false);
@@ -631,7 +637,9 @@ function SystemBarberPage(props) {
                     <h3>{selectedSalon.name}</h3>
                     <p>{selectedSalon.address}</p>
                     <a
-                      href={`https://www.google.com/maps/dir/?api=1&destination=${selectedSalon.latitude},${selectedSalon.longitude}`}
+                      // href={`https://www.google.com/maps/dir/?api=1&destination=${selectedSalon.latitude},${selectedSalon.longitude}`}
+                      // href={`https://www.google.com/maps/dir//${selectedSalon.latitude},${selectedSalon.longitude},7z?entry=ttu`}
+                      href={`https://www.google.com/maps/dir//${selectedSalon.latitude},${selectedSalon.longitude},7z?entry=ttu`}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
