@@ -192,7 +192,10 @@ function SystemBarberPage(props) {
         locationSalon ? locationSalon : null,
         salonName ? salonName : null,
         currentPage,
-        pageSize
+        pageSize,
+        null,
+        null,
+        null
       ).then((res) => {
         setLoading(false);
         setSalonList(res.data.items);
@@ -281,7 +284,10 @@ function SystemBarberPage(props) {
       locationSalon || null,
       salonName || null,
       currentPage,
-      pageSize
+      pageSize,
+      null,
+      null,
+      null
     ).then((res) => {
       navigate(`/system_shop?location=${value}`);
       setLoading(false);

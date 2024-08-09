@@ -71,7 +71,10 @@ const ListSalon = () => {
       locationSalon || null,
       salonName || null,
       currentPage,
-      pageSize
+      pageSize,
+      null,
+      null,
+      null
     ).then((res) => {
       setSalonList(res.data.items);
       setTotalPages(res.data.totalPages);
