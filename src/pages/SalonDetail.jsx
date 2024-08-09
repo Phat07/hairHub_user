@@ -1599,7 +1599,7 @@ function SalonDetail(props) {
                                           title="Chọn nhân viên"
                                           visible={isModalVisible}
                                           // onOk={handleModalOk}
-                                          // onCancel={handleCancel}
+                                          onCancel={handleCancel}
                                           footer={null}
                                         >
                                           <Select
