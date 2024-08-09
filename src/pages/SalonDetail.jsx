@@ -162,6 +162,7 @@ function SalonDetail(props) {
   const [listVoucher, setListVoucher] = useState([]);
   const [selectedVouchers, setSelectedVouchers] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingTime, setLoadingTime] = useState(false);
 
   const [isPriceModalVisible, setIsPriceModalVisible] = useState(false);
   const [originalPrice, setOriginalPrice] = useState(0);
@@ -349,6 +350,9 @@ function SalonDetail(props) {
       };
 
       const formattedDate = formatDate(currentDate);
+      console.log("service", service);
+
+      console.log("formattedDate34", formattedDate);
       const postData = {
         day: formattedDate, // Chuyển đổi date thành ISO string
         salonId: id,
@@ -364,9 +368,12 @@ function SalonDetail(props) {
             postData
           )
           .then((res) => {
+            console.log("ressTest", res?.data);
+
             setTimeSlots(res?.data);
           })
           .catch((err) => {
+            setTimeSlots("");
             console.log("err", err);
           });
       } catch (error) {
@@ -446,6 +453,7 @@ function SalonDetail(props) {
   };
 
   const handleDateSelect = async (day) => {
+    setLoadingTime(true);
     const idSer = additionalServices[0]?.id;
     const formatDate = (date) => {
       const year = date.getFullYear();
@@ -455,6 +463,7 @@ function SalonDetail(props) {
     };
 
     const formattedDate = formatDate(day);
+    console.log("formatDay", formattedDate);
 
     if (formattedDate !== selectedDate) {
       setAdditionalServices((prevServices) =>
@@ -466,7 +475,6 @@ function SalonDetail(props) {
       setSelectedStaff("");
       setSelectedDate(day);
     }
-    // setSelectedDate(day);
     const postData = {
       day: formattedDate, // Chuyển đổi date thành ISO string
       salonId: id,
@@ -492,13 +500,17 @@ function SalonDetail(props) {
           if (selectedTimeSlot && !availableTimes.includes(selectedTimeSlot)) {
             setSelectedTimeSlot(null);
           }
-          //   tui muốn kiểm tra xem thời gian chọn là selectedTimeSlot nằm trong khoảng của res?.data.availableTimes.map((e)=>e.timeSlot xem selectedTimeSlot có nhỏ hơn hay vượt quá không nếu có thì setSelectedTimeSlot lại null)
+          setLoadingTime(false);
         })
         .catch((err) => {
-          setSelectedDate(null);
-          setSelectedDate(null);
-          // setSelectedTimeSlot(null)
+          // setAdditionalServices([])
+          // setSelectedDate(null);
+          setLoadingTime(false);
+          setTimeSlots(null);
           message.warning(err?.response?.data?.message);
+        })
+        .finally((err) => {
+          setLoadingTime(false);
         });
       const dataMapping = [...additionalServices];
       const databooking = await dataMapping?.map((e) => {
@@ -508,7 +520,6 @@ function SalonDetail(props) {
           salonEmployeeId: e?.bookingDetail?.salonEmployeeId || null,
         };
       });
-      const formattedDate = formatDate(selectedDate);
       const requestBody = {
         day: formattedDate, // Thay bằng ngày bạn muốn book
         availableSlot: selectedTimeSlot, // Thay bằng slot bạn muốn book
@@ -522,29 +533,6 @@ function SalonDetail(props) {
           requestBody
         )
         .then((response) => {
-          // Xử lý kết quả từ server nếu cần
-          // const updatedAdditionalServices = [...additionalServices];
-
-          // for (const service of additionalServices) {
-          //   const matchingBookingDetailResponse =
-          //     response.data.bookingDetailResponses.find(
-          //       (responseDetail) =>
-          //         responseDetail?.serviceHair?.id === service.id
-          //     );
-
-          //   if (matchingBookingDetailResponse) {
-          //     service.bookingDetailResponses = matchingBookingDetailResponse;
-          //   }
-          // }
-
-          // setStatusChangeStaff(false);
-          // setAdditionalServices(updatedAdditionalServices);
-          // updatedAdditionalServices((prevServices) =>
-          //   prevServices.map((s) => ({
-          //     ...s,
-          //     bookingDetail: { ...s.bookingDetail, salonEmployeeId: null },
-          //   }))
-          // );
           const updatedAdditionalServices = additionalServices.map(
             (service) => {
               // Tìm đối tượng matchingBookingDetailResponse tương ứng
@@ -647,18 +635,38 @@ function SalonDetail(props) {
               bookingDetail: {
                 ...s.bookingDetail,
                 salonEmployeeId: value,
+                serviceHairId: service.id,
+                isAnyOne: true,
               },
             }
           : s
       )
     );
+    setIsModalVisible(false);
+  };
+  const handleChangeRandomEmployee = () => {
+    setAdditionalServices((prevServices) =>
+      prevServices.map((s) =>
+        s.id === currentService.id
+          ? {
+              ...s,
+              bookingDetail: {
+                ...s.bookingDetail,
+                salonEmployeeId: null,
+                serviceHairId: currentService.id,
+                isAnyOne: true,
+              },
+            }
+          : s
+      )
+    );
+    setIsModalVisible(false);
   };
 
   const handleCancel = () => {
     setIsModalVisible(false);
     setCurrentService(null);
   };
-  console.log("add", additionalServices);
 
   const handleServiceSelect = async (service) => {
     setLoading(true);
@@ -1087,6 +1095,9 @@ function SalonDetail(props) {
     // Update the state with the new array
     setAdditionalServices(updatedServices);
   };
+
+  console.log("add", additionalServices);
+
   return (
     <div>
       <Header />
@@ -1223,9 +1234,14 @@ function SalonDetail(props) {
                   <Spin spinning={loading}>
                     <Modal
                       title="Đặt dịch vụ"
-                      visible={isBookingModalVisible}
+                      visible={
+                        isBookingModalVisible &&
+                        additionalServices?.length !== 0
+                      }
                       className={showServiceList ? "no-close-btn" : ""}
-                      onCancel={() => setIsBookingModalVisible(false)}
+                      onCancel={() => {
+                        setIsBookingModalVisible(false);
+                      }}
                       footer={null}
                       width={800}
                     >
@@ -1247,16 +1263,6 @@ function SalonDetail(props) {
                                     <List.Item
                                       key={index} // Thêm thuộc tính key
                                       actions={[
-                                        // <Checkbox
-                                        //   className="custom-checkbox"
-                                        //   key={`checkbox-${index}`} // Thêm thuộc tính key cho Checkbox
-                                        //   checked={isChecked}
-                                        //   onChange={() =>
-                                        //     handleServiceSelect(service)
-                                        //   }
-                                        // >
-                                        //   Book
-                                        // </Checkbox>,
                                         <div
                                           className={`custom-checkbox ${
                                             isChecked ? "booked" : ""
@@ -1386,183 +1392,112 @@ function SalonDetail(props) {
 
                           {selectedDate && (
                             <>
-                              <div className="time-picker">
-                                {timeSlots?.availableTimes?.length > 0 ? (
-                                  <>
-                                    <Divider />
-                                    <div className="scroll-container">
-                                      <button
-                                        className="arrow-button"
-                                        onClick={() =>
-                                          handleScroll1(
-                                            "left",
-                                            timeContainerRef
-                                          )
-                                        }
-                                      >
-                                        <LeftOutlined />
-                                      </button>
-                                      <div
-                                        className="scroll-wrapper"
-                                        ref={timeContainerRef}
-                                      >
-                                        <div className="scroll-content">
-                                          {timeSlots?.availableTimes?.map(
-                                            (slot, index) => {
-                                              // Tạo biến timeString để lưu chuỗi thời gian hiển thị
-                                              let timeString = "";
-                                              const timeParts = slot?.timeSlot
-                                                ?.toString()
-                                                .split(".");
-                                              const hour = parseInt(
-                                                timeParts[0],
-                                                10
-                                              );
-                                              const minutes =
-                                                timeParts.length > 1
-                                                  ? parseInt(timeParts[1], 10)
-                                                  : 0;
-                                              // Xử lý hiển thị theo định dạng giờ và phút
-                                              if (minutes === 0) {
-                                                timeString = `${hour} giờ`;
-                                              } else if (minutes === 25) {
-                                                timeString = `${hour} giờ 15 phút`;
-                                              } else if (minutes === 5) {
-                                                timeString = `${hour} giờ 30 phút`;
-                                              } else if (minutes === 75) {
-                                                timeString = `${hour} giờ 45 phút`;
-                                              }
-                                              const currentTime = new Date();
-                                              const slotTime = dayjs()
-                                                .hour(hour)
-                                                .minute(minutes);
-
-                                              const isDisabled =
-                                                selectedDate &&
-                                                dayjs(selectedDate).isSame(
-                                                  dayjs(),
-                                                  "day"
-                                                ) &&
-                                                slotTime.isBefore(currentTime);
-                                              return (
-                                                <Button
-                                                  key={index}
-                                                  onClick={() =>
-                                                    handleTimeSlotSelect(
-                                                      slot?.timeSlot
-                                                    )
-                                                  }
-                                                  className={
-                                                    selectedTimeSlot ===
-                                                    slot?.timeSlot
-                                                      ? "selected"
-                                                      : ""
-                                                  }
-                                                  disabled={isDisabled}
-                                                >
-                                                  {timeString}
-                                                </Button>
-                                              );
-                                            }
-                                          )}
-                                          {/* {timeSlots?.availableTimes?.map(
-                                          (slot, index) => {
-                                            // Tạo biến timeString để lưu chuỗi thời gian hiển thị
-                                            let timeString = "";
-                                            const timeParts = slot?.timeSlot
-                                              ?.toString()
-                                              .split(".");
-                                            const hour = parseInt(
-                                              timeParts[0],
-                                              10
-                                            );
-                                            const minutes =
-                                              timeParts.length > 1
-                                                ? parseInt(timeParts[1], 10) *
-                                                  15
-                                                : 0; // Chuyển đổi phút từ phần thập phân
-
-                                            // Xử lý hiển thị theo định dạng giờ và phút
-                                            if (minutes === 0) {
-                                              timeString = `${hour} giờ`;
-                                            } else if (minutes === 15) {
-                                              timeString = `${hour} giờ 15 phút`;
-                                            } else if (minutes === 30) {
-                                              timeString = `${hour} giờ 30 phút`;
-                                            } else if (minutes === 45) {
-                                              timeString = `${hour} giờ 45 phút`;
-                                            }
-
-                                            // Thời gian hiện tại theo múi giờ Việt Nam
-                                            const currentTime =
-                                              dayjs().tz("Asia/Ho_Chi_Minh");
-                                            // Thời gian slot theo múi giờ Việt Nam
-                                            const slotTime = dayjs()
-                                              .tz("Asia/Ho_Chi_Minh")
-                                              .hour(hour)
-                                              .minute(minutes);
-
-                                            // Định dạng thời gian slot
-                                            const formattedSlotTime =
-                                              slotTime.format("HH:mm");
-                                            console.log(
-                                              "slotTime:",
-                                              formattedSlotTime
-                                            );
-
-                                            // Xác định xem thời gian slot có bị disable hay không
-                                            const isDisabled =
-                                              selectedDate &&
-                                              dayjs(selectedDate).isSame(
-                                                dayjs(),
-                                                "day"
-                                              ) &&
-                                              slotTime.isBefore(currentTime);
-
-                                            return (
-                                              <Button
-                                                key={index}
-                                                onClick={() =>
-                                                  handleTimeSlotSelect(
-                                                    slot?.timeSlot
-                                                  )
-                                                }
-                                                className={
-                                                  selectedTimeSlot ===
-                                                  slot?.timeSlot
-                                                    ? "selected"
-                                                    : ""
-                                                }
-                                                disabled={isDisabled}
-                                              >
-                                                {timeString}
-                                              </Button>
-                                            );
+                              <Spin spinning={loadingTime}>
+                                <div className="time-picker">
+                                  {timeSlots?.availableTimes?.length > 0 ? (
+                                    <>
+                                      <Divider />
+                                      <div className="scroll-container">
+                                        <button
+                                          className="arrow-button"
+                                          onClick={() =>
+                                            handleScroll1(
+                                              "left",
+                                              timeContainerRef
+                                            )
                                           }
-                                        )} */}
+                                        >
+                                          <LeftOutlined />
+                                        </button>
+                                        <div
+                                          className="scroll-wrapper"
+                                          ref={timeContainerRef}
+                                        >
+                                          <div className="scroll-content">
+                                            {timeSlots?.availableTimes?.map(
+                                              (slot, index) => {
+                                                // Tạo biến timeString để lưu chuỗi thời gian hiển thị
+                                                let timeString = "";
+                                                const timeParts = slot?.timeSlot
+                                                  ?.toString()
+                                                  .split(".");
+                                                const hour = parseInt(
+                                                  timeParts[0],
+                                                  10
+                                                );
+                                                const minutes =
+                                                  timeParts.length > 1
+                                                    ? parseInt(timeParts[1], 10)
+                                                    : 0;
+                                                // Xử lý hiển thị theo định dạng giờ và phút
+                                                if (minutes === 0) {
+                                                  timeString = `${hour} giờ`;
+                                                } else if (minutes === 25) {
+                                                  timeString = `${hour} giờ 15 phút`;
+                                                } else if (minutes === 5) {
+                                                  timeString = `${hour} giờ 30 phút`;
+                                                } else if (minutes === 75) {
+                                                  timeString = `${hour} giờ 45 phút`;
+                                                }
+                                                const currentTime = new Date();
+                                                const slotTime = dayjs()
+                                                  .hour(hour)
+                                                  .minute(minutes);
+
+                                                const isDisabled =
+                                                  selectedDate &&
+                                                  dayjs(selectedDate).isSame(
+                                                    dayjs(),
+                                                    "day"
+                                                  ) &&
+                                                  slotTime.isBefore(
+                                                    currentTime
+                                                  );
+                                                return (
+                                                  <Button
+                                                    key={index}
+                                                    onClick={() =>
+                                                      handleTimeSlotSelect(
+                                                        slot?.timeSlot
+                                                      )
+                                                    }
+                                                    className={
+                                                      selectedTimeSlot ===
+                                                      slot?.timeSlot
+                                                        ? "selected"
+                                                        : ""
+                                                    }
+                                                    disabled={isDisabled}
+                                                  >
+                                                    {timeString}
+                                                  </Button>
+                                                );
+                                              }
+                                            )}
+                                          </div>
                                         </div>
+                                        <button
+                                          className="arrow-button"
+                                          onClick={() =>
+                                            handleScroll1(
+                                              "right",
+                                              timeContainerRef
+                                            )
+                                          }
+                                        >
+                                          <RightOutlined />
+                                        </button>
                                       </div>
-                                      <button
-                                        className="arrow-button"
-                                        onClick={() =>
-                                          handleScroll1(
-                                            "right",
-                                            timeContainerRef
-                                          )
-                                        }
-                                      >
-                                        <RightOutlined />
-                                      </button>
-                                    </div>
-                                  </>
-                                ) : (
-                                  <Title className="warning-title" level={3}>
-                                    Không tìm thấy dịch vụ nào trong khoảng thời
-                                    gian này!
-                                  </Title>
-                                )}
-                              </div>
-                              <Divider />
+                                    </>
+                                  ) : (
+                                    <Title className="warning-title" level={3}>
+                                      Salon không hoạt hộng trong khoảng thời
+                                      gian này!
+                                    </Title>
+                                  )}
+                                </div>
+                                <Divider />
+                              </Spin>
                             </>
                           )}
                           {additionalServices?.length > 0 && (
@@ -1663,8 +1598,9 @@ function SalonDetail(props) {
                                         <Modal
                                           title="Chọn nhân viên"
                                           visible={isModalVisible}
-                                          onOk={handleModalOk}
-                                          onCancel={handleCancel}
+                                          // onOk={handleModalOk}
+                                          // onCancel={handleCancel}
+                                          footer={null}
                                         >
                                           <Select
                                             placeholder="Lựa chọn 1 nhân viên"
@@ -1677,13 +1613,26 @@ function SalonDetail(props) {
                                                 currentService.id
                                               ) || undefined
                                             }
-                                            onChange={(value) =>
-                                              handleChangeStaffSecond(
-                                                currentService,
-                                                value
-                                              )
-                                            }
+                                            // onChange={(value) =>
+                                            //   handleChangeStaffSecond(
+                                            //     currentService,
+                                            //     value
+                                            //   )
+                                            // }
+                                            onChange={(value) => {
+                                              if (value === "random") {
+                                                handleChangeRandomEmployee();
+                                              } else {
+                                                handleChangeStaffSecond(
+                                                  currentService,
+                                                  value
+                                                );
+                                              }
+                                            }}
                                           >
+                                            <Option key="random" value="random">
+                                              Ngẫu nhiên
+                                            </Option>
                                             {currentService?.bookingDetailResponses?.employees?.map(
                                               (e) => (
                                                 <Option
