@@ -75,16 +75,19 @@ export function actGetAllAppointmentHistoryByCustomerId(id, page, size) {
   };
 }
 
-
-export function actDeleteAppointmentByCustomerId(id, customerId) {
+export function actDeleteAppointmentByCustomerId(id, customerId, reasonCancel) {
   return async (dispatch) => {
-    const result = AppointmentService.deleteAppointmentCustomer(id, customerId);
+    const result = AppointmentService.deleteAppointmentCustomer(
+      id,
+      customerId,
+      reasonCancel
+    );
     await result
       .then((response) => {
         if (response.status === 200 || response.status === 201) {
           console.log("ressData", response);
           dispatch(actGetAllAppointmentByCustomerId(customerId, 1, 5));
-          dispatch(actGetAllAppointmentHistoryByCustomerId(customerId,1,5))
+          dispatch(actGetAllAppointmentHistoryByCustomerId(customerId, 1, 5));
           message.success("Hủy lịch hẹn thành công");
         } else {
           message.error("Hủy lịch hẹn thất bại!!!");
@@ -96,4 +99,3 @@ export function actDeleteAppointmentByCustomerId(id, customerId) {
       });
   };
 }
-

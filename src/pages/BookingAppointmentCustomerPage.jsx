@@ -44,7 +44,7 @@ function BookingAppointmentCustomerPage() {
   const [selectedStatus, setSelectedStatus] = useState("BOOKING");
   // const userIdCustomer = userAuth?.idCustomer;
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 8;
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedAppointmentId, setSelectedAppointmentId] = useState(null);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
@@ -57,6 +57,7 @@ function BookingAppointmentCustomerPage() {
   const [isRatingModalVisible, setIsRatingModalVisible] = useState(false);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
+  const [reasonCancel, setReasonCancel] = useState("");
   const [feedbackImage, setFeedbackImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -165,12 +166,21 @@ function BookingAppointmentCustomerPage() {
   };
 
   const handleOk = () => {
+    if (!reasonCancel) {
+      message.error("Vui lòng cung cấp lý do hủy.");
+      return;
+    }
+
     dispatch(
-      actDeleteAppointmentByCustomerId(selectedAppointmentId, userIdCustomer)
+      actDeleteAppointmentByCustomerId(
+        selectedAppointmentId,
+        userIdCustomer,
+        reasonCancel
+      )
     );
     setSelectedStatus("CANCEL_BY_CUSTOMER");
     setIsModalVisible(false);
-    // Implement the cancel logic here
+    setReasonCancel("");
   };
 
   const handleCancelModal = () => {
@@ -312,7 +322,7 @@ function BookingAppointmentCustomerPage() {
   const navigate = useNavigate();
   const renderAppointmentDetail = () => {
     if (!selectedAppointmentDetail) return null;
-  
+
     return (
       <div>
         {/* First Main Section */}
@@ -368,7 +378,7 @@ function BookingAppointmentCustomerPage() {
               </p>
             </div>
           </div>
-  
+
           {/* Right Part - Services */}
           <div style={{ flex: 1, border: "1px solid #ccc", padding: "10px" }}>
             <Text strong>Dịch vụ: </Text>
@@ -405,7 +415,7 @@ function BookingAppointmentCustomerPage() {
             ))}
           </div>
         </div>
-  
+
         {/* Second Main Section - Centered Information */}
         <div style={{ textAlign: "center" }}>
           <p>
@@ -429,7 +439,7 @@ function BookingAppointmentCustomerPage() {
             <Text strong>Giá gốc: </Text>
             <Text>{formatVND(selectedAppointmentDetail.originalPrice)}vnđ</Text>
           </p>
-          
+
           {/* Hiển thị lý do và thời gian hủy nếu trạng thái là "Đã hủy" */}
           {selectedAppointmentDetail.status === "CANCEL_BY_CUSTOMER" && (
             <div>
@@ -440,7 +450,9 @@ function BookingAppointmentCustomerPage() {
               <p>
                 <Text strong>Thời gian hủy: </Text>
                 <Text>
-                  {moment(selectedAppointmentDetail.cancellationTime).format("DD/MM/YYYY HH:mm")}
+                  {moment(selectedAppointmentDetail.cancellationTime).format(
+                    "DD/MM/YYYY - HH:mm"
+                  )}
                 </Text>
               </p>
             </div>
@@ -449,7 +461,6 @@ function BookingAppointmentCustomerPage() {
       </div>
     );
   };
-  
 
   return (
     <div className="cus-appoint-container">
@@ -689,7 +700,11 @@ function BookingAppointmentCustomerPage() {
         okText="Hủy cuộc hẹn"
         cancelText="Đóng"
       >
-        <p>Bạn có chắc chắn muốn hủy dịch vụ này không?</p>
+        <Input.TextArea
+          value={reasonCancel}
+          onChange={(e) => setReasonCancel(e.target.value)}
+          placeholder="Nhập lý do hủy cuộc hẹn"
+        />
       </Modal>
       {isLoading && (
         <div className="overlay">

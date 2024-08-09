@@ -1354,14 +1354,6 @@ function SalonDetail(props) {
                         <div>
                           <Divider />
                           <div className="scroll-container">
-                            <button
-                              className="arrow-button"
-                              onClick={() =>
-                                handleScroll("left", dateContainerRef)
-                              }
-                            >
-                              <LeftOutlined />
-                            </button>
                             <div
                               className="scroll-wrapper"
                               ref={dateContainerRef}
@@ -1384,16 +1376,7 @@ function SalonDetail(props) {
                                 ))}
                               </div>
                             </div>
-                            <button
-                              className="arrow-button"
-                              onClick={() =>
-                                handleScroll("right", dateContainerRef)
-                              }
-                            >
-                              <RightOutlined />
-                            </button>
                           </div>
-                          <Divider />
 
                           {selectedDate && (
                             <>

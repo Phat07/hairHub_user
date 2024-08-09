@@ -1,7 +1,7 @@
 import { API } from "./api";
 
 export const AppointmentService = {
-  GetAppointmentSalonByStatus(salonId,page, size, status) {
+  GetAppointmentSalonByStatus(salonId, page, size, status) {
     return API.get(`/appointments/GetAppointmentSalonByStatus/${salonId}`, {
       params: {
         page,
@@ -44,10 +44,10 @@ export const AppointmentService = {
       },
     });
   },
-  deleteAppointmentCustomer(id, customerId) {
-    return API.put(`/appointments/UpdateAppointment/${id}`, {
+  deleteAppointmentCustomer(id, customerId, reasonCancel) {
+    return API.put(`/appointments/CancelAppointByCustomer/${id}`, {
       customerId: customerId,
-      status: "CANCEL_BY_CUSTOMER",
+      reasonCancel: reasonCancel,
     });
   },
 };
