@@ -312,105 +312,145 @@ function BookingAppointmentCustomerPage() {
   const navigate = useNavigate();
   const renderAppointmentDetail = () => {
     if (!selectedAppointmentDetail) return null;
-
+  
     return (
       <div>
-        <p>
-          <Text strong>Thông tin Salon|Barber shop: </Text>
+        {/* First Main Section */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: "20px",
+          }}
+        >
+          {/* Left Part - Salon Information */}
           <div
+            style={{
+              flex: 1,
+              border: "1px solid #ccc",
+              padding: "10px",
+              marginRight: "10px",
+            }}
             onClick={() =>
               navigate(
                 `/salon_detail/${selectedAppointmentDetail?.salonInformation.id}`
               )
             }
-            style={{
-              border: "1px solid #ccc",
-              padding: "10px",
-              marginBottom: "10px",
-            }}
           >
+            <Text strong>Thông tin Salon | Barber shop: </Text>
+            <div
+              style={{
+                border: "1px solid #ccc",
+                padding: "10px",
+                marginBottom: "10px",
+              }}
+            >
+              <Image
+                src={selectedAppointmentDetail?.salonInformation.img}
+                preview={false}
+                style={{ marginBottom: "10px" }}
+              />
+              <p>
+                <Text strong>Tên tiệm: </Text>
+                <Text>{selectedAppointmentDetail?.salonInformation.name}</Text>
+              </p>
+              <p>
+                <Text strong>Mô tả: </Text>
+                <Text>
+                  {selectedAppointmentDetail?.salonInformation.description}
+                </Text>
+              </p>
+              <p>
+                <Text strong>Địa chỉ: </Text>
+                <Text>
+                  {selectedAppointmentDetail?.salonInformation.address}
+                </Text>
+              </p>
+            </div>
+          </div>
+  
+          {/* Right Part - Services */}
+          <div style={{ flex: 1, border: "1px solid #ccc", padding: "10px" }}>
+            <Text strong>Dịch vụ: </Text>
+            {selectedAppointmentDetail.appointmentDetails.map((service) => (
+              <div
+                key={service.serviceHairId}
+                style={{
+                  border: "1px solid #ccc",
+                  padding: "10px",
+                  marginBottom: "10px",
+                }}
+              >
+                <p>
+                  <Text strong>Tên dịch vụ: </Text>
+                  <Text>{service?.serviceName}</Text>
+                </p>
+                <p>
+                  <Text strong>Giá: </Text>
+                  <Text>{formatVND(service?.priceServiceHair)}vnđ</Text>
+                </p>
+                <p>
+                  <Text strong>Thời gian bắt đầu: </Text>
+                  <Text>{moment(service?.startTime).format("HH:mm")}</Text>
+                </p>
+                <p>
+                  <Text strong>Thời gian kết thúc: </Text>
+                  <Text>{moment(service?.endTime).format("HH:mm")}</Text>
+                </p>
+                <p>
+                  <Text strong>Nhân viên: </Text>
+                  <Text>{service.salonEmployee.fullName}</Text>
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+  
+        {/* Second Main Section - Centered Information */}
+        <div style={{ textAlign: "center" }}>
+          <p>
+            <Text strong>Mã Qr xác nhận để thành công: </Text>
             <Image
-              src={selectedAppointmentDetail?.salonInformation.img}
-              preview={false}
+              style={{ width: "15rem", height: "15rem" }}
+              src={selectedAppointmentDetail?.qrCodeImg}
             />
-            <Text strong>Tên tiệm: </Text>
-            <Text>{selectedAppointmentDetail?.salonInformation.name}</Text>
-            <Text strong>Mô tả: </Text>
-            <Text>
-              {selectedAppointmentDetail?.salonInformation.description}
+          </p>
+          <p>
+            <Text strong>Ngày: </Text>
+            <Text style={{ display: "inline" }}>
+              {moment(selectedAppointmentDetail.startDate).format("DD/MM/YYYY")}{" "}
+              -{" "}
+              {moment(
+                selectedAppointmentDetail.appointmentDetails[0]?.startTime
+              ).format("HH:mm")}
             </Text>
-            <Text strong>Địa chỉ: </Text>
-            <Text>{selectedAppointmentDetail?.salonInformation.address}</Text>
-          </div>
-        </p>
-        <p>
-          <Text strong>Ngày: </Text>
-          <Text>
-            {moment(selectedAppointmentDetail.startDate).format("DD/MM/YYYY")}
-          </Text>
-        </p>
-        {/* <p>
-          <Text strong>Giờ: </Text>
-          <Text>
-            {moment(
-              selectedAppointmentDetail.appointmentDetails[0]?.startTime
-            ).format("HH:mm")}
-          </Text>
-        </p> */}
-        {/* <p>
-          <Text strong>Mã Qr xác nhận để thành công: </Text>
-          <Image src={selectedAppointmentDetail?.qrCodeImg} />
-        </p> */}
-        <p>
-          <Text strong>Dịch vụ: </Text>
-        </p>
-        {selectedAppointmentDetail.appointmentDetails.map((service) => (
-          <div
-            key={service.serviceHairId}
-            style={{
-              border: "1px solid #ccc",
-              padding: "10px",
-              marginBottom: "10px",
-            }}
-          >
-            <p>
-              <Text strong>Tên dịch vụ: </Text>
-              <Text>{service?.serviceName}</Text>
-            </p>
-            <p>
-              <Text strong>Giá: </Text>
-              <Text>{formatVND(service?.priceServiceHair)}</Text>
-              vnđ
-            </p>
-            <p>
-              <Text strong>Thời gian bắt đầu: </Text>
-              <Text>{moment(service?.startTime).format("HH:mm")}</Text>
-            </p>
-            <p>
-              <Text strong>Thời gian kết thúc: </Text>
-              <Text>{moment(service?.endTime).format("HH:mm")}</Text>
-            </p>
-            <p>
-              <Text strong>Nhân viên: </Text>
-              <Text>{service.salonEmployee.fullName}</Text>
-            </p>
-          </div>
-        ))}
-        <p>
-          <Text strong>Giá gốc: </Text>
-          <Text>{formatVND(selectedAppointmentDetail.originalPrice)}vnđ</Text>
-        </p>
-        <p>
-          <Text strong>Giảm: </Text>
-          <Text>{formatVND(selectedAppointmentDetail.discountedPrice)}vnđ</Text>
-        </p>
-        <p>
-          <Text strong>Tổng: </Text>
-          <Text>{formatVND(selectedAppointmentDetail.totalPrice)}vnđ</Text>
-        </p>
+          </p>
+          <p>
+            <Text strong>Giá gốc: </Text>
+            <Text>{formatVND(selectedAppointmentDetail.originalPrice)}vnđ</Text>
+          </p>
+          
+          {/* Hiển thị lý do và thời gian hủy nếu trạng thái là "Đã hủy" */}
+          {selectedAppointmentDetail.status === "CANCEL_BY_CUSTOMER" && (
+            <div>
+              <p>
+                <Text strong>Lý do hủy: </Text>
+                <Text>{selectedAppointmentDetail.reasonCancel}</Text>
+              </p>
+              <p>
+                <Text strong>Thời gian hủy: </Text>
+                <Text>
+                  {moment(selectedAppointmentDetail.cancellationTime).format("DD/MM/YYYY HH:mm")}
+                </Text>
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     );
   };
+  
+
   return (
     <div className="cus-appoint-container">
       <div className="status-buttons">
@@ -589,6 +629,7 @@ function BookingAppointmentCustomerPage() {
                   Đóng
                 </Button>,
               ]}
+              width={1000}
             >
               {renderAppointmentDetail()}
             </Modal>

@@ -149,10 +149,20 @@ function ListSalonVer2(props) {
         <div className="list-salon-search">
           <Row gutter={[16, 16]}>
             <Col span={8}>
+              <Input
+                placeholder="Tìm kiếm salon"
+                prefix={<SearchOutlined />}
+                onChange={(e) => {
+                  // Xử lý tìm kiếm salon
+                  console.log(e.target.value);
+                }}
+              />
+            </Col>
+            <Col span={8}>
               <Popover
                 content={popularServices}
                 visible={searchVisible}
-                onVisibleChange={handleSearchClick}
+                onVisibleChange={setSearchVisible}
                 trigger="click"
                 placement="bottom"
                 overlayClassName="popover-overlay"
@@ -162,12 +172,13 @@ function ListSalonVer2(props) {
                   prefix={<SearchOutlined />}
                   suffix={
                     selectedService && (
-                      <CloseCircleOutlined onClick={handleClearService} />
+                      <CloseCircleOutlined
+                        onClick={() => setSelectedService("")}
+                      />
                     )
                   }
                   value={selectedService}
-                  onClick={handleSearchClick}
-                  readOnly
+                  onChange={(e) => setSelectedService(e.target.value)}
                 />
               </Popover>
             </Col>
@@ -188,12 +199,8 @@ function ListSalonVer2(props) {
                   placeholder="Nơi chốn?"
                   prefix={<EnvironmentOutlined />}
                   onClick={handleLocationClick}
-                  readOnly
                 />
               </Popover>
-            </Col>
-            <Col span={8}>
-              <DatePicker style={{ width: "100%" }} inputReadOnly />
             </Col>
           </Row>
         </div>
