@@ -631,7 +631,9 @@ function SystemBarberPage(props) {
                     <h3>{selectedSalon.name}</h3>
                     <p>{selectedSalon.address}</p>
                     <a
-                      href={`https://www.google.com/maps/dir/?api=1&destination=${selectedSalon.latitude},${selectedSalon.longitude}`}
+                      // href={`https://www.google.com/maps/dir/?api=1&destination=${selectedSalon.latitude},${selectedSalon.longitude}`}
+                      // href={`https://www.google.com/maps/dir//${selectedSalon.latitude},${selectedSalon.longitude},7z?entry=ttu`}
+                      href={`https://www.google.com/maps/dir//${selectedSalon.latitude},${selectedSalon.longitude},7z?entry=ttu`}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
