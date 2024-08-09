@@ -42,6 +42,7 @@ import RandomIcon from "@rsuite/icons/Random";
 import timezone from "dayjs/plugin/timezone";
 import duration from "dayjs/plugin/duration";
 import utc from "dayjs/plugin/utc";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../components/Loader";
 import { AppointmentService } from "../services/appointmentServices";
@@ -81,6 +82,7 @@ const reportOptions = [
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(duration);
+dayjs.extend(isSameOrBefore);
 function renderStars(stars) {
   const filledStars = Math.floor(stars);
   const hasHalfStar = stars % 1 !== 0;
@@ -105,6 +107,8 @@ function renderStars(stars) {
 
   return starIcons;
 }
+const vietnamTimezone = "Asia/Ho_Chi_Minh";
+const currentTime = dayjs().tz(vietnamTimezone);
 
 function SalonDetail(props) {
   const { id } = useParams();
@@ -601,6 +605,7 @@ function SalonDetail(props) {
       .then((response) => {
         // Xử lý kết quả từ server nếu cần
         const updatedAdditionalServices = [...additionalServices];
+        console.log("responeTime", response.data);
 
         for (const service of additionalServices) {
           const matchingBookingDetailResponse =
@@ -1414,7 +1419,7 @@ function SalonDetail(props) {
                                           ref={timeContainerRef}
                                         >
                                           <div className="scroll-content">
-                                            {timeSlots?.availableTimes?.map(
+                                            {/* {timeSlots?.availableTimes?.map(
                                               (slot, index) => {
                                                 // Tạo biến timeString để lưu chuỗi thời gian hiển thị
                                                 let timeString = "";
@@ -1473,6 +1478,73 @@ function SalonDetail(props) {
                                                   </Button>
                                                 );
                                               }
+                                            )} */}
+                                            {timeSlots?.availableTimes?.map(
+                                              (slot, index) => {
+                                                let timeString = "";
+                                                const timeParts = slot?.timeSlot
+                                                  .toString()
+                                                  .split(".");
+                                                const hour = parseInt(
+                                                  timeParts[0],
+                                                  10
+                                                );
+                                                const minutes =
+                                                  timeParts.length > 1
+                                                    ? parseInt(timeParts[1], 10)
+                                                    : 0;
+
+                                                if (minutes === 0) {
+                                                  timeString = `${hour} giờ`;
+                                                } else if (minutes === 25) {
+                                                  timeString = `${hour} giờ 15 phút`;
+                                                } else if (minutes === 5) {
+                                                  timeString = `${hour} giờ 30 phút`;
+                                                } else if (minutes === 75) {
+                                                  timeString = `${hour} giờ 45 phút`;
+                                                }
+
+                                                const vietnamTimezone =
+                                                  "Asia/Ho_Chi_Minh";
+                                                const currentTime =
+                                                  dayjs().tz(vietnamTimezone);
+
+                                                const slotTime = dayjs()
+                                                  .tz(vietnamTimezone)
+                                                  .set("hour", hour)
+                                                  .set("minute", minutes)
+                                                  .set("second", 0)
+                                                  .set("millisecond", 0);
+
+                                                const isDisabled =
+                                                  selectedDate &&
+                                                  dayjs(selectedDate)
+                                                    .tz(vietnamTimezone)
+                                                    .isSame(dayjs(), "day") &&
+                                                  slotTime.isSameOrBefore(
+                                                    currentTime
+                                                  );
+
+                                                return (
+                                                  <Button
+                                                    key={index}
+                                                    onClick={() =>
+                                                      handleTimeSlotSelect(
+                                                        slot?.timeSlot
+                                                      )
+                                                    }
+                                                    className={
+                                                      selectedTimeSlot ===
+                                                      slot?.timeSlot
+                                                        ? "selected"
+                                                        : ""
+                                                    }
+                                                    disabled={isDisabled}
+                                                  >
+                                                    {timeString}
+                                                  </Button>
+                                                );
+                                              }
                                             )}
                                           </div>
                                         </div>
@@ -1491,8 +1563,8 @@ function SalonDetail(props) {
                                     </>
                                   ) : (
                                     <Title className="warning-title" level={3}>
-                                      Salon không hoạt hộng trong khoảng thời
-                                      gian này!
+                                      Salon không hoạt hộng hoặc không có nhân
+                                      viên làm trong khoảng thời gian này!
                                     </Title>
                                   )}
                                 </div>
@@ -1513,6 +1585,7 @@ function SalonDetail(props) {
                                         e?.id ===
                                         service?.bookingDetail?.salonEmployeeId
                                     ); // Define data if necessary
+
                                   return (
                                     <List.Item
                                       actions={[
@@ -1583,7 +1656,30 @@ function SalonDetail(props) {
                                                     src={data?.img}
                                                     style={{ marginRight: 8 }}
                                                   />
-                                                  {data?.fullName}
+                                                  <div>
+                                                    <div>{data?.fullName}</div>
+                                                    <div
+                                                      style={{
+                                                        fontSize: "12px",
+                                                        color: "#888",
+                                                      }}
+                                                    >
+                                                      Bắt đầu:{" "}
+                                                      {dayjs(
+                                                        service
+                                                          ?.bookingDetailResponses
+                                                          ?.serviceHair
+                                                          ?.startTime
+                                                      ).format("HH:mm")}{" "}
+                                                      - Kết thúc:{" "}
+                                                      {dayjs(
+                                                        service
+                                                          ?.bookingDetailResponses
+                                                          ?.serviceHair
+                                                          ?.startTime
+                                                      ).format("HH:mm")}
+                                                    </div>
+                                                  </div>
                                                 </>
                                               ) : (
                                                 <>
@@ -1639,7 +1735,19 @@ function SalonDetail(props) {
                                                   key={e.id}
                                                   value={e.id || e.fullName}
                                                 >
-                                                  {e.fullName}
+                                                  <div
+                                                    style={{
+                                                      display: "flex",
+                                                      alignItems: "center",
+                                                    }}
+                                                  >
+                                                    <Avatar
+                                                      src={e.img}
+                                                      alt={e.fullName}
+                                                      style={{ marginRight: 8 }}
+                                                    />
+                                                    {e.fullName}
+                                                  </div>
                                                 </Option>
                                               )
                                             )}
