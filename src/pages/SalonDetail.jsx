@@ -856,6 +856,45 @@ function SalonDetail(props) {
     }
   };
 
+  const formatDate = (date) => {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    const dayAfterTomorrow = new Date(today);
+    const dayAfterThat = new Date(today);
+
+    tomorrow.setDate(today.getDate() + 1);
+    dayAfterTomorrow.setDate(today.getDate() + 2);
+    dayAfterThat.setDate(today.getDate() + 3);
+
+    const daysOfWeek = [
+      "Chủ Nhật",
+      "Thứ 2",
+      "Thứ 3",
+      "Thứ 4",
+      "Thứ 5",
+      "Thứ 6",
+      "Thứ 7",
+    ];
+
+    const dayOfWeek = daysOfWeek[date.getDay()];
+    const day = date.getDate();
+    const month = date.getMonth() + 1; // Tháng từ 0 (Tháng 1) đến 11 (Tháng 12)
+    const monthFormatted = month < 10 ? `0${month}` : month;
+
+    // Hàm kiểm tra nếu ngày đầu vào trùng với các ngày đặc biệt
+    if (date.toDateString() === today.toDateString()) {
+      return `Hôm nay (${day < 10 ? "0" : ""}${day}/${monthFormatted})`;
+    } else if (date.toDateString() === tomorrow.toDateString()) {
+      return `Ngày mai (${day < 10 ? "0" : ""}${day}/${monthFormatted})`;
+    } else if (date.toDateString() === dayAfterTomorrow.toDateString()) {
+      return `Ngày mốt (${day < 10 ? "0" : ""}${day}/${monthFormatted})`;
+    } else if (date.toDateString() === dayAfterThat.toDateString()) {
+      return `Ngày kia (${day < 10 ? "0" : ""}${day}/${monthFormatted})`;
+    } else {
+      return `${dayOfWeek} ngày ${day < 10 ? "0" : ""}${day}/${monthFormatted}`;
+    }
+  };
+
   useEffect(() => {
     axios
       .get(SALONDETAIL_URL + id)
@@ -884,11 +923,11 @@ function SalonDetail(props) {
     if (hours > 0) {
       timeString += `${hours} giờ `;
     }
-    if (minutes > 0) {
+    if (minutes > 0 || hours === 0) {
       timeString += `${minutes} phút`;
     }
 
-    return timeString.trim();
+    return timeString.trim() || "0 phút";
   };
 
   const handleChangeSelectedService = async () => {
@@ -1238,7 +1277,17 @@ function SalonDetail(props) {
                 <div>
                   <Spin spinning={loading}>
                     <Modal
-                      title="Đặt dịch vụ"
+                      title={
+                        <span
+                          style={{
+                            fontSize: "3rem",
+                            fontWeight: "bold",
+                            textAlign: "center",
+                          }}
+                        >
+                          Đặt lịch cắt tóc
+                        </span>
+                      }
                       visible={
                         isBookingModalVisible &&
                         additionalServices?.length !== 0
@@ -1254,7 +1303,12 @@ function SalonDetail(props) {
                         <>
                           <Spin spinning={loading}>
                             <div>
-                              <Title level={4}>Thêm những dịch vụ khác</Title>
+                              <Title
+                                style={{ backgroundColor: "white" }}
+                                level={3}
+                              >
+                                Thêm những dịch vụ khác
+                              </Title>
                               <List
                                 itemLayout="horizontal"
                                 dataSource={data}
@@ -1302,11 +1356,17 @@ function SalonDetail(props) {
                                           </Title>
                                         }
                                         description={
-                                          <Typography className="w-fit">
+                                          <Typography
+                                            style={{ backgroundColor: "white" }}
+                                            className="w-fit"
+                                          >
                                             <Text strong>
                                               Mô tả: &nbsp;
                                               <Text
-                                                style={{ display: "inline" }}
+                                                style={{
+                                                  display: "inline",
+                                                  fontWeight: "normal",
+                                                }}
                                               >
                                                 {service.description}
                                               </Text>
@@ -1314,7 +1374,10 @@ function SalonDetail(props) {
                                             <Text strong>
                                               Giá: &nbsp;
                                               <Text
-                                                style={{ display: "inline" }}
+                                                style={{
+                                                  display: "inline",
+                                                  fontWeight: "normal",
+                                                }}
                                               >
                                                 {formatCurrency(service.price)}
                                               </Text>
@@ -1322,7 +1385,10 @@ function SalonDetail(props) {
                                             <Text strong>
                                               Thời gian: &nbsp;
                                               <Text
-                                                style={{ display: "inline" }}
+                                                style={{
+                                                  display: "inline",
+                                                  fontWeight: "normal",
+                                                }}
                                               >
                                                 {formatTime(service.time)}
                                               </Text>
@@ -1371,20 +1437,22 @@ function SalonDetail(props) {
                                         : ""
                                     }
                                   >
-                                    {day.toDateString().slice(0, 10)}
+                                    {formatDate(day)}
                                   </Button>
                                 ))}
                               </div>
                             </div>
                           </div>
+                          {/* <Divider /> */}
 
                           {selectedDate && (
                             <>
                               <Spin spinning={loadingTime}>
                                 <div className="time-picker">
+                                  <Divider />
                                   {timeSlots?.availableTimes?.length > 0 ? (
                                     <>
-                                      <Divider />
+                                      {/* <Divider /> */}
                                       <div className="scroll-container">
                                         <button
                                           className="arrow-button"
@@ -1614,20 +1682,35 @@ function SalonDetail(props) {
                                             src={service?.img}
                                           />
                                         }
-                                        title={service.serviceName}
+                                        title={
+                                          <span
+                                            style={{
+                                              fontSize: "1.7rem",
+                                              fontWeight: "bold",
+                                            }}
+                                          >
+                                            {service.serviceName}
+                                          </span>
+                                        }
                                         description={
                                           <>
-                                            {`${
-                                              service.price
-                                            } vnđ • ${formatTime(
-                                              service.time
-                                            )}`}
-                                            <br />
+                                            <span>
+                                              Tiền: {service.price} vnđ
+                                            </span>
+                                            <span>
+                                              Thời gian dịch vụ:{" "}
+                                              {formatTime(service.time)}
+                                            </span>
+                                            <span>
+                                              Thời gian chờ:{" "}
+                                              {formatTime(service.waitingTime)}
+                                            </span>
                                             <span>
                                               Nhân viên:{" "}
                                               {data ? (
                                                 <>
-                                                  <Avatar
+                                                  {data?.fullName}
+                                                  {/* <Avatar
                                                     size={{
                                                       xs: 24,
                                                       sm: 32,
@@ -1662,7 +1745,7 @@ function SalonDetail(props) {
                                                           ?.startTime
                                                       ).format("HH:mm")}
                                                     </div>
-                                                  </div>
+                                                  </div> */}
                                                 </>
                                               ) : (
                                                 <>
@@ -1747,7 +1830,7 @@ function SalonDetail(props) {
                           <Button
                             type="dashed"
                             block
-                            style={{ marginTop: "16px" }}
+                            style={{ marginTop: "16px", fontSize: "1.6rem" }}
                             // onClick={() => setShowServiceList(true)}
                             onClick={handleAddServiceClick}
                           >
@@ -1756,8 +1839,13 @@ function SalonDetail(props) {
                           <Button
                             type="dashed"
                             block
-                            style={{ marginTop: "16px" }}
+                            style={{
+                              marginTop: "16px",
+                              opacity: 0.5, // Phủ mờ nút
+                              cursor: "not-allowed", // Không cho phép chọn
+                            }}
                             onClick={handleDisplayVoucherList}
+                            disabled
                           >
                             {displayVoucherList ? (
                               <Text>Đóng</Text>
@@ -1765,6 +1853,16 @@ function SalonDetail(props) {
                               <Text>Thêm voucher</Text>
                             )}
                           </Button>
+                          <p
+                            style={{
+                              marginTop: "8px",
+                              color: "#888",
+                              textAlign: "center",
+                            }}
+                          >
+                            Sử dụng ứng dụng di động HairHub để có thêm nhiều ưu
+                            đãi hấp dẫn.
+                          </p>
                           {displayVoucherList && (
                             <List
                               style={{ marginTop: "16px", background: "#ee22" }}
@@ -1827,7 +1925,9 @@ function SalonDetail(props) {
 
                           <div style={{ marginTop: "16px" }}>
                             <Title level={4}>Tổng</Title>
-                            <p>{calculateTotal()}</p>
+                            <p style={{ fontSize: "2rem" }}>
+                              {calculateTotal()}
+                            </p>
                             <Button
                               onClick={handleBooking}
                               type="primary"
