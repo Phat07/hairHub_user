@@ -1626,8 +1626,8 @@
   margin: 1rem 0;
   border-radius: 1rem;
   background-color: #ddf0ff;
-  /* border-width: 3px;
-  border-color: #bf9456; */
+  border-width: 3px;
+  border-color: #bf9456;
 }
 .location-card-col{
   padding: 1rem;
@@ -1787,6 +1787,7 @@
   padding: 10px;
   display: flex;
   align-items: center;
+  margin-bottom: 10rem;
 }
 
 .card-list {
@@ -1815,7 +1816,10 @@
 
 .scroll-icon2 {
   font-size: 4rem;
-  color: #bf9456;
+  color: white;
+  background-color: #bf9456;
+  border-radius: 50%;
+  padding: 5px;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -1834,5 +1838,8 @@
 @media (max-width: 768px) {
   .scroll-icon2 {
     display: none;
+  }
+  .container-service-list {
+    margin-bottom: 5rem;
   }
 }

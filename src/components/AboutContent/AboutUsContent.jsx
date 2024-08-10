@@ -76,7 +76,7 @@ function AboutUsContent() {
                 <strong>
                   Tại Hairhub, chúng tôi hướng tới việc tạo ra một trải nghiệm
                   dịch vụ làm đẹp vừa thoải mái vừa tiện lợi cho mọi khách hàng.
-                </strong>
+                </strong>{" "}
                 Tầm nhìn của chúng tôi là trở thành nền tảng hàng đầu trong việc
                 cung cấp giải pháp đặt lịch cắt tóc và dịch vụ làm đẹp trực
                 tuyến, nơi bạn có thể dễ dàng lựa chọn và lên lịch cho các dịch
@@ -87,7 +87,7 @@ function AboutUsContent() {
                 <strong>
                   Chúng tôi cam kết nâng cao cả số lượng và chất lượng khách
                   hàng cho các tiệm tóc vừa và nhỏ,
-                </strong>
+                </strong>{" "}
                 giúp họ mở rộng và phát triển mạnh mẽ hơn trong thị trường cạnh
                 tranh. Hairhub không chỉ là cầu nối giữa khách hàng và các nhà
                 tạo mẫu tóc, mà còn là nền tảng để kết nối, chia sẻ và gợi ý về
@@ -98,7 +98,7 @@ function AboutUsContent() {
                 <strong>
                   Chúng tôi mong muốn tạo ra một trải nghiệm thư giãn và tích
                   cực cho tất cả người dùng của mình,
-                </strong>
+                </strong>{" "}
                 từ việc lên lịch cắt tóc và tận hưởng dịch vụ tại tiệm tóc cho
                 đến việc quản lý các lịch hẹn, doanh thu, ... cho các tiệm tóc.
                 Với Hairhub, chúng tôi tin rằng việc đặt lịch hẹn bằng Hairhub
@@ -144,7 +144,7 @@ function AboutUsContent() {
               <h2>Sứ Mệnh Của Hairhub</h2>
               <ul>
                 <li>
-                  <strong>Xây Dựng Một Nền Tảng An Toàn và Chất Lượng:</strong>
+                  <strong>Xây Dựng Một Nền Tảng An Toàn và Chất Lượng:</strong>{" "}
                   Chúng tôi cam kết tạo ra một nền tảng kết nối đáng tin cậy
                   giữa khách hàng và các salon, barber shop. Hairhub đảm bảo
                   rằng các đối tác của chúng tôi đều đạt tiêu chuẩn cao về an
@@ -160,7 +160,7 @@ function AboutUsContent() {
                   mối quan hệ tích cực và ý nghĩa trong ngành làm đẹp.
                 </li>
                 <li>
-                  <strong>Cung Cấp Trải Nghiệm Thoải Mái và Thú Vị:</strong>
+                  <strong>Cung Cấp Trải Nghiệm Thoải Mái và Thú Vị:</strong>{" "}
                   Chúng tôi hiểu rằng việc làm đẹp không chỉ là nhu cầu mà còn
                   là cơ hội để thư giãn và làm mới tinh thần. Hairhub mang đến
                   những trải nghiệm làm đẹp dễ dàng và vui vẻ cùng với việc quản
@@ -170,7 +170,7 @@ function AboutUsContent() {
                 <li>
                   <strong>
                     Đồng Hành Cùng Bạn Trong Mỗi Bước Đường Làm Đẹp:
-                  </strong>
+                  </strong>{" "}
                   Chúng tôi là người bạn đồng hành đáng tin cậy trong hành trình
                   làm đẹp của bạn. Dù bạn đang tìm kiếm sự thay đổi phong cách
                   hay chỉ đơn giản là chăm sóc bản thân, Hairhub luôn sẵn sàng

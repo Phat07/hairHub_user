@@ -52,15 +52,21 @@ function FAQsContent() {
           </a>
         </p>
 
-        <h3>Hỗ Trợ Trực Tuyến</h3>
-        <p>
-          <strong>Chat Trực Tuyến:</strong> Truy cập trang web
-          <a href="https://hairhub.vn/">hairhub.vn</a> và sử dụng tính năng chat
-          trực tuyến để nhận hỗ trợ ngay lập tức.
+        <h2>Hỗ Trợ Trực Tuyến</h2>
+        <p className="no-wrap-text">
+          <strong>Chat Trực Tuyến:</strong>
+          <p>
+            Truy cập trang web và sử dụng tính năng chat trực tuyến để nhận hỗ
+            trợ ngay lập tức.
+            <a href="https://hairhub.id.vn/">hairhub.id.vn</a>
+          </p>
         </p>
         <p>
           <strong>Hệ Thống Fanpage Facebook:</strong> Gửi yêu cầu hỗ trợ qua
           fanpage Hairhub.
+          <a href="https://www.facebook.com/profile.php?id=61559941142117">
+            Hairhub | Ho Chi Minh City
+          </a>
         </p>
       </section>
     </div>

@@ -34,6 +34,7 @@
     font-size: 1.1em;
     color: #555;
     margin-bottom: 10px;
+    font-weight: bold;
   }
   
   .policy-section ul {
@@ -55,5 +56,8 @@
   
   .policy-section ul ul li {
     margin-bottom: 10px;
+  }
+  .no-wrap-text {
+    white-space: nowrap;
   }
   
