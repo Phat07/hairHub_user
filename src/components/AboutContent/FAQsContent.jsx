@@ -5,12 +5,12 @@ function FAQsContent() {
   return (
     <div className="privacy-policy-content">
       <h1>Thông Tin Liên Hệ</h1>
-      <h6>
+      {/* <h6>
         <strong>
           Để hỗ trợ và giải đáp thắc mắc, khách hàng và đối tác có thể liên hệ
           với chúng tôi qua các kênh sau:
         </strong>
-      </h6>
+      </h6> */}
       <section className="policy-section">
         <h2>Thông Tin Liên Hệ Chính</h2>
         <p>

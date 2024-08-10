@@ -35,12 +35,16 @@ function PrivacyPolicyContent() {
           </li>
           <li>
             <strong>Không có Trách Nhiệm về Sự Cố Không Được Dự Đoán:</strong>{" "}
-            Chúng tôi tiếp nhận và hỗ trợ các yêu cầu của khách hàng qua trang
-            Fanpage: Hairhub.
+            Hairhub không có nghĩa vụ giám sát các hoạt động của người sử dụng
+            dịch vụ và từ chối mọi trách nhiệm đối với các sự cố phát sinh do
+            việc lạm dụng hoặc sử dụng sai mục đích dịch vụ.
           </li>
           <li>
             <strong>Hỗ Trợ Khách Hàng:</strong> Chúng tôi tiếp nhận và hỗ trợ
-            các yêu cầu của khách hàng qua trang Fanpage...
+            các yêu cầu của khách hàng qua trang Fanpage
+            <a href="https://www.facebook.com/profile.php?id=61559941142117">
+              Hairhub
+            </a>
           </li>
         </ul>
 
@@ -48,7 +52,8 @@ function PrivacyPolicyContent() {
         <ul>
           <li>
             <strong>Tuân Thủ Pháp Luật:</strong> Khách hàng phải tuân thủ Hiến
-            pháp và pháp luật của nước Cộng hòa xã hội chủ nghĩa Việt Nam...
+            pháp và pháp luật của nước Cộng hòa xã hội chủ nghĩa Việt Nam khi sử
+            dụng dịch vụ.
           </li>
           <li>
             <strong>Cung Cấp Thông Tin Chính Xác:</strong> Khách hàng phải cung
@@ -82,7 +87,7 @@ function PrivacyPolicyContent() {
             phải có trách nhiệm về cuộc hẹn của mình đối với các tiệm tóc trên
             hệ thống Hairhub. Thực hiện đúng theo theo quy trình đặt lịch, đến
             tiệm tóc đúng giờ và checkin đúng cách. Hairhub sẽ không chịu trách
-            nhiệm cho các khách hàng không tuân thủ theo quy định.s
+            nhiệm cho các khách hàng không tuân thủ theo quy định.
           </li>
         </ul>
 

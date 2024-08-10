@@ -9,6 +9,7 @@
     margin-bottom: 30px;
     font-size: 3em;
     color: #333;
+    font-weight: bold;
   }
   
   .policy-section {
@@ -22,6 +23,7 @@
     background-color: #bf9456;
     padding: 5px;
     border-radius: 0.5rem 2rem 2rem 0.5rem;
+    font-weight: bold;
   }
   
   .policy-section h3 {
