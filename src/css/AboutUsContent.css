@@ -1,0 +1,72 @@
+.about-us-content {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+  }
+  
+  .about-us-content h2 {
+    color: #bf9456;
+    margin-bottom: 15px;
+    font-size: 1.8em;
+    border-bottom: 2px solid #f1f1f1;
+    padding-bottom: 5px;
+  }
+  
+  .introduction-section, .vision-section, .mission-section {
+    margin-bottom: 30px;
+  }
+  
+  .introduction-section p, .vision-section p, .mission-section li {
+    margin-bottom: 15px;
+    color: #555;
+  }
+  
+  .mission-section ul {
+    padding-left: 20px;
+  }
+  
+  .mission-section li {
+    list-style: disc;
+  }
+  
+  .mission-section strong {
+    color: #333;
+  }
+  .card-policy{
+    border-radius: 2px;
+    overflow: hidden;
+    /* margin: 10rem 0; */
+    padding: 2rem 0;
+    border-radius: 1rem;
+    background-color: #f4f2eb;
+    /* border-width: 3px;
+    border-color: #bf9456; */
+  }
+  .policy-card-col{
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media (max-width: 768px) {
+    .about-us-content .ant-row {
+      flex-direction: column; /* Chuyển các phần tử thành dạng dọc */
+    }
+  
+    .about-us-content .ant-col {
+      width: 100%; /* Chiếm toàn bộ chiều rộng */
+      max-width: 100%; /* Đảm bảo không bị giới hạn chiều rộng */
+    }
+  
+    .policy-card-col {
+      padding: 1rem 0; /* Điều chỉnh padding cho hợp lý trên mobile */
+    }
+  
+    .card-policy {
+      margin: 2rem 0; /* Điều chỉnh margin để không quá lớn trên mobile */
+    }
+  }
+  
+  

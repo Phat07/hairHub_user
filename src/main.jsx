@@ -56,6 +56,7 @@ import PackageSuccessPage from "./pages/PackageSuccessPage.jsx";
 import DashboardTransactionPage from "./pages/DashboardTransactionPage.jsx";
 import PaymentCommissionPage from "./pages/PaymentCommissionPage.jsx";
 import ChatComponent from "./components/chat/ChatComponent.jsx";
+import AboutPage from "./pages/About.jsx";
 
 const router = createBrowserRouter([
   {
@@ -276,6 +277,11 @@ const router = createBrowserRouter([
       {
         path: "list_salon_ver2",
         element: <ListSalonVer2 />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: `about`,
+        element: <AboutPage />,
         errorElement: <ErrorPage />,
       },
     ],

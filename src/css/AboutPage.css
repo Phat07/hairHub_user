@@ -1,0 +1,102 @@
+/* CSS chung cho cả màn hình lớn và nhỏ */
+.policy-container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden; /* Đảm bảo không có thanh cuộn không cần thiết */
+}
+
+.policy-menu {
+  width: 20%;
+  position: sticky;
+  top: 0;
+  background-color: #bf9456;
+  border-right: 1px solid #d9d9d9;
+  margin-top: 100px;
+  padding-top: 3rem;
+  transition: all 0.3s ease; /* Thêm hiệu ứng chuyển động khi thay đổi kích thước */
+}
+
+.policy-menu .ant-menu-item-selected {
+  background-color: #f4f2eb !important;
+  color: #bf9456 !important;
+}
+
+.policy-content {
+  width: 80%;
+  padding: 20px;
+  overflow-y: auto;
+  padding-top: 120px;
+}
+
+.policy-content h2 {
+  margin-top: 0;
+}
+
+.policy-content p {
+  line-height: 1.6;
+}
+
+/* CSS cho màn hình nhỏ hơn 768px */
+@media (max-width: 768px) {
+  .policy-container {
+    flex-direction: column; /* Thay đổi chiều dọc cho các phần tử */
+    padding-top: 100px;
+  }
+  
+  .policy-menu {
+    width: 100%;
+    height: auto; /* Đảm bảo menu không chiếm nhiều không gian khi ẩn */
+    border-right: none; /* Bỏ viền bên phải khi menu ở chế độ dropdown */
+    padding-top: 0; /* Loại bỏ khoảng cách trên */
+    position: static; /* Thay đổi vị trí để menu không bị cố định */
+    display: none; /* Ẩn menu trên màn hình nhỏ */
+  }
+  
+  .policy-content {
+    width: 100%;
+    padding-top: 0; /* Loại bỏ khoảng cách trên để phù hợp với menu dropdown */
+  }
+  
+  .policy-menu-dropdown {
+    display: block;
+    width: 100%;
+    background-color: #bf9456;
+    border-bottom: 1px solid #d9d9d9;
+  }
+  
+  .policy-menu-dropdown .ant-menu {
+    width: 100%;
+  }
+  /* CSS cho Dropdown menu */
+.policy-menu-dropdown .ant-dropdown-menu {
+  background-color: #bf9456; /* Màu nền của menu dropdown */
+  border: none; /* Bỏ viền của menu dropdown */
+}
+
+.policy-menu-dropdown .ant-dropdown-menu-item {
+  color: #f4f2eb; /* Màu chữ của các item */
+}
+
+.policy-menu-dropdown .ant-dropdown-menu-item:hover,
+.policy-menu-dropdown .ant-dropdown-menu-item-active {
+  background-color: #f4f2eb !important; /* Màu nền của item khi hover và active */
+  color: #bf9456 !important; /* Màu chữ của item khi hover và active */
+}
+
+.policy-menu-dropdown .ant-dropdown-menu-item:active {
+  background-color: #f4f2eb !important; /* Đảm bảo màu nền khi item được nhấn */
+  color: #bf9456 !important; /* Đảm bảo màu chữ khi item được nhấn */
+}
+
+/* CSS cho Button chứa Dropdown */
+.policy-menu-dropdown .ant-dropdown-trigger {
+  background-color: #bf9456; /* Màu nền của nút dropdown */
+  color: #f4f2eb; /* Màu chữ của nút dropdown */
+  border: none; /* Bỏ viền của nút dropdown */
+}
+
+.policy-menu-dropdown .ant-dropdown-trigger:hover {
+  background-color: #a87b4e; /* Màu nền của nút khi hover */
+}
+}
