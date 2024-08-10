@@ -42,6 +42,7 @@ import RandomIcon from "@rsuite/icons/Random";
 import timezone from "dayjs/plugin/timezone";
 import duration from "dayjs/plugin/duration";
 import utc from "dayjs/plugin/utc";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../components/Loader";
 import { AppointmentService } from "../services/appointmentServices";
@@ -81,6 +82,7 @@ const reportOptions = [
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(duration);
+dayjs.extend(isSameOrBefore);
 function renderStars(stars) {
   const filledStars = Math.floor(stars);
   const hasHalfStar = stars % 1 !== 0;
@@ -105,6 +107,8 @@ function renderStars(stars) {
 
   return starIcons;
 }
+const vietnamTimezone = "Asia/Ho_Chi_Minh";
+const currentTime = dayjs().tz(vietnamTimezone);
 
 function SalonDetail(props) {
   const { id } = useParams();
@@ -162,6 +166,7 @@ function SalonDetail(props) {
   const [listVoucher, setListVoucher] = useState([]);
   const [selectedVouchers, setSelectedVouchers] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingTime, setLoadingTime] = useState(false);
 
   const [isPriceModalVisible, setIsPriceModalVisible] = useState(false);
   const [originalPrice, setOriginalPrice] = useState(0);
@@ -349,6 +354,9 @@ function SalonDetail(props) {
       };
 
       const formattedDate = formatDate(currentDate);
+      console.log("service", service);
+
+      console.log("formattedDate34", formattedDate);
       const postData = {
         day: formattedDate, // Chuyển đổi date thành ISO string
         salonId: id,
@@ -364,9 +372,12 @@ function SalonDetail(props) {
             postData
           )
           .then((res) => {
+            console.log("ressTest", res?.data);
+
             setTimeSlots(res?.data);
           })
           .catch((err) => {
+            setTimeSlots("");
             console.log("err", err);
           });
       } catch (error) {
@@ -446,6 +457,7 @@ function SalonDetail(props) {
   };
 
   const handleDateSelect = async (day) => {
+    setLoadingTime(true);
     const idSer = additionalServices[0]?.id;
     const formatDate = (date) => {
       const year = date.getFullYear();
@@ -455,6 +467,7 @@ function SalonDetail(props) {
     };
 
     const formattedDate = formatDate(day);
+    console.log("formatDay", formattedDate);
 
     if (formattedDate !== selectedDate) {
       setAdditionalServices((prevServices) =>
@@ -466,7 +479,6 @@ function SalonDetail(props) {
       setSelectedStaff("");
       setSelectedDate(day);
     }
-    // setSelectedDate(day);
     const postData = {
       day: formattedDate, // Chuyển đổi date thành ISO string
       salonId: id,
@@ -492,13 +504,17 @@ function SalonDetail(props) {
           if (selectedTimeSlot && !availableTimes.includes(selectedTimeSlot)) {
             setSelectedTimeSlot(null);
           }
-          //   tui muốn kiểm tra xem thời gian chọn là selectedTimeSlot nằm trong khoảng của res?.data.availableTimes.map((e)=>e.timeSlot xem selectedTimeSlot có nhỏ hơn hay vượt quá không nếu có thì setSelectedTimeSlot lại null)
+          setLoadingTime(false);
         })
         .catch((err) => {
-          setSelectedDate(null);
-          setSelectedDate(null);
-          // setSelectedTimeSlot(null)
+          // setAdditionalServices([])
+          // setSelectedDate(null);
+          setLoadingTime(false);
+          setTimeSlots(null);
           message.warning(err?.response?.data?.message);
+        })
+        .finally((err) => {
+          setLoadingTime(false);
         });
       const dataMapping = [...additionalServices];
       const databooking = await dataMapping?.map((e) => {
@@ -508,7 +524,6 @@ function SalonDetail(props) {
           salonEmployeeId: e?.bookingDetail?.salonEmployeeId || null,
         };
       });
-      const formattedDate = formatDate(selectedDate);
       const requestBody = {
         day: formattedDate, // Thay bằng ngày bạn muốn book
         availableSlot: selectedTimeSlot, // Thay bằng slot bạn muốn book
@@ -522,29 +537,6 @@ function SalonDetail(props) {
           requestBody
         )
         .then((response) => {
-          // Xử lý kết quả từ server nếu cần
-          // const updatedAdditionalServices = [...additionalServices];
-
-          // for (const service of additionalServices) {
-          //   const matchingBookingDetailResponse =
-          //     response.data.bookingDetailResponses.find(
-          //       (responseDetail) =>
-          //         responseDetail?.serviceHair?.id === service.id
-          //     );
-
-          //   if (matchingBookingDetailResponse) {
-          //     service.bookingDetailResponses = matchingBookingDetailResponse;
-          //   }
-          // }
-
-          // setStatusChangeStaff(false);
-          // setAdditionalServices(updatedAdditionalServices);
-          // updatedAdditionalServices((prevServices) =>
-          //   prevServices.map((s) => ({
-          //     ...s,
-          //     bookingDetail: { ...s.bookingDetail, salonEmployeeId: null },
-          //   }))
-          // );
           const updatedAdditionalServices = additionalServices.map(
             (service) => {
               // Tìm đối tượng matchingBookingDetailResponse tương ứng
@@ -613,6 +605,7 @@ function SalonDetail(props) {
       .then((response) => {
         // Xử lý kết quả từ server nếu cần
         const updatedAdditionalServices = [...additionalServices];
+        console.log("responeTime", response.data);
 
         for (const service of additionalServices) {
           const matchingBookingDetailResponse =
@@ -647,18 +640,38 @@ function SalonDetail(props) {
               bookingDetail: {
                 ...s.bookingDetail,
                 salonEmployeeId: value,
+                serviceHairId: service.id,
+                isAnyOne: true,
               },
             }
           : s
       )
     );
+    setIsModalVisible(false);
+  };
+  const handleChangeRandomEmployee = () => {
+    setAdditionalServices((prevServices) =>
+      prevServices.map((s) =>
+        s.id === currentService.id
+          ? {
+              ...s,
+              bookingDetail: {
+                ...s.bookingDetail,
+                salonEmployeeId: null,
+                serviceHairId: currentService.id,
+                isAnyOne: true,
+              },
+            }
+          : s
+      )
+    );
+    setIsModalVisible(false);
   };
 
   const handleCancel = () => {
     setIsModalVisible(false);
     setCurrentService(null);
   };
-  console.log("add", additionalServices);
 
   const handleServiceSelect = async (service) => {
     setLoading(true);
@@ -843,6 +856,45 @@ function SalonDetail(props) {
     }
   };
 
+  const formatDate = (date) => {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    const dayAfterTomorrow = new Date(today);
+    const dayAfterThat = new Date(today);
+
+    tomorrow.setDate(today.getDate() + 1);
+    dayAfterTomorrow.setDate(today.getDate() + 2);
+    dayAfterThat.setDate(today.getDate() + 3);
+
+    const daysOfWeek = [
+      "Chủ Nhật",
+      "Thứ 2",
+      "Thứ 3",
+      "Thứ 4",
+      "Thứ 5",
+      "Thứ 6",
+      "Thứ 7",
+    ];
+
+    const dayOfWeek = daysOfWeek[date.getDay()];
+    const day = date.getDate();
+    const month = date.getMonth() + 1; // Tháng từ 0 (Tháng 1) đến 11 (Tháng 12)
+    const monthFormatted = month < 10 ? `0${month}` : month;
+
+    // Hàm kiểm tra nếu ngày đầu vào trùng với các ngày đặc biệt
+    if (date.toDateString() === today.toDateString()) {
+      return `Hôm nay (${day < 10 ? "0" : ""}${day}/${monthFormatted})`;
+    } else if (date.toDateString() === tomorrow.toDateString()) {
+      return `Ngày mai (${day < 10 ? "0" : ""}${day}/${monthFormatted})`;
+    } else if (date.toDateString() === dayAfterTomorrow.toDateString()) {
+      return `Ngày mốt (${day < 10 ? "0" : ""}${day}/${monthFormatted})`;
+    } else if (date.toDateString() === dayAfterThat.toDateString()) {
+      return `Ngày kia (${day < 10 ? "0" : ""}${day}/${monthFormatted})`;
+    } else {
+      return `${dayOfWeek} ngày ${day < 10 ? "0" : ""}${day}/${monthFormatted}`;
+    }
+  };
+
   useEffect(() => {
     axios
       .get(SALONDETAIL_URL + id)
@@ -871,11 +923,11 @@ function SalonDetail(props) {
     if (hours > 0) {
       timeString += `${hours} giờ `;
     }
-    if (minutes > 0) {
+    if (minutes > 0 || hours === 0) {
       timeString += `${minutes} phút`;
     }
 
-    return timeString.trim();
+    return timeString.trim() || "0 phút";
   };
 
   const handleChangeSelectedService = async () => {
@@ -1087,6 +1139,9 @@ function SalonDetail(props) {
     // Update the state with the new array
     setAdditionalServices(updatedServices);
   };
+
+  console.log("add", additionalServices);
+
   return (
     <div>
       <Header />
@@ -1222,10 +1277,25 @@ function SalonDetail(props) {
                 <div>
                   <Spin spinning={loading}>
                     <Modal
-                      title="Đặt dịch vụ"
-                      visible={isBookingModalVisible}
+                      title={
+                        <span
+                          style={{
+                            fontSize: "3rem",
+                            fontWeight: "bold",
+                            textAlign: "center",
+                          }}
+                        >
+                          Đặt lịch cắt tóc
+                        </span>
+                      }
+                      visible={
+                        isBookingModalVisible &&
+                        additionalServices?.length !== 0
+                      }
                       className={showServiceList ? "no-close-btn" : ""}
-                      onCancel={() => setIsBookingModalVisible(false)}
+                      onCancel={() => {
+                        setIsBookingModalVisible(false);
+                      }}
                       footer={null}
                       width={800}
                     >
@@ -1233,7 +1303,12 @@ function SalonDetail(props) {
                         <>
                           <Spin spinning={loading}>
                             <div>
-                              <Title level={4}>Thêm những dịch vụ khác</Title>
+                              <Title
+                                style={{ backgroundColor: "white" }}
+                                level={3}
+                              >
+                                Thêm những dịch vụ khác
+                              </Title>
                               <List
                                 itemLayout="horizontal"
                                 dataSource={data}
@@ -1247,16 +1322,6 @@ function SalonDetail(props) {
                                     <List.Item
                                       key={index} // Thêm thuộc tính key
                                       actions={[
-                                        // <Checkbox
-                                        //   className="custom-checkbox"
-                                        //   key={`checkbox-${index}`} // Thêm thuộc tính key cho Checkbox
-                                        //   checked={isChecked}
-                                        //   onChange={() =>
-                                        //     handleServiceSelect(service)
-                                        //   }
-                                        // >
-                                        //   Book
-                                        // </Checkbox>,
                                         <div
                                           className={`custom-checkbox ${
                                             isChecked ? "booked" : ""
@@ -1291,11 +1356,17 @@ function SalonDetail(props) {
                                           </Title>
                                         }
                                         description={
-                                          <Typography className="w-fit">
+                                          <Typography
+                                            style={{ backgroundColor: "white" }}
+                                            className="w-fit"
+                                          >
                                             <Text strong>
                                               Mô tả: &nbsp;
                                               <Text
-                                                style={{ display: "inline" }}
+                                                style={{
+                                                  display: "inline",
+                                                  fontWeight: "normal",
+                                                }}
                                               >
                                                 {service.description}
                                               </Text>
@@ -1303,7 +1374,10 @@ function SalonDetail(props) {
                                             <Text strong>
                                               Giá: &nbsp;
                                               <Text
-                                                style={{ display: "inline" }}
+                                                style={{
+                                                  display: "inline",
+                                                  fontWeight: "normal",
+                                                }}
                                               >
                                                 {formatCurrency(service.price)}
                                               </Text>
@@ -1311,7 +1385,10 @@ function SalonDetail(props) {
                                             <Text strong>
                                               Thời gian: &nbsp;
                                               <Text
-                                                style={{ display: "inline" }}
+                                                style={{
+                                                  display: "inline",
+                                                  fontWeight: "normal",
+                                                }}
                                               >
                                                 {formatTime(service.time)}
                                               </Text>
@@ -1342,20 +1419,9 @@ function SalonDetail(props) {
                       ) : (
                         <div>
                           <Divider />
-                          <div className="scroll-container">
-                            <button
-                              className="arrow-button"
-                              onClick={() =>
-                                handleScroll("left", dateContainerRef)
-                              }
-                            >
-                              <LeftOutlined />
-                            </button>
-                            <div
-                              className="scroll-wrapper"
-                              ref={dateContainerRef}
-                            >
-                              <div className="scroll-content">
+                          <div>
+                            <div>
+                              <div className="date-picker">
                                 {currentMonthDays.map((day, index) => (
                                   <Button
                                     key={index}
@@ -1368,201 +1434,190 @@ function SalonDetail(props) {
                                         : ""
                                     }
                                   >
-                                    {day.toDateString().slice(0, 10)}
+                                    {formatDate(day)}
                                   </Button>
                                 ))}
                               </div>
                             </div>
-                            <button
-                              className="arrow-button"
-                              onClick={() =>
-                                handleScroll("right", dateContainerRef)
-                              }
-                            >
-                              <RightOutlined />
-                            </button>
                           </div>
-                          <Divider />
+                          {/* <Divider /> */}
 
                           {selectedDate && (
                             <>
-                              <div className="time-picker">
-                                {timeSlots?.availableTimes?.length > 0 ? (
-                                  <>
-                                    <Divider />
-                                    <div className="scroll-container">
-                                      <button
-                                        className="arrow-button"
-                                        onClick={() =>
-                                          handleScroll1(
-                                            "left",
-                                            timeContainerRef
-                                          )
-                                        }
-                                      >
-                                        <LeftOutlined />
-                                      </button>
-                                      <div
-                                        className="scroll-wrapper"
-                                        ref={timeContainerRef}
-                                      >
-                                        <div className="scroll-content">
-                                          {timeSlots?.availableTimes?.map(
-                                            (slot, index) => {
-                                              // Tạo biến timeString để lưu chuỗi thời gian hiển thị
-                                              let timeString = "";
-                                              const timeParts = slot?.timeSlot
-                                                ?.toString()
-                                                .split(".");
-                                              const hour = parseInt(
-                                                timeParts[0],
-                                                10
-                                              );
-                                              const minutes =
-                                                timeParts.length > 1
-                                                  ? parseInt(timeParts[1], 10)
-                                                  : 0;
-                                              // Xử lý hiển thị theo định dạng giờ và phút
-                                              if (minutes === 0) {
-                                                timeString = `${hour} giờ`;
-                                              } else if (minutes === 25) {
-                                                timeString = `${hour} giờ 15 phút`;
-                                              } else if (minutes === 5) {
-                                                timeString = `${hour} giờ 30 phút`;
-                                              } else if (minutes === 75) {
-                                                timeString = `${hour} giờ 45 phút`;
-                                              }
-                                              const currentTime = new Date();
-                                              const slotTime = dayjs()
-                                                .hour(hour)
-                                                .minute(minutes);
-
-                                              const isDisabled =
-                                                selectedDate &&
-                                                dayjs(selectedDate).isSame(
-                                                  dayjs(),
-                                                  "day"
-                                                ) &&
-                                                slotTime.isBefore(currentTime);
-                                              return (
-                                                <Button
-                                                  key={index}
-                                                  onClick={() =>
-                                                    handleTimeSlotSelect(
-                                                      slot?.timeSlot
-                                                    )
-                                                  }
-                                                  className={
-                                                    selectedTimeSlot ===
-                                                    slot?.timeSlot
-                                                      ? "selected"
-                                                      : ""
-                                                  }
-                                                  disabled={isDisabled}
-                                                >
-                                                  {timeString}
-                                                </Button>
-                                              );
-                                            }
-                                          )}
-                                          {/* {timeSlots?.availableTimes?.map(
-                                          (slot, index) => {
-                                            // Tạo biến timeString để lưu chuỗi thời gian hiển thị
-                                            let timeString = "";
-                                            const timeParts = slot?.timeSlot
-                                              ?.toString()
-                                              .split(".");
-                                            const hour = parseInt(
-                                              timeParts[0],
-                                              10
-                                            );
-                                            const minutes =
-                                              timeParts.length > 1
-                                                ? parseInt(timeParts[1], 10) *
-                                                  15
-                                                : 0; // Chuyển đổi phút từ phần thập phân
-
-                                            // Xử lý hiển thị theo định dạng giờ và phút
-                                            if (minutes === 0) {
-                                              timeString = `${hour} giờ`;
-                                            } else if (minutes === 15) {
-                                              timeString = `${hour} giờ 15 phút`;
-                                            } else if (minutes === 30) {
-                                              timeString = `${hour} giờ 30 phút`;
-                                            } else if (minutes === 45) {
-                                              timeString = `${hour} giờ 45 phút`;
-                                            }
-
-                                            // Thời gian hiện tại theo múi giờ Việt Nam
-                                            const currentTime =
-                                              dayjs().tz("Asia/Ho_Chi_Minh");
-                                            // Thời gian slot theo múi giờ Việt Nam
-                                            const slotTime = dayjs()
-                                              .tz("Asia/Ho_Chi_Minh")
-                                              .hour(hour)
-                                              .minute(minutes);
-
-                                            // Định dạng thời gian slot
-                                            const formattedSlotTime =
-                                              slotTime.format("HH:mm");
-                                            console.log(
-                                              "slotTime:",
-                                              formattedSlotTime
-                                            );
-
-                                            // Xác định xem thời gian slot có bị disable hay không
-                                            const isDisabled =
-                                              selectedDate &&
-                                              dayjs(selectedDate).isSame(
-                                                dayjs(),
-                                                "day"
-                                              ) &&
-                                              slotTime.isBefore(currentTime);
-
-                                            return (
-                                              <Button
-                                                key={index}
-                                                onClick={() =>
-                                                  handleTimeSlotSelect(
-                                                    slot?.timeSlot
-                                                  )
-                                                }
-                                                className={
-                                                  selectedTimeSlot ===
-                                                  slot?.timeSlot
-                                                    ? "selected"
-                                                    : ""
-                                                }
-                                                disabled={isDisabled}
-                                              >
-                                                {timeString}
-                                              </Button>
-                                            );
+                              <Spin spinning={loadingTime}>
+                                <div className="time-picker">
+                                  <Divider />
+                                  {timeSlots?.availableTimes?.length > 0 ? (
+                                    <>
+                                      {/* <Divider /> */}
+                                      <div className="scroll-container">
+                                        <button
+                                          className="arrow-button"
+                                          onClick={() =>
+                                            handleScroll1(
+                                              "left",
+                                              timeContainerRef
+                                            )
                                           }
-                                        )} */}
+                                        >
+                                          <LeftOutlined />
+                                        </button>
+                                        <div
+                                          className="scroll-wrapper"
+                                          ref={timeContainerRef}
+                                        >
+                                          <div className="scroll-content">
+                                            {/* {timeSlots?.availableTimes?.map(
+                                              (slot, index) => {
+                                                // Tạo biến timeString để lưu chuỗi thời gian hiển thị
+                                                let timeString = "";
+                                                const timeParts = slot?.timeSlot
+                                                  ?.toString()
+                                                  .split(".");
+                                                const hour = parseInt(
+                                                  timeParts[0],
+                                                  10
+                                                );
+                                                const minutes =
+                                                  timeParts.length > 1
+                                                    ? parseInt(timeParts[1], 10)
+                                                    : 0;
+                                                // Xử lý hiển thị theo định dạng giờ và phút
+                                                if (minutes === 0) {
+                                                  timeString = `${hour} giờ`;
+                                                } else if (minutes === 25) {
+                                                  timeString = `${hour} giờ 15 phút`;
+                                                } else if (minutes === 5) {
+                                                  timeString = `${hour} giờ 30 phút`;
+                                                } else if (minutes === 75) {
+                                                  timeString = `${hour} giờ 45 phút`;
+                                                }
+                                                const currentTime = new Date();
+                                                const slotTime = dayjs()
+                                                  .hour(hour)
+                                                  .minute(minutes);
+
+                                                const isDisabled =
+                                                  selectedDate &&
+                                                  dayjs(selectedDate).isSame(
+                                                    dayjs(),
+                                                    "day"
+                                                  ) &&
+                                                  slotTime.isBefore(
+                                                    currentTime
+                                                  );
+                                                return (
+                                                  <Button
+                                                    key={index}
+                                                    onClick={() =>
+                                                      handleTimeSlotSelect(
+                                                        slot?.timeSlot
+                                                      )
+                                                    }
+                                                    className={
+                                                      selectedTimeSlot ===
+                                                      slot?.timeSlot
+                                                        ? "selected"
+                                                        : ""
+                                                    }
+                                                    disabled={isDisabled}
+                                                  >
+                                                    {timeString}
+                                                  </Button>
+                                                );
+                                              }
+                                            )} */}
+                                            {timeSlots?.availableTimes?.map(
+                                              (slot, index) => {
+                                                let timeString = "";
+                                                const timeParts = slot?.timeSlot
+                                                  .toString()
+                                                  .split(".");
+                                                const hour = parseInt(
+                                                  timeParts[0],
+                                                  10
+                                                );
+                                                const minutes =
+                                                  timeParts.length > 1
+                                                    ? parseInt(timeParts[1], 10)
+                                                    : 0;
+
+                                                if (minutes === 0) {
+                                                  timeString = `${hour} giờ`;
+                                                } else if (minutes === 25) {
+                                                  timeString = `${hour} giờ 15 phút`;
+                                                } else if (minutes === 5) {
+                                                  timeString = `${hour} giờ 30 phút`;
+                                                } else if (minutes === 75) {
+                                                  timeString = `${hour} giờ 45 phút`;
+                                                }
+
+                                                const vietnamTimezone =
+                                                  "Asia/Ho_Chi_Minh";
+                                                const currentTime =
+                                                  dayjs().tz(vietnamTimezone);
+
+                                                const slotTime = dayjs()
+                                                  .tz(vietnamTimezone)
+                                                  .set("hour", hour)
+                                                  .set("minute", minutes)
+                                                  .set("second", 0)
+                                                  .set("millisecond", 0);
+
+                                                const isDisabled =
+                                                  selectedDate &&
+                                                  dayjs(selectedDate)
+                                                    .tz(vietnamTimezone)
+                                                    .isSame(dayjs(), "day") &&
+                                                  slotTime.isSameOrBefore(
+                                                    currentTime
+                                                  );
+
+                                                return (
+                                                  <Button
+                                                    key={index}
+                                                    onClick={() =>
+                                                      handleTimeSlotSelect(
+                                                        slot?.timeSlot
+                                                      )
+                                                    }
+                                                    className={
+                                                      selectedTimeSlot ===
+                                                      slot?.timeSlot
+                                                        ? "selected"
+                                                        : ""
+                                                    }
+                                                    disabled={isDisabled}
+                                                  >
+                                                    {timeString}
+                                                  </Button>
+                                                );
+                                              }
+                                            )}
+                                          </div>
                                         </div>
+                                        <button
+                                          className="arrow-button"
+                                          onClick={() =>
+                                            handleScroll1(
+                                              "right",
+                                              timeContainerRef
+                                            )
+                                          }
+                                        >
+                                          <RightOutlined />
+                                        </button>
                                       </div>
-                                      <button
-                                        className="arrow-button"
-                                        onClick={() =>
-                                          handleScroll1(
-                                            "right",
-                                            timeContainerRef
-                                          )
-                                        }
-                                      >
-                                        <RightOutlined />
-                                      </button>
-                                    </div>
-                                  </>
-                                ) : (
-                                  <Title className="warning-title" level={3}>
-                                    Không tìm thấy dịch vụ nào trong khoảng thời
-                                    gian này!
-                                  </Title>
-                                )}
-                              </div>
-                              <Divider />
+                                    </>
+                                  ) : (
+                                    <Title className="warning-title" level={3}>
+                                      Salon không hoạt hộng hoặc không có nhân
+                                      viên làm trong khoảng thời gian này!
+                                    </Title>
+                                  )}
+                                </div>
+                                <Divider />
+                              </Spin>
                             </>
                           )}
                           {additionalServices?.length > 0 && (
@@ -1578,6 +1633,7 @@ function SalonDetail(props) {
                                         e?.id ===
                                         service?.bookingDetail?.salonEmployeeId
                                     ); // Define data if necessary
+
                                   return (
                                     <List.Item
                                       actions={[
@@ -1623,20 +1679,35 @@ function SalonDetail(props) {
                                             src={service?.img}
                                           />
                                         }
-                                        title={service.serviceName}
+                                        title={
+                                          <span
+                                            style={{
+                                              fontSize: "1.7rem",
+                                              fontWeight: "bold",
+                                            }}
+                                          >
+                                            {service.serviceName}
+                                          </span>
+                                        }
                                         description={
                                           <>
-                                            {`${
-                                              service.price
-                                            } vnđ • ${formatTime(
-                                              service.time
-                                            )}`}
-                                            <br />
+                                            <span>
+                                              Tiền: {service.price} vnđ
+                                            </span>
+                                            <span>
+                                              Thời gian dịch vụ:{" "}
+                                              {formatTime(service.time)}
+                                            </span>
+                                            <span>
+                                              Thời gian chờ:{" "}
+                                              {formatTime(service.waitingTime)}
+                                            </span>
                                             <span>
                                               Nhân viên:{" "}
                                               {data ? (
                                                 <>
-                                                  <Avatar
+                                                  {data?.fullName}
+                                                  {/* <Avatar
                                                     size={{
                                                       xs: 24,
                                                       sm: 32,
@@ -1648,7 +1719,30 @@ function SalonDetail(props) {
                                                     src={data?.img}
                                                     style={{ marginRight: 8 }}
                                                   />
-                                                  {data?.fullName}
+                                                  <div>
+                                                    <div>{data?.fullName}</div>
+                                                    <div
+                                                      style={{
+                                                        fontSize: "12px",
+                                                        color: "#888",
+                                                      }}
+                                                    >
+                                                      Bắt đầu:{" "}
+                                                      {dayjs(
+                                                        service
+                                                          ?.bookingDetailResponses
+                                                          ?.serviceHair
+                                                          ?.startTime
+                                                      ).format("HH:mm")}{" "}
+                                                      - Kết thúc:{" "}
+                                                      {dayjs(
+                                                        service
+                                                          ?.bookingDetailResponses
+                                                          ?.serviceHair
+                                                          ?.startTime
+                                                      ).format("HH:mm")}
+                                                    </div>
+                                                  </div> */}
                                                 </>
                                               ) : (
                                                 <>
@@ -1663,8 +1757,9 @@ function SalonDetail(props) {
                                         <Modal
                                           title="Chọn nhân viên"
                                           visible={isModalVisible}
-                                          onOk={handleModalOk}
+                                          // onOk={handleModalOk}
                                           onCancel={handleCancel}
+                                          footer={null}
                                         >
                                           <Select
                                             placeholder="Lựa chọn 1 nhân viên"
@@ -1677,20 +1772,45 @@ function SalonDetail(props) {
                                                 currentService.id
                                               ) || undefined
                                             }
-                                            onChange={(value) =>
-                                              handleChangeStaffSecond(
-                                                currentService,
-                                                value
-                                              )
-                                            }
+                                            // onChange={(value) =>
+                                            //   handleChangeStaffSecond(
+                                            //     currentService,
+                                            //     value
+                                            //   )
+                                            // }
+                                            onChange={(value) => {
+                                              if (value === "random") {
+                                                handleChangeRandomEmployee();
+                                              } else {
+                                                handleChangeStaffSecond(
+                                                  currentService,
+                                                  value
+                                                );
+                                              }
+                                            }}
                                           >
+                                            <Option key="random" value="random">
+                                              Ngẫu nhiên
+                                            </Option>
                                             {currentService?.bookingDetailResponses?.employees?.map(
                                               (e) => (
                                                 <Option
                                                   key={e.id}
                                                   value={e.id || e.fullName}
                                                 >
-                                                  {e.fullName}
+                                                  <div
+                                                    style={{
+                                                      display: "flex",
+                                                      alignItems: "center",
+                                                    }}
+                                                  >
+                                                    <Avatar
+                                                      src={e.img}
+                                                      alt={e.fullName}
+                                                      style={{ marginRight: 8 }}
+                                                    />
+                                                    {e.fullName}
+                                                  </div>
                                                 </Option>
                                               )
                                             )}
@@ -1707,7 +1827,7 @@ function SalonDetail(props) {
                           <Button
                             type="dashed"
                             block
-                            style={{ marginTop: "16px" }}
+                            style={{ marginTop: "16px", fontSize: "1.6rem" }}
                             // onClick={() => setShowServiceList(true)}
                             onClick={handleAddServiceClick}
                           >
@@ -1716,8 +1836,13 @@ function SalonDetail(props) {
                           <Button
                             type="dashed"
                             block
-                            style={{ marginTop: "16px" }}
+                            style={{
+                              marginTop: "16px",
+                              opacity: 0.5, // Phủ mờ nút
+                              cursor: "not-allowed", // Không cho phép chọn
+                            }}
                             onClick={handleDisplayVoucherList}
+                            disabled
                           >
                             {displayVoucherList ? (
                               <Text>Đóng</Text>
@@ -1725,6 +1850,16 @@ function SalonDetail(props) {
                               <Text>Thêm voucher</Text>
                             )}
                           </Button>
+                          <p
+                            style={{
+                              marginTop: "8px",
+                              color: "#888",
+                              textAlign: "center",
+                            }}
+                          >
+                            Sử dụng ứng dụng di động HairHub để có thêm nhiều ưu
+                            đãi hấp dẫn
+                          </p>
                           {displayVoucherList && (
                             <List
                               style={{ marginTop: "16px", background: "#ee22" }}
@@ -1787,7 +1922,9 @@ function SalonDetail(props) {
 
                           <div style={{ marginTop: "16px" }}>
                             <Title level={4}>Tổng</Title>
-                            <p>{calculateTotal()}</p>
+                            <p style={{ fontSize: "2rem" }}>
+                              {calculateTotal()}
+                            </p>
                             <Button
                               onClick={handleBooking}
                               type="primary"
@@ -2097,7 +2234,9 @@ function SalonDetail(props) {
                           key={e.id}
                           actions={[
                             <>
-                              <Text strong>Dịch vụ: {e?.serviceName} </Text>
+                              <Text style={{ fontSize: "2rem" }} strong>
+                                Dịch vụ: {e?.serviceName}{" "}
+                              </Text>
                               <br />
                               {employee ? (
                                 <>
@@ -2111,7 +2250,11 @@ function SalonDetail(props) {
                                 <>
                                   <Avatar
                                     icon={<RandomIcon />}
-                                    style={{ marginRight: 8 }}
+                                    style={{
+                                      fontSize: "1.5rem",
+                                      color: "#878787",
+                                      backgroundColor: "white",
+                                    }}
                                   />
                                   Nhân viên: Ngẫu nhiên
                                 </>
@@ -2132,7 +2275,9 @@ function SalonDetail(props) {
                       );
                     })}
 
-                    <Typography className="w-fit">
+                    <Typography
+                      style={{ backgroundColor: "white", marginTop: "1rem" }}
+                    >
                       <Text strong>
                         Giá gốc: &nbsp;
                         <Text style={{ display: "inline" }}>

@@ -16,9 +16,18 @@ export const SalonInformationServices = {
     return API.get("/saloninformations/GetAllSalonInformation");
   },
   getAllSalonInformationNotPaging() {
-    return API.get("/saloninformations/GetAllSalonInformationNoPaging")
+    return API.get("/saloninformations/GetAllSalonInformationNoPaging");
   },
-  getAllSalonInformationByAddressOrSalonName(serviceName, salonAddress, salonName, page, size) {
+  getAllSalonInformationByAddressOrSalonName(
+    serviceName,
+    salonAddress,
+    salonName,
+    page,
+    size,
+    latitude,
+    longitude,
+    distance
+  ) {
     return API.get("/saloninformations/GetSalonByServiceNameAddress", {
       params: {
         serviceName,
@@ -26,6 +35,9 @@ export const SalonInformationServices = {
         salonName,
         page,
         size,
+        latitude,
+        longitude,
+        distance,
       },
     });
   },

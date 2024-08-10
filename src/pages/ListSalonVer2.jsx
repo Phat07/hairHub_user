@@ -16,6 +16,7 @@ import {
   Menu,
   Divider,
   Pagination,
+  Spin,
 } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import "../css/ListSalonVer2.css";
@@ -24,14 +25,21 @@ import { ServiceHairServices } from "../services/servicesHairServices";
 
 function ListSalonVer2(props) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(6);
+  const [pageSize, setPageSize] = useState(2);
   const [searchVisible, setSearchVisible] = useState(false);
   const [locationVisible, setLocationVisible] = useState(false);
   const [filterVisible, setFilterVisible] = useState(false);
-  const [selectedService, setSelectedService] = useState("");
+  // const [selectedService, setSelectedService] = useState("");
   const [salonList, setSalonList] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
-  const [total, setTotal] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [servicesName, setServicesName] = useState("");
+  const [locationSalon, setLocationSalon] = useState("");
+  const [salonName, setSalonName] = useState("");
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
+  const [distance, setDistance] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const scrollContainerRef = useRef(null);
 
@@ -59,8 +67,8 @@ function ListSalonVer2(props) {
       <Menu.Item onClick={() => handleServiceSelect("Duỗi tóc")}>
         Duỗi tóc
       </Menu.Item>
-      <Menu.Item onClick={() => handleServiceSelect("Gọi đầu")}>
-        Gọi đầu
+      <Menu.Item onClick={() => handleServiceSelect("Gội đầu")}>
+        Gội đầu
       </Menu.Item>
       <Menu.Item onClick={() => handleServiceSelect("Ráy tay")}>
         Ráy tay
@@ -91,12 +99,14 @@ function ListSalonVer2(props) {
   };
 
   const handleServiceSelect = (service) => {
-    setSelectedService(service);
+    // setSelectedService(service);
+    setServicesName(service);
     setSearchVisible(false);
   };
 
   const handleClearService = () => {
-    setSelectedService("");
+    // setSelectedService("");
+    setServicesName("");
   };
 
   const handleFilterClick = () => {
@@ -110,38 +120,55 @@ function ListSalonVer2(props) {
   useEffect(() => {
     const fetchSalonData = async () => {
       try {
-        // Gọi API getAllSalonInformation
-        const salonRes = await SalonInformationServices.getAllSalonInformation(
-          currentPage,
-          pageSize
-        );
+        setLoading(true);
+        const salonRes =
+          await SalonInformationServices.getAllSalonInformationByAddressOrSalonName(
+            servicesName ? servicesName : null,
+            locationSalon ? locationSalon : null,
+            salonName ? salonName : null,
+            currentPage,
+            pageSize,
+            latitude ? latitude : null,
+            longitude ? longitude : null,
+            distance ? distance : null
+          );
         const salons = salonRes.data.items;
+        console.log("vđ",salonRes.data);
+        
+        console.log("bcss",salons);
+        
 
-        // Gọi API GetServiceHairBySalonInformationId cho từng salonId
         const servicePromises = salons.map((salon) =>
           ServiceHairServices.getServiceHairBySalonNotPaging(salon.id).then(
             (serviceData) => ({
               ...salon,
-              services: serviceData.data, // Giả sử serviceData có cấu trúc { data: ... }
+              services: serviceData.data,
             })
           )
         );
 
-        // Đợi tất cả các promises hoàn thành
         const salonsWithServices = await Promise.all(servicePromises);
 
-        // Cập nhật state
         setSalonList(salonsWithServices);
         setTotalPages(salonRes.data.totalPages);
         setTotal(salonRes.data.total);
       } catch (err) {
         console.log(err, "errors");
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchSalonData();
-  }, [currentPage]);
-  console.log("salonList", salonList);
+  }, [currentPage, servicesName, locationSalon, salonName]);
+
+  const handleLocationChange = (e) => {
+    setLocationSalon(e.target.value);
+  };
+
+  const handleSalonNameChange = (e) => {
+    setSalonName(e.target.value);
+  };
 
   return (
     <div className="list-salon-container">
@@ -149,10 +176,17 @@ function ListSalonVer2(props) {
         <div className="list-salon-search">
           <Row gutter={[16, 16]}>
             <Col span={8}>
+              <Input
+                placeholder="Tìm kiếm salon"
+                prefix={<SearchOutlined />}
+                onChange={handleSalonNameChange}
+              />
+            </Col>
+            <Col span={8}>
               <Popover
                 content={popularServices}
                 visible={searchVisible}
-                onVisibleChange={handleSearchClick}
+                onVisibleChange={setSearchVisible}
                 trigger="click"
                 placement="bottom"
                 overlayClassName="popover-overlay"
@@ -161,13 +195,14 @@ function ListSalonVer2(props) {
                   placeholder="Tìm kiếm dịch vụ"
                   prefix={<SearchOutlined />}
                   suffix={
-                    selectedService && (
-                      <CloseCircleOutlined onClick={handleClearService} />
+                    servicesName && (
+                      <CloseCircleOutlined
+                        onClick={() => setServicesName("")}
+                      />
                     )
                   }
-                  value={selectedService}
-                  onClick={handleSearchClick}
-                  readOnly
+                  value={servicesName}
+                  onChange={(e) => setServicesName(e.target.value)}
                 />
               </Popover>
             </Col>
@@ -188,51 +223,85 @@ function ListSalonVer2(props) {
                   placeholder="Nơi chốn?"
                   prefix={<EnvironmentOutlined />}
                   onClick={handleLocationClick}
-                  readOnly
+                  onChange={handleLocationChange}
                 />
               </Popover>
-            </Col>
-            <Col span={8}>
-              <DatePicker style={{ width: "100%" }} inputReadOnly />
             </Col>
           </Row>
         </div>
         <div className="list-salon-service">
-          <div className="service-item">Cắt tóc</div>
-          <div className="service-item">Nhuộm tóc</div>
-          <div className="service-item">Uốn tóc</div>
-          <div className="service-item">Duỗi tóc</div>
-          <div className="service-item">Gọi đầu</div>
-          <div className="service-item">Ráy tay</div>
-          <div className="service-item">Cạo râu</div>
-        </div>
-      </div>
-      <div className="list-salon-center">
-        <div>
-          <p className="list-salon-result">Results ({total})</p>
-        </div>
-        <div className="list-salon-scoll">
-          <Button
-            className="list-salon-arrow-button left"
-            icon={<LeftOutlined />}
-            onClick={() => handleScroll("left")}
-          />
-          <div className="list-salon-cards-scroll" ref={scrollContainerRef}>
-            {salonList.map((salon) => (
-              <div className="list-salon-card-scroll" key={salon.id}>
-                <img src={salon.img} alt={salon.name} />
-                <p style={{ fontWeight: "bold" }}>{salon.name}</p>
-                <p>{salon.address}</p>
-              </div>
-            ))}
+          <div
+            onClick={() => handleServiceSelect("Cắt tóc")}
+            className="service-item"
+          >
+            Cắt tóc
           </div>
-          <Button
-            className="list-salon-arrow-button right"
-            icon={<RightOutlined />}
-            onClick={() => handleScroll("right")}
-          />
+          <div
+            onClick={() => handleServiceSelect("Nhuộm tóc")}
+            className="service-item"
+          >
+            Nhuộm tóc
+          </div>
+          <div
+            onClick={() => handleServiceSelect("Uốn tóc")}
+            className="service-item"
+          >
+            Uốn tóc
+          </div>
+          <div
+            onClick={() => handleServiceSelect("Duỗi tóc")}
+            className="service-item"
+          >
+            Duỗi tóc
+          </div>
+          <div
+            onClick={() => handleServiceSelect("Gội đầu")}
+            className="service-item"
+          >
+            Gội đầu
+          </div>
+          <div
+            onClick={() => handleServiceSelect("Ráy tai")}
+            className="service-item"
+          >
+            Ráy tai
+          </div>
+          <div
+            onClick={() => handleServiceSelect("Cạo râu")}
+            className="service-item"
+          >
+            Cạo râu
+          </div>
         </div>
       </div>
+      <Spin spinning={loading}>
+        <div className="list-salon-center">
+          <div>
+            <p className="list-salon-result">Results ({total})</p>
+          </div>
+          <div className="list-salon-scoll">
+            <Button
+              className="list-salon-arrow-button left"
+              icon={<LeftOutlined />}
+              onClick={() => handleScroll("left")}
+            />
+            <div className="list-salon-cards-scroll" ref={scrollContainerRef}>
+              {salonList.map((salon) => (
+                <div className="list-salon-card-scroll" key={salon.id}>
+                  <img src={salon.img} alt={salon.name} />
+                  <p style={{ fontWeight: "bold" }}>{salon.name}</p>
+                  <p>{salon.address}</p>
+                </div>
+              ))}
+            </div>
+            <Button
+              className="list-salon-arrow-button right"
+              icon={<RightOutlined />}
+              onClick={() => handleScroll("right")}
+            />
+          </div>
+        </div>
+      </Spin>
       <Divider />
       <div className="list-salon-end">
         <div className="list-salon-actbtn">
@@ -298,7 +367,7 @@ function ListSalonVer2(props) {
         <Pagination
           current={currentPage}
           pageSize={pageSize}
-          total={total}
+          total={totalPages}
           onChange={(page) => setCurrentPage(page)}
           style={{ textAlign: "center", marginTop: "20px" }}
         />

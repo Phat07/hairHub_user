@@ -11,7 +11,7 @@
 /* customCheckbox.css */
 .custom-checkbox {
   color: white; /* Đặt màu chữ */
-  background-color: #1A94AD; /* Đặt màu nền cho span */
+  background-color: #1a94ad; /* Đặt màu nền cho span */
   padding: 5px 10px; /* Đặt padding cho span */
   border-radius: 8px; /* Bo tròn các góc của span */
   display: inline-block; /* Đặt span thành inline-block */
@@ -156,13 +156,16 @@
 .scroll-wrapper {
   overflow: hidden;
   flex: 1;
+  width: 100%;
 }
 
 .scroll-content {
   display: flex;
   flex-wrap: nowrap;
+  justify-content: center;
   gap: 8px;
   transition: transform 0.3s ease;
+  width: max-content;
 }
 
 .arrow-button {
@@ -201,21 +204,16 @@
 
 .date-picker {
   display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
+  justify-content: center;
+  flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 16px;
-}
-
-.date-picker button {
-  flex: 0 0 auto;
 }
 
 .warning-title {
-  color: #ff0000 !important;
-  -webkit-box-shadow: 0px 0px 50px 15px #ff0000;
-  -moz-box-shadow: 0px 0px 50px 15px #ff0000;
-  box-shadow: 0px 0px 50px 15px #ff0000;
+  color: #0059ff !important;
+  -webkit-box-shadow: 0px 0px 50px 15px #00b7ff;
+  -moz-box-shadow: 0px 0px 50px 15px #00b7ff;
+  box-shadow: 0px 0px 50px 15px #00b7ff;
   border-radius: 50px;
   margin: 0 auto;
 }
