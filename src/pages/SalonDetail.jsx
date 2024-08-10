@@ -1419,12 +1419,9 @@ function SalonDetail(props) {
                       ) : (
                         <div>
                           <Divider />
-                          <div className="scroll-container">
-                            <div
-                              className="scroll-wrapper"
-                              ref={dateContainerRef}
-                            >
-                              <div className="scroll-content">
+                          <div>
+                            <div>
+                              <div className="date-picker">
                                 {currentMonthDays.map((day, index) => (
                                   <Button
                                     key={index}
@@ -1861,7 +1858,7 @@ function SalonDetail(props) {
                             }}
                           >
                             Sử dụng ứng dụng di động HairHub để có thêm nhiều ưu
-                            đãi hấp dẫn.
+                            đãi hấp dẫn
                           </p>
                           {displayVoucherList && (
                             <List
@@ -2237,7 +2234,9 @@ function SalonDetail(props) {
                           key={e.id}
                           actions={[
                             <>
-                              <Text strong>Dịch vụ: {e?.serviceName} </Text>
+                              <Text style={{ fontSize: "2rem" }} strong>
+                                Dịch vụ: {e?.serviceName}{" "}
+                              </Text>
                               <br />
                               {employee ? (
                                 <>
@@ -2251,7 +2250,11 @@ function SalonDetail(props) {
                                 <>
                                   <Avatar
                                     icon={<RandomIcon />}
-                                    style={{ marginRight: 8 }}
+                                    style={{
+                                      fontSize: "1.5rem",
+                                      color: "#878787",
+                                      backgroundColor: "white",
+                                    }}
                                   />
                                   Nhân viên: Ngẫu nhiên
                                 </>
@@ -2272,7 +2275,9 @@ function SalonDetail(props) {
                       );
                     })}
 
-                    <Typography className="w-fit">
+                    <Typography
+                      style={{ backgroundColor: "white", marginTop: "1rem" }}
+                    >
                       <Text strong>
                         Giá gốc: &nbsp;
                         <Text style={{ display: "inline" }}>
