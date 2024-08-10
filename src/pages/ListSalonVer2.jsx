@@ -377,7 +377,7 @@ function ListSalonVer2(props) {
                     icon={<EnvironmentOutlined />}
                     onClick={handleLocationClick}
                   >
-                    Tìm salon gần bạn
+                    Nhấn vào đây để tìm salon gần bạn
                   </Button>
                 }
                 visible={locationVisible}
@@ -388,7 +388,7 @@ function ListSalonVer2(props) {
               >
                 <Input
                   name="locationInput"
-                  placeholder="Vị trí salon, baberShop?"
+                  placeholder="Điền vị trí salon, baberShop bạn muốn đến?"
                   prefix={<EnvironmentOutlined />}
                   onClick={() => setLocationVisible(!locationVisible)}
                   onChange={handleLocationChange}
