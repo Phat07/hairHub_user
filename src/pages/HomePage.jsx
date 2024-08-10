@@ -75,7 +75,6 @@ function HomePage(props) {
   const ownerId = useSelector((state) => state.ACCOUNT.idOwner);
   const scrollContainerRef = useRef(null);
   const recommendedSalons = salonList;
-  console.log("recommendedSalons: ", recommendedSalons);
 
   const handleScroll = (direction) => {
     if (scrollContainerRef.current) {
@@ -822,6 +821,9 @@ function HomePage(props) {
                               borderRadius: "2rem",
                               paddingTop: "1rem",
                             }}
+                            onClick={() => {
+                              navigate("/list_salon_ver2?servicesName=Cắt tóc");
+                            }}
                           />
                         </div>
                       </div>
@@ -848,6 +850,9 @@ function HomePage(props) {
                               objectFit: "cover",
                               borderRadius: "2rem",
                               paddingTop: "1rem",
+                            }}
+                            onClick={() => {
+                              navigate("/list_salon_ver2?servicesName=Gội đầu");
                             }}
                           />
                         </div>
@@ -876,6 +881,9 @@ function HomePage(props) {
                               borderRadius: "2rem",
                               paddingTop: "1rem",
                             }}
+                            onClick={() => {
+                              navigate("/list_salon_ver2?servicesName=Lấy ráy tai");
+                            }}
                           />
                         </div>
                       </div>
@@ -902,6 +910,9 @@ function HomePage(props) {
                               objectFit: "cover",
                               borderRadius: "2rem",
                               paddingTop: "1rem",
+                            }}
+                            onClick={() => {
+                              navigate("/list_salon_ver2?servicesName=Dịch vụ làm đẹp");
                             }}
                           />
                         </div>
@@ -930,6 +941,9 @@ function HomePage(props) {
                               borderRadius: "2rem",
                               paddingTop: "1rem",
                             }}
+                            onClick={() => {
+                              navigate("/list_salon_ver2?servicesName=Cạo râu");
+                            }}
                           />
                         </div>
                       </div>
@@ -956,6 +970,9 @@ function HomePage(props) {
                               objectFit: "cover",
                               borderRadius: "2rem",
                               paddingTop: "1rem",
+                            }}
+                            onClick={() => {
+                              navigate("/list_salon_ver2?servicesName=Nhuộm tóc");
                             }}
                           />
                         </div>
@@ -984,6 +1001,9 @@ function HomePage(props) {
                               borderRadius: "2rem",
                               paddingTop: "1rem",
                             }}
+                            onClick={() => {
+                              navigate("/list_salon_ver2?servicesName=Phục hồi tóc");
+                            }}
                           />
                         </div>
                       </div>
@@ -1010,6 +1030,9 @@ function HomePage(props) {
                               objectFit: "cover",
                               borderRadius: "2rem",
                               paddingTop: "1rem",
+                            }}
+                            onClick={() => {
+                              navigate("/list_salon_ver2?servicesName=Uốn tóc");
                             }}
                           />
                         </div>
