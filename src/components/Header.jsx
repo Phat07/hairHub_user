@@ -104,7 +104,11 @@ function Header(props) {
   return (
     <div>
       <header className="header fixed-header">
-        <div className="header-bottom" style={{ height: "10rem" }} data-header>
+        <div
+          className="header-bottom"
+          style={{ height: "12rem", backgroundColor: "black" }}
+          data-header
+        >
           <div className="container">
             <div>
               <Link to={"/"} className="logo logo-header">
