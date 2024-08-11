@@ -146,9 +146,7 @@ function Header(props) {
                   {(idCustomer || idOwner) && (
                     <Link
                       to={
-                        idOwner
-                          ? "/salon_appointment"
-                          : "/booking_appointment/customer"
+                        idOwner ? "/salon_appointment" : "/customer_appointment"
                       }
                       className="navbar-link"
                       data-nav-link

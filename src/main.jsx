@@ -45,6 +45,7 @@ import SalonForm from "./components/SalonShop/SalonForm.jsx";
 import ManageVoucher from "./pages/ManageVoucher.jsx";
 import SalonAppointment from "./pages/SalonAppointment.jsx";
 import SalonAppointmentVer2 from "./pages/SalonAppointmentVer2.jsx";
+import CustomerAppointmentVer2 from "./pages/CustomerAppointmentVer2.jsx";
 import SalonOwnerAccountPage from "./pages/SalonOwnerAccountPage.jsx";
 import BookingAppointmentCustomerPage from "./pages/BookingAppointmentCustomerPage.jsx";
 import CustomerSchedule from "./pages/CustomerSchedule.jsx";
@@ -139,6 +140,14 @@ const router = createBrowserRouter([
         element: (
           <RequireAuth fallbackPath="/login">
             <SalonAppointment />
+          </RequireAuth>
+        ),
+      },
+      {
+        path: "customer_appointment",
+        element: (
+          <RequireAuth fallbackPath="/login">
+            <CustomerAppointmentVer2 />
           </RequireAuth>
         ),
       },

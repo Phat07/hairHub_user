@@ -10,6 +10,18 @@ export const AppointmentService = {
       },
     });
   },
+  GetAppointmentCustomerByStatus(customerId, page, size, status) {
+    return API.get(
+      `/appointments/GetAppointmentCustomerByStatus/${customerId}`,
+      {
+        params: {
+          page,
+          size,
+          status,
+        },
+      }
+    );
+  },
   GetAppointmentSalonNotPaging(salonId) {
     return API.get(`/appointments/GetAppointmentBySalonIdNoPaging/${salonId}`);
   },
