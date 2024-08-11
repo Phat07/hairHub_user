@@ -6,7 +6,10 @@ import "./App.css";
 import Header from "./components/Header";
 import HeaderUnAuth from "./components/HeaderUnAuth";
 import { actGetAllPaymentList } from "./store/config/action";
-import { actGetAllServicesBySalonId, actGetAllServicesBySalonIdNoPaging } from "./store/salonEmployees/action";
+import {
+  actGetAllServicesBySalonId,
+  actGetAllServicesBySalonIdNoPaging,
+} from "./store/salonEmployees/action";
 import {
   actGetAllSalonInformation,
   actGetAllSalonSuggestionInformation,
@@ -18,6 +21,7 @@ import ChatBox from "./components/ChatBox";
 import Footer from "./components/Footer";
 import { AccountServices } from "./services/accountServices";
 import { fetchUserByTokenApi } from "./store/account/action";
+import Footer2 from "./components/Footer2";
 
 function App() {
   const navigate = useNavigate();
@@ -132,7 +136,8 @@ function App() {
       {localStorage.getItem("refreshToken") ? <Header /> : <HeaderUnAuth />}
       <ChatBox />
       {/* <ChatComponent /> */}
-      <Footer />
+      {/* <Footer /> */}
+      <Footer2 />
     </>
   );
 }

@@ -113,6 +113,7 @@ import { useSelector } from "react-redux";
 import QrScanner from "react-qr-scanner";
 import "../css/SalonOwnerAccountPage.css";
 import dayjs from "dayjs";
+import Loader from "../components/Loader";
 
 const { Option } = Select;
 
@@ -124,6 +125,7 @@ function SalonOwnerAccountPage() {
 
   const [salonData, setSalonData] = useState({});
   const [showScanner, setShowScanner] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isNotified, setIsNotified] = useState(false);
   const [avatarFile, setAvatarFile] = useState(null);
   const [form] = Form.useForm();
@@ -199,20 +201,20 @@ function SalonOwnerAccountPage() {
 
   const handleSave = (values) => {
     const formData = new FormData();
-
+    setIsLoading(true);
     formData.append("roleId", idCustomer);
-    formData.append("phone", values.phone || salonData.phone);
+    formData.append("phone", values.phone ?? salonData.phone);
     formData.append("password", salonData.password);
-    formData.append("fullName", values.fullName || salonData.fullName);
+    formData.append("fullName", values.fullName ?? salonData.fullName);
     formData.append(
       "dayOfBirth",
       values.dayOfBirth
         ? values.dayOfBirth.format("YYYY-MM-DD")
         : salonData.dayOfBirth
     );
-    formData.append("gender", values.gender || salonData.gender);
-    formData.append("email", values.email || salonData.email);
-    formData.append("address", values.address || salonData.address);
+    formData.append("gender", values.gender ?? salonData.gender);
+    formData.append("email", values.email ?? salonData.email);
+    formData.append("address", values.address ?? salonData.address);
 
     if (avatarFile) {
       formData.append("img", avatarFile);
@@ -221,29 +223,28 @@ function SalonOwnerAccountPage() {
     AccountServices.updateUserById(id, formData)
       .then((res) => {
         message.success("Cập nhật tài khoản thành công");
-        AccountServices.GetInformationAccount(id)
-          .then((res) => {
-            setSalonData(res.data);
-            setAvatarUrl(res.data.img);
-            form.setFieldsValue({
-              fullName: res.data.fullName,
-              phone: res.data.phone,
-              email: res.data.email,
-              dayOfBirth: res.data.dayOfBirth
-                ? dayjs(res.data.dayOfBirth)
-                : null,
-              gender: res.data.gender,
-              address: res.data.address,
-              password: maskPassword(res.data.password),
-              avatar: res.data.img,
-            });
-          })
-          .catch((err) => {
-            message.warning("Loading!!!");
-          });
+        return AccountServices.GetInformationAccount(id);
+      })
+      .then((res) => {
+        setSalonData(res.data);
+        setAvatarUrl(res.data.img);
+        form.setFieldsValue({
+          fullName: res.data.fullName,
+          phone: res.data.phone,
+          email: res.data.email,
+          dayOfBirth: res.data.dayOfBirth ? dayjs(res.data.dayOfBirth) : null,
+          gender: res.data.gender,
+          address: res.data.address,
+          password: maskPassword(res.data.password),
+          avatar: res.data.img,
+        });
       })
       .catch((err) => {
         message.warning("Cập nhật thất bại, vui lòng thử lại sau!!!");
+        console.error(err);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   };
 
@@ -316,6 +317,11 @@ function SalonOwnerAccountPage() {
 
   return (
     <div className="salon-owner-account">
+      {isLoading && (
+        <div className="overlay">
+          <Loader />
+        </div>
+      )}
       {uid ? (
         <div className="salon-layout">
           <div className="salon-left">

@@ -1,0 +1,104 @@
+import React from "react";
+import { Row, Col, Form, Input, Button, Typography } from "antd";
+import { FacebookOutlined, InstagramOutlined } from "@ant-design/icons";
+import "../css/footer2.css";
+import googleplay from "../assets/images/imageGooglePlay.png";
+import { Link, useNavigate } from "react-router-dom";
+const { Title } = Typography;
+
+const Footer2 = () => {
+  const navigate = useNavigate();
+  const handleNavigation = (selectedKey) => {
+    navigate("/about", { state: { selectedKey } });
+  };
+  return (
+    <div className="footer-container">
+      <div className="waves">
+        <div className="wave" id="wave1"></div>
+        <div className="wave" id="wave2"></div>
+        <div className="wave" id="wave3"></div>
+        <div className="wave" id="wave4"></div>
+      </div>
+      <div className="navbar-footer-container">
+        <nav className="navbar-footer">
+          <ul className="navbar-footer-list">
+            <li className="navbar-footer-item">
+              <div
+                className="navbar-footer-link"
+                onClick={() => handleNavigation("aboutUs")}
+              >
+                Giới thiệu về chúng tôi
+              </div>
+            </li>
+            <li className="navbar-footer-item">
+              <div
+                className="navbar-footer-link"
+                onClick={() => handleNavigation("privacyPolicy")}
+              >
+                Chính sách
+              </div>
+            </li>
+            <li className="navbar-footer-item">
+              <div
+                className="navbar-footer-link"
+                onClick={() => handleNavigation("termsOfService")}
+              >
+                Lợi Ích
+              </div>
+            </li>
+            <li className="navbar-footer-item">
+              <div
+                className="navbar-footer-link"
+                onClick={() => handleNavigation("faqs")}
+              >
+                Thông Tin Liên Hệ
+              </div>
+            </li>
+          </ul>
+        </nav>
+        <img
+          src={googleplay}
+          alt="googleplay Banner"
+          style={{
+            width: "100%",
+            height: "100%",
+            maxWidth: "30rem",
+            maxHeight: "30rem",
+            objectFit: "cover",
+            borderRadius: "0 2px 2px 0",
+          }}
+          className="googleplay-footer  "
+        />
+      </div>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          marginTop: "1rem",
+          marginBottom: "3rem",
+        }}
+      >
+        <Title style={{ margin: "0", color: "white" }}>HairHub </Title>
+        <Row justify="center" className="social-links">
+          <a
+            href="https://www.facebook.com/profile.php?id=61559941142117"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <FacebookOutlined className="social-icon" />
+          </a>
+          <a
+            href="https://www.instagram.com/hair_hub2024?fbclid=IwY2xjawEXH4RleHRuA2FlbQIxMAABHcU-ErcSfFW_dY4RCcrsM9JndPfn-gyjzGDj_1BIGJjuxznpo-p1Pk6nZA_aem_0g8FC4RzX60yd6_YJbqiHQ"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <InstagramOutlined className="social-icon" />
+          </a>
+        </Row>
+      </div>
+    </div>
+  );
+};
+
+export default Footer2;

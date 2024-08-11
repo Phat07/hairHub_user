@@ -164,7 +164,7 @@
  }
  
  article {
-   background-color: var(--indian-yellow_10);
+   /* background-color: var(--indian-yellow_10); */
    color: wheat;
  }
  
@@ -510,17 +510,20 @@
    padding: 5rem;
    background-color: var(--eerie-black-2_1);
    border-radius: 5px;
+   margin-bottom: 3rem;
  }
  
  .service-card {
-   background-color: var(--white);
+   /* background-color: var(--white); */
+   background-color: #bf9456;
    padding: 60px 25px;
    box-shadow: var(--shadow-1);
    border-radius: var(--radius-8);
  }
  
  .service-card .card-icon {
-   color: var(--indian-yellow);
+   /* color: var(--indian-yellow); */
+   color: white;
    font-size: 70px;
    line-height: 1;
  }
@@ -528,23 +531,27 @@
  .service-card .card-title {
    margin-block: 15px 12px;
    transition: var(--transition-1);
-   color: rgb(71, 71, 253);
+   /* color: rgb(71, 71, 253); */
+   color: white;
  }
  
  .service-card .card-title:is(:hover, :focus) {
-   color: var(--indian-yellow);
+   /* color: var(--indian-yellow); */
+   color: #000000;
  }
  
  .service-card .card-text {
    margin-block-end: 30px;
-   color: var(--eerie-black-1);
+   /* color: var(--eerie-black-1); */
+   color: white;
    font-weight: 500;
  }
  
  .service-card .card-btn {
-   border: 2px solid var(--indian-yellow);
-   color: var(--indian-yellow);
-   background-color: var(--white);
+   border: 2px solid #f4f2eb;
+   /* color: var(--indian-yellow); */
+   background-color: #bf9456;
+   color: var(--white);
    max-width: max-content;
    margin-inline: auto;
    font-size: 20px;
@@ -555,8 +562,10 @@
  }
  
  .service-card:is(:hover, :focus-within) .card-btn {
-   background-color: var(--indian-yellow);
-   color: var(--white);
+   /* background-color: var(--indian-yellow); */
+   color: #bf9456;
+   /* background-color: var(--white); */
+   background-color: #f4f2eb;
  }
  
  /*-----------------------------------*\
@@ -1593,7 +1602,7 @@
 }
 
 .scroll-icon {
-  font-size: 5rem;
+  font-size: 4rem;
   cursor: pointer;
   color: #bf9456;
 }
@@ -1617,8 +1626,8 @@
   margin: 1rem 0;
   border-radius: 1rem;
   background-color: #ddf0ff;
-  /* border-width: 3px;
-  border-color: #bf9456; */
+  border-width: 3px;
+  border-color: #bf9456;
 }
 .location-card-col{
   padding: 1rem;
@@ -1674,14 +1683,17 @@
   padding: 5rem 0;
   border-radius: 1rem;
   background-color: #f4f2eb;
-  border-width: 3px;
-  border-color: #bf9456;
+  /* border-width: 3px;
+  border-color: #bf9456; */
 }
 .title-card-homepage{
   font-weight: bold;
   margin-left: 1rem;
   display: block;
   margin-bottom: 10rem;
+  background-color: #bf9456;
+  padding: 1rem;
+  border-radius: 2rem;
 }
 
 .text-card-homepage{
@@ -1747,3 +1759,87 @@
   border-radius: 0 0 2px 2px;
 }
 
+/* .card-list {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  gap: 1rem;
+  padding: 1rem;
+  -ms-overflow-style: none;
+  scrollbar-width: none; 
+}
+
+.grid-list::-webkit-scrollbar {
+  display: none; 
+}
+
+.service-card2 {
+  flex: 0 0 auto;
+  min-width: 300px;
+}
+
+.container-service-list {
+  padding: 10px;
+} */
+
+.container-service-list {
+  position: relative;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 10rem;
+}
+
+.card-list {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  gap: 1rem;
+  padding: 1rem;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.card-list::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.service-card2 {
+  flex: 0 0 auto;
+  min-width: 300px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.service-card2:hover {
+  transform: scale(1.05);
+}
+
+.scroll-icon2 {
+  font-size: 4rem;
+  color: white;
+  background-color: #bf9456;
+  border-radius: 50%;
+  padding: 5px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  z-index: 10;
+}
+
+.left-icon {
+  left: 0;
+}
+
+.right-icon {
+  right: 0;
+}
+
+@media (max-width: 768px) {
+  .scroll-icon2 {
+    display: none;
+  }
+  .container-service-list {
+    margin-bottom: 5rem;
+  }
+}
