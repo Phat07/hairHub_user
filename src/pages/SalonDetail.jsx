@@ -83,30 +83,86 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(duration);
 dayjs.extend(isSameOrBefore);
-function renderStars(stars) {
-  const filledStars = Math.floor(stars);
-  const hasHalfStar = stars % 1 !== 0;
+// function renderStars(stars) {
+//   const filledStars = Math.floor(stars);
+//   const hasHalfStar = stars % 1 !== 0;
 
+//   const starIcons = [];
+
+//   for (let i = 0; i < filledStars; i++) {
+//     starIcons.push(<StarFilled key={i} style={{ color: "#FFD700" }} />);
+//   }
+
+//   if (hasHalfStar) {
+//     starIcons.push(
+//       <StarOutlined key={filledStars} style={{ color: "#FFD700" }} />
+//     );
+//   }
+
+//   const remainingStars = 5 - filledStars - (hasHalfStar ? 1 : 0);
+
+//   for (let i = 0; i < remainingStars; i++) {
+//     starIcons.push(<StarOutlined key={filledStars + i + 1} />);
+//   }
+
+//   return starIcons;
+// }
+function renderStars(stars) {
+  const filledStars = Math.floor(stars); // Số sao đầy đủ
+  const fraction = stars % 1; // Phần thập phân của số sao
   const starIcons = [];
 
+  // Thêm các sao đầy đủ
   for (let i = 0; i < filledStars; i++) {
     starIcons.push(<StarFilled key={i} style={{ color: "#FFD700" }} />);
   }
 
-  if (hasHalfStar) {
+  // Thêm sao một phần nếu có phần thập phân
+  if (fraction > 0) {
     starIcons.push(
-      <StarOutlined key={filledStars} style={{ color: "#FFD700" }} />
+      <span 
+        key={`partial-${filledStars}`} 
+        style={{ 
+          position: 'relative', 
+          display: 'inline-block', 
+          width: '24px',  // kích thước sao
+          height: '24px', 
+        }}
+      >
+        <StarOutlined 
+          style={{ 
+            position: 'absolute', 
+            color: '#E0E0E0', // màu sao trống
+            zIndex: 1, // lớp dưới cùng
+            left: 0,
+            top: 0 
+          }} 
+        />
+        <StarFilled 
+          style={{ 
+            position: 'absolute', 
+            color: "#FFD700", 
+            clipPath: `inset(0 ${100 - fraction * 100}% 0 0)`, // phần sao được tô vàng
+            zIndex: 2, // lớp trên cùng
+            left: 0,
+            top: 0 
+          }} 
+        />
+      </span>
     );
   }
 
-  const remainingStars = 5 - filledStars - (hasHalfStar ? 1 : 0);
-
+  // Thêm các sao trống còn lại
+  const remainingStars = 5 - filledStars - (fraction > 0 ? 1 : 0);
   for (let i = 0; i < remainingStars; i++) {
-    starIcons.push(<StarOutlined key={filledStars + i + 1} />);
+    starIcons.push(<StarOutlined key={filledStars + i + 1} style={{ color: '#E0E0E0' }} />);
   }
 
   return starIcons;
 }
+
+
+
 const vietnamTimezone = "Asia/Ho_Chi_Minh";
 const currentTime = dayjs().tz(vietnamTimezone);
 
@@ -1144,7 +1200,7 @@ function SalonDetail(props) {
 
   return (
     <div>
-      <Header />
+      {/* <Header /> */}
       <div
         style={{
           marginTop: "10rem",

@@ -22,8 +22,9 @@ import Footer from "./components/Footer";
 import { AccountServices } from "./services/accountServices";
 import { fetchUserByTokenApi } from "./store/account/action";
 import Footer2 from "./components/Footer2";
-
+import  useDocumentTitle  from "../src/components/useDocumentTitle";
 function App() {
+  useDocumentTitle();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -134,6 +135,7 @@ function App() {
   return (
     <>
       {localStorage.getItem("refreshToken") ? <Header /> : <HeaderUnAuth />}
+      {/* {localStorage.getItem("refreshToken") ? <HeaderUnAuth /> :<></>} */}
       <ChatBox />
       {/* <ChatComponent /> */}
       {/* <Footer /> */}

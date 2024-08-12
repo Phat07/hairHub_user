@@ -95,13 +95,12 @@
     overflow-x: auto;
     gap: 1rem;
     padding: 1rem;
-    /* Ẩn thanh cuộn */
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; 
+    scrollbar-width: none; 
   }
 
   .grid-list::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
+    display: none; 
   }
 
   .service-card {
@@ -113,4 +112,4 @@
     padding: 10px;
   }
 }
-/* } */
+

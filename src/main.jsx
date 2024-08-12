@@ -292,26 +292,6 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
-    path: "list_salon",
-    element: <ListSalon />,
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: `salon_detail/:id`,
-    element: <SalonDetail />,
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: `chat`,
-    element: <ChatComponent />,
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: `chat/:id`,
-    element: <ChatComponent />,
-    errorElement: <ErrorPage />,
-  },
-  {
     path: "*",
     element: <ErrorPage />,
   },

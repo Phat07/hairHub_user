@@ -162,6 +162,8 @@ function HomePage(props) {
       .querySelector(".card-list")
       .scrollBy({ left: 300, behavior: "smooth" });
   };
+  console.log("re",recommendedSalons);
+  
   return (
     <div>
       <main>

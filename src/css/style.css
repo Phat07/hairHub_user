@@ -1069,7 +1069,7 @@
      transform: translateX(-50%);
      max-width: 600px;
      z-index: 4;
-     background-color: var(--white);
+     background-color: #313131;
      border-radius: 0 0 20px 20px;
    }
  

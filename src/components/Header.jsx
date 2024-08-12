@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../css/flaticon.min.css";
-import "../css/style.css";
+// import "../css/style.css";
 import "../css/header.css";
 import { Link, Outlet, redirect, useNavigate } from "react-router-dom";
 import { IoMenu } from "react-icons/io5";
