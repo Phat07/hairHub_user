@@ -6,7 +6,7 @@
  * copyright 2022 codewithsadee
  */
  @import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Pacifico&display=swap");
-
+@import url("../css/root.css");
  /*-----------------------------------*\
    #CUSTOM PROPERTY
  \*-----------------------------------*/
@@ -1123,6 +1123,7 @@
    }
    .hero-title {
      color: #bf9456 !important;
+     font-family: var(--font-secondary);
    }
  
    /**
@@ -1373,6 +1374,7 @@
    .hero-title {
      max-width: 600px;
      color: #bf9456 !important;
+     font-family: var(--font-secondary);
    }
    .hero-text {
      max-width: 600px;
@@ -1512,6 +1514,7 @@
    .hero-title {
      max-width: 680px;
      color: #bf9456 !important;
+     font-family: var(--font-secondary);
    }
    .hero-text {
      max-width: 680px;
@@ -1580,176 +1583,15 @@
    justify-content: center !important;
  }
  
- .customTitle {
-   /* color: var(--harvest-gold) !important; */
-   /* background: linear-gradient(90deg, #e7f1ff 0%, #dca68a 85%); */
-   background-color: #bf9456;
-   color: #fff !important;
-   padding: 1rem;
-   border-radius: 1rem;
- }
- .scroll-wrapper {
-  position: relative;
-}
+ 
 
-.scroll-icons {
-  display: flex;
-  justify-content: space-between;
-  position: absolute;
-  width: 100%;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.scroll-icon {
-  font-size: 4rem;
-  cursor: pointer;
-  color: #bf9456;
-}
 
 /* .location-card-container{
   margin: 10rem 0;
 } */
 
-.location-card {
-  border-radius: 2px;
-  overflow: hidden;
-  margin: 1rem 0;
-  border-radius: 1rem;
-  background-color: #f4f2eb;
-  border-width: 3px;
-  border-color: #bf9456;
-}
-.banner-card {
-  border-radius: 2px;
-  overflow: hidden;
-  margin: 1rem 0;
-  border-radius: 1rem;
-  background-color: #ddf0ff;
-  border-width: 3px;
-  border-color: #bf9456;
-}
-.location-card-col{
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-.location-card-buton{
-  margin-top: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.location-buton1{
-  margin-right: 1rem;
-  padding: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #333333;
-  color: #fff;
-}
 
-.location-buton1 {
-  &:hover {
-    background-color: #333333 !important; /* Giữ nguyên màu nền */
-    color: #fff !important; /* Giữ nguyên màu chữ */
-  }
-}
 
-.location-buton2{
-  margin-right: 1rem;
-  padding: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #fff;
-  color: #333;
-}
-
-.location-buton2 {
-  &:hover {
-    background-color: #fff !important; /* Giữ nguyên màu nền */
-    color: #333 !important; /* Giữ nguyên màu chữ */
-  }
-}
-
-.card-homepage{
-  border-radius: 2px;
-  overflow: hidden;
-  margin: 10rem 0;
-  padding: 5rem 0;
-  border-radius: 1rem;
-  background-color: #f4f2eb;
-  /* border-width: 3px;
-  border-color: #bf9456; */
-}
-.title-card-homepage{
-  font-weight: bold;
-  margin-left: 1rem;
-  display: block;
-  margin-bottom: 10rem;
-  background-color: #bf9456;
-  padding: 1rem;
-  border-radius: 2rem;
-}
-
-.text-card-homepage{
-  font-size: 2rem;
-  margin-left: 1rem;
-  display: block;
-  max-width: 50rem;
-  margin-bottom: 5px;
-}
-
-@media (max-width: 768px) {
-  .scroll-icon {
-    display: none;
-  }
-  .location-card img {
-    display: none;
-  }
-  .location-card-buton{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: "100%";
-  }
-  .location-buton1{
-    width: 100%;
-    margin-bottom: 10px;
-  }
-  .location-buton2{
-    width: 100%;
-  }
-  .location-card-container{
-    margin: 5rem 0;
-  }
-  .card-homepage{
-    border-radius: 2px;
-    overflow: hidden;
-    margin: 0;
-    padding: 3rem 0;
-    border-radius: 1rem;
-    background-color: #f4f2eb;
-    border-width: 3px;
-    border-color: #bf9456;
-  }
-}
-
-.scroll-content {
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-}
-
-.scroll-content::-webkit-scrollbar {
-  display: none;  /* Chrome, Safari, Opera */
-}
 
 .small-card {
   flex: 0 0 auto; /* Ngăn các thẻ co lại hoặc giãn ra */
@@ -1818,7 +1660,7 @@
   font-size: 4rem;
   color: white;
   background-color: #bf9456;
-  border-radius: 50%;
+  border-radius: 5px;
   padding: 5px;
   position: absolute;
   top: 50%;

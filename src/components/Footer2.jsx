@@ -1,9 +1,9 @@
-import React from "react";
-import { Row, Col, Form, Input, Button, Typography } from "antd";
 import { FacebookOutlined, InstagramOutlined } from "@ant-design/icons";
-import "../css/footer2.css";
+import { Row, Typography } from "antd";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import googleplay from "../assets/images/imageGooglePlay.png";
-import { Link, useNavigate } from "react-router-dom";
+import "../css/footer2.css";
 const { Title } = Typography;
 
 const Footer2 = () => {
@@ -62,8 +62,8 @@ const Footer2 = () => {
           style={{
             width: "100%",
             height: "100%",
-            maxWidth: "30rem",
-            maxHeight: "30rem",
+            maxWidth: "15rem",
+            maxHeight: "15rem",
             objectFit: "cover",
             borderRadius: "0 2px 2px 0",
           }}
@@ -74,12 +74,14 @@ const Footer2 = () => {
         style={{
           display: "flex",
           alignItems: "center",
-          justifyContent: "center",
+          justifyContent: "space-between",
           marginTop: "1rem",
           marginBottom: "3rem",
         }}
       >
-        <Title style={{ margin: "0", color: "white" }}>HairHub </Title>
+        <Title style={{ margin: "0", color: "white", fontSize: "2.5rem" }}>
+          HairHub{" "}
+        </Title>
         <Row justify="center" className="social-links">
           <a
             href="https://www.facebook.com/profile.php?id=61559941142117"
