@@ -2,6 +2,7 @@ import {
   CloseOutlined,
   HeartOutlined,
   LeftOutlined,
+  PhoneOutlined,
   RightOutlined,
   ShareAltOutlined,
   StarFilled,
@@ -1971,7 +1972,7 @@ function SalonDetail(props) {
                         marginLeft: "5px",
                       }}
                     >
-                      VỤ
+                      GIÁ
                     </span>
                   </h2>
                 </div>
@@ -2069,7 +2070,7 @@ function SalonDetail(props) {
                 xs={24}
                 md={8}
                 className="sticky-col"
-                style={{ marginTop: "20px", height: "600px" }}
+                style={{ marginTop: "20px" }}
               >
                 <div
                   style={{
@@ -2078,7 +2079,6 @@ function SalonDetail(props) {
                     background: "#F4F2EB",
                     borderRadius: "8px",
                     border: "3px solid black",
-                    height: "900px",
                   }}
                   className="detail-salon-col-2"
                 >
@@ -2129,7 +2129,11 @@ function SalonDetail(props) {
                   <div>
                     <Title level={4}>Liên hệ</Title>
                     <Row justify="space-between" align="middle">
-                      <Text>{salonDetail?.salonOwner?.phone}</Text>
+                      <Col>
+                        <Text>
+                          <PhoneOutlined /> {salonDetail?.salonOwner?.phone}
+                        </Text>
+                      </Col>
                       {/* <Button type="primary">Gọi</Button> */}
                     </Row>
                     <Divider />

@@ -21,7 +21,10 @@ import { DownOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons";
 import { SalonInformationServices } from "../services/salonInformationServices";
 import { isEmptyObject } from "./formatCheckValue/checkEmptyObject";
 import { useDispatch, useSelector } from "react-redux";
-import { actGetSalonInformationByOwnerId, actGetSalonInformationByOwnerIdByCheck } from "../store/salonInformation/action";
+import {
+  actGetSalonInformationByOwnerId,
+  actGetSalonInformationByOwnerIdByCheck,
+} from "../store/salonInformation/action";
 import hairHubLogo from "../assets/images/hairHubLogo.png";
 import { AccountServices } from "../services/accountServices";
 import { fetchUserByTokenApi } from "../store/account/action";
@@ -63,11 +66,7 @@ function Header(props) {
   };
 
   const handleEmptySalon = () => {
-    if (
-      !salonServicesList ||
-      (typeof salonServicesList === "object" &&
-        Object.keys(salonServicesList).length === 0)
-    ) {
+    if (!salonDetail) {
       return "/create_shop";
     } else {
       return "/list_shop";

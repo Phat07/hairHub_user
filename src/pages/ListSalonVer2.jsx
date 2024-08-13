@@ -27,7 +27,7 @@ import { useNavigate } from "react-router-dom";
 import { LoadScript, StandaloneSearchBox } from "@react-google-maps/api";
 function ListSalonVer2(props) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(2);
+  const [pageSize, setPageSize] = useState(6);
   const [searchVisible, setSearchVisible] = useState(false);
   const [locationVisible, setLocationVisible] = useState(false);
   const [filterVisible, setFilterVisible] = useState(false);

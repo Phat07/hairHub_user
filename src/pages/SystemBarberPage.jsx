@@ -56,6 +56,7 @@ const defaultCenter = {
   lat: 10.8231, // Default to Ho Chi Minh City
   lng: 106.6297,
 };
+
 const vietnamProvinces = [
   { name: "Hà Nội", lat: 21.0285, lng: 105.8542 },
   { name: "Hồ Chí Minh", lat: 10.8231, lng: 106.6297 },
