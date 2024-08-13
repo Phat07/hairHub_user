@@ -116,8 +116,6 @@ function ListSalonVer2(props) {
   //   setSearchVisible(false);
   // };
   const handleLocationClick = () => {
-    console.log("333");
-
     setLocationVisible(false); // Close the popover
     setModalVisible(true); // Show the modal
   };

@@ -44,7 +44,7 @@ function HeaderUnAuth(props) {
   //     // window.location.reload();
   //   }
   // };
-  console.log("salon", salonDetail);
+ 
   const handleEmptySalon = () => {
     if (!salonDetail) {
       return "/create_shop";

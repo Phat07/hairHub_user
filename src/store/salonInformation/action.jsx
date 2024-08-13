@@ -49,6 +49,25 @@ export function actGetSalonInformationByOwnerId(id) {
   };
 }
 
+export function actGetSalonInformationByOwnerIdByCheck(id, navigate) {
+  return async (dispatch) => {
+    const result = SalonInformationServices.getSalonInformationByOwnerId(id);
+    await result
+      .then((response) => {
+        if (response.status === 200 || response.status === 201) {
+          dispatch(getSalonInformationByOwnerId(response.data));
+        } else {
+          message.error("Không tìm thấy salon của bạn!!!");
+        }
+      })
+      .catch((error) => {
+        navigate('/create_shop')
+        // Xử lý lỗi nếu có
+        console.error("error", error);
+      });
+  };
+}
+
 export function actGetAllSalonInformation() {
   return async (dispatch) => {
     const result = SalonInformationServices.getAllSalonInformation();

@@ -1,9 +1,10 @@
 .detail-salon-col-1 {
-  margin-left: 20rem;
+  margin-left: 8rem;
+  margin-right: 8rem;
 }
 
 .detail-salon-col-2 {
-  margin-left: 5rem;
+  margin-right: 8rem;
 }
 .container {
   padding: "0 50px";
@@ -30,6 +31,16 @@
 }
 .close-button-close:hover {
   transform: rotate(90deg);
+}
+.css-dev-only-do-not-override-wb61s4.ant-layout {
+  /* Các thuộc tính CSS bạn muốn áp dụng */
+  background-color: #F4F2EB;
+  /* Thêm các thuộc tính khác tùy theo nhu cầu */
+}
+.css-dev-only-do-not-override-wb61s4 .ant-row {
+  display: flex;
+  flex-flow: nowrap;
+  justify-content: flex-start;
 }
 @media (max-width: 768px) {
   .detail-salon-col-1 {

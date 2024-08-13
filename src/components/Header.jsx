@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../css/flaticon.min.css";
-import "../css/style.css";
+// import "../css/style.css";
 import "../css/header.css";
 import { Link, Outlet, redirect, useNavigate } from "react-router-dom";
 import { IoMenu } from "react-icons/io5";
@@ -21,10 +21,11 @@ import { DownOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons";
 import { SalonInformationServices } from "../services/salonInformationServices";
 import { isEmptyObject } from "./formatCheckValue/checkEmptyObject";
 import { useDispatch, useSelector } from "react-redux";
-import { actGetSalonInformationByOwnerId } from "../store/salonInformation/action";
+import { actGetSalonInformationByOwnerId, actGetSalonInformationByOwnerIdByCheck } from "../store/salonInformation/action";
 import hairHubLogo from "../assets/images/hairHubLogo.png";
 import { AccountServices } from "../services/accountServices";
 import { fetchUserByTokenApi } from "../store/account/action";
+import { actGetAllServicesBySalonIdNoPaging } from "../store/salonEmployees/action";
 
 function Header(props) {
   const navigate = useNavigate();
@@ -36,12 +37,18 @@ function Header(props) {
   const salonDetail = useSelector(
     (state) => state.SALONINFORMATION.getSalonByOwnerId
   );
+  console.log("salonDetail", salonDetail);
+  const salonServicesList = useSelector(
+    (state) => state.SALONEMPLOYEES.salonServicesList
+  );
+  console.log("salonServicesList", salonServicesList);
+
   const account = useSelector((state) => state.ACCOUNT.username);
 
   useEffect(() => {
     if (idOwner) {
       try {
-        dispatch(actGetSalonInformationByOwnerId(idOwner));
+        dispatch(actGetSalonInformationByOwnerIdByCheck(idOwner, navigate));
       } catch (err) {
         console.log(err, "errors");
       }
@@ -56,7 +63,11 @@ function Header(props) {
   };
 
   const handleEmptySalon = () => {
-    if (!salonDetail) {
+    if (
+      !salonServicesList ||
+      (typeof salonServicesList === "object" &&
+        Object.keys(salonServicesList).length === 0)
+    ) {
       return "/create_shop";
     } else {
       return "/list_shop";
@@ -159,13 +170,13 @@ function Header(props) {
                     </Link>
                   )}
                 </li>
-                <li className="navbar-item">
+                {/* <li className="navbar-item">
                   {idOwner && !salonDetail && (
                     <Link className="navbar-link" to={"/create_shop"}>
                       Tạo Salon
                     </Link>
                   )}
-                </li>
+                </li> */}
                 <li className="navbar-item">
                   {idOwner && (
                     <Dropdown overlay={serviceMenu} trigger={["hover"]}>

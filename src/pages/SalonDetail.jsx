@@ -83,30 +83,86 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(duration);
 dayjs.extend(isSameOrBefore);
-function renderStars(stars) {
-  const filledStars = Math.floor(stars);
-  const hasHalfStar = stars % 1 !== 0;
+// function renderStars(stars) {
+//   const filledStars = Math.floor(stars);
+//   const hasHalfStar = stars % 1 !== 0;
 
+//   const starIcons = [];
+
+//   for (let i = 0; i < filledStars; i++) {
+//     starIcons.push(<StarFilled key={i} style={{ color: "#FFD700" }} />);
+//   }
+
+//   if (hasHalfStar) {
+//     starIcons.push(
+//       <StarOutlined key={filledStars} style={{ color: "#FFD700" }} />
+//     );
+//   }
+
+//   const remainingStars = 5 - filledStars - (hasHalfStar ? 1 : 0);
+
+//   for (let i = 0; i < remainingStars; i++) {
+//     starIcons.push(<StarOutlined key={filledStars + i + 1} />);
+//   }
+
+//   return starIcons;
+// }
+function renderStars(stars) {
+  const filledStars = Math.floor(stars); // Số sao đầy đủ
+  const fraction = stars % 1; // Phần thập phân của số sao
   const starIcons = [];
 
+  // Thêm các sao đầy đủ
   for (let i = 0; i < filledStars; i++) {
     starIcons.push(<StarFilled key={i} style={{ color: "#FFD700" }} />);
   }
 
-  if (hasHalfStar) {
+  // Thêm sao một phần nếu có phần thập phân
+  if (fraction > 0) {
     starIcons.push(
-      <StarOutlined key={filledStars} style={{ color: "#FFD700" }} />
+      <span
+        key={`partial-${filledStars}`}
+        style={{
+          position: "relative",
+          display: "inline-block",
+          width: "24px", // kích thước sao
+          height: "24px",
+        }}
+      >
+        <StarOutlined
+          style={{
+            position: "absolute",
+            color: "#E0E0E0", // màu sao trống
+            zIndex: 1, // lớp dưới cùng
+            left: 0,
+            top: 0,
+          }}
+        />
+        <StarFilled
+          style={{
+            position: "absolute",
+            color: "#FFD700",
+            clipPath: `inset(0 ${100 - fraction * 100}% 0 0)`, // phần sao được tô vàng
+            zIndex: 2, // lớp trên cùng
+            left: 0,
+            top: 0,
+          }}
+        />
+      </span>
     );
   }
 
-  const remainingStars = 5 - filledStars - (hasHalfStar ? 1 : 0);
-
+  // Thêm các sao trống còn lại
+  const remainingStars = 5 - filledStars - (fraction > 0 ? 1 : 0);
   for (let i = 0; i < remainingStars; i++) {
-    starIcons.push(<StarOutlined key={filledStars + i + 1} />);
+    starIcons.push(
+      <StarOutlined key={filledStars + i + 1} style={{ color: "#E0E0E0" }} />
+    );
   }
 
   return starIcons;
 }
+
 const vietnamTimezone = "Asia/Ho_Chi_Minh";
 const currentTime = dayjs().tz(vietnamTimezone);
 
@@ -167,6 +223,7 @@ function SalonDetail(props) {
   const [selectedVouchers, setSelectedVouchers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingTime, setLoadingTime] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   const [isPriceModalVisible, setIsPriceModalVisible] = useState(false);
   const [originalPrice, setOriginalPrice] = useState(0);
@@ -715,8 +772,6 @@ function SalonDetail(props) {
           requestBody
         )
         .then((response) => {
-          console.log("bookRES", response.data);
-
           // Xử lý kết quả từ server nếu cần
           const updatedAdditionalServices = [...dataMapping];
           let total = 0;
@@ -754,9 +809,10 @@ function SalonDetail(props) {
           // Cập nhật state hoặc hiển thị thông báo thành công
         })
         .catch((error) => {
-          setShowServiceList(false);
+          setShowServiceList(true);
           message.warning(error?.response?.data?.message);
           setLoading(true);
+          setHasError(true);
           // Xử lý lỗi nếu có
           // console.error("Error booking appointment:", error);
           // Hiển thị thông báo lỗi cho người dùng nếu cần
@@ -1140,11 +1196,9 @@ function SalonDetail(props) {
     setAdditionalServices(updatedServices);
   };
 
-  console.log("add", additionalServices);
-
   return (
     <div>
-      <Header />
+      {/* <Header /> */}
       <div
         style={{
           marginTop: "10rem",
@@ -1156,8 +1210,8 @@ function SalonDetail(props) {
             <Row gutter={16}>
               <Col
                 xs={24}
-                md={10}
-                style={{ marginBottom: "16px" }}
+                md={14}
+                style={{ marginBottom: "16px", marginTop: "50px" }}
                 className="detail-salon-col-1"
               >
                 <div>
@@ -1179,7 +1233,15 @@ function SalonDetail(props) {
                     </Carousel>
                   </div>
                 </div>
-                <div className="space-between">
+                <div
+                  className="text-center"
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
                   <h2
                     style={{
                       fontSize: "2rem",
@@ -1214,9 +1276,21 @@ function SalonDetail(props) {
                     <Panel
                       header={
                         <span
-                          style={{ fontSize: "1.8rem", fontWeight: "bold" }}
+                          style={{
+                            fontSize: "1.8rem",
+                            fontWeight: "bold",
+                            textAlign: "center",
+                          }}
                         >
-                          Dịch vụ
+                          DỊCH{" "}
+                          <span
+                            style={{
+                              display: "inline-block",
+                              color: "#BF9456",
+                            }}
+                          >
+                            VỤ
+                          </span>
                         </span>
                       }
                       key="1"
@@ -1405,11 +1479,10 @@ function SalonDetail(props) {
                                 type="dashed"
                                 block
                                 style={{ marginTop: "16px" }}
-                                // onClick={() => setShowServiceList(false)}
-                                // onClick={handleChangeSelectedService}
                                 onClick={() => {
                                   setShowServiceList(false);
                                 }}
+                                disabled={hasError}
                               >
                                 Trở về
                               </Button>
@@ -1467,66 +1540,6 @@ function SalonDetail(props) {
                                           ref={timeContainerRef}
                                         >
                                           <div className="scroll-content">
-                                            {/* {timeSlots?.availableTimes?.map(
-                                              (slot, index) => {
-                                                // Tạo biến timeString để lưu chuỗi thời gian hiển thị
-                                                let timeString = "";
-                                                const timeParts = slot?.timeSlot
-                                                  ?.toString()
-                                                  .split(".");
-                                                const hour = parseInt(
-                                                  timeParts[0],
-                                                  10
-                                                );
-                                                const minutes =
-                                                  timeParts.length > 1
-                                                    ? parseInt(timeParts[1], 10)
-                                                    : 0;
-                                                // Xử lý hiển thị theo định dạng giờ và phút
-                                                if (minutes === 0) {
-                                                  timeString = `${hour} giờ`;
-                                                } else if (minutes === 25) {
-                                                  timeString = `${hour} giờ 15 phút`;
-                                                } else if (minutes === 5) {
-                                                  timeString = `${hour} giờ 30 phút`;
-                                                } else if (minutes === 75) {
-                                                  timeString = `${hour} giờ 45 phút`;
-                                                }
-                                                const currentTime = new Date();
-                                                const slotTime = dayjs()
-                                                  .hour(hour)
-                                                  .minute(minutes);
-
-                                                const isDisabled =
-                                                  selectedDate &&
-                                                  dayjs(selectedDate).isSame(
-                                                    dayjs(),
-                                                    "day"
-                                                  ) &&
-                                                  slotTime.isBefore(
-                                                    currentTime
-                                                  );
-                                                return (
-                                                  <Button
-                                                    key={index}
-                                                    onClick={() =>
-                                                      handleTimeSlotSelect(
-                                                        slot?.timeSlot
-                                                      )
-                                                    }
-                                                    className={
-                                                      selectedTimeSlot ===
-                                                      slot?.timeSlot
-                                                        ? "selected"
-                                                        : ""
-                                                    }
-                                                    disabled={isDisabled}
-                                                  >
-                                                    {timeString}
-                                                  </Button>
-                                                );
-                                              }
-                                            )} */}
                                             {timeSlots?.availableTimes?.map(
                                               (slot, index) => {
                                                 let timeString = "";
@@ -1938,88 +1951,28 @@ function SalonDetail(props) {
                     </Modal>
                   </Spin>
                 </div>
-                {/* <div>
-                  <div className="our-work-section">
-                    <h2
-                      style={{
-                        fontSize: "1.8rem",
-                        fontWeight: "bold",
-                        marginBottom: "1rem",
-                      }}
-                    >
-                      See Our Work
-                    </h2>
-                    <Row gutter={16}>
-                      <Col xs={24} sm={12}>
-                        <img
-                          src={ourWorkImages[0]}
-                          alt="Main Work"
-                          style={{
-                            width: "100%",
-                            height: "auto",
-                            borderRadius: "8px",
-                          }}
-                        />
-                      </Col>
-                      <Col xs={24} sm={12}>
-                        <Row gutter={[8, 8]}>
-                          {ourWorkImages.slice(1, 5).map((image, index) => (
-                            <Col key={index} span={12}>
-                              <img
-                                src={image}
-                                alt={`Work ${index + 1}`}
-                                style={{
-                                  width: "100%",
-                                  height: "auto",
-                                  borderRadius: "8px",
-                                }}
-                              />
-                            </Col>
-                          ))}
-                        </Row>
-                      </Col>
-                    </Row>
-                    <Button
-                      block
-                      onClick={() => setShowAllWork(true)}
-                      style={{ marginTop: "16px" }}
-                    >
-                      SEE ALL WORK
-                    </Button>
-                  </div>
-
-                  <div>
-                    <Modal
-                      title="All Our Work"
-                      visible={showAllWork}
-                      onCancel={() => setShowAllWork(false)}
-                      footer={null}
-                      width={800}
-                    >
-                      <Carousel arrows infinite={false}>
-                        {ourWorkImages.map((image, index) => (
-                          <div key={index}>
-                            <img
-                              src={image}
-                              alt={`Work ${index}`}
-                              style={{ width: "100%", height: "auto" }}
-                            />
-                          </div>
-                        ))}
-                      </Carousel>
-                    </Modal>
-                  </div>
-                </div> */}
                 <div>
                   <h2
                     style={{
+                      display: "flex",
                       fontSize: "1.8rem",
                       fontWeight: "bold",
                       marginBottom: "1rem",
                       marginTop: "1rem",
+                      flexDirection: "row",
+                      justifyContent: "center",
                     }}
                   >
-                    Đánh giá
+                    ĐÁNH{" "}
+                    <span
+                      style={{
+                        display: "inline-block",
+                        color: "#BF9456",
+                        marginLeft: "5px",
+                      }}
+                    >
+                      VỤ
+                    </span>
                   </h2>
                 </div>
                 <div className="rating-stats-container">
@@ -2112,13 +2065,20 @@ function SalonDetail(props) {
                   </div>
                 </div>
               </Col>
-              <div></div>
-              <Col xs={24} md={7} className="sticky-col">
+              <Col
+                xs={24}
+                md={8}
+                className="sticky-col"
+                style={{ marginTop: "20px", height: "600px" }}
+              >
                 <div
                   style={{
-                    padding: "24px",
-                    background: "#fff",
+                    // marginTop:"30px",
+                    padding: "10px",
+                    background: "#F4F2EB",
                     borderRadius: "8px",
+                    border: "3px solid black",
+                    height: "900px",
                   }}
                   className="detail-salon-col-2"
                 >
@@ -2156,6 +2116,7 @@ function SalonDetail(props) {
                       )}
                     />
                     <Pagination
+                      style={{ textAlign: "center" }}
                       current={page}
                       pageSize={pageSizeEmployee}
                       total={total}
@@ -2179,7 +2140,7 @@ function SalonDetail(props) {
                     {sortedSchedules?.map((e) => {
                       return (
                         <Row justify="space-between" key={e?.dayOfWeek}>
-                          <Text strong>{daysOfWeek[e?.dayOfWeek]}</Text>
+                          <Text strong>{daysOfWeek[e?.dayOfWeek]}:&nbsp; </Text>
                           {/* <Text>
                             {e?.startTime?.slice(0, 5)} AM -{" "}
                             {e?.endTime?.slice(0, 5)} PM
