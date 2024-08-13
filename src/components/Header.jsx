@@ -21,10 +21,11 @@ import { DownOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons";
 import { SalonInformationServices } from "../services/salonInformationServices";
 import { isEmptyObject } from "./formatCheckValue/checkEmptyObject";
 import { useDispatch, useSelector } from "react-redux";
-import { actGetSalonInformationByOwnerId } from "../store/salonInformation/action";
+import { actGetSalonInformationByOwnerId, actGetSalonInformationByOwnerIdByCheck } from "../store/salonInformation/action";
 import hairHubLogo from "../assets/images/hairHubLogo.png";
 import { AccountServices } from "../services/accountServices";
 import { fetchUserByTokenApi } from "../store/account/action";
+import { actGetAllServicesBySalonIdNoPaging } from "../store/salonEmployees/action";
 
 function Header(props) {
   const navigate = useNavigate();
@@ -36,12 +37,18 @@ function Header(props) {
   const salonDetail = useSelector(
     (state) => state.SALONINFORMATION.getSalonByOwnerId
   );
+  console.log("salonDetail", salonDetail);
+  const salonServicesList = useSelector(
+    (state) => state.SALONEMPLOYEES.salonServicesList
+  );
+  console.log("salonServicesList", salonServicesList);
+
   const account = useSelector((state) => state.ACCOUNT.username);
 
   useEffect(() => {
     if (idOwner) {
       try {
-        dispatch(actGetSalonInformationByOwnerId(idOwner));
+        dispatch(actGetSalonInformationByOwnerIdByCheck(idOwner, navigate));
       } catch (err) {
         console.log(err, "errors");
       }
@@ -56,7 +63,11 @@ function Header(props) {
   };
 
   const handleEmptySalon = () => {
-    if (!salonDetail) {
+    if (
+      !salonServicesList ||
+      (typeof salonServicesList === "object" &&
+        Object.keys(salonServicesList).length === 0)
+    ) {
       return "/create_shop";
     } else {
       return "/list_shop";
@@ -104,7 +115,11 @@ function Header(props) {
   return (
     <div>
       <header className="header fixed-header">
-        <div className="header-bottom" style={{ height: "10rem" }} data-header>
+        <div
+          className="header-bottom"
+          style={{ height: "12rem", backgroundColor: "black" }}
+          data-header
+        >
           <div className="container">
             <div>
               <Link to={"/"} className="logo logo-header">
@@ -146,9 +161,7 @@ function Header(props) {
                   {(idCustomer || idOwner) && (
                     <Link
                       to={
-                        idOwner
-                          ? "/salon_appointment"
-                          : "/booking_appointment/customer"
+                        idOwner ? "/salon_appointment" : "/customer_appointment"
                       }
                       className="navbar-link"
                       data-nav-link
@@ -157,13 +170,13 @@ function Header(props) {
                     </Link>
                   )}
                 </li>
-                <li className="navbar-item">
+                {/* <li className="navbar-item">
                   {idOwner && !salonDetail && (
                     <Link className="navbar-link" to={"/create_shop"}>
                       Tạo Salon
                     </Link>
                   )}
-                </li>
+                </li> */}
                 <li className="navbar-item">
                   {idOwner && (
                     <Dropdown overlay={serviceMenu} trigger={["hover"]}>

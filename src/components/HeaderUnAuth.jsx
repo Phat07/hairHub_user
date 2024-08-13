@@ -62,7 +62,11 @@ function HeaderUnAuth(props) {
   return (
     <div>
       <header className="header fixed-header">
-        <div className="header-bottom" style={{ height: "10rem" }} data-header>
+        <div
+          className="header-bottom"
+          style={{ height: "12rem", backgroundColor: "black" }}
+          data-header
+        >
           <div className="container">
             <Link to={"/"} className="logo logo-header">
               <img
@@ -113,7 +117,7 @@ function HeaderUnAuth(props) {
               <IoMenu />
             </button>
             <Link to={"/login"} className="btn has-before btn-login">
-                <span>Đăng nhập</span>
+              <span>Đăng nhập</span>
             </Link>
           </div>
         </div>

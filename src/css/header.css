@@ -37,6 +37,8 @@
 
 .header-avatar {
   background-color: #5382d5;
+  width: 5rem;
+  height: 5rem;
 }
 
 .logo-header {
@@ -45,7 +47,7 @@
 }
 
 .logo-header-img {
-  width: 6.5rem;
+  width: 8rem;
   border-radius: 50%;
   margin-right: 1rem;
 }
@@ -55,12 +57,20 @@
   padding: 0;
   font-size: 2.8rem;
   line-height: 1.5rem;
+  font-weight: bolder;
+  color: #BF9456;
 }
 
 .logo-header-title-2 {
-  font-size: 1.15rem;
+  font-size: 2rem;
   color: #888;
   line-height: 1.5rem;
+  margin-top: 0.5rem;
+  font-weight: bolder;
+}
+
+.navbar-item {
+  font-size: 2rem;
 }
 
 @media (max-width: 768px) {
