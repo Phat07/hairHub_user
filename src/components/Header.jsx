@@ -23,6 +23,7 @@ function Header(props) {
   const salonServicesList = useSelector(
     (state) => state.SALONEMPLOYEES.salonServicesList
   );
+  console.log("salonServicesList", salonServicesList);
 
   const account = useSelector((state) => state.ACCOUNT.username);
 
@@ -44,7 +45,11 @@ function Header(props) {
   };
 
   const handleEmptySalon = () => {
-    if (!salonDetail) {
+    if (
+      !salonServicesList ||
+      (typeof salonServicesList === "object" &&
+        Object.keys(salonServicesList).length === 0)
+    ) {
       return "/create_shop";
     } else {
       return "/list_shop";
@@ -119,9 +124,17 @@ function Header(props) {
                   </Link>
                 )}
               </li>
-              <li className={style.navItemRepo}>
-                {idOwner && <Link to={handleEmptySalon()}>Quản lý Salon</Link>}
+              <li
+                className={style.navItem}
+                style={{ display: idCustomer ? "none" : "block" }}
+              >
+                {idOwner && (
+                  <Link className={style.navLink} to={handleEmptySalon()}>
+                    Quản lý Salon
+                  </Link>
+                )}
               </li>
+
               {/* <li className={style.navItem}>
                 <Link to={"/listPackage"}>Dịch vụ hệ thống</Link>
               </li>
@@ -135,7 +148,6 @@ function Header(props) {
                   </Link>
                 </li>
               )}
-
               {menuActive && (
                 <li className={style.navItemRepo}>
                   <Link to={"/"} className={style.navLink}>
