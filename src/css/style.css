@@ -1,20 +1,8 @@
-/*-----------------------------------*\
-  #style.css
-\*-----------------------------------*/
-
-/**
- * copyright 2022 codewithsadee
- */
- @import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Pacifico&display=swap");
+ /* @import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Pacifico&display=swap");
 @import url("../css/root.css");
- /*-----------------------------------*\
-   #CUSTOM PROPERTY
- \*-----------------------------------*/
+
  
  :root {
-   /**
-    * colors
-    */
  
    --rich-black-fogra-39_50: hsla(0, 0%, 5%, 0.5);
    --rich-black-fogra-39: hsl(0, 0%, 5%);
@@ -38,10 +26,6 @@
    --white: hsl(0, 0%, 100%);
    --jet: hsl(0, 0%, 21%);
  
-   /**
-    * typography
-    */
- 
    --ff-oswald: "Lora", serif;
    --ff-rubik: "Lora", serif;
  
@@ -57,38 +41,22 @@
    --fw-600: 600;
    --fw-700: 700;
  
-   /**
-    * spacing
-    */
  
    --section-padding: 80px;
- 
-   /**
-    * shadow
-    */
  
    --shadow-1: 10px 0 60px hsla(0, 0%, 15%, 0.07);
    --shadow-2: 10px 0 60px hsla(0, 0%, 15%, 0.1);
  
-   /**
-    * radius
-    */
  
    --radius-5: 5px;
    --radius-8: 8px;
  
-   /**
-    * transition
-    */
  
    --transition-1: 0.25s ease;
    --transition-2: 0.5s ease;
    --cubic-out: cubic-bezier(0.33, 0.85, 0.4, 0.96);
  }
  
- /*-----------------------------------*\
-   #RESET
- \*-----------------------------------*/
  
  *,
  *::before,
@@ -98,11 +66,9 @@
    box-sizing: border-box;
  }
  p {
-   /* font-family: "Pacifico", cursive !important; */
    font-optical-sizing: auto;
    font-style: normal;
    font-size: 16px;
-   /* text-shadow: 3px 3px 3px #ababab;  */
  }
  li {
    list-style: none;
@@ -164,7 +130,6 @@
  }
  
  article {
-   /* background-color: var(--indian-yellow_10); */
    color: wheat;
  }
  
@@ -195,15 +160,11 @@
    background-color: hsl(0, 0%, 70%);
  }
  
- /*-----------------------------------*\
-   #REUSED STYLE
- \*-----------------------------------*/
  
  .container {
    padding-inline: 10rem;
  }
  
- /* .section { padding-block: var(--section-padding); } */
  
  .has-before,
  .has-after {
@@ -278,15 +239,6 @@
    border-radius: var(--radius-5);
    overflow: hidden;
  }
- /* .ant-btn-primary {
- /* .ant-btn-primary {
-   background: linear-gradient(90deg, rgba(31, 17, 206, 1) 0%, rgba(229, 43, 43, 1) 100%);
-   
- }
- .ant-btn-primary:hover {
-   background: linear-gradient(to left, rgba(31, 17, 206, 1) 0%, rgba(229, 43, 43, 1) 100%) !important;
- 
- } */
  
  .btn::before {
    background-color: var(--eerie-black-1);
@@ -321,9 +273,6 @@
    object-fit: cover;
  }
  
- /*-----------------------------------*\
-   #HEADER
- \*-----------------------------------*/
  
  .header-top-item,
  .header .btn {
@@ -357,7 +306,6 @@
  
  .header-bottom {
    position: absolute;
-   /* top: 45px;  */
    left: 0;
    width: 100%;
    padding-block: 10px;
@@ -398,9 +346,7 @@
    width: 100%;
    background-color: #333;
    color: white;
-   /* text-align: center; */
-   /* padding: 10px 0; */
-   z-index: 1000; /* Ensure it stays above other elements */
+   z-index: 1000; 
  }
  
  .logo {
@@ -466,9 +412,6 @@
    color: var(--indian-yellow);
  }
  
- /*-----------------------------------*\
-   #HERO
- \*-----------------------------------*/
  
  .hero {
    --section-padding: 100px;
@@ -491,9 +434,6 @@
    margin-block: 15px 40px;
  }
  
- /*-----------------------------------*\
-   #SERVICE
- \*-----------------------------------*/
  
  .service {
    text-align: center;
@@ -514,7 +454,6 @@
  }
  
  .service-card {
-   /* background-color: var(--white); */
    background-color: #bf9456;
    padding: 60px 25px;
    box-shadow: var(--shadow-1);
@@ -522,7 +461,6 @@
  }
  
  .service-card .card-icon {
-   /* color: var(--indian-yellow); */
    color: white;
    font-size: 70px;
    line-height: 1;
@@ -531,25 +469,21 @@
  .service-card .card-title {
    margin-block: 15px 12px;
    transition: var(--transition-1);
-   /* color: rgb(71, 71, 253); */
    color: white;
  }
  
  .service-card .card-title:is(:hover, :focus) {
-   /* color: var(--indian-yellow); */
    color: #000000;
  }
  
  .service-card .card-text {
    margin-block-end: 30px;
-   /* color: var(--eerie-black-1); */
    color: white;
    font-weight: 500;
  }
  
  .service-card .card-btn {
    border: 2px solid #f4f2eb;
-   /* color: var(--indian-yellow); */
    background-color: #bf9456;
    color: var(--white);
    max-width: max-content;
@@ -562,15 +496,10 @@
  }
  
  .service-card:is(:hover, :focus-within) .card-btn {
-   /* background-color: var(--indian-yellow); */
    color: #bf9456;
-   /* background-color: var(--white); */
    background-color: #f4f2eb;
  }
  
- /*-----------------------------------*\
-   #PRICING
- \*-----------------------------------*/
  
  .pricing::before {
    inset: 0;
@@ -671,9 +600,6 @@
    font-weight: var(--fw-500);
  }
  
- /*-----------------------------------*\
-   #GALLERY
- \*-----------------------------------*/
  
  .title-wrapper {
    margin-block-end: 60px;
@@ -733,9 +659,6 @@
    color: var(--white);
  }
  
- /*-----------------------------------*\
-   #APPOINTMENT
- \*-----------------------------------*/
  
  .appoin {
    padding-block-start: 0;
@@ -830,13 +753,9 @@
    color: var(--eerie-black-1);
  }
  
- /*-----------------------------------*\
-   #FOOTER
- \*-----------------------------------*/
  
  .footer {
    background-color: var(--eerie-black-2);
-   /* padding-block-end: 30px; */
  }
  
  .footer-top {
@@ -993,9 +912,6 @@
    color: var(--indian-yellow);
  }
  
- /*-----------------------------------*\
-   #BACK TO TOP
- \*-----------------------------------*/
  
  .back-top-btn {
    position: fixed;
@@ -1018,30 +934,16 @@
    transform: translateY(-10px);
  }
  
- /*-----------------------------------*\
-   #MEDIA QUERIES
- \*-----------------------------------*/
- 
- /**
-  * responsive for large than 575px screen
-  */
- 
  @media (min-width: 575px) {
-   /**
-    * CUSTOM PROPERTY
-    */
+ 
  
    :root {
-     /**
-      * typography
-      */
+    
  
      --fs-40: 6rem;
    }
  
-   /**
-    * REUSED STYLE
-    */
+  
  
    .container,
    .header-top {
@@ -1057,10 +959,7 @@
    .h2 {
      --fs-30: 3.5rem;
    }
- 
-   /**
-    * HEADER
-    */
+
  
    .header-top {
      position: absolute;
@@ -1110,9 +1009,7 @@
      font-size: 1.4rem;
    }
  
-   /**
-    * HERO
-    */
+   
  
    .hero {
      padding-block-start: calc(var(--section-padding) + 80px) !important;
@@ -1125,10 +1022,7 @@
      color: #bf9456 !important;
      font-family: var(--font-secondary);
    }
- 
-   /**
-    * PRICING
-    */
+
  
    .filter-btn .btn-icon {
      display: block;
@@ -1152,25 +1046,18 @@
      line-height: 1.6;
    }
  
-   /**
-    * GALLERY
-    */
+
  
    .gallery .grid-list {
      grid-template-columns: 1fr 1fr;
    }
- 
-   /**
-    * APPOINTMENT
-    */
+
  
    .appoin-card .card-content {
      padding-inline: 50px;
    }
  
-   /**
-    * FOOTER
-    */
+ 
  
    .footer-wrap {
      background-color: var(--eerie-black-2_1);
@@ -1206,26 +1093,18 @@
    }
  }
  
- /**
-  * responsive for large than 768px screen
-  */
+
  
  @media (min-width: 768px) {
-   /**
-    * CUSTOM PROPERTY
-    */
+
  
    :root {
-     /**
-      * typography
-      */
+   
  
      --fs-40: 8rem;
    }
  
-   /**
-    * REUSED STYLE
-    */
+
  
    .container {
      max-width: 720px;
@@ -1241,9 +1120,6 @@
      color: var(--indian-yellow);
    }
  
-   /**
-    * HEADER
-    */
  
    .header-top {
      max-width: 780px;
@@ -1253,17 +1129,13 @@
      display: none;
    }
  
-   /**
-    * SERVICE
-    */
+ 
  
    .service .grid-list {
      grid-template-columns: 1fr 1fr;
    }
  
-   /**
-    * PRICING
-    */
+
  
    .pricing-tab-container {
      padding: 40px;
@@ -1273,9 +1145,6 @@
      margin-inline-end: auto;
    }
  
-   /**
-    * GALLERY
-    */
  
    .gallery .section-text {
      margin-inline: 0;
@@ -1284,10 +1153,7 @@
    .gallery-card .card-content {
      inset: 30px;
    }
- 
-   /**
-    * APPOINTMENT
-    */
+
  
    .appoin-card .card-banner {
      display: block;
@@ -1297,43 +1163,29 @@
      display: flex;
    }
  
-   /**
-    * FOOTER
-    */
  
    .footer-list:is(:nth-child(3), :nth-child(4)) {
      grid-column: auto;
    }
  }
- 
- /**
-  * responsive for large than 992px screen
-  */
+
  
  @media (min-width: 992px) {
-   /**
-    * CUSTOM PROPERTY
-    */
+ 
  
    :root {
-     /**
-      * typography
-      */
+     
  
      --fs-40: 10rem;
    }
  
-   /**
-    * REUSED STYLE
-    */
+  
  
    .container {
      max-width: 960px;
    }
  
-   /**
-    * HEADER
-    */
+  
  
    .nav-toggle-btn {
      display: none;
@@ -1362,9 +1214,6 @@
      padding-inline: 10px;
    }
  
-   /**
-    * HERO
-    */
  
    .hero {
      --section-padding: 150px;
@@ -1381,17 +1230,13 @@
      color: var(--white);
    }
  
-   /**
-    * SERVICE
-    */
+
  
    .service .grid-list {
      grid-template-columns: repeat(3, 1fr);
    }
  
-   /**
-    * PRICING
-    */
+
  
    .pricing .grid-list {
      grid-template-columns: 1fr 1fr;
@@ -1405,9 +1250,7 @@
      flex-shrink: 0;
    }
  
-   /**
-    * GALLERY
-    */
+
  
    .gallery .title-wrapper {
      display: flex;
@@ -1418,19 +1261,13 @@
    .gallery .section-text {
      margin-block-end: 0;
    }
- 
-   /**
-    * APPOINTMENT
-    */
+
  
    .appoin-card .input-wrapper {
      display: flex;
      gap: 20px;
    }
- 
-   /**
-    * FOOTER
-    */
+
  
    .footer-brand {
      display: flex;
@@ -1449,40 +1286,27 @@
    }
  }
  
- /**
-  * responsive for large than 1200px screen
-  */
+
  
  @media (min-width: 1200px) {
-   /**
-    * CUSTOM PROPERTY
-    */
- 
+
    :root {
-     /**
-      * typography
-      */
+
  
      --fs-40: 11rem;
  
-     /**
-      * spacing
-      */
+  
  
      --section-padding: 120px;
    }
  
-   /**
-    * REUSED STYLE
-    */
+   
  
    .container {
      max-width: 1200px;
    }
  
-   /**
-    * HEADER
-    */
+  
  
    .header-top {
      max-width: 1260px;
@@ -1502,9 +1326,6 @@
      margin-inline-end: auto;
    }
  
-   /**
-    * HERO
-    */
  
    .hero {
      background-position: left;
@@ -1520,62 +1341,48 @@
      max-width: 680px;
    }
  
-   /**
-    * PRICING
-    */
+
  
    .filter-btn {
      min-width: 178px;
    }
- 
-   /**
-    * GALLERY
-    */
+
  
    .gallery .grid-list {
      grid-template-columns: repeat(4, 1fr);
    }
  
-   /**
-    * APPOINTMENT
-    */
- 
+
    .appoin-card .card-content {
      flex-grow: 1;
    }
- 
-   /**
-    * FOOTER
-    */
+
  
    .footer-link-box {
      grid-template-columns: 0.5fr 0.5fr 1fr 0.8fr;
    }
- 
-   /**
-    * BACK TO TOP
-    */
+
  
    .back-top-btn {
      padding: 15px;
    }
  }
  
- /* No data message */
+
  .no-data-message {
    display: flex;
    flex-direction: column;
    align-items: center;
    justify-content: center;
-   height: 200px; /* Chiều cao của khung chứa */
-   padding: 20px; /* Khoảng cách bên trong */
-   font-size: 20px; /* Kích thước chữ */
-   color: #555; /* Màu chữ */
-   background-color: #fff; /* Màu nền */
-   border: 2px dashed #ccc; /* Đường viền kiểu nét đứt */
-   border-radius: 10px; /* Bo tròn góc */
-   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Đổ bóng */
-   text-align: center; /* Canh giữa nội dung */
+   height: 200px; 
+   padding: 20px;
+   font-size: 20px; 
+   color: #555; 
+   background-color: #fff; 
+   border: 2px dashed #ccc;
+   border-radius: 10px; 
+   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+   text-align: center;
  }
  
  .move-empty-to-center {
@@ -1583,46 +1390,15 @@
    justify-content: center !important;
  }
  
- 
-
-
-/* .location-card-container{
-  margin: 10rem 0;
-} */
-
-
-
 
 .small-card {
-  flex: 0 0 auto; /* Ngăn các thẻ co lại hoặc giãn ra */
+  flex: 0 0 auto; 
 }
 
 .location-card img {
   border-radius: 0 0 2px 2px;
 }
 
-/* .card-list {
-  display: flex;
-  flex-direction: row;
-  overflow-x: auto;
-  gap: 1rem;
-  padding: 1rem;
-  -ms-overflow-style: none;
-  scrollbar-width: none; 
-}
-
-.grid-list::-webkit-scrollbar {
-  display: none; 
-}
-
-.service-card2 {
-  flex: 0 0 auto;
-  min-width: 300px;
-}
-
-.container-service-list {
-  padding: 10px;
-} */
 
 .container-service-list {
   position: relative;
@@ -1638,12 +1414,12 @@
   overflow-x: auto;
   gap: 1rem;
   padding: 1rem;
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; 
+  scrollbar-width: none;
 }
 
 .card-list::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
+  display: none; 
 }
 
 .service-card2 {
@@ -1684,4 +1460,4 @@
   .container-service-list {
     margin-bottom: 5rem;
   }
-}
+} */

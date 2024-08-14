@@ -7,8 +7,7 @@ import Header from "./components/Header";
 import HeaderUnAuth from "./components/HeaderUnAuth";
 import { actGetAllPaymentList } from "./store/config/action";
 import {
-  actGetAllServicesBySalonId,
-  actGetAllServicesBySalonIdNoPaging,
+  actGetAllServicesBySalonIdNoPaging
 } from "./store/salonEmployees/action";
 import {
   actGetAllSalonInformation,
@@ -17,12 +16,11 @@ import {
 } from "./store/salonInformation/action";
 
 import { message } from "antd";
+import useDocumentTitle from "../src/components/useDocumentTitle";
 import ChatBox from "./components/ChatBox";
-import Footer from "./components/Footer";
+import Footer2 from "./components/Footer2";
 import { AccountServices } from "./services/accountServices";
 import { fetchUserByTokenApi } from "./store/account/action";
-import Footer2 from "./components/Footer2";
-import  useDocumentTitle  from "../src/components/useDocumentTitle";
 function App() {
   useDocumentTitle();
   const navigate = useNavigate();

@@ -1,63 +1,53 @@
-import React, { useEffect } from "react";
+import { ConfigProvider } from "antd";
+import viVn from "antd/lib/locale/vi_VN";
+import React from "react";
 import ReactDOM from "react-dom/client";
-import App1 from "./App.jsx";
-import "./index.css";
+import { Provider } from "react-redux";
 import {
-  BrowserRouter,
   Route,
   RouterProvider,
   Routes,
-  createBrowserRouter,
-  useNavigate,
+  createBrowserRouter
 } from "react-router-dom";
-import { ConfigProvider } from "antd";
 import "rsuite/dist/rsuite.min.css";
-import enUS from "antd/lib/locale/en_US";
-import viVn from "antd/lib/locale/vi_VN";
-import HomePage from "./pages/HomePage.jsx";
-import LoginPage from "./pages/LoginPage.jsx";
-import BarberPage from "./pages/BarberPage.jsx";
-import BarberShopPage from "./pages/BarberShopPage.jsx";
-import ListBarberEmployees from "./pages/ListBarberEmployees.jsx";
+import App1 from "./App.jsx";
+import Footer from "./components/Footer.jsx";
+import SalonForm from "./components/SalonShop/SalonForm.jsx";
+import "./index.css";
+import AboutPage from "./pages/About.jsx";
 import AccountPage from "./pages/AccountPage.jsx";
-import SystemBarberPage from "./pages/SystemBarberPage.jsx";
-import ListShopBarber from "./pages/ListShopBarber.jsx";
-import SalonDetail from "./pages/SalonDetail.jsx";
+import BarberPage from "./pages/BarberPage.jsx";
+import BookingAppointmentCustomerPage from "./pages/BookingAppointmentCustomerPage.jsx";
+import CustomerAppointmentVer2 from "./pages/CustomerAppointmentVer2.jsx";
+import CustomerFeedback from "./pages/CustomerFeedback.jsx";
+import CustomerReport from "./pages/CustomerReport.jsx";
+import DashboardTransactionPage from "./pages/DashboardTransactionPage.jsx";
+import ErrorPage from "./pages/ErrorPage.jsx";
+import FailPayment from "./pages/FailPayment.jsx";
+import FavoriteList from "./pages/FavoriteList.jsx";
+import HomePage from "./pages/HomePage.jsx";
+import ListBarberEmployees from "./pages/ListBarberEmployees.jsx";
 import ListSalon from "./pages/ListSalon.jsx";
 import ListSalonVer2 from "./pages/ListSalonVer2.jsx";
-import Footer from "./components/Footer.jsx";
-import ErrorPage from "./pages/ErrorPage.jsx";
-import { Provider, useDispatch } from "react-redux";
-import store from "./store";
-import createStore from "react-auth-kit/createStore";
-import AuthProvider from "react-auth-kit";
-import SalonOwnerPage from "./pages/SalonOwnerPage.jsx";
-import RequireAuth from "./PrivateRoute.js";
-import VoucherPage from "./pages/VoucherPage.jsx";
 import ListServices from "./pages/ListServices.jsx";
-import CustomerReport from "./pages/CustomerReport.jsx";
-import SalonReport from "./pages/SalonReport.jsx";
-import SalonFeedback from "./pages/SalonFeedback.jsx";
-import CustomerFeedback from "./pages/CustomerFeedback.jsx";
-import SalonPayment from "./pages/SalonPayment.jsx";
-import FavoriteList from "./pages/FavoriteList.jsx";
-import SalonForm from "./components/SalonShop/SalonForm.jsx";
+import ListShopBarber from "./pages/ListShopBarber.jsx";
+import LoginPage from "./pages/LoginPage.jsx";
 import ManageVoucher from "./pages/ManageVoucher.jsx";
-import SalonAppointment from "./pages/SalonAppointment.jsx";
-import SalonAppointmentVer2 from "./pages/SalonAppointmentVer2.jsx";
-import CustomerAppointmentVer2 from "./pages/CustomerAppointmentVer2.jsx";
-import SalonOwnerAccountPage from "./pages/SalonOwnerAccountPage.jsx";
-import BookingAppointmentCustomerPage from "./pages/BookingAppointmentCustomerPage.jsx";
-import CustomerSchedule from "./pages/CustomerSchedule.jsx";
-import SucessPayment from "./pages/SucessPayment.jsx";
-import FailPayment from "./pages/FailPayment.jsx";
-import { ProConfigProvider } from "@ant-design/pro-components";
 import PackagePage from "./pages/PackagePage.jsx";
 import PackageSuccessPage from "./pages/PackageSuccessPage.jsx";
-import DashboardTransactionPage from "./pages/DashboardTransactionPage.jsx";
 import PaymentCommissionPage from "./pages/PaymentCommissionPage.jsx";
-import ChatComponent from "./components/chat/ChatComponent.jsx";
-import AboutPage from "./pages/About.jsx";
+import SalonAppointment from "./pages/SalonAppointment.jsx";
+import SalonAppointmentVer2 from "./pages/SalonAppointmentVer2.jsx";
+import SalonDetail from "./pages/SalonDetail.jsx";
+import SalonFeedback from "./pages/SalonFeedback.jsx";
+import SalonOwnerAccountPage from "./pages/SalonOwnerAccountPage.jsx";
+import SalonOwnerPage from "./pages/SalonOwnerPage.jsx";
+import SalonPayment from "./pages/SalonPayment.jsx";
+import SalonReport from "./pages/SalonReport.jsx";
+import SucessPayment from "./pages/SucessPayment.jsx";
+import SystemBarberPage from "./pages/SystemBarberPage.jsx";
+import RequireAuth from "./PrivateRoute.js";
+import store from "./store";
 
 const router = createBrowserRouter([
   {

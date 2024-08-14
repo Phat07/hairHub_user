@@ -1,34 +1,21 @@
 import React, { useEffect, useState } from "react";
 import "../css/flaticon.min.css";
-// import "../css/style.css";
-import "../css/header.css";
-import { Link, Outlet, redirect, useNavigate } from "react-router-dom";
-import { IoMenu } from "react-icons/io5";
-import useAuthUser from "react-auth-kit/hooks/useAuthUser";
-import useSignOut from "react-auth-kit/hooks/useSignOut";
+import { DownOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons";
 import {
   Avatar,
   Button,
-  Col,
   Dropdown,
-  Flex,
   Menu,
-  Row,
-  Typography,
-  message,
+  message
 } from "antd";
-import { DownOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons";
-import { SalonInformationServices } from "../services/salonInformationServices";
-import { isEmptyObject } from "./formatCheckValue/checkEmptyObject";
+import { IoMenu } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  actGetSalonInformationByOwnerId,
-  actGetSalonInformationByOwnerIdByCheck,
-} from "../store/salonInformation/action";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import hairHubLogo from "../assets/images/hairHubLogo.png";
-import { AccountServices } from "../services/accountServices";
-import { fetchUserByTokenApi } from "../store/account/action";
-import { actGetAllServicesBySalonIdNoPaging } from "../store/salonEmployees/action";
+import "../css/header.css";
+import {
+  actGetSalonInformationByOwnerIdByCheck
+} from "../store/salonInformation/action";
 
 function Header(props) {
   const navigate = useNavigate();
@@ -44,7 +31,7 @@ function Header(props) {
   const salonServicesList = useSelector(
     (state) => state.SALONEMPLOYEES.salonServicesList
   );
-  console.log("salonServicesList", salonServicesList);
+  
 
   const account = useSelector((state) => state.ACCOUNT.username);
 

@@ -29,14 +29,14 @@ import img8 from "../assets/images/serviceImg2/8.png";
 import "../css/flaticon.min.css";
 import "../css/homePage.css";
 import "../css/ListSalon.css";
-import "../css/style.css";
-const { Title, Text } = Typography;
+// import "../css/style.css";
+
 
 import { useDispatch, useSelector } from "react-redux";
 import { EmptyComponent } from "../components/EmptySection/DisplayEmpty";
 import { actGetAllSalonInformation } from "../store/salonInformation/action";
 import { actGetStatusPayment } from "../store/salonPayment/action";
-
+const { Title, Text } = Typography;
 function HomePage(props) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -137,7 +137,7 @@ function HomePage(props) {
       .querySelector(".card-list")
       .scrollBy({ left: 300, behavior: "smooth" });
   };
-  console.log("re",recommendedSalons);
+
   
   return (
     <div>
