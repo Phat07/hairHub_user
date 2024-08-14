@@ -119,10 +119,8 @@ function Header(props) {
                   </Link>
                 )}
               </li>
-              <li className={style.navItem}>
-                <Link className={style.navLink} to={handleEmptySalon()}>
-                  Quản lý Salon
-                </Link>
+              <li className={style.navItemRepo}>
+                {idOwner && <Link to={handleEmptySalon()}>Quản lý Salon</Link>}
               </li>
               {/* <li className={style.navItem}>
                 <Link to={"/listPackage"}>Dịch vụ hệ thống</Link>
