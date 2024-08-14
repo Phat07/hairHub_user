@@ -28,7 +28,7 @@ import img7 from "../assets/images/serviceImg2/7.png";
 import img8 from "../assets/images/serviceImg2/8.png";
 import "../css/flaticon.min.css";
 import "../css/homePage.css";
-import "../css/ListSalon.css";
+// import "../css/ListSalon.css";
 import "../css/style.css";
 const { Title, Text } = Typography;
 
@@ -137,8 +137,8 @@ function HomePage(props) {
       .querySelector(".card-list")
       .scrollBy({ left: 300, behavior: "smooth" });
   };
-  console.log("re",recommendedSalons);
-  
+  console.log("re", recommendedSalons);
+
   return (
     <div>
       <main>
@@ -364,286 +364,284 @@ function HomePage(props) {
               <RightOutlined />
             </button> */}
           </Flex>
-          <section
+          {/* <section
             className="section service mt-32"
             id="services"
             aria-label="services"
             // style={{ marginBottom: "100px" }}
-          >
-            <div className="container">
-              <Title
-                level={3}
-                className="customTitle"
-                style={{ color: "#bf9456" }}
-              >
-                Dịch vụ nổi bật
-              </Title>
-              {/* <Text className="section-text text-center text-4xl">
+          > */}
+          <div className="container">
+            <Title
+              level={3}
+              className="customTitle"
+              style={{ color: "#bf9456" }}
+            >
+              Dịch vụ nổi bật
+            </Title>
+            {/* <Text className="section-text text-center text-4xl">
                 Dưới đây là 1 số dịch vụ có thể bao gồm trong những Barber Shop,
                 những cũng có thể có thêm vài dịch vụ bổ sung từ các tiệm
               </Text> */}
-              <div className="container-service-list">
-                <ArrowLeftOutlined
-                  className="scroll-icon2 left-icon"
-                  onClick={scrollLeft}
-                />
-                <ul className="card-list">
-                  <li>
-                    <div className="service-card2">
-                      <div className="card-img flex justify-center">
-                        <div
+            <div className="container-service-list">
+              <ArrowLeftOutlined
+                className="scroll-icon2 left-icon"
+                onClick={scrollLeft}
+              />
+              <ul className="card-list">
+                <li>
+                  <div className="service-card2">
+                    <div className="card-img flex justify-center">
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <img
+                          src={img1}
+                          alt="img"
                           style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
+                            width: "100%",
+                            height: "100%",
+                            maxWidth: "35rem",
+                            maxHeight: "35rem",
+                            objectFit: "cover",
+                            borderRadius: "2rem",
+                            paddingTop: "1rem",
                           }}
-                        >
-                          <img
-                            src={img1}
-                            alt="img"
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              maxWidth: "35rem",
-                              maxHeight: "35rem",
-                              objectFit: "cover",
-                              borderRadius: "2rem",
-                              paddingTop: "1rem",
-                            }}
-                            onClick={() => {
-                              navigate("/list_salon_ver2?servicesName=Cắt tóc");
-                            }}
-                          />
-                        </div>
+                          onClick={() => {
+                            navigate("/list_salon_ver2?servicesName=Cắt tóc");
+                          }}
+                        />
                       </div>
                     </div>
-                  </li>
-                  <li>
-                    <div className="service-card2">
-                      <div className="card-img flex justify-center">
-                        <div
+                  </div>
+                </li>
+                <li>
+                  <div className="service-card2">
+                    <div className="card-img flex justify-center">
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <img
+                          src={img2}
+                          alt="img"
                           style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
+                            width: "100%",
+                            height: "100%",
+                            maxWidth: "35rem",
+                            maxHeight: "35rem",
+                            objectFit: "cover",
+                            borderRadius: "2rem",
+                            paddingTop: "1rem",
                           }}
-                        >
-                          <img
-                            src={img2}
-                            alt="img"
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              maxWidth: "35rem",
-                              maxHeight: "35rem",
-                              objectFit: "cover",
-                              borderRadius: "2rem",
-                              paddingTop: "1rem",
-                            }}
-                            onClick={() => {
-                              navigate("/list_salon_ver2?servicesName=Gội đầu");
-                            }}
-                          />
-                        </div>
+                          onClick={() => {
+                            navigate("/list_salon_ver2?servicesName=Gội đầu");
+                          }}
+                        />
                       </div>
                     </div>
-                  </li>
-                  <li>
-                    <div className="service-card2">
-                      <div className="card-img flex justify-center">
-                        <div
+                  </div>
+                </li>
+                <li>
+                  <div className="service-card2">
+                    <div className="card-img flex justify-center">
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <img
+                          src={img3}
+                          alt="img"
                           style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
+                            width: "100%",
+                            height: "100%",
+                            maxWidth: "35rem",
+                            maxHeight: "35rem",
+                            objectFit: "cover",
+                            borderRadius: "2rem",
+                            paddingTop: "1rem",
                           }}
-                        >
-                          <img
-                            src={img3}
-                            alt="img"
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              maxWidth: "35rem",
-                              maxHeight: "35rem",
-                              objectFit: "cover",
-                              borderRadius: "2rem",
-                              paddingTop: "1rem",
-                            }}
-                            onClick={() => {
-                              navigate(
-                                "/list_salon_ver2?servicesName=Lấy ráy tai"
-                              );
-                            }}
-                          />
-                        </div>
+                          onClick={() => {
+                            navigate(
+                              "/list_salon_ver2?servicesName=Lấy ráy tai"
+                            );
+                          }}
+                        />
                       </div>
                     </div>
-                  </li>
-                  <li>
-                    <div className="service-card2">
-                      <div className="card-img flex justify-center">
-                        <div
+                  </div>
+                </li>
+                <li>
+                  <div className="service-card2">
+                    <div className="card-img flex justify-center">
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <img
+                          src={img4}
+                          alt="img"
                           style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
+                            width: "100%",
+                            height: "100%",
+                            maxWidth: "35rem",
+                            maxHeight: "35rem",
+                            objectFit: "cover",
+                            borderRadius: "2rem",
+                            paddingTop: "1rem",
                           }}
-                        >
-                          <img
-                            src={img4}
-                            alt="img"
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              maxWidth: "35rem",
-                              maxHeight: "35rem",
-                              objectFit: "cover",
-                              borderRadius: "2rem",
-                              paddingTop: "1rem",
-                            }}
-                            onClick={() => {
-                              navigate(
-                                "/list_salon_ver2?servicesName=Dịch vụ làm đẹp"
-                              );
-                            }}
-                          />
-                        </div>
+                          onClick={() => {
+                            navigate(
+                              "/list_salon_ver2?servicesName=Dịch vụ làm đẹp"
+                            );
+                          }}
+                        />
                       </div>
                     </div>
-                  </li>
-                  <li>
-                    <div className="service-card2">
-                      <div className="card-img flex justify-center">
-                        <div
+                  </div>
+                </li>
+                <li>
+                  <div className="service-card2">
+                    <div className="card-img flex justify-center">
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <img
+                          src={img5}
+                          alt="img"
                           style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
+                            width: "100%",
+                            height: "100%",
+                            maxWidth: "35rem",
+                            maxHeight: "35rem",
+                            objectFit: "cover",
+                            borderRadius: "2rem",
+                            paddingTop: "1rem",
                           }}
-                        >
-                          <img
-                            src={img5}
-                            alt="img"
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              maxWidth: "35rem",
-                              maxHeight: "35rem",
-                              objectFit: "cover",
-                              borderRadius: "2rem",
-                              paddingTop: "1rem",
-                            }}
-                            onClick={() => {
-                              navigate("/list_salon_ver2?servicesName=Cạo râu");
-                            }}
-                          />
-                        </div>
+                          onClick={() => {
+                            navigate("/list_salon_ver2?servicesName=Cạo râu");
+                          }}
+                        />
                       </div>
                     </div>
-                  </li>
-                  <li>
-                    <div className="service-card2">
-                      <div className="card-img flex justify-center">
-                        <div
+                  </div>
+                </li>
+                <li>
+                  <div className="service-card2">
+                    <div className="card-img flex justify-center">
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <img
+                          src={img6}
+                          alt="img"
                           style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
+                            width: "100%",
+                            height: "100%",
+                            maxWidth: "35rem",
+                            maxHeight: "35rem",
+                            objectFit: "cover",
+                            borderRadius: "2rem",
+                            paddingTop: "1rem",
                           }}
-                        >
-                          <img
-                            src={img6}
-                            alt="img"
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              maxWidth: "35rem",
-                              maxHeight: "35rem",
-                              objectFit: "cover",
-                              borderRadius: "2rem",
-                              paddingTop: "1rem",
-                            }}
-                            onClick={() => {
-                              navigate(
-                                "/list_salon_ver2?servicesName=Nhuộm tóc"
-                              );
-                            }}
-                          />
-                        </div>
+                          onClick={() => {
+                            navigate("/list_salon_ver2?servicesName=Nhuộm tóc");
+                          }}
+                        />
                       </div>
                     </div>
-                  </li>
-                  <li>
-                    <div className="service-card2">
-                      <div className="card-img flex justify-center">
-                        <div
+                  </div>
+                </li>
+                <li>
+                  <div className="service-card2">
+                    <div className="card-img flex justify-center">
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <img
+                          src={img7}
+                          alt="img"
                           style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
+                            width: "100%",
+                            height: "100%",
+                            maxWidth: "35rem",
+                            maxHeight: "35rem",
+                            objectFit: "cover",
+                            borderRadius: "2rem",
+                            paddingTop: "1rem",
                           }}
-                        >
-                          <img
-                            src={img7}
-                            alt="img"
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              maxWidth: "35rem",
-                              maxHeight: "35rem",
-                              objectFit: "cover",
-                              borderRadius: "2rem",
-                              paddingTop: "1rem",
-                            }}
-                            onClick={() => {
-                              navigate(
-                                "/list_salon_ver2?servicesName=Phục hồi tóc"
-                              );
-                            }}
-                          />
-                        </div>
+                          onClick={() => {
+                            navigate(
+                              "/list_salon_ver2?servicesName=Phục hồi tóc"
+                            );
+                          }}
+                        />
                       </div>
                     </div>
-                  </li>
-                  <li>
-                    <div className="service-card2">
-                      <div className="card-img flex justify-center">
-                        <div
+                  </div>
+                </li>
+                <li>
+                  <div className="service-card2">
+                    <div className="card-img flex justify-center">
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <img
+                          src={img8}
+                          alt="img"
                           style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
+                            width: "100%",
+                            height: "100%",
+                            maxWidth: "35rem",
+                            maxHeight: "35rem",
+                            objectFit: "cover",
+                            borderRadius: "2rem",
+                            paddingTop: "1rem",
                           }}
-                        >
-                          <img
-                            src={img8}
-                            alt="img"
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              maxWidth: "35rem",
-                              maxHeight: "35rem",
-                              objectFit: "cover",
-                              borderRadius: "2rem",
-                              paddingTop: "1rem",
-                            }}
-                            onClick={() => {
-                              navigate("/list_salon_ver2?servicesName=Uốn tóc");
-                            }}
-                          />
-                        </div>
+                          onClick={() => {
+                            navigate("/list_salon_ver2?servicesName=Uốn tóc");
+                          }}
+                        />
                       </div>
                     </div>
-                  </li>
-                </ul>
-                <ArrowRightOutlined
-                  className="scroll-icon2 right-icon"
-                  onClick={scrollRight}
-                />
-              </div>
+                  </div>
+                </li>
+              </ul>
+              <ArrowRightOutlined
+                className="scroll-icon2 right-icon"
+                onClick={scrollRight}
+              />
             </div>
-          </section>
+          </div>
+          {/* </section> */}
 
           <Title
             level={3}
