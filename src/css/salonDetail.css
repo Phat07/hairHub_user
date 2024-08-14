@@ -1,10 +1,10 @@
 .detail-salon-col-1 {
-  margin-left: 8rem;
-  margin-right: 8rem;
+  /* margin-left: 8rem;
+  margin-right: 8rem; */
 }
 
 .detail-salon-col-2 {
-  margin-right: 8rem;
+  /* margin-right: 8rem; */
 }
 .container {
   padding: "0 50px";
@@ -168,15 +168,6 @@
   overflow: hidden;
   flex: 1;
   width: 100%;
-}
-
-.scroll-content {
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: center;
-  gap: 8px;
-  transition: transform 0.3s ease;
-  width: max-content;
 }
 
 .arrow-button {

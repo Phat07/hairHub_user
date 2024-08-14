@@ -1,42 +1,23 @@
-import React, { useEffect, useRef, useState } from "react";
-import "../css/flaticon.min.css";
-import "../css/ListSalon.css";
-import "../css/style.css";
-import "../css/salonDetail.css";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  ArrowLeftOutlined,
+  ArrowRightOutlined,
+  CheckCircleOutlined,
+  EnvironmentOutlined,
+  HeartFilled,
+  HeartOutlined,
+  LeftCircleOutlined,
+  RightCircleOutlined,
+} from "@ant-design/icons";
+import { Button, Card, Col, Flex, Modal, Row, Typography } from "antd";
 import { motion } from "framer-motion";
-import { LiaCutSolid } from "react-icons/lia";
-import { FaArrowRight } from "react-icons/fa";
-import { PiHairDryerBold } from "react-icons/pi";
-import {
-  BsFillBagCheckFill,
-  BsFillCupHotFill,
-  BsFillEarFill,
-  BsFillPencilFill,
-} from "react-icons/bs";
-import { IoMenu } from "react-icons/io5";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import {
-  Avatar,
-  Button,
-  Card,
-  Col,
-  Flex,
-  message,
-  Modal,
-  Rate,
-  Row,
-  Space,
-  Typography,
-} from "antd";
+import React, { useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import heroBanner from "../assets/images/bannerHomePage.jpg";
-import locationPhone from "../assets/images/phoneMap.png";
-import bannerHomepage1 from "../assets/images/Hairhub mobile andoird app.png";
 import video from "../assets/images/Hairhub mobile andoird app (1).mp4";
 import video1 from "../assets/images/Hairhub mobile andoird app (4).mp4";
 import video2 from "../assets/images/Hairhub mobile andoird app (5).mp4";
-import logo from "../assets/images/hairHubIcon.png";
+import bannerHomepage1 from "../assets/images/Hairhub mobile andoird app.png";
+import locationPhone from "../assets/images/phoneMap.png";
 import img1 from "../assets/images/serviceImg2/1.png";
 import img2 from "../assets/images/serviceImg2/2.png";
 import img3 from "../assets/images/serviceImg2/3.png";
@@ -45,22 +26,16 @@ import img5 from "../assets/images/serviceImg2/5.png";
 import img6 from "../assets/images/serviceImg2/6.png";
 import img7 from "../assets/images/serviceImg2/7.png";
 import img8 from "../assets/images/serviceImg2/8.png";
-import {
-  CheckCircleOutlined,
-  EnvironmentOutlined,
-  HeartFilled,
-  HeartOutlined,
-  LeftCircleOutlined,
-  LeftOutlined,
-  RightCircleOutlined,
-  RightOutlined,
-} from "@ant-design/icons";
+import "../css/flaticon.min.css";
+import "../css/homePage.css";
+import "../css/ListSalon.css";
+import "../css/style.css";
 const { Title, Text } = Typography;
 
 import { useDispatch, useSelector } from "react-redux";
+import { EmptyComponent } from "../components/EmptySection/DisplayEmpty";
 import { actGetAllSalonInformation } from "../store/salonInformation/action";
 import { actGetStatusPayment } from "../store/salonPayment/action";
-import { EmptyComponent } from "../components/EmptySection/DisplayEmpty";
 
 function HomePage(props) {
   const navigate = useNavigate();
@@ -175,6 +150,7 @@ function HomePage(props) {
             aria-label="home"
             style={{
               backgroundImage: `url(${heroBanner})`,
+              // backgroundClip: `url(${videoAboutUs})`,
             }}
           >
             {/* <Button onClick={() => navigate("/list_barber_employees")}>
@@ -195,30 +171,53 @@ function HomePage(props) {
               }}
               initial="hidden"
               animate="visible"
-              className="container"
+              className="container title-container"
             >
-              <Title
+              {/* <Title
                 className="hero-title"
                 style={{ fontSize: "10rem", margin: "0" }}
               >
-                Hệ thống
-              </Title>
-              <Title
+                HỆ THỐNG ĐẶT LỊCH SALON, BARBER SHOP
+              </Title> */}
+              {/* <Title
                 className="hero-title"
                 style={{ fontSize: "6.5rem", margin: "0", fontWeight: "bold" }}
               >
                 Salon - Barber Shop
-              </Title>
-              <Text className="hero-text text-4xl">
+              </Title> */}
+              {/* <Text className="hero-text text-4xl">
                 Trải nghiệm những dịch vụ tuyệt vời nhất từ những salon, barber
                 shop tốt nhất trên thị trường Việt Nam
-              </Text>
-              <Link to={"/list_salon"}>
+              </Text> */}
+              {/* <Link to={"/list_salon"}>
                 <Text className="btn has-before text-white hover:text-white-600">
                   Khám phá những dịch vụ nổi bật
                 </Text>
+              </Link> */}
+              <Text className="titleHomePage">
+                HỆ THỐNG ĐẶT LỊCH SALON, BARBER SHOP
+              </Text>
+              <Link to={"/list_salon"}>
+                <Text className="btn has-before text-white hover:text-white-600">
+                  Đặt lịch ngay
+                </Text>
               </Link>
             </motion.div>
+            {/* <video
+              src={videoAboutUs} // Đường dẫn đến video
+              autoPlay
+              loop
+              muted
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                objectFit: "cover", // Đảm bảo video bao phủ toàn bộ phần tử
+                zIndex: -1, // Đưa video ra sau nội dung khác
+              }}
+            /> */}
           </section>
           <Flex className="mt-32" align="center" gap={24}>
             {/* <button
@@ -230,7 +229,7 @@ function HomePage(props) {
             <div className="container">
               <div className="scroll-wrapper" ref={scrollContainerRef}>
                 <Title level={3} className="customTitle">
-                  Những Barber Shop - Salon gợi ý cho bạn
+                  Barber Shop - Salon gợi ý
                 </Title>
                 <div className="scroll-icons">
                   <LeftCircleOutlined
@@ -365,13 +364,483 @@ function HomePage(props) {
               <RightOutlined />
             </button> */}
           </Flex>
-          <div className="container" style={{ marginBlock: "10rem" }}>
+          <section
+            className="section service mt-32"
+            id="services"
+            aria-label="services"
+            // style={{ marginBottom: "100px" }}
+          >
+            <div className="container">
+              <Title
+                level={3}
+                className="customTitle"
+                style={{ color: "#bf9456" }}
+              >
+                Dịch vụ nổi bật
+              </Title>
+              {/* <Text className="section-text text-center text-4xl">
+                Dưới đây là 1 số dịch vụ có thể bao gồm trong những Barber Shop,
+                những cũng có thể có thêm vài dịch vụ bổ sung từ các tiệm
+              </Text> */}
+              <div className="container-service-list">
+                <ArrowLeftOutlined
+                  className="scroll-icon2 left-icon"
+                  onClick={scrollLeft}
+                />
+                <ul className="card-list">
+                  <li>
+                    <div className="service-card2">
+                      <div className="card-img flex justify-center">
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <img
+                            src={img1}
+                            alt="img"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              maxWidth: "35rem",
+                              maxHeight: "35rem",
+                              objectFit: "cover",
+                              borderRadius: "2rem",
+                              paddingTop: "1rem",
+                            }}
+                            onClick={() => {
+                              navigate("/list_salon_ver2?servicesName=Cắt tóc");
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="service-card2">
+                      <div className="card-img flex justify-center">
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <img
+                            src={img2}
+                            alt="img"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              maxWidth: "35rem",
+                              maxHeight: "35rem",
+                              objectFit: "cover",
+                              borderRadius: "2rem",
+                              paddingTop: "1rem",
+                            }}
+                            onClick={() => {
+                              navigate("/list_salon_ver2?servicesName=Gội đầu");
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="service-card2">
+                      <div className="card-img flex justify-center">
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <img
+                            src={img3}
+                            alt="img"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              maxWidth: "35rem",
+                              maxHeight: "35rem",
+                              objectFit: "cover",
+                              borderRadius: "2rem",
+                              paddingTop: "1rem",
+                            }}
+                            onClick={() => {
+                              navigate(
+                                "/list_salon_ver2?servicesName=Lấy ráy tai"
+                              );
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="service-card2">
+                      <div className="card-img flex justify-center">
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <img
+                            src={img4}
+                            alt="img"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              maxWidth: "35rem",
+                              maxHeight: "35rem",
+                              objectFit: "cover",
+                              borderRadius: "2rem",
+                              paddingTop: "1rem",
+                            }}
+                            onClick={() => {
+                              navigate(
+                                "/list_salon_ver2?servicesName=Dịch vụ làm đẹp"
+                              );
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="service-card2">
+                      <div className="card-img flex justify-center">
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <img
+                            src={img5}
+                            alt="img"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              maxWidth: "35rem",
+                              maxHeight: "35rem",
+                              objectFit: "cover",
+                              borderRadius: "2rem",
+                              paddingTop: "1rem",
+                            }}
+                            onClick={() => {
+                              navigate("/list_salon_ver2?servicesName=Cạo râu");
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="service-card2">
+                      <div className="card-img flex justify-center">
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <img
+                            src={img6}
+                            alt="img"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              maxWidth: "35rem",
+                              maxHeight: "35rem",
+                              objectFit: "cover",
+                              borderRadius: "2rem",
+                              paddingTop: "1rem",
+                            }}
+                            onClick={() => {
+                              navigate(
+                                "/list_salon_ver2?servicesName=Nhuộm tóc"
+                              );
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="service-card2">
+                      <div className="card-img flex justify-center">
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <img
+                            src={img7}
+                            alt="img"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              maxWidth: "35rem",
+                              maxHeight: "35rem",
+                              objectFit: "cover",
+                              borderRadius: "2rem",
+                              paddingTop: "1rem",
+                            }}
+                            onClick={() => {
+                              navigate(
+                                "/list_salon_ver2?servicesName=Phục hồi tóc"
+                              );
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="service-card2">
+                      <div className="card-img flex justify-center">
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <img
+                            src={img8}
+                            alt="img"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              maxWidth: "35rem",
+                              maxHeight: "35rem",
+                              objectFit: "cover",
+                              borderRadius: "2rem",
+                              paddingTop: "1rem",
+                            }}
+                            onClick={() => {
+                              navigate("/list_salon_ver2?servicesName=Uốn tóc");
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+                <ArrowRightOutlined
+                  className="scroll-icon2 right-icon"
+                  onClick={scrollRight}
+                />
+              </div>
+            </div>
+          </section>
+
+          <Title
+            level={3}
+            className="customTitle1"
+            style={{ color: "#bf9456" }}
+          >
+            ĐẶT LỊCH MỌI LÚC
+          </Title>
+          <Title
+            level={3}
+            className="customTitle"
+            style={{ marginBlock: "5px" }}
+          >
+            PHỤC VỤ MỌI NƠI
+          </Title>
+          <div className="container">
+            <Row className="location-container">
+              <Col xs={24} md={12} className="location-card-container">
+                <Card
+                  className="location-card"
+                  style={{
+                    textAlign: "center",
+                    padding: "2rem",
+                    backgroundColor: "#DDF0FF",
+                  }}
+                >
+                  {/* <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      marginBottom: "1rem",
+                    }}
+                  >
+                    <Avatar
+                      size={50}
+                      shape="square"
+                      src={logo}
+                      style={{
+                        border: "2px solid #bf9456",
+                      }}
+                    />
+                    <Text
+                      style={{
+                        marginLeft: "1rem",
+                        fontSize: "1.5rem",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      Hairhub Mobile Android App
+                    </Text>
+                  </div> */}
+                  <Title level={3}>HAIRHUB ANDROID APP</Title>
+                  <Text
+                    style={{
+                      // fontSize: "2.5rem",
+                      fontWeight: "bold",
+                      marginBottom: "1rem",
+                      display: "block",
+                    }}
+                  >
+                    Sử dụng ứng dụng di động Hairhub để nhận được nhiều tính
+                    năng thú vị và ưu đãi hấp dẫn
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: "1.7rem",
+                      marginBottom: "0.5rem",
+                      display: "block",
+                      padding: "5px",
+                    }}
+                  >
+                    Nhận được nhiều voucher giảm giá từ salon, hệ thống
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: "1.7rem",
+                      marginBottom: "1rem",
+                      display: "block",
+                      padding: "5px",
+                    }}
+                  >
+                    Các tính năng nâng cấp như lưu giữ kiểu tóc người dùng
+                  </Text>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      marginTop: "1rem",
+                    }}
+                  >
+                    <img
+                      src={bannerHomepage1}
+                      alt="bannerHomepage1"
+                      style={{
+                        width: "100%",
+                        height: "auto",
+                        maxWidth: "40rem",
+                        maxHeight: "40rem",
+                        objectFit: "contain",
+                        borderRadius: "0 2px 2px 0",
+                      }}
+                    />
+                  </div>
+                </Card>
+              </Col>
+              <Col xs={24} md={12} className="location-card-container">
+                <Card
+                  bodyStyle={{ padding: 0 }}
+                  className="location-card"
+                  style={{
+                    textAlign: "center",
+                    padding: "2rem",
+                    backgroundColor: "#E1E1E1",
+                  }}
+                >
+                  <div className="location-card-col">
+                    <div style={{ padding: "1rem" }}>
+                      <Title level={3}>BẬT CHỨC NĂNG VỊ TRÍ</Title>
+                      <Text
+                        style={{
+                          // fontSize: "2.5rem",
+                          fontWeight: "bold",
+                          marginBottom: "1rem",
+                          display: "block",
+                        }}
+                      >
+                        Dễ dàng tìm kiếm, đặt lịch ở các sanlon, barber shop gần
+                        bạn bằng cách bật chức năng vị trí
+                      </Text>
+                      <div
+                        // style={{
+                        //   marginTop: "1rem",
+                        //   display: "flex",
+                        //   alignItems: "center",
+                        //   justifyContent: "center",
+                        // }}
+                        className="location-card-buton"
+                      >
+                        <Button
+                          // onClick={() => navigate("/search-near-you")}
+                          style={{
+                            borderWidth: "0",
+                          }}
+                          className="location-buton1"
+                        >
+                          Tìm kiếm gần bạn
+                        </Button>
+                        <Button
+                          style={{
+                            borderWidth: "0",
+                          }}
+                          className="location-buton2"
+                        >
+                          Không phải bây giờ
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      marginTop: "1rem",
+                      alignItems: "center",
+                    }}
+                  >
+                    <img
+                      src={locationPhone}
+                      alt="locationPhone Banner"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        maxWidth: "40rem",
+                        maxHeight: "50rem",
+                        objectFit: "cover",
+                        borderRadius: "0 2px 2px 0",
+                      }}
+                    />
+                  </div>
+                </Card>
+              </Col>
+            </Row>
+          </div>
+          {/* <div className="container" style={{ marginBlock: "10rem" }}>
             <Card bodyStyle={{ padding: 0 }} className="location-card">
               <Row>
                 <Col xs={24} md={16} className="location-card-col">
                   <div style={{ padding: "1rem" }}>
-                    <Title level={3}>Bật chức năng vị trí</Title>
-                    <Text>Để tìm kiếm cửa hàng gần bạn</Text>
+                    <Title level={3} style={{ color: "white" }}>
+                      Bật chức năng vị trí
+                    </Title>
+                    <Text style={{ color: "white" }}>
+                      Để tìm kiếm cửa hàng gần bạn
+                    </Text>
                     <div
                       // style={{
                       //   marginTop: "1rem",
@@ -514,25 +983,23 @@ function HomePage(props) {
                 />
               </div>
             </Card>
-          </div>
+          </div> */}
           <div className="container">
             <Card bodyStyle={{ padding: 0 }} className="card-homepage">
               <Row>
                 <Col xs={24} md={14} className="location-card-col">
-                  <div style={{ padding: "1rem" }}>
-                    <Title level={2} className="title-card-homepage">
-                      Tìm kiếm nhanh chóng, chỉ đường dễ dàng
-                    </Title>
-                    <Text className="text-card-homepage">
-                      - Hairhub giúp bạn tìm kiếm nhanh chóng các tiệm salon,
-                      barber shop ở gần vị trí của bạn theo tên cửa tiệm tóc,
-                      tên dịch vụ.{" "}
-                    </Text>
-                    <Text className="text-card-homepage">
-                      - Hairhub còn giúp chỉ đường cho bạn đến cửa tiệm tóc bằng
-                      bản đồ Google Map dễ dàng.{" "}
-                    </Text>
-                  </div>
+                  <Title level={2} className="title-card-homepage">
+                    Tìm kiếm nhanh chóng, chỉ đường dễ dàng
+                  </Title>
+                  <Text className="text-card-homepage">
+                    Hairhub giúp bạn tìm kiếm nhanh chóng các tiệm salon, barber
+                    shop ở gần vị trí của bạn theo tên cửa tiệm tóc, tên dịch
+                    vụ.{" "}
+                  </Text>
+                  <Text className="text-card-homepage">
+                    Hairhub còn giúp chỉ đường cho bạn đến cửa tiệm tóc bằng bản
+                    đồ Google Map dễ dàng.{" "}
+                  </Text>
                 </Col>
                 <Col xs={24} md={10}>
                   <div style={{ position: "relative", paddingTop: "80%" }}>
@@ -588,27 +1055,25 @@ function HomePage(props) {
                   </div>
                 </Col>
                 <Col xs={24} md={14} className="location-card-col">
-                  <div style={{ padding: "1rem" }}>
-                    <Title level={2} className="title-card-homepage">
-                      Đặt lịch tiện lợi, quản lý dễ dàng
-                    </Title>
-                    <Text className="text-card-homepage">
-                      - Bạn hoàn toàn có thể đặt lịch hẹn trực tuyến với cửa
-                      tiệm tóc chỉ vài thao tác đơn giản.
-                    </Text>
-                    <Text className="text-card-homepage">
-                      - Đặt lịch hẹn theo cửa tiệm tóc, khung giờ và dịch vụ
-                      giúp bạn tiết kiệm thời gian hơn mà không phải chờ đợi
-                    </Text>
-                    <Text className="text-card-homepage">
-                      - Bạn cũng có thể dễ dàng quản lý lịch hẹn sẽ giúp bạn có
-                      thể bám sát lịch trình rõ ràng hơn.
-                    </Text>
-                    <Text className="text-card-homepage">
-                      - Nhận được nhiều voucher hấp dẫn từ hệ thống và cửa tiệm
-                      tóc khi sử dụng ứng dụng Hairhub trên điện thoại.
-                    </Text>
-                  </div>
+                  <Title level={2} className="title-card-homepage">
+                    Đặt lịch tiện lợi, quản lý dễ dàng
+                  </Title>
+                  <Text className="text-card-homepage">
+                    Bạn hoàn toàn có thể đặt lịch hẹn trực tuyến với cửa tiệm
+                    tóc chỉ vài thao tác đơn giản.
+                  </Text>
+                  <Text className="text-card-homepage">
+                    Đặt lịch hẹn theo cửa tiệm tóc, khung giờ và dịch vụ giúp
+                    bạn tiết kiệm thời gian hơn mà không phải chờ đợi
+                  </Text>
+                  <Text className="text-card-homepage">
+                    Bạn cũng có thể dễ dàng quản lý lịch hẹn sẽ giúp bạn có thể
+                    bám sát lịch trình rõ ràng hơn.
+                  </Text>
+                  <Text className="text-card-homepage">
+                    Nhận được nhiều voucher hấp dẫn từ hệ thống và cửa tiệm tóc
+                    khi sử dụng ứng dụng Hairhub trên điện thoại.
+                  </Text>
                 </Col>
               </Row>
             </Card>
@@ -617,20 +1082,18 @@ function HomePage(props) {
             <Card bodyStyle={{ padding: 0 }} className="card-homepage">
               <Row>
                 <Col xs={24} md={14} className="location-card-col">
-                  <div style={{ padding: "1rem" }}>
-                    <Title level={2} className="title-card-homepage">
-                      Check in tức thời, đánh giá thuận tiện
-                    </Title>
-                    <Text className="text-card-homepage">
-                      - Khi đến barber shop, salon hãy quét mã QR để check in
-                      nhanh chóng cho đơn đặt lịch của mình.
-                    </Text>
-                    <Text className="text-card-homepage">
-                      - Ngoài ra, sau khi hoàn thành đơn cắt tóc của mình, bạn
-                      cũng có thể đánh giá cho salon, barber shop và xem nó ở
-                      phần thông tin của cửa tiệm tóc trên Hairhub.
-                    </Text>
-                  </div>
+                  <Title level={2} className="title-card-homepage">
+                    Check in tức thời, đánh giá thuận tiện
+                  </Title>
+                  <Text className="text-card-homepage">
+                    Khi đến barber shop, salon hãy quét mã QR để check in nhanh
+                    chóng cho đơn đặt lịch của mình.
+                  </Text>
+                  <Text className="text-card-homepage">
+                    Ngoài ra, sau khi hoàn thành đơn cắt tóc của mình, bạn cũng
+                    có thể đánh giá cho salon, barber shop và xem nó ở phần
+                    thông tin của cửa tiệm tóc trên Hairhub.
+                  </Text>
                 </Col>
                 <Col xs={24} md={10}>
                   <div style={{ position: "relative", paddingTop: "80%" }}>
@@ -780,275 +1243,6 @@ function HomePage(props) {
               </div>
             </div>
           </section> */}
-
-          <section
-            className="section service mt-32"
-            id="services"
-            aria-label="services"
-            // style={{ marginBottom: "100px" }}
-          >
-            <div className="container">
-              <Title level={3} className="section-title customTitle text-start">
-                Những dịch vụ nổi bật
-              </Title>
-              {/* <Text className="section-text text-center text-4xl">
-                Dưới đây là 1 số dịch vụ có thể bao gồm trong những Barber Shop,
-                những cũng có thể có thêm vài dịch vụ bổ sung từ các tiệm
-              </Text> */}
-              <div className="container-service-list">
-                <LeftCircleOutlined
-                  className="scroll-icon2 left-icon"
-                  onClick={scrollLeft}
-                />
-                <ul className="card-list">
-                  <li>
-                    <div className="service-card2">
-                      <div className="card-img flex justify-center">
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
-                        >
-                          <img
-                            src={img1}
-                            alt="img"
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              maxWidth: "35rem",
-                              maxHeight: "35rem",
-                              objectFit: "cover",
-                              borderRadius: "2rem",
-                              paddingTop: "1rem",
-                            }}
-                            onClick={() => {
-                              navigate("/list_salon_ver2?servicesName=Cắt tóc");
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="service-card2">
-                      <div className="card-img flex justify-center">
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
-                        >
-                          <img
-                            src={img2}
-                            alt="img"
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              maxWidth: "35rem",
-                              maxHeight: "35rem",
-                              objectFit: "cover",
-                              borderRadius: "2rem",
-                              paddingTop: "1rem",
-                            }}
-                            onClick={() => {
-                              navigate("/list_salon_ver2?servicesName=Gội đầu");
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="service-card2">
-                      <div className="card-img flex justify-center">
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
-                        >
-                          <img
-                            src={img3}
-                            alt="img"
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              maxWidth: "35rem",
-                              maxHeight: "35rem",
-                              objectFit: "cover",
-                              borderRadius: "2rem",
-                              paddingTop: "1rem",
-                            }}
-                            onClick={() => {
-                              navigate("/list_salon_ver2?servicesName=Lấy ráy tai");
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="service-card2">
-                      <div className="card-img flex justify-center">
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
-                        >
-                          <img
-                            src={img4}
-                            alt="img"
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              maxWidth: "35rem",
-                              maxHeight: "35rem",
-                              objectFit: "cover",
-                              borderRadius: "2rem",
-                              paddingTop: "1rem",
-                            }}
-                            onClick={() => {
-                              navigate("/list_salon_ver2?servicesName=Dịch vụ làm đẹp");
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="service-card2">
-                      <div className="card-img flex justify-center">
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
-                        >
-                          <img
-                            src={img5}
-                            alt="img"
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              maxWidth: "35rem",
-                              maxHeight: "35rem",
-                              objectFit: "cover",
-                              borderRadius: "2rem",
-                              paddingTop: "1rem",
-                            }}
-                            onClick={() => {
-                              navigate("/list_salon_ver2?servicesName=Cạo râu");
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="service-card2">
-                      <div className="card-img flex justify-center">
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
-                        >
-                          <img
-                            src={img6}
-                            alt="img"
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              maxWidth: "35rem",
-                              maxHeight: "35rem",
-                              objectFit: "cover",
-                              borderRadius: "2rem",
-                              paddingTop: "1rem",
-                            }}
-                            onClick={() => {
-                              navigate("/list_salon_ver2?servicesName=Nhuộm tóc");
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="service-card2">
-                      <div className="card-img flex justify-center">
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
-                        >
-                          <img
-                            src={img7}
-                            alt="img"
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              maxWidth: "35rem",
-                              maxHeight: "35rem",
-                              objectFit: "cover",
-                              borderRadius: "2rem",
-                              paddingTop: "1rem",
-                            }}
-                            onClick={() => {
-                              navigate("/list_salon_ver2?servicesName=Phục hồi tóc");
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="service-card2">
-                      <div className="card-img flex justify-center">
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
-                        >
-                          <img
-                            src={img8}
-                            alt="img"
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              maxWidth: "35rem",
-                              maxHeight: "35rem",
-                              objectFit: "cover",
-                              borderRadius: "2rem",
-                              paddingTop: "1rem",
-                            }}
-                            onClick={() => {
-                              navigate("/list_salon_ver2?servicesName=Uốn tóc");
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                </ul>
-                <RightCircleOutlined
-                  className="scroll-icon2 right-icon"
-                  onClick={scrollRight}
-                />
-              </div>
-            </div>
-          </section>
 
           <Modal
             title="Thông báo thanh toán"

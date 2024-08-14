@@ -218,7 +218,7 @@ function ListSalonVer2(props) {
         );
       const salons = salonRes.data.items;
 
-      const servicePromises = salons.map((salon) =>
+      const servicePromises = await salons.map((salon) =>
         ServiceHairServices.getServiceHairBySalonNotPaging(salon.id).then(
           (serviceData) => ({
             ...salon,

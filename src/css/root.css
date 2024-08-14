@@ -1,0 +1,36 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+@font-face {
+    font-family: 'CustomFont';
+    src: url('/src/assets/font/KD-Gold-Queen.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+  
+:root {
+    /* Màu sắc */
+    --color-background: #f4f2eb;
+    --color-text: #333333;
+    --color-card: #bf9456;
+
+    /* Font chữ */
+    --font-primary: 'Open Sans', sans-serif;
+    --font-secondary: 'CustomFont', sans-serif; /* Đây là font chữ từ file TTF mà bạn tải lên */
+
+    /* Kích thước chữ */
+    --font-size-small: 12px;
+    --font-size-normal: 16px;
+    --font-size-medium: 18px;
+    --font-size-large: 24px;
+    --font-size-xlarge: 32px;
+}
+
+body {
+
+    background-color: #f4f2eb;
+}
+
+.root {
+
+    background-color: #f4f2eb;
+}

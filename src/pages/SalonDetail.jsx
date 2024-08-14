@@ -234,6 +234,7 @@ function SalonDetail(props) {
 
   const [statusChangeStaff, setStatusChangeStaff] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [filterRating, setFilterRating] = useState(null);
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
@@ -1196,7 +1197,13 @@ function SalonDetail(props) {
     // Update the state with the new array
     setAdditionalServices(updatedServices);
   };
+  const handleFilterChange = (rating) => {
+    setFilterRating(rating);
+  };
 
+  const filteredFeedback = filterRating
+    ? listFeedback.filter((feedback) => feedback?.rating === filterRating)
+    : listFeedback;
   return (
     <div>
       {/* <Header /> */}
@@ -1208,11 +1215,15 @@ function SalonDetail(props) {
       <div>
         <Layout>
           <Content className="container">
-            <Row gutter={16}>
+            <Row justify="center" gutter={0}>
               <Col
                 xs={24}
-                md={14}
-                style={{ marginBottom: "16px", marginTop: "50px" }}
+                md={16}
+                style={{
+                  marginBottom: "16px",
+                  marginTop: "50px",
+                  marginRight: "11rem",
+                }}
                 className="detail-salon-col-1"
               >
                 <div>
@@ -1245,21 +1256,21 @@ function SalonDetail(props) {
                 >
                   <h2
                     style={{
-                      fontSize: "2rem",
+                      fontSize: "3rem",
                       fontWeight: "bold",
                       margin: 0,
                     }}
                   >
                     {salonDetail?.name}
                   </h2>
-                  <Space>
+                  <Space style={{ marginLeft: "10px" }}>
                     <Button
                       type="text"
-                      icon={<ShareAltOutlined style={{ fontSize: "1.5rem" }} />}
+                      icon={<ShareAltOutlined style={{ fontSize: "3rem" }} />}
                     />
                     <Button
                       type="text"
-                      icon={<HeartOutlined style={{ fontSize: "1.5rem" }} />}
+                      icon={<HeartOutlined style={{ fontSize: "3rem" }} />}
                     />
                   </Space>
                 </div>
@@ -2015,9 +2026,28 @@ function SalonDetail(props) {
                   </div>
                 </div>
                 <div>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-around",
+                      marginBottom: "20px",
+                    }}
+                  >
+                    {[5, 4, 3, 2, 1].map((rating) => (
+                      <Button
+                        key={rating}
+                        onClick={() => handleFilterChange(rating)}
+                      >
+                        {rating} sao
+                      </Button>
+                    ))}
+                    <Button onClick={() => handleFilterChange(null)}>
+                      Tất cả
+                    </Button>
+                  </div>
                   <List
                     itemLayout="horizontal"
-                    dataSource={listFeedback}
+                    dataSource={filteredFeedback}
                     renderItem={(feedback) => (
                       <List.Item>
                         <List.Item.Meta
@@ -2068,8 +2098,8 @@ function SalonDetail(props) {
               </Col>
               <Col
                 xs={24}
-                md={8}
-                className="sticky-col"
+                md={6}
+                // className="sticky-col"
                 style={{ marginTop: "20px" }}
               >
                 <div
@@ -2077,8 +2107,11 @@ function SalonDetail(props) {
                     // marginTop:"30px",
                     padding: "10px",
                     background: "#F4F2EB",
-                    borderRadius: "8px",
-                    border: "3px solid black",
+                    borderLeft: "3px solid black",
+                    borderRight: "3px solid black",
+                    borderBottom: "3px solid black", // Đường viền phía dưới
+                    borderBottomLeftRadius: "8px", // Bo góc phía dưới bên trái (tùy chọn)
+                    borderBottomRightRadius: "8px",
                   }}
                   className="detail-salon-col-2"
                 >
@@ -2143,13 +2176,49 @@ function SalonDetail(props) {
                     <Title level={4}>Thời gian làm việc</Title>
                     {sortedSchedules?.map((e) => {
                       return (
-                        <Row justify="space-between" key={e?.dayOfWeek}>
-                          <Text strong>{daysOfWeek[e?.dayOfWeek]}:&nbsp; </Text>
-                          {/* <Text>
-                            {e?.startTime?.slice(0, 5)} AM -{" "}
-                            {e?.endTime?.slice(0, 5)} PM
-                          </Text> */}
-                          <Text>
+                        // <Row  justify="space-between" key={e?.dayOfWeek}>
+                        //   <Text strong>{daysOfWeek[e?.dayOfWeek]}:&nbsp; </Text>
+                        //   {/* <Text>
+                        //     {e?.startTime?.slice(0, 5)} AM -{" "}
+                        //     {e?.endTime?.slice(0, 5)} PM
+                        //   </Text> */}
+                        //   <Text>
+                        //     {e?.startTime?.slice(0, 5) === "00:00" &&
+                        //     e?.endTime?.slice(0, 5) === "00:00"
+                        //       ? "Không hoạt động"
+                        //       : `${e?.startTime?.slice(
+                        //           0,
+                        //           5
+                        //         )} AM - ${e?.endTime?.slice(0, 5)} PM`}
+                        //   </Text>
+                        // </Row>
+                        // <Row
+                        //   justify="space-evenly"
+                        //   key={e?.dayOfWeek}
+                        //   style={{ width: "100%" }}
+                        // >
+                        //   <Text strong style={{ flex: 1 }}>
+                        //     {daysOfWeek[e?.dayOfWeek]}:&nbsp;{" "}
+                        //   </Text>
+                        //   <Text style={{ flex: 1, textAlign: "right" }}>
+                        //     {e?.startTime?.slice(0, 5) === "00:00" &&
+                        //     e?.endTime?.slice(0, 5) === "00:00"
+                        //       ? "Không hoạt động"
+                        //       : `${e?.startTime?.slice(
+                        //           0,
+                        //           5
+                        //         )} AM - ${e?.endTime?.slice(0, 5)} PM`}
+                        //   </Text>
+                        // </Row>
+                        <Row
+                          justify="space-between"
+                          key={e?.dayOfWeek}
+                          style={{ width: "100%" }}
+                        >
+                          <Text strong style={{ marginRight: 8 }}>
+                            {daysOfWeek[e?.dayOfWeek]}:&nbsp;{" "}
+                          </Text>
+                          <Text style={{ textAlign: "right" }}>
                             {e?.startTime?.slice(0, 5) === "00:00" &&
                             e?.endTime?.slice(0, 5) === "00:00"
                               ? "Không hoạt động"
