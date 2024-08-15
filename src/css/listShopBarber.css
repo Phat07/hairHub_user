@@ -3,25 +3,64 @@
     margin-left: 60px;
     margin-right: 60px;
   }
+  .salon-title-container{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
   .salon-title {
-    font-size: 1rem; /* Giảm kích thước chữ */
-    padding: 1rem; /* Giảm khoảng đệm */
+    font-size: 1.5rem; 
+    color: black;
   }
   .responsive-col {
     width: 20rem;
     margin-bottom: 20px; 
-  }  
-
+  }
+  .table-fillter{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-block: 1rem;
+  } 
+  .table-fillter-item{
+    margin-right: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  .table-container {
+    width: 100%;
+    overflow-x: auto; /* Enable horizontal scrolling */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS devices */
+  }
+  
+  .table-container table {
+    width: 100%;
+    min-width: 600px; /* Set a minimum width for the table */
+  }
+  
   @media (max-width: 768px) {
     .container_list {
         margin-top: 140px;
         margin-left: 10px;
         margin-right: 10px;
       }
+      .salon-title-container{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+      }  
     .salon-title {
         font-size: 1rem; 
-        padding: 1rem; 
+        color: black;
       }
+    .salon-title-cover{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
     .dropdown-btns {
         display: none; 
       }
@@ -48,6 +87,17 @@
     .small-text {
         font-size: 12px; 
       }
+  .table-fillter{
+    flex-direction: column;
+    align-items: flex-start;
+    margin-block: 5px;
+  }
+  .table-fillter-item{
+    margin-bottom: 5px;
+  }
+  .table-container {
+    padding: 10px; /* Optional: Add padding for better UX on small screens */
+  }
 }
 @media (min-width: 769px) {
     .dropdown-icon {

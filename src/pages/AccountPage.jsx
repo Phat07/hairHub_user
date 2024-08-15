@@ -25,12 +25,13 @@ import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import { SalonEmployeesServices } from "../services/salonEmployeesServices";
 import { ServiceHairServices } from "../services/servicesHairServices";
 import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { actGetAllEmployees } from "../store/salonEmployees/action";
 
 function AccountPage() {
   const [form] = Form.useForm();
-  const { id, employeeId } = useParams(); //id//salonId
+  // const { id, employeeId } = useParams();
+  const { employeeId } = useParams();
   const [dayOff, setDayOff] = useState({
     Monday: false,
     Tuesday: false,
@@ -47,6 +48,9 @@ function AccountPage() {
   const [schedules, setSchedules] = useState([]);
   const [fileList, setFileList] = useState([]);
 
+  const salonDetail = useSelector(
+    (state) => state.SALONINFORMATION.getSalonByOwnerId
+  );
   const [selectedServices, setSelectedServices] = useState([]);
   const EMPLOYEESDETAILS_URL =
     "http://14.225.218.91:8080/api/v1/salonemployees/GetSalonEmployeeById/";
@@ -160,7 +164,7 @@ function AccountPage() {
       .catch((err) => {
         console.log(err, "errors");
       });
-    ServiceHairServices.getServiceHairBySalonNotPaging(id)
+    ServiceHairServices.getServiceHairBySalonNotPaging(salonDetail.id)
       .then((res) => {
         console.log("resSer", res);
 
@@ -220,7 +224,7 @@ function AccountPage() {
     const imageFile = fileList.length > 0 ? fileList[0].originFileObj : null;
     const formData = await new FormData();
     // formData.append("id", employeeId);
-    await formData.append("SalonInformationId", id);
+    await formData.append("SalonInformationId", salonDetail.id);
     await formData.append("Gender", gender);
     await formData.append("Img", imageFile);
     await formData.append("Phone", phone);
@@ -229,8 +233,8 @@ function AccountPage() {
     await axios
       .put(EMPLOYEESDETAILS_URL_UPDATE + `${employeeId}`, formData)
       .then((res) => {
-        navigate(`/list_barber_employees/${id}`);
-        dispatch(actGetAllEmployees(id));
+        navigate(`/list_barber_employees/${salonDetail.id}`);
+        dispatch(actGetAllEmployees(salonDetail.id));
         message.success("Chỉnh sửa thông tin nhân viên thành công");
         console.log(res, "res neeeee");
       })
@@ -243,7 +247,7 @@ function AccountPage() {
     console.log(form.name);
     console.log("phone", form.phone);
     // formData.append("id", employeeId);
-    await formData.append("SalonInformationId", id);
+    await formData.append("SalonInformationId", salonDetail.id);
     await formData.append("Gender", form.gender);
     await formData.append("Img", imageFile);
     await formData.append("Phone", form.phone);
@@ -252,8 +256,8 @@ function AccountPage() {
     await axios
       .put(EMPLOYEESDETAILS_URL_UPDATE + `${employeeId}`, formData)
       .then((res) => {
-        navigate(`/list_barber_employees/${id}`);
-        dispatch(actGetAllEmployees(id));
+        navigate(`/list_barber_employees/${salonDetail.id}`);
+        dispatch(actGetAllEmployees(salonDetail.id));
         message.success("Chỉnh sửa thông tin nhân viên thành công");
       })
       .catch((err) => message.error(err));
