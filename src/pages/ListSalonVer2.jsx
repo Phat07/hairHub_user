@@ -7,7 +7,7 @@ import {
   SortAscendingOutlined,
 } from "@ant-design/icons";
 import {
-  Button,
+  // Button,
   Col,
   Input,
   Row,
@@ -19,6 +19,9 @@ import {
   Spin,
   Modal,
   Select,
+  Empty,
+  message,
+  Form,
 } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import "../css/ListSalonVer2.css";
@@ -28,11 +31,25 @@ import { useNavigate } from "react-router-dom";
 import { LoadScript, StandaloneSearchBox } from "@react-google-maps/api";
 import axios from "axios";
 import LoadScriptMap from "../components/LoadScriptMap";
-
+import { motion } from "framer-motion";
+import "antd/dist/reset.css";
 const defaultCenter = {
   lat: 10.8231, // Default to Ho Chi Minh City
   lng: 106.6297,
 };
+const MotionButton = motion.button;
+const Button = ({ children, className, ...props }) => (
+  <MotionButton
+    whileHover={{ scale: 0.9, backgroundColor: "#1890ff", color: "black" }}
+    whileTap={{ scale: 0.9 }}
+    transition={{ duration: 0.3 }}
+    className={`ant-btn book-button ${className}`}
+    {...props} // Spread props để truyền tất cả các thuộc tính khác
+  >
+    {children}
+  </MotionButton>
+);
+const MotionDiv = motion.div;
 
 const vietnamProvinces = [
   { name: "Hà Nội", lat: 21.0285, lng: 105.8542 },
@@ -133,23 +150,30 @@ function ListSalonVer2(props) {
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
   const libraries = ["places"];
-  const [selectedProvince, setSelectedProvince] = useState(
-    locationSalon || "Tỉnh/Thành phố"
-  );
+  const [selectedProvince, setSelectedProvince] = useState(locationSalon);
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [mapStyle, setMapStyle] = useState({
     height: "500px",
     width: "850px",
   });
+  // useEffect(() => {
+  //   const timeoutId = setTimeout(() => {
+  //     if (!isApiLoaded) {
+  //       window.location.reload();
+  //     }
+  //   }, 1000); // 5 seconds timeout
+
+  //   return () => clearTimeout(timeoutId);
+  // }, [isApiLoaded]);
 
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth <= 480) {
-        setMapStyle({ height: "250px", width: "100%" });
+        setMapStyle({ height: "250px", width: "425px" });
       } else if (window.innerWidth <= 768) {
-        setMapStyle({ height: "300px", width: "100%" });
+        setMapStyle({ height: "300px", width: "425px" });
       } else {
-        setMapStyle({ height: "300px", width: "450px" });
+        setMapStyle({ height: "300px", width: "500px" });
       }
     };
 
@@ -184,12 +208,15 @@ function ListSalonVer2(props) {
           const mapper = districtsData.map((e) => {
             return { value: e?.name, label: e?.name };
           });
+
+          if (selectedProvince === "Hồ Chí Minh") {
+            mapper.push({ value: "9", label: "9" });
+          }
           setDistricts(mapper);
         })
         .catch((error) => console.error("Error fetching districts:", error));
     } else {
       setDistricts([]);
-      // setWards([]);
     }
   }, [selectedProvince]);
 
@@ -202,15 +229,16 @@ function ListSalonVer2(props) {
     if (province) {
       setCurrentLocation({ lat: province.lat, lng: province.lng });
     } else {
-      setCurrentLocation(defaultCenter); 
+      setCurrentLocation(defaultCenter);
     }
 
     setSelectedProvince(value);
     setSelectedDistrict("");
-    setSelectedWard("");
 
-    let fetchLatLng = false;
-    fetchSalonData(fetchLatLng);
+    // fetchSalonData();
+  };
+  const handleChangeDistrict = (value) => {
+    setSelectedDistrict(value);
   };
   const handleScroll = (direction) => {
     if (scrollContainerRef.current) {
@@ -221,9 +249,7 @@ function ListSalonVer2(props) {
       });
     }
   };
-  const handleChangeDistrict = (value) => {
-    setSelectedDistrict(value);
-  };
+
   const popularServices = (
     <Menu>
       <Menu.Item onClick={() => handleServiceSelect("Cắt tóc")}>
@@ -259,20 +285,6 @@ function ListSalonVer2(props) {
     </Menu>
   );
 
-  const handleSearchClick = () => {
-    setSearchVisible(!searchVisible);
-    setLocationVisible(false);
-  };
-
-  // const handleLocationClick = () => {
-  //   setLocationVisible(!locationVisible);
-  //   setSearchVisible(false);
-  // };
-  const handleLocationClick = () => {
-    setLocationVisible(false); // Close the popover
-    setModalVisible(true); // Show the modal
-  };
-
   const handlePlacesChanged = () => {
     const places = searchBoxRef.current.getPlaces();
 
@@ -289,10 +301,8 @@ function ListSalonVer2(props) {
       places.find((place) => {
         return place.formatted_address.includes(userInputAddressPart);
       }) || places[0]; // Fallback to the first place if no match is found
-    console.log("best", bestPlace);
 
     const location = bestPlace.formatted_address;
-    console.log("location", location);
 
     const lat = bestPlace.geometry.location.lat();
     const lng = bestPlace.geometry.location.lng();
@@ -302,29 +312,33 @@ function ListSalonVer2(props) {
     setLongitude(lng);
   };
 
-  const handleModalClose = () => {
-    setModalVisible(false); // Close the modal
-  };
-
-  // const handleServiceSelect = (service) => {
-  //   // setSelectedService(service);
-  //   setServicesName(service);
-  //   setSearchVisible(false);
-  // };
-  const handleServiceSelect = (service) => {
-    setServicesName(service);
-    setSearchVisible(false);
-
-    const params = new URLSearchParams(location.search);
-
-    if (service) {
-      params.set("servicesName", service);
-    } else {
-      params.delete("servicesName");
-    }
-
-    navigate(`?${params.toString()}`);
+  useEffect(() => {
     fetchSalonData();
+  }, [
+    currentPage,
+    servicesName,
+    salonName,
+    selectedProvince,
+    selectedDistrict,
+  ]);
+  const handleServiceSelect = async (service) => {
+    try {
+      const params = new URLSearchParams(location.search);
+
+      if (service) {
+        params.set("servicesName", service);
+      } else {
+        params.delete("servicesName");
+      }
+      navigate(`?${params.toString()}`);
+
+      // Chờ đợi fetchSalonData hoàn thành
+      await fetchSalonData();
+      setServicesName(service);
+      setSearchVisible(false);
+    } catch (error) {
+      console.error("Error fetching salon data:", error);
+    }
   };
 
   const handleClearService = () => {
@@ -339,19 +353,25 @@ function ListSalonVer2(props) {
   const handleFilterSelect = (filter) => {
     setFilterVisible(false);
   };
-  const fetchSalonData = async (fetchLatLng = true) => {
+  const fetchSalonData = async () => {
     try {
+      console.log("test");
+      
       setLoading(true);
+      let dataAddress = selectedProvince;
+      if (selectedDistrict) {
+        dataAddress = `${selectedDistrict}, ${selectedProvince}`;
+      }
       const salonRes =
         await SalonInformationServices.getAllSalonInformationByAddressOrSalonName(
           servicesName ? servicesName : null,
-          !fetchLatLng && locationSalon ? locationSalon : null,
+          dataAddress ? dataAddress : null,
           salonName ? salonName : null,
+          latitude ? latitude : null,
+          longitude ? longitude : null,
+          distance ? distance : null,
           currentPage,
-          pageSize,
-          fetchLatLng && latitude ? latitude : null,
-          fetchLatLng && longitude ? longitude : null,
-          distance ? distance : null
+          pageSize
         );
       const salons = salonRes.data.items;
 
@@ -375,88 +395,214 @@ function ListSalonVer2(props) {
       setLoading(false);
     }
   };
+  const fetchSalonDataNear = async (latitude, longtitude, distance) => {
+    try {
+      setLoading(true);
+      console.log("56", selectedProvince);
+      let dataAddress = selectedProvince;
+      if (selectedDistrict) {
+        dataAddress = `${selectedDistrict}, ${selectedProvince}`;
+      }
+      const salonRes =
+        await SalonInformationServices.getAllSalonInformationByAddressOrSalonName(
+          servicesName ? servicesName : null,
+          null,
+          salonName ? salonName : null,
+          latitude ? latitude : null,
+          longtitude ? longtitude : null,
+          distance ? distance : null,
+          currentPage,
+          pageSize
+        );
+      const salons = salonRes.data.items;
+        
+      const servicePromises = await salons.map((salon) =>
+        ServiceHairServices.getServiceHairBySalonNotPaging(salon.id).then(
+          (serviceData) => ({
+            ...salon,
+            services: serviceData.data,
+          })
+        )
+      );
+
+      const salonsWithServices = await Promise.all(servicePromises);
+
+      setSalonList(salonsWithServices);
+      setTotalPages(salonRes.data.total);
+      setTotal(salonRes.data.total);
+      message.info(`Có ${salons.length} salon gần bạn`)
+    } catch (err) {
+      console.log(err, "errors");
+    } finally {
+      setLoading(false);
+    }
+  };
   // useEffect(() => {
   //   fetchSalonData();
   // }, [currentPage, servicesName, locationSalon, salonName]);
-  useEffect(() => {
-    fetchSalonData();
-  }, [currentPage]);
-  // const handleKeyPress = (event) => {
-  //   if (event.key === "Enter") {
-  //     const params = new URLSearchParams();
 
-  //     if (salonName) params.set("salonName", salonName);
-  //     if (servicesName) params.set("servicesName", servicesName);
-  //     if (locationSalon) params.set("location", locationSalon);
-
-  //     navigate(`?${params.toString()}`); // Với React Router v6, sử dụng navigate(`?${params.toString()}`);
-  //     fetchSalonData();
-  //     if (modalVisible) {
-  //       setModalVisible(false);
-  //       setLocationSalon(locationInput); // Set the entered location input
-  //       // Optionally, trigger an API call with latitude and longitude
-  //       fetchSalonData();
-  //     }
-  //   }
-  // };
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
       const params = new URLSearchParams();
-      let fetchLatLng = false;
-
-      if (event.target.name === "locationInput") {
-        if (salonName) params.set("salonName", salonName);
-        if (servicesName) params.set("servicesName", servicesName);
-        if (locationSalon) {
-          params.set("location", locationSalon);
-          // Ensure lat and lng are removed if locationSalon is used
-          params.delete("lat");
-          params.delete("lng");
-        }
-      } else if (event.target.name === "salonLocationInput") {
-        if (salonName) params.set("salonName", salonName);
-        if (servicesName) params.set("servicesName", servicesName);
-        if (locationInput) {
-          // Add latitude and longitude if locationInput is used
-          params.set("lat", latitude);
-          params.set("lng", longitude);
-          // Ensure locationSalon is removed if locationInput is used
-          params.delete("location");
-          fetchLatLng = true;
-        }
-      }
+      if (salonName) params.set("salonName", salonName);
+      if (servicesName) params.set("servicesName", servicesName);
 
       navigate(`?${params.toString()}`);
-      fetchSalonData(fetchLatLng);
-
-      if (modalVisible) {
-        setModalVisible(false);
-        setLocationSalon(locationInput);
-      }
+      fetchSalonData();
     }
-  };
-  const handleLocationChange = (e) => {
-    setLocationSalon(e.target.value);
   };
 
   const handleSalonNameChange = (e) => {
     setSalonName(e.target.value);
   };
+  const handleServiceNameChange = (e) => {
+    setServicesName(e.target.value);
+  };
+  const handleClick = () => {
+    // Clear the servicesName state
+    setServicesName("");
 
+    // Update the URL parameters
+    const url = new URL(window.location.href);
+    const params = new URLSearchParams(url.search);
+    params.delete("servicesName");
+    url.search = params.toString();
+
+    // Replace the current URL without reloading the page
+    window.history.replaceState({}, "", url.toString());
+  };
+  const handleLocationClick = () => {
+    setLocationVisible(false); // Close the popover
+    setModalVisible(true); // Show the modal
+  };
+  const handleModalClose = () => {
+    setModalVisible(false); // Close the modal
+  };
+  const [form] = Form.useForm();
+  const handleSearch = async () => {
+    const validateDistance = async () => {
+      try {
+        const values = await form.validateFields(["distance"]);
+        return values.distance;
+      } catch (error) {
+        message.error("Vui lòng nhập khoảng cách hợp lệ.");
+        throw error;
+      }
+    };
+
+    document.body.style.overflow = "hidden";
+    Modal.confirm({
+      title: "Bật vị trí hiện tại",
+      content: (
+        <Form form={form} layout="vertical">
+          <Form.Item
+            label="Nhập khoảng cách bạn muốn tìm (km)"
+            name="distance"
+            rules={[
+              { required: true, message: "Vui lòng nhập khoảng cách!" },
+              { pattern: /^\d+$/, message: "Khoảng cách phải là số!" },
+            ]}
+          >
+            <Input placeholder="Nhập khoảng cách" />
+          </Form.Item>
+        </Form>
+      ),
+      async onOk() {
+        const distance = await validateDistance();
+        if ("geolocation" in navigator) {
+          navigator.geolocation.getCurrentPosition(
+            async (pos) => {
+              const { latitude, longitude } = pos.coords;
+              const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${
+                import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
+              }&loading=async`;
+              const dataDistance = form.getFieldValue("distance");
+              await fetchSalonDataNear(latitude, longitude, dataDistance);
+
+              message.success("Cảm ơn bạn đã kích hoạt dịch vụ định vị.");
+              document.body.style.overflow = "";
+            },
+            (error) => {
+              message.error("Bạn đã từ chối quyền truy cập vị trí!");
+              document.body.style.overflow = "";
+            }
+          );
+        } else {
+          message.error(
+            "Định vị địa lý không được trình duyệt của bạn hỗ trợ."
+          );
+          document.body.style.overflow = "";
+        }
+      },
+      onCancel() {
+        message.error("Bạn đã từ chối quyền truy cập vị trí.");
+        document.body.style.overflow = "";
+      },
+    });
+  };
   return (
-    <div className="list-salon-container">
+    <main className="list-salon-container">
       <div className="left-side">
         <div className="list-salon-header">
           <div className="list-salon-search">
+            <div style={{ marginBottom: "10px" }}>
+              <Button
+                // icon={<EnvironmentOutlined />}
+                onClick={handleSearch}
+              >
+                <EnvironmentOutlined
+                  style={{ fontSize: "24px", marginRight: "8px" }}
+                />
+                Nhấn vào đây để tìm salon gần bạn
+              </Button>
+              <Modal
+                title="Nhập vị trí hiện tại của bạn"
+                visible={modalVisible}
+                onCancel={handleModalClose}
+                footer={[
+                  <Button key="close" onClick={handleModalClose}>
+                    Đóng
+                  </Button>,
+                ]}
+              >
+                <LoadScript
+                  googleMapsApiKey={`${
+                    import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
+                  }&loading=async`}
+                  libraries={libraries}
+                  onLoad={() => setIsApiLoaded(true)}
+                >
+                  {isApiLoaded && (
+                    <StandaloneSearchBox
+                      onLoad={(ref) => (searchBoxRef.current = ref)}
+                      onPlacesChanged={handlePlacesChanged}
+                    >
+                      <Input
+                        value={locationInput}
+                        placeholder="Nhập vị trí hiện tại của bạn"
+                        onChange={(e) => setLocationInput(e.target.value)}
+                        onKeyDown={handleKeyPress}
+                      />
+                    </StandaloneSearchBox>
+                  )}
+                </LoadScript>
+              </Modal>
+            </div>
             <Row gutter={[16, 16]}>
               <Col span={8}>
-                <Input
-                  placeholder="Tìm kiếm salon"
-                  prefix={<SearchOutlined />}
-                  onChange={handleSalonNameChange}
-                  onKeyDown={handleKeyPress}
-                  value={salonName}
-                />
+                <MotionDiv
+                  whileHover={{ scale: 1.05 }} // Tăng nhẹ kích thước khi hover
+                  whileTap={{ scale: 0.95 }} // Giảm nhẹ kích thước khi nhấn
+                  transition={{ duration: 0.3 }} // Thời gian chuyển đổi
+                >
+                  <Input
+                    placeholder="Tìm kiếm salon"
+                    prefix={<SearchOutlined />}
+                    onChange={handleSalonNameChange}
+                    onKeyDown={handleKeyPress}
+                    value={salonName}
+                  />
+                </MotionDiv>
               </Col>
               <Col style={{ backgroundColor: "#ECE8DE" }} span={16}>
                 <Popover
@@ -467,20 +613,27 @@ function ListSalonVer2(props) {
                   placement="bottom"
                   overlayClassName="popover-overlay"
                 >
+                  {/* <MotionDiv
+                    whileHover={{ scale: 1.05 }} // Tăng nhẹ kích thước khi hover
+                    whileTap={{ scale: 0.95 }} // Giảm nhẹ kích thước khi nhấn
+                    transition={{ duration: 0.3 }} // Thời gian chuyển đổi
+                  > */}
                   <Input
                     placeholder="Tìm kiếm dịch vụ"
                     prefix={<SearchOutlined />}
                     suffix={
                       servicesName && (
-                        <CloseCircleOutlined
-                          onClick={() => setServicesName("")}
-                        />
+                        // <CloseCircleOutlined
+                        //   onClick={() => setServicesName("")}
+                        // />
+                        <CloseCircleOutlined onClick={handleClick} />
                       )
                     }
                     value={servicesName}
-                    onChange={(e) => setServicesName(e.target.value)}
-                    onKeyDown={handleKeyPress}
+                    onChange={handleServiceNameChange}
+                    onKeyUp={handleKeyPress}
                   />
+                  {/* </MotionDiv> */}
                 </Popover>
                 <div className="list-salon-service">
                   <div
@@ -610,173 +763,143 @@ function ListSalonVer2(props) {
               </Col>
             </Row>
           </div>
-          {/* <div className="list-salon-service">
-            <div
-              onClick={() => handleServiceSelect("Cắt tóc")}
-              className="service-item"
-            >
-              Cắt tóc
-            </div>
-            <div
-              onClick={() => handleServiceSelect("Nhuộm tóc")}
-              className="service-item"
-            >
-              Nhuộm tóc
-            </div>
-            <div
-              onClick={() => handleServiceSelect("Uốn tóc")}
-              className="service-item"
-            >
-              Uốn tóc
-            </div>
-            <div
-              onClick={() => handleServiceSelect("Duỗi tóc")}
-              className="service-item"
-            >
-              Duỗi tóc
-            </div>
-            <div
-              onClick={() => handleServiceSelect("Gội đầu")}
-              className="service-item"
-            >
-              Gội đầu
-            </div>
-            <div
-              onClick={() => handleServiceSelect("Ráy tai")}
-              className="service-item"
-            >
-              Ráy tai
-            </div>
-            <div
-              onClick={() => handleServiceSelect("Cạo râu")}
-              className="service-item"
-            >
-              Cạo râu
-            </div>
-          </div> */}
         </div>
         <Spin spinning={loading}>
           <div className="list-salon-center">
             <div>
-              <p className="list-salon-result">Results ({total})</p>
+              <p className="list-salon-result">Kết quả: ({total})</p>
             </div>
-            {/* <div className="list-salon-scoll">
-            <Button
-              className="list-salon-arrow-button left"
-              icon={<LeftOutlined />}
-              onClick={() => handleScroll("left")}
-            />
-            <div className="list-salon-cards-scroll" ref={scrollContainerRef}>
-              {salonList.map((salon) => (
-                <div className="list-salon-card-scroll" key={salon.id}>
-                  <img src={salon.img} alt={salon.name} />
-                  <p style={{ fontWeight: "bold" }}>{salon.name}</p>
-                  <p>{salon.address}</p>
-                </div>
-              ))}
-            </div>
-            <Button
-              className="list-salon-arrow-button right"
-              icon={<RightOutlined />}
-              onClick={() => handleScroll("right")}
-            />
-          </div> */}
           </div>
-        </Spin>
-        <Divider />
-        <div className="list-salon-end">
-          <div className="list-salon-actbtn">
-            <div className="list-salon-filmap">
-              <Popover
-                content={filterOptions}
-                visible={filterVisible}
-                onVisibleChange={handleFilterClick}
-                trigger="click"
-                placement="bottom"
-                overlayClassName="popover-overlay"
-              >
-                <Button
-                  className="sort-button"
-                  icon={<SortAscendingOutlined />}
+          <Divider />
+          <div className="list-salon-end">
+            <div className="list-salon-actbtn">
+              <div className="list-salon-filmap">
+                <Popover
+                  content={filterOptions}
+                  visible={filterVisible}
+                  onVisibleChange={handleFilterClick}
+                  trigger="click"
+                  placement="bottom"
+                  overlayClassName="popover-overlay"
                 >
-                  Sắp xếp
-                </Button>
-              </Popover>
-              {/* <Button
+                  <Button
+                    className="sort-button"
+                    icon={<SortAscendingOutlined />}
+                  >
+                    Sắp xếp
+                  </Button>
+                </Popover>
+                {/* <Button
                 className="view-map-button"
                 icon={<EnvironmentOutlined />}
               >
                 View Map
               </Button> */}
-            </div>
-          </div>
-          <div className="list-salon-content">
-            {salonList.map((salon) => (
-              <div className="list-salon-item" key={salon.id}>
-                <div className="list-salon-image" style={{ width: "30%" }}>
-                  <img
-                    src={salon.img}
-                    alt={salon.name}
-                    style={{ width: "100%" }}
-                  />
-                </div>
-                <div
-                  className="list-salon-info"
-                  style={{ width: "70%", paddingLeft: "16px" }}
-                >
-                  <h3>{salon.name}</h3>
-                  <p style={{ fontSize: "1.5rem" }}>
-                    <strong>Mô tả:</strong> {salon.description}
-                  </p>
-                  <p style={{ fontSize: "1.5rem" }}>
-                    <strong>Địa chỉ:</strong> {salon.address}
-                  </p>
-                  <ul>
-                    {salon.services.map((service, index) => (
-                      <li key={index} className="service-list-item">
-                        <div className="service-details">
-                          <span className="service-name">
-                            {service.serviceName}:
-                          </span>
-                          <span className="service-description">
-                            {service.description} - {service.price} Vnđ
-                          </span>
-                        </div>
-                        <Button className="book-button">Book</Button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
               </div>
-            ))}
+            </div>
+            <div className="list-salon-content">
+              {salonList.length !== 0 ? (
+                salonList.map((salon) => (
+                  <div className="list-salon-item" key={salon.id}>
+                    <div className="list-salon-image" style={{ width: "30%" }}>
+                      <img
+                        src={salon.img}
+                        alt={salon.name}
+                        style={{ width: "100%" }}
+                      />
+                    </div>
+                    <div
+                      className="list-salon-info"
+                      style={{ width: "70%", paddingLeft: "16px" }}
+                    >
+                      {/* <h3>{salon.name}</h3> */}
+                      <p style={{ fontSize: "1.5rem" }}>{salon.name}</p>
+                      <p style={{ fontSize: "1rem" }}>
+                        <strong>Mô tả:</strong> {salon.description}
+                      </p>
+                      <p style={{ fontSize: "1rem" }}>
+                        <strong>Địa chỉ:</strong> {salon.address}
+                      </p>
+                      <ul>
+                        {salon.services.map((service, index) => (
+                          <li key={index} className="service-list-item">
+                            <div className="service-details">
+                              <span className="service-name">
+                                {service.serviceName}:
+                              </span>
+                              <span className="service-description">
+                                {service.description} - {service.price} Vnđ
+                              </span>
+                            </div>
+                            <Button
+                              onClick={() =>
+                                navigate(`/salon_detail/${salon?.id}`)
+                              }
+                              className="book-button"
+                            >
+                              Đặt lịch
+                            </Button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <>
+                  <Empty />
+                </>
+              )}
+            </div>
+            {salonList.length !== 0 && (
+              <Pagination
+                className="custom-pagination"
+                current={currentPage}
+                pageSize={pageSize}
+                total={totalPages}
+                onChange={(page) => setCurrentPage(page)}
+                style={{ textAlign: "center", marginTop: "20px" }}
+              />
+            )}
           </div>
-          {salonList.length !== 0 && (
-            <Pagination
-              className="custom-pagination"
-              current={currentPage}
-              pageSize={pageSize}
-              total={totalPages}
-              onChange={(page) => setCurrentPage(page)}
-              style={{ textAlign: "center", marginTop: "20px" }}
-            />
-          )}
-        </div>
+        </Spin>
       </div>
       <div className="right-side">
-        <div style={{ display: "flex", justifyContent: "flex-start" }}>
-          <Select
-            value={selectedProvince || "Tỉnh/Thành phố"}
-            style={{ width: 150, marginRight: "10px" }}
+        <div style={{ display: "flex", justifyContent: "space-around" }}>
+          {/* <Select
+            value={selectedProvince || undefined}
+            style={{ width: 250, marginRight: "10px" }}
             onChange={handleChange}
-            options={provinces}
-          />
-
-          <Select
-            value={selectedDistrict || "Quận/Huyện"}
-            style={{ width: 150 }}
-            onChange={handleChangeDistrict}
-            options={selectedProvince ? districts : <Empty />}
-          />
+            // options={provinces}
+            options={[{ value: null, label: "ĐẶT LẠI" }, ...provinces]}
+            placeholder="Tỉnh/Thành phố" // Set the placeholder text
+          /> */}
+          <MotionDiv
+            whileHover={{ scale: 1.05 }} // Tăng nhẹ kích thước khi hover
+            whileTap={{ scale: 0.95 }} // Giảm nhẹ kích thước khi nhấn
+            transition={{ duration: 0.3 }} // Thời gian chuyển đổi
+          >
+            <Select
+              value={selectedProvince || undefined}
+              onChange={handleChange}
+              options={[{ value: null, label: "ĐẶT LẠI" }, ...provinces]}
+              placeholder="Tỉnh/Thành phố"
+              className="select_1"
+            />
+          </MotionDiv>
+          <MotionDiv
+            whileHover={{ scale: 1.05 }} // Tăng nhẹ kích thước khi hover
+            whileTap={{ scale: 0.95 }} // Giảm nhẹ kích thước khi nhấn
+            transition={{ duration: 0.3 }} // Thời gian chuyển đổi
+          >
+            <Select
+              value={selectedDistrict || undefined}
+              onChange={handleChangeDistrict}
+              options={selectedProvince ? districts : <Empty />}
+              placeholder="Quận/Huyện" // Set the placeholder text
+              className="select_2"
+            />
+          </MotionDiv>
         </div>
         <div className="showMap">
           <LoadScriptMap
@@ -786,7 +909,7 @@ function ListSalonVer2(props) {
           />
         </div>
       </div>
-    </div>
+    </main>
   );
 }
 

@@ -1,9 +1,10 @@
-import { GoogleMap, LoadScript, MarkerF } from '@react-google-maps/api';
+import { GoogleMap, InfoWindow, InfoWindowF, LoadScript, MarkerF } from '@react-google-maps/api';
 import React, { useEffect, useState } from 'react';
 
 
 function LoadScriptMap({salonList, currentLocation, mapStyle}) {
     const [scriptLoaded, setScriptLoaded] = useState(false);
+    const [loadingError, setLoadingError] = useState(false);
     const [selectedSalon, setSelectedSalon] = useState(null);
 
     useEffect(() => {
@@ -18,24 +19,6 @@ function LoadScriptMap({salonList, currentLocation, mapStyle}) {
 
     const handleMarkerClick = (salon) => {
         setSelectedSalon(salon);
-        // const directionsService = new window.google.maps.DirectionsService();
-        // directionsService.route(
-        //   {
-        //     origin: defaultCenter, // Replace with the current location if available
-        //     destination: {
-        //       lat: parseFloat(salon.latitude),
-        //       lng: parseFloat(salon.longitude),
-        //     },
-        //     travelMode: window.google.maps.TravelMode.DRIVING,
-        //   },
-        //   (result, status) => {
-        //     if (status === window.google.maps.DirectionsStatus.OK) {
-        //       setDirections(result);
-        //     } else {
-        //       console.error(`error fetching directions ${result}`);
-        //     }
-        //   }
-        // );
       };
     return (
         <LoadScript
@@ -75,7 +58,7 @@ function LoadScriptMap({salonList, currentLocation, mapStyle}) {
                   );
                 })}
               {selectedSalon && (
-                <InfoWindow
+                <InfoWindowF
                   position={{
                     lat: parseFloat(selectedSalon.latitude),
                     lng: parseFloat(selectedSalon.longitude),
@@ -95,7 +78,7 @@ function LoadScriptMap({salonList, currentLocation, mapStyle}) {
                       Chỉ đường
                     </a>
                   </div>
-                </InfoWindow>
+                </InfoWindowF>
               )}
               {/* {directions && <DirectionsRenderer directions={directions} />} */}
             </GoogleMap>

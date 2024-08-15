@@ -22,22 +22,22 @@ export const SalonInformationServices = {
     serviceName,
     salonAddress,
     salonName,
+    latitude,
+    longtitude,
+    distance,
     page,
     size,
-    latitude,
-    longitude,
-    distance
   ) {
     return API.get("/saloninformations/GetSalonByServiceNameAddress", {
       params: {
         serviceName,
         salonAddress,
         salonName,
+        latitude,
+        longtitude,
+        distance,
         page,
         size,
-        latitude,
-        longitude,
-        distance,
       },
     });
   },

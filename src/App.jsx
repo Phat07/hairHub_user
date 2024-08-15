@@ -6,9 +6,7 @@ import "./App.css";
 import Header from "./components/Header";
 import HeaderUnAuth from "./components/HeaderUnAuth";
 import { actGetAllPaymentList } from "./store/config/action";
-import {
-  actGetAllServicesBySalonIdNoPaging
-} from "./store/salonEmployees/action";
+import { actGetAllServicesBySalonIdNoPaging } from "./store/salonEmployees/action";
 import {
   actGetAllSalonInformation,
   actGetAllSalonSuggestionInformation,
@@ -86,6 +84,8 @@ function App() {
         }
       }
     } catch (error) {
+      message?.info(error?.response?.data?.message, 1);
+      // navigate("/login");
       // message.error("Có lỗi xảy ra khi làm mới token");
     }
   };
@@ -134,7 +134,7 @@ function App() {
     <>
       {localStorage.getItem("refreshToken") ? <Header /> : <HeaderUnAuth />}
       {/* {localStorage.getItem("refreshToken") ? <HeaderUnAuth /> :<></>} */}
-      <ChatBox />
+      {/* <ChatBox /> */}
       {/* <ChatComponent /> */}
       {/* <Footer /> */}
       <Footer2 />
