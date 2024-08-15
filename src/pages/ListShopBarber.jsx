@@ -317,7 +317,7 @@ import {
   InputNumber,
   DatePicker,
 } from "antd";
-import "../css/listShopBarber.css";
+import styles from "../css/listShopBarber.module.css";
 import Header from "../components/Header";
 import { Link, useNavigate } from "react-router-dom";
 import AddServiceForm from "../components/SalonShop/ServiceForm";
@@ -613,8 +613,8 @@ function ListShopBarber(props) {
         <>
           <Link to={`account_details/${record.id}`}>
             <Button
-              type="primary"
-              style={{ marginRight: 8 }}
+              className="editButtonStyle"
+              onClick={() => {}}
               icon={<EditOutlined />}
             >
               Chỉnh sửa
@@ -957,17 +957,17 @@ function ListShopBarber(props) {
 
   return (
     <div>
-      <div className="container_list">
+      <div className={styles["container_list"]}>
         {!isEmptyObject(salonDetail) ? (
           <>
             <Card
               title="Thông tin Salon"
-              className="responsive-card"
+              className={styles["responsive-card"]}
               style={{ width: "100%", height: "100%", margin: "20px auto" }}
             >
               <Row
                 gutter={16}
-                className="responsive-row"
+                className={styles["responsive-row"]}
                 style={{ display: "flex" }}
               >
                 {/* <Col span={8} xs={24} className="responsive-col">
@@ -976,7 +976,7 @@ function ListShopBarber(props) {
                 <Col span={18} xs={24} className="responsive-col1">
                   <Descriptions
                     title={
-                      <div className="salon-title-container">
+                      <div className={styles["salon-title-container"]}>
                         {/* <Flex className="bg-blue-600 p-3 w-max border border-red-300 rounded-md cursor-pointer salon-title">
                           <Typography.Title
                             style={{ color: "rgb(241 245 249)" }}
@@ -1007,9 +1007,11 @@ function ListShopBarber(props) {
                         </div>
                         <div
                           style={{ padding: "1rem" }}
-                          className="salon-title-cover"
+                          className={styles["salon-title-cover"]}
                         >
-                          <div className="salon-title">{salonDetail.name}</div>
+                          <div className={styles["salon-title"]}>
+                            {salonDetail.name}
+                          </div>
                           <Button
                             type="primary"
                             onClick={() => {
@@ -1062,7 +1064,7 @@ function ListShopBarber(props) {
                       </div>
                     }
                     bordered
-                    className="responsive-descriptions"
+                    className={styles["responsive-descriptions"]}
                   >
                     <Descriptions.Item span={1} label="Địa chỉ">
                       {salonDetail.address}
@@ -1123,11 +1125,17 @@ function ListShopBarber(props) {
                               </Typography.Text>
                             ) : (
                               <Space size={10}>
-                                <Typography.Text strong className="small-text">
+                                <Typography.Text
+                                  strong
+                                  className={styles["small-text"]}
+                                >
                                   {schedule.startTime.slice(0, 5)} AM
                                 </Typography.Text>
                                 <LineOutlined />
-                                <Typography.Text strong className="small-text">
+                                <Typography.Text
+                                  strong
+                                  className={styles["small-text"]}
+                                >
                                   {schedule.endTime.slice(0, 5)} PM
                                 </Typography.Text>
                               </Space>
@@ -1142,9 +1150,9 @@ function ListShopBarber(props) {
                 <Col span={24}>
                   <Collapse defaultActiveKey={["1"]}>
                     <Panel header="Nhân viên" key="1">
-                      <div className="table-fillter">
+                      <div className={styles["table-fillter"]}>
                         <Button
-                          className="table-fillter-item"
+                          className={styles["table-fillter-item"]}
                           type="primary"
                           icon={<PlusOutlined />}
                           onClick={() => setOpenEmployee(true)}
@@ -1153,7 +1161,7 @@ function ListShopBarber(props) {
                         </Button>
                         <Dropdown
                           overlay={sortMenu}
-                          className="table-fillter-item"
+                          className={styles["table-fillter-item"]}
                         >
                           <Button>
                             Sắp xếp <DownOutlined />
@@ -1162,7 +1170,7 @@ function ListShopBarber(props) {
 
                         <Dropdown
                           overlay={filterMenu}
-                          className="table-fillter-item"
+                          className={styles["table-fillter-item"]}
                         >
                           <Button>
                             Lọc <DownOutlined />
@@ -1170,7 +1178,7 @@ function ListShopBarber(props) {
                         </Dropdown>
                         <Input
                           placeholder="Tìm kiếm nhân viên"
-                          className="table-fillter-item"
+                          className={styles["table-fillter-item"]}
                           style={{ maxWidth: "20rem" }}
                           suffix={
                             <SearchOutlined style={{ cursor: "pointer" }} />
@@ -1178,7 +1186,7 @@ function ListShopBarber(props) {
                           onPressEnter={() => {}} // Trigger search on Enter key press
                         />
                       </div>
-                      <div className="table-container">
+                      <div className={styles["table-container"]}>
                         <Table
                           dataSource={listEmployee}
                           columns={columnsEmployee}
@@ -1202,9 +1210,9 @@ function ListShopBarber(props) {
                 <Col span={24}>
                   <Collapse defaultActiveKey={["1"]}>
                     <Panel header="Dịch vụ" key="1">
-                      <div className="table-fillter">
+                      <div className={styles["table-fillter"]}>
                         <Button
-                          className="table-fillter-item"
+                          className={styles["table-fillter-item"]}
                           type="primary"
                           icon={<PlusOutlined />}
                           onClick={showAddServiceModal}
@@ -1213,7 +1221,7 @@ function ListShopBarber(props) {
                         </Button>
                         <Dropdown
                           overlay={sortMenu}
-                          className="table-fillter-item"
+                          className={styles["table-fillter-item"]}
                         >
                           <Button>
                             Sắp xếp <DownOutlined />
@@ -1222,7 +1230,7 @@ function ListShopBarber(props) {
 
                         <Dropdown
                           overlay={filterMenu}
-                          className="table-fillter-item"
+                          className={styles["table-fillter-item"]}
                         >
                           <Button>
                             Lọc <DownOutlined />
@@ -1230,7 +1238,7 @@ function ListShopBarber(props) {
                         </Dropdown>
                         <Input
                           placeholder="Tìm kiếm nhân viên"
-                          className="table-fillter-item"
+                          className={styles["table-fillter-item"]}
                           style={{ maxWidth: "20rem" }}
                           suffix={
                             <SearchOutlined style={{ cursor: "pointer" }} />
@@ -1238,7 +1246,7 @@ function ListShopBarber(props) {
                           onPressEnter={() => {}} // Trigger search on Enter key press
                         />
                       </div>
-                      <div className="table-container">
+                      <div className={styles["table-container"]}>
                         <Table
                           dataSource={listTotalService}
                           columns={columnsService}
@@ -1262,9 +1270,9 @@ function ListShopBarber(props) {
                 <Col span={24}>
                   <Collapse defaultActiveKey={["1"]}>
                     <Panel header="Voucher" key="1">
-                      <div className="table-fillter">
+                      <div className={styles["table-fillter"]}>
                         <Button
-                          className="table-fillter-item"
+                          className={styles["table-fillter-item"]}
                           type="primary"
                           icon={<PlusOutlined />}
                           onClick={showModalVoucher}
@@ -1273,7 +1281,7 @@ function ListShopBarber(props) {
                         </Button>
                         <Dropdown
                           overlay={sortMenu}
-                          className="table-fillter-item"
+                          className={styles["table-fillter-item"]}
                         >
                           <Button>
                             Sắp xếp <DownOutlined />
@@ -1282,7 +1290,7 @@ function ListShopBarber(props) {
 
                         <Dropdown
                           overlay={filterMenu}
-                          className="table-fillter-item"
+                          className={styles["table-fillter-item"]}
                         >
                           <Button>
                             Lọc <DownOutlined />
@@ -1290,7 +1298,7 @@ function ListShopBarber(props) {
                         </Dropdown>
                         <Input
                           placeholder="Tìm kiếm nhân viên"
-                          className="table-fillter-item"
+                          className={styles["table-fillter-item"]}
                           style={{ maxWidth: "20rem" }}
                           suffix={
                             <SearchOutlined style={{ cursor: "pointer" }} />
@@ -1298,7 +1306,7 @@ function ListShopBarber(props) {
                           onPressEnter={() => {}} // Trigger search on Enter key press
                         />
                       </div>
-                      <div className="table-container">
+                      <div className={styles["table-container"]}>
                         <Table
                           dataSource={voucherList}
                           columns={columnsVoucher}

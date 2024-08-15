@@ -6,9 +6,7 @@ import "./App.css";
 import Header from "./components/Header";
 import HeaderUnAuth from "./components/HeaderUnAuth";
 import { actGetAllPaymentList } from "./store/config/action";
-import {
-  actGetAllServicesBySalonIdNoPaging
-} from "./store/salonEmployees/action";
+import { actGetAllServicesBySalonIdNoPaging } from "./store/salonEmployees/action";
 import {
   actGetAllSalonInformation,
   actGetAllSalonSuggestionInformation,
@@ -132,11 +130,13 @@ function App() {
 
   return (
     <>
-      {localStorage.getItem("refreshToken") ? <Header /> : <HeaderUnAuth />}
-      {/* {localStorage.getItem("refreshToken") ? <HeaderUnAuth /> :<></>} */}
-      <ChatBox />
-      {/* <ChatComponent /> */}
-      {/* <Footer /> */}
+      <div className="super-container">
+        {localStorage.getItem("refreshToken") ? <Header /> : <HeaderUnAuth />}
+        {/* {localStorage.getItem("refreshToken") ? <HeaderUnAuth /> :<></>} */}
+        <ChatBox />
+        {/* <ChatComponent /> */}
+        {/* <Footer /> */}
+      </div>
       <Footer2 />
     </>
   );

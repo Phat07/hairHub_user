@@ -48,6 +48,7 @@ import SucessPayment from "./pages/SucessPayment.jsx";
 import SystemBarberPage from "./pages/SystemBarberPage.jsx";
 import RequireAuth from "./PrivateRoute.js";
 import store from "./store";
+import Footer2 from "./components/Footer2.jsx";
 
 const router = createBrowserRouter([
   {
