@@ -5,18 +5,19 @@
   }
 
   .about-us-content h1 {
-font-weight: bold;
-font-size: 4rem;
-color: #1b1b1b;
-align-items: center;
-display: flex;
-justify-content: center;
+    font-weight: bold;
+    font-size: 3rem;
+    color: #1b1b1b;
+    align-items: center;
+    display: flex;
+    justify-content: center;
   }
   
   .about-us-content h2 {
     color: #bf9456;
+    font-weight: bold;
     margin-bottom: 15px;
-    font-size: 2.2em;
+    font-size: 2em;
     border-bottom: 2px solid #f1f1f1;
     padding-bottom: 5px;
   }
@@ -28,7 +29,7 @@ justify-content: center;
   .introduction-section p, .vision-section p, .mission-section li {
     margin-bottom: 15px;
     color: #555;
-    font-size: 1.5rem;
+    font-size: 1rem;
   }
   
   .mission-section ul {
@@ -62,12 +63,12 @@ justify-content: center;
 
   @media (max-width: 768px) {
     .about-us-content .ant-row {
-      flex-direction: column; /* Chuyển các phần tử thành dạng dọc */
+      flex-direction: column; 
     }
   
     .about-us-content .ant-col {
-      width: 100%; /* Chiếm toàn bộ chiều rộng */
-      max-width: 100%; /* Đảm bảo không bị giới hạn chiều rộng */
+      width: 100%; 
+      max-width: 100%; 
     }
   
     .policy-card-col {

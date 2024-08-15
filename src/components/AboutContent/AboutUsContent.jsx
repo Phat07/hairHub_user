@@ -125,7 +125,6 @@ function AboutUsContent() {
                   // maxHeight: "35rem",
                   objectFit: "cover",
                   borderRadius: "2rem",
-                  paddingTop: "1rem",
                 }}
               />
             </div>
@@ -197,7 +196,6 @@ function AboutUsContent() {
                   // maxHeight: "35rem",
                   objectFit: "cover",
                   borderRadius: "2rem",
-                  paddingTop: "1rem",
                 }}
               />
             </div>

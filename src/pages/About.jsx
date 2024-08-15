@@ -34,14 +34,6 @@ function AboutPage() {
     setSelectedKey(e.key);
   };
 
-  const menu = (
-    <Menu onClick={handleMenuClick} selectedKeys={[selectedKey]}>
-      <Menu.Item key="aboutUs">Giới thiệu về chúng tôi</Menu.Item>
-      <Menu.Item key="privacyPolicy">Chính sách bảo mật</Menu.Item>
-      <Menu.Item key="termsOfService">Term of service</Menu.Item>
-      <Menu.Item key="faqs">FAQs</Menu.Item>
-    </Menu>
-  );
   return (
     <div className="policy-container">
       {/* {window.innerWidth > 768 ? ( */}

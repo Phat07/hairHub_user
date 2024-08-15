@@ -1,12 +1,10 @@
-.footer-container {
-  /* background: #0052cc; */
+/* .footer-container {
   background: #4d4d4d;
   color: white;
-  padding: 20px 10px; /* Giảm padding */
+  padding: 20px 10px; 
   position: relative;
   overflow: hidden;
-  /* margin-top: 10rem; */
-}
+} */
 
 .footer-content {
   max-width: 1000px;
@@ -14,26 +12,24 @@
 }
 
 .contact-info p {
-  margin: 5px 0; /* Giảm khoảng cách giữa các đoạn văn */
+  margin: 5px 0; 
 }
 
 .form-send {
-  margin-top: 1rem; /* Giảm khoảng cách trên của form */
+  margin-top: 1rem; 
 }
 
 h2 {
-  /* color: white; */
   border-bottom: 2px solid white;
   display: inline-block;
-  margin-bottom: 10px; /* Giảm khoảng cách dưới của h2 */
-  font-size: 1.2rem; /* Giảm kích thước chữ của h2 */
+  margin-bottom: 10px; 
+  font-size: 1.2rem; 
 }
 
 p,
 .contact-info p,
 .footer-content p {
-  font-size: 1.2rem; /* Giảm kích thước chữ */
-  /* color: rgba(255, 255, 255, 0.8); */
+  font-size: 1.2rem; 
 }
 
 .social-links {
@@ -42,7 +38,7 @@ p,
 }
 
 .social-links a {
-  margin: 0 10px; /* Giảm khoảng cách giữa các icon */
+  margin: 0 10px; 
   transition: transform 0.3s;
 }
 
@@ -51,7 +47,7 @@ p,
 }
 
 .social-icon {
-  font-size: 4rem; /* Giảm kích thước biểu tượng icon */
+  font-size: 4rem; 
   color: #fff;
 }
 
@@ -61,17 +57,16 @@ p,
   bottom: 0;
   left: 0;
   right: 0;
-  height: 50px; /* Giảm chiều cao của sóng */
-  margin-bottom: -5px; /* Điều chỉnh để không có khoảng trắng dưới sóng */
+  height: 50px; 
+  margin-bottom: -5px; 
 }
 
 .wave {
   position: absolute;
   bottom: 0;
   width: 100%;
-  height: 50px; /* Giảm chiều cao của sóng */
+  height: 50px; 
   background: url("../assets//images/wave.png") repeat-x;
-  /* background: #bf9456; */
   background-size: cover;
 }
 

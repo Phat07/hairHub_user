@@ -26,9 +26,9 @@ import img5 from "../assets/images/serviceImg2/5.png";
 import img6 from "../assets/images/serviceImg2/6.png";
 import img7 from "../assets/images/serviceImg2/7.png";
 import img8 from "../assets/images/serviceImg2/8.png";
-import "../css/flaticon.min.css";
+// import "../css/flaticon.min.css";
 import "../css/homePage.css";
-import "../css/ListSalon.css";
+// import "../css/ListSalon.css";
 // import "../css/style.css";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -137,131 +137,82 @@ function HomePage(props) {
       .scrollBy({ left: 300, behavior: "smooth" });
   };
 
+  const scrollLeft1 = () => {
+    const container = scrollContainerRef.current;
+    container.scrollBy({ left: -250, behavior: "smooth" });
+  };
+
+  const scrollRight1 = () => {
+    const container = scrollContainerRef.current;
+    container.scrollBy({ left: 250, behavior: "smooth" });
+  };
+
   return (
-    <div>
-      <main>
+    <div style={{ marginTop: "95px" }}>
+      <section
+        className="section hero has-before has-bg-image"
+        id="home"
+        aria-label="home"
+        style={{
+          backgroundImage: `url(${heroBanner})`,
+          paddingBlock: "10rem",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <motion.div
+          variants={{
+            hidden: { y: "-100vh", opacity: 0 },
+            visible: {
+              y: "-1px",
+              opacity: 1,
+              transition: {
+                delay: 0.5,
+                type: "spring",
+                stiffness: 30,
+              },
+            },
+          }}
+          initial="hidden"
+          animate="visible"
+          className="container title-container"
+        >
+          <Text className="titleHomePage">
+            HỆ THỐNG ĐẶT LỊCH SALON, BARBER SHOP
+          </Text>
+          <Link to={"/list_salon"}>
+            <Text className="btn has-before text-white hover:text-white-600">
+              Đặt lịch ngay
+            </Text>
+          </Link>
+        </motion.div>
+      </section>
+      <main className="homepage-container">
         <article>
           {/* HERO */}
-          <section
-            className="section hero has-before has-bg-image"
-            id="home"
-            aria-label="home"
-            style={{
-              backgroundImage: `url(${heroBanner})`,
-              // backgroundClip: `url(${videoAboutUs})`,
-            }}
-          >
-            {/* <Button onClick={() => navigate("/list_barber_employees")}>
-              List Barber Employees
-            </Button> */}
-            <motion.div
-              variants={{
-                hidden: { y: "-100vh", opacity: 0 },
-                visible: {
-                  y: "-1px",
-                  opacity: 1,
-                  transition: {
-                    delay: 0.5,
-                    type: "spring",
-                    stiffness: 30,
-                  },
-                },
-              }}
-              initial="hidden"
-              animate="visible"
-              className="container title-container"
-            >
-              {/* <Title
-                className="hero-title"
-                style={{ fontSize: "10rem", margin: "0" }}
-              >
-                HỆ THỐNG ĐẶT LỊCH SALON, BARBER SHOP
-              </Title> */}
-              {/* <Title
-                className="hero-title"
-                style={{ fontSize: "6.5rem", margin: "0", fontWeight: "bold" }}
-              >
-                Salon - Barber Shop
-              </Title> */}
-              {/* <Text className="hero-text text-4xl">
-                Trải nghiệm những dịch vụ tuyệt vời nhất từ những salon, barber
-                shop tốt nhất trên thị trường Việt Nam
-              </Text> */}
-              {/* <Link to={"/list_salon"}>
-                <Text className="btn has-before text-white hover:text-white-600">
-                  Khám phá những dịch vụ nổi bật
-                </Text>
-              </Link> */}
-              <Text className="titleHomePage">
-                HỆ THỐNG ĐẶT LỊCH SALON, BARBER SHOP
-              </Text>
-              <Link to={"/list_salon"}>
-                <Text className="btn has-before text-white hover:text-white-600">
-                  Đặt lịch ngay
-                </Text>
-              </Link>
-            </motion.div>
-            {/* <video
-              src={videoAboutUs} // Đường dẫn đến video
-              autoPlay
-              loop
-              muted
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%",
-                objectFit: "cover", // Đảm bảo video bao phủ toàn bộ phần tử
-                zIndex: -1, // Đưa video ra sau nội dung khác
-              }}
-            /> */}
-          </section>
           <Flex className="mt-32" align="center" gap={24}>
-            {/* <button
-              className="arrow-button ml-[20rem] text-gray-800"
-              onClick={() => handleScroll("left")}
-            >
-              <LeftOutlined />
-            </button> */}
             <div className="container">
-              <div className="scroll-wrapper" ref={scrollContainerRef}>
-                <Title level={3} className="customTitle">
-                  Barber Shop - Salon gợi ý
-                </Title>
-                <div className="scroll-icons">
-                  <LeftCircleOutlined
-                    className="scroll-icon"
-                    onClick={() => {
-                      const container = scrollContainerRef.current;
-                      container.scrollBy({ left: -250, behavior: "smooth" });
-                    }}
-                  />
-                  <RightCircleOutlined
-                    className="scroll-icon"
-                    onClick={() => {
-                      const container = scrollContainerRef.current;
-                      container.scrollBy({ left: 250, behavior: "smooth" });
-                    }}
-                  />
-                </div>
-                <div className="scroll-content mt-12">
+              <div className="scroll-wrapper">
+                <div className="customTitle">Barber Shop - Salon gợi ý</div>
+
+                <LeftCircleOutlined
+                  className="scroll-icon scroll-icon-left"
+                  onClick={scrollLeft1}
+                />
+
+                <div className="scroll-content" ref={scrollContainerRef}>
                   {recommendedSalons?.length > 0 ? (
                     recommendedSalons?.map((item, index) => (
                       <Card
                         hoverable
-                        style={{
-                          width: "25rem",
-                          position: "relative",
-                          backgroundColor: "#ece8de",
-                        }} // Add position: relative to parent
                         key={item.id}
-                        className="small-card"
+                        className="small-card-salon"
                         cover={
                           <img
                             style={{
-                              objectFit: "cover", //display image in card
-                              height: "15rem",
+                              objectFit: "cover",
+                              height: "11rem",
                               width: "100%",
                               cursor: "default",
                             }}
@@ -289,28 +240,22 @@ function HomePage(props) {
                         <Card.Meta
                           onClick={() => navigate(`/salon_detail/${item.id}`)}
                           title={
-                            <>
-                              <Title
-                                level={4}
-                                style={{
-                                  fontSize: "1.5rem",
-                                  whiteSpace: "nowrap",
-                                  overflow: "hidden",
-                                  textOverflow: "ellipsis",
-                                  maxWidth: "23rem",
-                                }}
-                              >
-                                {item.name}
-                              </Title>
-                            </>
+                            <Title
+                              level={4}
+                              style={{
+                                fontSize: "1.2rem",
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                maxWidth: "23rem",
+                              }}
+                            >
+                              {item.name}
+                            </Title>
                           }
                           description={
                             <div className="h-[7rem]">
-                              <Text
-                                style={{
-                                  fontSize: "1.2rem",
-                                }}
-                              >
+                              <Text style={{ fontSize: "1rem" }}>
                                 <EnvironmentOutlined /> {item.address}
                               </Text>
                             </div>
@@ -334,14 +279,125 @@ function HomePage(props) {
                               display: "flex",
                               flexDirection: "column",
                               alignItems: "center",
-                              fontSize: "1rem",
+                              fontSize: "0.8rem",
                             }}
                           >
                             {item.totalReviewer > 0 ? (
-                              <>
+                              <div
+                                style={{
+                                  fontSize: "0.8rem",
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  alignItems: "center",
+                                  textAlign: "center",
+                                }}
+                              >
                                 <div>{item.totalRating}/5</div>
                                 <div>{item.totalReviewer} đánh giá</div>
-                              </>
+                              </div>
+                            ) : (
+                              <div>Không có đánh giá</div>
+                            )}
+                          </div>
+                        </div>
+                      </Card>
+                    ))
+                  ) : (
+                    <EmptyComponent description={"Hiện không có salon nào!"} />
+                  )}
+                  {recommendedSalons?.length > 0 ? (
+                    recommendedSalons?.map((item, index) => (
+                      <Card
+                        hoverable
+                        key={item.id}
+                        className="small-card-salon"
+                        cover={
+                          <img
+                            style={{
+                              objectFit: "cover",
+                              height: "11rem",
+                              width: "100%",
+                              cursor: "default",
+                            }}
+                            alt={item.name}
+                            src={item.img}
+                          />
+                        }
+                        actions={
+                          heartButton[index]
+                            ? [
+                                <HeartFilled
+                                  onClick={() => handleHeartButton(item, index)}
+                                  style={{ color: "red" }}
+                                  key="heart"
+                                />,
+                              ]
+                            : [
+                                <HeartOutlined
+                                  onClick={() => handleHeartButton(item, index)}
+                                  key="heart"
+                                />,
+                              ]
+                        }
+                      >
+                        <Card.Meta
+                          onClick={() => navigate(`/salon_detail/${item.id}`)}
+                          title={
+                            <Title
+                              level={4}
+                              style={{
+                                fontSize: "1.2rem",
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                maxWidth: "23rem",
+                              }}
+                            >
+                              {item.name}
+                            </Title>
+                          }
+                          description={
+                            <div className="h-[7rem]">
+                              <Text style={{ fontSize: "1rem" }}>
+                                <EnvironmentOutlined /> {item.address}
+                              </Text>
+                            </div>
+                          }
+                        />
+                        <div
+                          style={{
+                            position: "absolute",
+                            top: 0,
+                            right: 0,
+                            display: "flex",
+                            flexDirection: "column",
+                          }}
+                        >
+                          <div
+                            style={{
+                              backgroundColor: "rgba(191, 148, 86, 0.8)",
+                              color: "white",
+                              padding: "1rem",
+                              borderRadius: "0 8px 0 8px",
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                              fontSize: "0.8rem",
+                            }}
+                          >
+                            {item.totalReviewer > 0 ? (
+                              <div
+                                style={{
+                                  fontSize: "0.8rem",
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  alignItems: "center",
+                                  textAlign: "center",
+                                }}
+                              >
+                                <div>{item.totalRating}/5</div>
+                                <div>{item.totalReviewer} đánh giá</div>
+                              </div>
                             ) : (
                               <div>Không có đánh giá</div>
                             )}
@@ -353,33 +409,18 @@ function HomePage(props) {
                     <EmptyComponent description={"Hiện không có salon nào!"} />
                   )}
                 </div>
+
+                <RightCircleOutlined
+                  className="scroll-icon scroll-icon-right"
+                  onClick={scrollRight1}
+                />
               </div>
             </div>
-            {/* <button
-              className="arrow-button mr-[20rem] text-gray-800"
-              onClick={() => handleScroll("right")}
-            >
-              <RightOutlined />
-            </button> */}
           </Flex>
-          {/* <section
-            className="section service mt-32"
-            id="services"
-            aria-label="services"
-            // style={{ marginBottom: "100px" }}
-          > */}
           <div className="container">
-            <Title
-              level={3}
-              className="customTitle"
-              style={{ color: "#bf9456" }}
-            >
+            <div className="customTitle mt-16" style={{ color: "#bf9456" }}>
               Dịch vụ nổi bật
-            </Title>
-            {/* <Text className="section-text text-center text-4xl">
-                Dưới đây là 1 số dịch vụ có thể bao gồm trong những Barber Shop,
-                những cũng có thể có thêm vài dịch vụ bổ sung từ các tiệm
-              </Text> */}
+            </div>
             <div className="container-service-list">
               <ArrowLeftOutlined
                 className="scroll-icon2 left-icon"
@@ -641,20 +682,12 @@ function HomePage(props) {
           </div>
           {/* </section> */}
 
-          <Title
-            level={3}
-            className="customTitle1"
-            style={{ color: "#bf9456" }}
-          >
+          <div className="customTitle1" style={{ color: "#bf9456" }}>
             ĐẶT LỊCH MỌI LÚC
-          </Title>
-          <Title
-            level={3}
-            className="customTitle"
-            style={{ marginBlock: "5px" }}
-          >
+          </div>
+          <div className="customTitle" style={{ marginBlock: "5px" }}>
             PHỤC VỤ MỌI NƠI
-          </Title>
+          </div>
           <div className="container">
             <Row className="location-container">
               <Col xs={24} md={12} className="location-card-container">
@@ -697,7 +730,7 @@ function HomePage(props) {
                   <Title level={3}>HAIRHUB ANDROID APP</Title>
                   <Text
                     style={{
-                      // fontSize: "2.5rem",
+                      fontSize: "1.2rem",
                       fontWeight: "bold",
                       marginBottom: "1rem",
                       display: "block",
@@ -708,7 +741,7 @@ function HomePage(props) {
                   </Text>
                   <Text
                     style={{
-                      fontSize: "1.7rem",
+                      fontSize: "1rem",
                       marginBottom: "0.5rem",
                       display: "block",
                       padding: "5px",
@@ -718,7 +751,7 @@ function HomePage(props) {
                   </Text>
                   <Text
                     style={{
-                      fontSize: "1.7rem",
+                      fontSize: "1rem",
                       marginBottom: "1rem",
                       display: "block",
                       padding: "5px",
@@ -739,8 +772,8 @@ function HomePage(props) {
                       style={{
                         width: "100%",
                         height: "auto",
-                        maxWidth: "40rem",
-                        maxHeight: "40rem",
+                        maxWidth: "30rem",
+                        maxHeight: "30rem",
                         objectFit: "contain",
                         borderRadius: "0 2px 2px 0",
                       }}
@@ -759,11 +792,11 @@ function HomePage(props) {
                   }}
                 >
                   <div className="location-card-col">
-                    <div style={{ padding: "1rem" }}>
+                    <div>
                       <Title level={3}>BẬT CHỨC NĂNG VỊ TRÍ</Title>
                       <Text
                         style={{
-                          // fontSize: "2.5rem",
+                          fontSize: "1.2rem",
                           fontWeight: "bold",
                           marginBottom: "1rem",
                           display: "block",
@@ -815,8 +848,8 @@ function HomePage(props) {
                       style={{
                         width: "100%",
                         height: "100%",
-                        maxWidth: "40rem",
-                        maxHeight: "50rem",
+                        maxWidth: "30rem",
+                        maxHeight: "30rem",
                         objectFit: "cover",
                         borderRadius: "0 2px 2px 0",
                       }}
@@ -826,160 +859,6 @@ function HomePage(props) {
               </Col>
             </Row>
           </div>
-          {/* <div className="container" style={{ marginBlock: "10rem" }}>
-            <Card bodyStyle={{ padding: 0 }} className="location-card">
-              <Row>
-                <Col xs={24} md={16} className="location-card-col">
-                  <div style={{ padding: "1rem" }}>
-                    <Title level={3} style={{ color: "white" }}>
-                      Bật chức năng vị trí
-                    </Title>
-                    <Text style={{ color: "white" }}>
-                      Để tìm kiếm cửa hàng gần bạn
-                    </Text>
-                    <div
-                      // style={{
-                      //   marginTop: "1rem",
-                      //   display: "flex",
-                      //   alignItems: "center",
-                      //   justifyContent: "center",
-                      // }}
-                      className="location-card-buton"
-                    >
-                      <Button
-                        // onClick={() => navigate("/search-near-you")}
-                        style={{
-                          borderWidth: "0",
-                        }}
-                        className="location-buton1"
-                      >
-                        Tìm kiếm gần bạn
-                      </Button>
-                      <Button
-                        style={{
-                          borderWidth: "0",
-                        }}
-                        className="location-buton2"
-                      >
-                        Không phải bây giờ
-                      </Button>
-                    </div>
-                  </div>
-                </Col>
-                <Col xs={24} md={8}>
-                  <img
-                    src={locationPhone}
-                    alt="locationPhone Banner"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      maxWidth: "30rem",
-                      maxHeight: "30rem",
-                      objectFit: "cover",
-                      borderRadius: "0 2px 2px 0",
-                    }}
-                  />
-                </Col>
-              </Row>
-            </Card>
-          </div>
-          <div
-            className="container"
-            style={{ maxWidth: "80rem", margin: "auto" }}
-          >
-            <Card
-              className="banner-card"
-              style={{ textAlign: "center", padding: "2rem" }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginBottom: "1rem",
-                }}
-              >
-                <Avatar
-                  size={50}
-                  shape="square"
-                  src={logo}
-                  style={{
-                    border: "2px solid #bf9456",
-                  }}
-                />
-                <Text
-                  style={{
-                    marginLeft: "1rem",
-                    fontSize: "1.5rem",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  Hairhub Mobile Android App
-                </Text>
-              </div>
-              <Text
-                style={{
-                  fontSize: "2.5rem",
-                  fontWeight: "bold",
-                  marginBottom: "1rem",
-                  display: "block",
-                }}
-              >
-                Tìm kiếm, đặt lịch tiện lợi hơn với ứng dụng di động
-              </Text>
-              <Text
-                style={{
-                  fontSize: "2rem",
-                  fontWeight: "bold",
-                  marginBottom: "1rem",
-                  display: "block",
-                }}
-              >
-                Sử dụng ứng dụng di động Hairhub để nhận được nhiều tính năng
-                thú vị và ưu đãi hấp dẫn:
-              </Text>
-              <Text
-                style={{
-                  fontSize: "1.7rem",
-                  marginBottom: "0.5rem",
-                  display: "block",
-                }}
-              >
-                Nhận được nhiều voucher giảm giá từ salon, hệ thống
-              </Text>
-              <Text
-                style={{
-                  fontSize: "1.7rem",
-                  marginBottom: "1rem",
-                  display: "block",
-                }}
-              >
-                Các tính năng nâng cấp như lưu giữ kiểu tóc người dùng
-              </Text>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center", // Căn giữa ảnh theo chiều ngang
-                  marginTop: "1rem",
-                }}
-              >
-                <img
-                  src={bannerHomepage1}
-                  alt="bannerHomepage1"
-                  style={{
-                    width: "100%",
-                    height: "auto",
-                    maxWidth: "40rem",
-                    maxHeight: "40rem",
-                    objectFit: "contain",
-                    borderRadius: "0 2px 2px 0",
-                  }}
-                />
-              </div>
-            </Card>
-          </div> */}
           <div className="container">
             <Card bodyStyle={{ padding: 0 }} className="card-homepage">
               <Row>
@@ -1026,7 +905,7 @@ function HomePage(props) {
 
           <div className="container">
             <Card bodyStyle={{ padding: 0 }} className="card-homepage">
-              <Row>
+              <Row gutter={[16, 16]} align="middle">
                 <Col xs={24} md={10}>
                   <div style={{ position: "relative", paddingTop: "80%" }}>
                     <video
