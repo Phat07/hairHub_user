@@ -274,7 +274,7 @@
 }
 
 .custom-pagination .ant-pagination-item:hover {
-  border-color: #bc8d4a; /* Màu viền khi hover */
+  border-color: #181717; /* Màu viền khi hover */
 }
 
 .custom-pagination .ant-pagination-item-link {
@@ -285,7 +285,7 @@
 }
 
 .custom-pagination .ant-pagination-item-link:hover {
-  border-color: #bc8d4a; /* Màu viền khi hover */
+  border-color: #0d0d0c; /* Màu viền khi hover */
 }
 
 .custom-pagination .ant-pagination-item-link svg {

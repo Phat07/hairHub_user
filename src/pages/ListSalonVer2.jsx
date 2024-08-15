@@ -192,7 +192,7 @@ function ListSalonVer2(props) {
       // setWards([]);
     }
   }, [selectedProvince]);
- 
+
   const handleChange = (value) => {
     // setLoading(true);
     const province = vietnamProvinces.find(
@@ -202,7 +202,7 @@ function ListSalonVer2(props) {
     if (province) {
       setCurrentLocation({ lat: province.lat, lng: province.lng });
     } else {
-      setCurrentLocation(defaultCenter); // Nếu không tìm thấy, sử dụng mặc định
+      setCurrentLocation(defaultCenter); 
     }
 
     setSelectedProvince(value);
@@ -699,7 +699,7 @@ function ListSalonVer2(props) {
                   className="sort-button"
                   icon={<SortAscendingOutlined />}
                 >
-                  Sort By
+                  Sắp xếp
                 </Button>
               </Popover>
               {/* <Button
@@ -750,14 +750,16 @@ function ListSalonVer2(props) {
               </div>
             ))}
           </div>
-          <Pagination
-            className="custom-pagination"
-            current={currentPage}
-            pageSize={pageSize}
-            total={totalPages}
-            onChange={(page) => setCurrentPage(page)}
-            style={{ textAlign: "center", marginTop: "20px" }}
-          />
+          {salonList.length !== 0 && (
+            <Pagination
+              className="custom-pagination"
+              current={currentPage}
+              pageSize={pageSize}
+              total={totalPages}
+              onChange={(page) => setCurrentPage(page)}
+              style={{ textAlign: "center", marginTop: "20px" }}
+            />
+          )}
         </div>
       </div>
       <div className="right-side">

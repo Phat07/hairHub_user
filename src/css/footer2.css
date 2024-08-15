@@ -3,6 +3,8 @@
     background-color: black;
     padding: 20px 100px;
     color: white;
+    position: relative;
+    overflow: hidden;
   }
   
   /* navbar-footer-container */

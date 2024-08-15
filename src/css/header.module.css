@@ -1,86 +1,129 @@
-.header-container {
-    position: relative;
-    z-index: 9999;
-  }
-  
+.headerContainer {
+  margin-bottom: 6rem;
+}
+
+.header {
+  background-color: #454545;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  width: 4rem;
+  border-radius: 50%;
+  margin-right: 1rem;
+}
+
+.navbar {
+  flex-grow: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.navList {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navItem {
+  margin: 0 1rem;
+}
+
+.navItemRepo {
+  display: none;
+}
+
+.navLink {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 1.5rem;
+  transition: color 0.3s;
+}
+
+.navLink:hover,
+.navLink:focus {
+  color: #bf9456;
+  text-decoration: none;
+}
+
+.loginLink {
+  margin-left: 1rem;
+}
+
+.loginLink span {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  color: #ffffff;
+  font-size: 1.2rem;
+  background-color: #bf9456; /* Màu nền của nút */
+  border-radius: 5px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.loginLink span:hover {
+  background-color: #f4f2eb;
+  color: #333333;
+}
+
+.avatarLink {
+  height: 4rem;
+  width: 4rem;
+  background-color: #bf9456;
+}
+
+.menuToggle {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 2rem;
+  cursor: pointer;
+  display: none;
+}
+
+@media (max-width: 768px) {
   .header {
-    width: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1000;
+    padding: 1rem;
   }
-  
-  .header-top {
-    /* background-color: #333; */
-    color: white;
-    padding: 10px 0;
-    text-align: center;
-  }
-  
-  .top-bar {
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  .header-bottom {
-    background-color: rgba(0, 0, 0, 0.8);
-    transition: background-color 0.3s, height 0.3s;
-    z-index: 999;
-  }
-  
-  .header-bottom-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 150px;
-  }
-  
-  .header-bottom.shrink {
-    background-color: black;
-    height: 80px;
-  }
-  
-  .navbar-list {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  
-  .navbar-item {
-    margin: 0 15px;
-  }
-  
-  .navbar-link {
-    color: white;
-    font-size: 1.2rem;
-    text-decoration: none;
-  }
-  
-  .logo-container {
+
+  .navList {
+    flex-direction: column;
+    background-color: #454545;
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    padding: 0 1rem;
   }
-  
-  .logo-header-img {
-    width: 60px;
-    height: auto;
+
+  .navItem {
+    display: none;
   }
-  
-  .logo-header-title-1 {
-    font-size: 1.5rem;
-    color: white;
+
+  .navItemRepo {
+    display: block;
   }
-  
-  .logo-header-title-2 {
-    font-size: 1rem;
-    color: white;
+
+  .menuToggle {
+    display: block;
   }
+
+  .loginLink {
+    display: none;
+  }
+}

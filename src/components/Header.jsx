@@ -1,21 +1,13 @@
 import React, { useEffect, useState } from "react";
 import "../css/flaticon.min.css";
 import { DownOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons";
-import {
-  Avatar,
-  Button,
-  Dropdown,
-  Menu,
-  message
-} from "antd";
+import { Avatar, Button, Dropdown, Menu, message } from "antd";
 import { IoMenu } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import hairHubLogo from "../assets/images/hairHubLogo.png";
-import "../css/header.css";
-import {
-  actGetSalonInformationByOwnerIdByCheck
-} from "../store/salonInformation/action";
+import style from "../css/header.module.css";
+import { actGetSalonInformationByOwnerIdByCheck } from "../store/salonInformation/action";
 
 function Header(props) {
   const navigate = useNavigate();
@@ -31,7 +23,7 @@ function Header(props) {
   const salonServicesList = useSelector(
     (state) => state.SALONEMPLOYEES.salonServicesList
   );
-  
+  console.log("salonServicesList", salonServicesList);
 
   const account = useSelector((state) => state.ACCOUNT.username);
 
@@ -53,28 +45,16 @@ function Header(props) {
   };
 
   const handleEmptySalon = () => {
-    if (!salonDetail) {
+    if (
+      !salonServicesList ||
+      (typeof salonServicesList === "object" &&
+        Object.keys(salonServicesList).length === 0)
+    ) {
       return "/create_shop";
     } else {
       return "/list_shop";
     }
   };
-
-  const serviceMenu = (
-    <Menu>
-      {idOwner && (
-        <Menu.Item>
-          <Link to={handleEmptySalon()}>Quản lý Salon</Link>
-        </Menu.Item>
-      )}
-      <Menu.Item>
-        <Link to={"/listPackage"}>Dịch vụ hệ thống</Link>
-      </Menu.Item>
-      <Menu.Item>
-        <Link to={"/listPayment"}>Dịch vụ đã thanh toán</Link>
-      </Menu.Item>
-    </Menu>
-  );
 
   const accountMenu = (
     <Menu>
@@ -98,105 +78,133 @@ function Header(props) {
     setMenuActive(!menuActive);
   };
 
+  console.log("idCustomer", idCustomer);
+  console.log("idOwner", idOwner);
+
   return (
     <div>
-      <header className="header fixed-header">
-        <div
-          className="header-bottom"
-          style={{ height: "12rem", backgroundColor: "black" }}
-          data-header
-        >
-          <div className="container">
-            <div>
-              <Link to={"/"} className="logo logo-header">
-                <img
-                  className="logo-header-img"
-                  src={hairHubLogo}
-                  alt="HairHub Logo"
-                />
-                <div>
-                  <h1 className="logo-header-title-1">HairHub</h1>
-                  <span className="logo-header-title-2">
-                    Salon | Barber Shop
-                  </span>
-                </div>
-              </Link>
-            </div>
+      <header className={style.headerContainer}>
+        <div className={style.header}>
+          <div className={style.logoContainer}>
+            <Link to={"/"}>
+              <img
+                className={style.logo}
+                src={hairHubLogo}
+                alt="HairHub Logo"
+              />
+            </Link>
+          </div>
 
-            <nav
-              className={`navbar ${menuActive ? "active" : ""}`}
-              data-navbar
-              style={{ marginLeft: "auto", marginRight: "1rem" }}
-            >
-              <ul className="navbar-list">
-                <li className="navbar-item">
-                  <Link to={"/"} className="navbar-link" data-nav-link>
+          <nav className={style.navbar}>
+            <ul className={style.navList}>
+              <li className={style.navItem}>
+                <Link to={"/"} className={style.navLink}>
+                  Trang chủ
+                </Link>
+              </li>
+              <li className={style.navItem}>
+                <Link to={"/"} className={style.navLink}>
+                  Giới thiệu
+                </Link>
+              </li>
+              <li className={style.navItem}>
+                <Link to={"/system_shop"} className={style.navLink}>
+                  Hệ thống cửa hàng
+                </Link>
+              </li>
+              <li className={style.navItem}>
+                {(idCustomer || idOwner) && (
+                  <Link
+                    to={
+                      idOwner ? "/salon_appointment" : "/customer_appointment"
+                    }
+                    className={style.navLink}
+                  >
+                    Cuộc hẹn
+                  </Link>
+                )}
+              </li>
+              <li
+                className={style.navItem}
+                style={{ display: idCustomer ? "none" : "block" }}
+              >
+                {idOwner && (
+                  <Link className={style.navLink} to={handleEmptySalon()}>
+                    Quản lý Salon
+                  </Link>
+                )}
+              </li>
+
+              {/* <li className={style.navItem}>
+                <Link to={"/listPackage"}>Dịch vụ hệ thống</Link>
+              </li>
+              <li className={style.navItem}>
+                <Link to={"/listPayment"}>Dịch vụ đã thanh toán</Link>
+              </li> */}
+              {menuActive && (
+                <li className={style.navItemRepo}>
+                  <Link to={"/"} className={style.navLink}>
                     Trang chủ
                   </Link>
                 </li>
-                <li className="navbar-item">
-                  <Link
-                    to={"/system_shop"}
-                    className="navbar-link"
-                    data-nav-link
-                  >
+              )}
+              {menuActive && (
+                <li className={style.navItemRepo}>
+                  <Link to={"/"} className={style.navLink}>
+                    Giới thiệu
+                  </Link>
+                </li>
+              )}
+              {menuActive && (
+                <li className={style.navItemRepo}>
+                  <Link to={"/system_shop"} className={style.navLink}>
                     Hệ thống cửa hàng
                   </Link>
                 </li>
-                <li className="navbar-item">
+              )}
+              {menuActive && (
+                <li className={style.navItemRepo}>
                   {(idCustomer || idOwner) && (
                     <Link
                       to={
                         idOwner ? "/salon_appointment" : "/customer_appointment"
                       }
-                      className="navbar-link"
-                      data-nav-link
+                      className={style.navLink}
                     >
                       Cuộc hẹn
                     </Link>
                   )}
                 </li>
-                {/* <li className="navbar-item">
-                  {idOwner && !salonDetail && (
-                    <Link className="navbar-link" to={"/create_shop"}>
-                      Tạo Salon
-                    </Link>
-                  )}
-                </li> */}
-                <li className="navbar-item">
+              )}
+              {menuActive && (
+                <li className={style.navItemRepo}>
                   {idOwner && (
-                    <Dropdown overlay={serviceMenu} trigger={["hover"]}>
-                      <a className="navbar-link" href="#!" data-nav-link>
-                        Tiện ích <DownOutlined />
-                      </a>
-                    </Dropdown>
+                    <Link to={handleEmptySalon()}>Quản lý Salon</Link>
                   )}
                 </li>
-              </ul>
-            </nav>
-            <button
-              className="nav-toggle-btn"
-              aria-label="toggle menu"
-              data-nav-toggler
-              onClick={toggleMenu}
-            >
-              <IoMenu />
-            </button>
-            {account ? (
-              <Dropdown overlay={accountMenu} trigger={["click"]}>
-                <a
-                  className="ant-dropdown-link"
-                  onClick={(e) => e.preventDefault()}
-                >
-                  <Avatar className="header-avatar" icon={<UserOutlined />} />
-                </a>
-              </Dropdown>
-            ) : (
-              <Link to={"/login"}>
-                <Button type="primary">Đăng nhập</Button>
-              </Link>
-            )}
-          </div>
+              )}
+            </ul>
+          </nav>
+
+          <button
+            aria-label="toggle menu"
+            className={style.menuToggle}
+            onClick={toggleMenu}
+          >
+            <IoMenu />
+          </button>
+
+          {account ? (
+            <Dropdown overlay={accountMenu} trigger={["click"]}>
+              <a onClick={(e) => e.preventDefault()}>
+                <Avatar className={style.avatarLink} icon={<UserOutlined />} />
+              </a>
+            </Dropdown>
+          ) : (
+            <Link to={"/login"}>
+              <Button type="primary">Đăng nhập</Button>
+            </Link>
+          )}
         </div>
       </header>
       <Outlet />
