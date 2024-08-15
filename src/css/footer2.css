@@ -1,7 +1,7 @@
 /* footer-container */
 .footer-container {
     background-color: black;
-    padding: 20px 100px;
+    padding: 10px 100px;
     color: white;
     position: relative;
     overflow: hidden;
@@ -69,7 +69,7 @@
   
   /* social-links */
   .social-links .social-icon {
-    font-size: 3rem;
+    font-size: 2rem;
     color: white;
     /* margin: 0 10px; */
     transition: transform 0.3s ease;
