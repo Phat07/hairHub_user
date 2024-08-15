@@ -35,8 +35,7 @@ import axios from "axios";
 import dayjs from "dayjs";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Header from "../components/Header";
-import "../css/salonDetail.css";
+import style from "../css/salonDetail.module.css";
 import { ServiceHairServices } from "../services/servicesHairServices";
 
 import RandomIcon from "@rsuite/icons/Random";
@@ -133,7 +132,7 @@ function renderStars(stars) {
         <StarOutlined
           style={{
             position: "absolute",
-            color: "#E0E0E0", // màu sao trống
+            color: "#1E1D1D", // màu sao trống
             zIndex: 1, // lớp dưới cùng
             left: 0,
             top: 0,
@@ -157,7 +156,7 @@ function renderStars(stars) {
   const remainingStars = 5 - filledStars - (fraction > 0 ? 1 : 0);
   for (let i = 0; i < remainingStars; i++) {
     starIcons.push(
-      <StarOutlined key={filledStars + i + 1} style={{ color: "#E0E0E0" }} />
+      <StarOutlined key={filledStars + i + 1} style={{ color: "#1E1D1D" }} />
     );
   }
 
@@ -1204,28 +1203,15 @@ function SalonDetail(props) {
   const filteredFeedback = filterRating
     ? listFeedback.filter((feedback) => feedback?.rating === filterRating)
     : listFeedback;
+  
+
   return (
     <div>
-      {/* <Header /> */}
-      <div
-        style={{
-          marginTop: "10rem",
-        }}
-      ></div>
       <div>
         <Layout>
-          <Content className="container">
+          <Content>
             <Row justify="center" gutter={0}>
-              <Col
-                xs={24}
-                md={16}
-                style={{
-                  marginBottom: "16px",
-                  marginTop: "50px",
-                  marginRight: "11rem",
-                }}
-                className="detail-salon-col-1"
-              >
+              <Col xs={24} md={14} className={style["detail-salon-col-1"]}>
                 <div>
                   {/* <div className="rating-overlay">
                     <div className="rating-score">
@@ -1238,10 +1224,8 @@ function SalonDetail(props) {
                       <img
                         src={salonDetail.img}
                         alt={salonDetail?.id}
-                        className="carousel-image"
+                        className={style["carousel-image"]}
                       />
-                      {/* </div>
-                      ))} */}
                     </Carousel>
                   </div>
                 </div>
@@ -1252,28 +1236,46 @@ function SalonDetail(props) {
                     flexDirection: "row",
                     alignItems: "center",
                     justifyContent: "center",
+                    marginTop: "10px",
                   }}
                 >
                   <h2
                     style={{
                       fontSize: "3rem",
                       fontWeight: "bold",
-                      margin: 0,
                     }}
                   >
                     {salonDetail?.name}
                   </h2>
-                  <Space style={{ marginLeft: "10px" }}>
+                  <Space>
                     <Button
                       type="text"
-                      icon={<ShareAltOutlined style={{ fontSize: "3rem" }} />}
+                      icon={<ShareAltOutlined style={{ fontSize: "2rem" }} />}
                     />
                     <Button
                       type="text"
-                      icon={<HeartOutlined style={{ fontSize: "3rem" }} />}
+                      icon={<HeartOutlined style={{ fontSize: "2rem" }} />}
                     />
                   </Space>
                 </div>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    cursor: "pointer",
+                  }}
+                >
+                  <Button>
+                    <a
+                      href={`https://www.google.com/maps/dir/?api=1&destination=${salonDetail.latitude},${salonDetail.longitude}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Chỉ đường
+                    </a>
+                  </Button>
+                </div>
+
                 <div>
                   <Collapse
                     bordered={false}
@@ -1281,7 +1283,7 @@ function SalonDetail(props) {
                     expandIconPosition="end"
                     className="custom-collapse"
                     style={{
-                      marginTop: "16px",
+                      // marginTop: "16px",
                       backgroundColor: "transparent",
                     }}
                   >
@@ -1409,10 +1411,11 @@ function SalonDetail(props) {
                                       key={index} // Thêm thuộc tính key
                                       actions={[
                                         <div
-                                          className={`custom-checkbox ${
-                                            isChecked ? "booked" : ""
-                                          }`}
-                                          s
+                                          className={`${style.customCheckbox} ${
+                                            isChecked
+                                              ? style.customCheckboxBooked
+                                              : ""
+                                          } ${style.customCheckboxHover}`}
                                           key={`checkbox-${index}`} // Thêm thuộc tính key
                                           onClick={() =>
                                             handleServiceSelect(service)
@@ -1506,7 +1509,7 @@ function SalonDetail(props) {
                           <Divider />
                           <div>
                             <div>
-                              <div className="date-picker">
+                              <div className={style["date-picker"]}>
                                 {currentMonthDays.map((day, index) => (
                                   <Button
                                     key={index}
@@ -1515,7 +1518,7 @@ function SalonDetail(props) {
                                       selectedDate &&
                                       selectedDate.toDateString() ===
                                         day.toDateString()
-                                        ? "selected"
+                                        ? style.selected
                                         : ""
                                     }
                                   >
@@ -1530,14 +1533,17 @@ function SalonDetail(props) {
                           {selectedDate && (
                             <>
                               <Spin spinning={loadingTime}>
-                                <div className="time-picker">
+                                <div className={style["time-picker"]}>
                                   <Divider />
                                   {timeSlots?.availableTimes?.length > 0 ? (
                                     <>
                                       {/* <Divider /> */}
-                                      <div className="scroll-container">
+                                      <div
+                                        className={style["scroll-container"]}
+                                      >
                                         <button
-                                          className="arrow-button"
+                                          className={`${style["arrow-button"]}`}
+                                          // className="arrow-button"
                                           onClick={() =>
                                             handleScroll1(
                                               "left",
@@ -1548,10 +1554,14 @@ function SalonDetail(props) {
                                           <LeftOutlined />
                                         </button>
                                         <div
-                                          className="scroll-wrapper"
+                                          className={style["scroll-wrapper"]}
+                                          // className="scroll-wrapper"
                                           ref={timeContainerRef}
                                         >
-                                          <div className="scroll-content">
+                                          <div
+                                            className={style["scroll-content"]}
+                                            // className="scroll-content"
+                                          >
                                             {timeSlots?.availableTimes?.map(
                                               (slot, index) => {
                                                 let timeString = "";
@@ -1568,13 +1578,13 @@ function SalonDetail(props) {
                                                     : 0;
 
                                                 if (minutes === 0) {
-                                                  timeString = `${hour} giờ`;
+                                                  timeString = `${hour}h00`;
                                                 } else if (minutes === 25) {
-                                                  timeString = `${hour} giờ 15 phút`;
+                                                  timeString = `${hour}h15`;
                                                 } else if (minutes === 5) {
-                                                  timeString = `${hour} giờ 30 phút`;
+                                                  timeString = `${hour}h30`;
                                                 } else if (minutes === 75) {
-                                                  timeString = `${hour} giờ 45 phút`;
+                                                  timeString = `${hour}h45`;
                                                 }
 
                                                 const vietnamTimezone =
@@ -1609,7 +1619,7 @@ function SalonDetail(props) {
                                                     className={
                                                       selectedTimeSlot ===
                                                       slot?.timeSlot
-                                                        ? "selected"
+                                                        ? style.selected
                                                         : ""
                                                     }
                                                     disabled={isDisabled}
@@ -1622,7 +1632,8 @@ function SalonDetail(props) {
                                           </div>
                                         </div>
                                         <button
-                                          className="arrow-button"
+                                          className={`${style["arrow-button"]}`}
+                                          // className="arrow-button"
                                           onClick={() =>
                                             handleScroll1(
                                               "right",
@@ -1635,7 +1646,10 @@ function SalonDetail(props) {
                                       </div>
                                     </>
                                   ) : (
-                                    <Title className="warning-title" level={3}>
+                                    <Title
+                                      className={style["warning-title"]}
+                                      level={3}
+                                    >
                                       Salon không hoạt hộng hoặc không có nhân
                                       viên làm trong khoảng thời gian này!
                                     </Title>
@@ -1678,7 +1692,9 @@ function SalonDetail(props) {
                                           onClick={() =>
                                             handleRemoveService(service)
                                           }
-                                          className="close-button-close"
+                                          className={
+                                            style["close-button-close"]
+                                          }
                                           style={{
                                             // position: "absolute",
                                             top: -30,
@@ -1715,7 +1731,7 @@ function SalonDetail(props) {
                                           </span>
                                         }
                                         description={
-                                          <>
+                                          <div style={{display:"inline-grid"}}>
                                             <span>
                                               Tiền: {service.price} vnđ
                                             </span>
@@ -1775,7 +1791,7 @@ function SalonDetail(props) {
                                                 </>
                                               )}
                                             </span>
-                                          </>
+                                          </div>
                                         }
                                       />
                                       {currentService && (
@@ -1852,7 +1868,7 @@ function SalonDetail(props) {
                           <Button
                             type="dashed"
                             block
-                            style={{ marginTop: "16px", fontSize: "1.6rem" }}
+                            style={{ fontSize: "1rem" }}
                             // onClick={() => setShowServiceList(true)}
                             onClick={handleAddServiceClick}
                           >
@@ -1987,9 +2003,9 @@ function SalonDetail(props) {
                     </span>
                   </h2>
                 </div>
-                <div className="rating-stats-container">
-                  <div className="rating-summary">
-                    <h3 className="rating">
+                <div className={style["rating-stats-container"]}>
+                  <div className={style["rating-summary"]}>
+                    <h3 className={style["rating"]}>
                       <span>
                         {averageRating !== "NaN" ? (
                           <>{averageRating}</>
@@ -2003,22 +2019,25 @@ function SalonDetail(props) {
 
                     <p>Dựa trên {listFeedback.length || 0} đánh giá</p>
                   </div>
-                  <div className="divider-line"></div>
-                  <div className="rating-distribution">
+                  <div className={style["divider-line"]}></div>
+                  <div className={style["rating-distribution"]}>
                     {[1, 2, 3, 4, 5].reverse().map((starValue) => (
-                      <div key={starValue} className="rating-bar-container">
-                        <span className="star-value">
+                      <div
+                        key={starValue}
+                        className={style["rating-bar-container"]}
+                      >
+                        <span className={style["star-value"]}>
                           {starValue} <StarFilled style={{ color: "gold" }} />
                         </span>
                         <Progress
-                          className="rating-progress-bar"
+                          className={style["rating-progress-bar"]}
                           percent={
                             (ratingDistribution[starValue] / totalReviews) * 100
                           }
                           status="active"
                           showInfo={false}
                         />
-                        <span className="review-count">
+                        <span className={style["review-count"]}>
                           {ratingDistribution[starValue]}
                         </span>
                       </div>
@@ -2049,26 +2068,46 @@ function SalonDetail(props) {
                     itemLayout="horizontal"
                     dataSource={filteredFeedback}
                     renderItem={(feedback) => (
-                      <List.Item>
+                      <List.Item className={style.listItem}>
                         <List.Item.Meta
                           title={
                             <div>
+                              <p>{feedback?.customer.fullName}</p>
                               <div>{renderStars(feedback?.rating)}</div>
                               <p>
-                                {feedback?.customer.fullName} •{" "}
                                 {new Date(
                                   feedback?.createDate
-                                ).toLocaleDateString("en-US", {
+                                ).toLocaleDateString("vi-VI", {
                                   year: "numeric",
                                   month: "long",
                                   day: "numeric",
-                                })}
+                                })}{" "}
+                                | Service:
+                                {feedback?.appointment?.appointmentDetails?.map(
+                                  (e, index, array) => (
+                                    <span key={index}>
+                                      {e?.serviceName}
+                                      {index < array.length - 1 ? " - " : ""}
+                                    </span>
+                                  )
+                                )}
                               </p>
+                              <p>{feedback.comment}</p>
+                              <div className={style["feedback-images"]}>
+                                {feedback.fileFeedbacks?.map((e, index) => (
+                                  <img
+                                    key={index}
+                                    src={e.img}
+                                    alt={`Feedback Image ${index}`}
+                                    className={style["feedback-image"]}
+                                  />
+                                ))}
+                              </div>
                             </div>
                           }
                           description={
                             <div>
-                              <p>{feedback.comment}</p>
+                              {/* <p>{feedback.comment}</p>
                               <p style={{ display: "flex" }}>
                                 Service:
                                 {feedback?.appointment?.appointmentDetails?.map(
@@ -2080,13 +2119,25 @@ function SalonDetail(props) {
                                   )
                                 )}
                               </p>
+                              <div className={style["feedback-images"]}>
+                                {feedback.fileFeedbacks?.map((e, index) => (
+                                  <img
+                                    key={index}
+                                    src={e.img}
+                                    alt={`Feedback Image ${index}`}
+                                    className={style["feedback-image"]}
+                                  />
+                                ))}
+                              </div> */}
                             </div>
                           }
+                          className={style.listItemMeta}
                         />
                       </List.Item>
                     )}
                   />
-                  <div className="rating">
+
+                  <div className={style["rating"]}>
                     <Pagination
                       current={currentPage}
                       total={totalPagesFeedback}
@@ -2096,36 +2147,23 @@ function SalonDetail(props) {
                   </div>
                 </div>
               </Col>
-              <Col
-                xs={24}
-                md={6}
-                // className="sticky-col"
-                style={{ marginTop: "20px" }}
-              >
+              <Col xs={24} md={6}>
                 <div
                   style={{
                     // marginTop:"30px",
                     padding: "10px",
-                    background: "#F4F2EB",
+                    background: "#E9E6D9",
                     borderLeft: "3px solid black",
                     borderRight: "3px solid black",
                     borderBottom: "3px solid black", // Đường viền phía dưới
                     borderBottomLeftRadius: "8px", // Bo góc phía dưới bên trái (tùy chọn)
                     borderBottomRightRadius: "8px",
                   }}
-                  className="detail-salon-col-2"
+                  className={style["detail-salon-col-2"]}
                 >
                   <div>
                     <Title level={4}>Địa chỉ</Title>
                     <Text>{salonDetail.address}</Text>
-                    <a
-                      style={{ marginTop: "10px", cursor: "pointer" }}
-                      href={`https://www.google.com/maps/dir/?api=1&destination=${salonDetail.latitude},${salonDetail.longitude}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Chỉ đường
-                    </a>
                     <Divider />
                   </div>
 

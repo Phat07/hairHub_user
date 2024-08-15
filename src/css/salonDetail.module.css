@@ -1,0 +1,409 @@
+.detail-salon-col-1 {
+  /* margin-left: 8rem;
+  margin-right: 8rem; */
+  margin-top: 20px;
+  margin-right: 5%;
+}
+
+.detail-salon-col-2 {
+  margin-right: 0;
+}
+
+/* customCheckbox.css */
+/* .custom-checkbox {
+  color: white;
+  background-color: #1a94ad; 
+  padding: 5px 10px; 
+  border-radius: 8px; 
+  display: inline-block;
+  cursor: pointer; 
+}
+
+.custom-checkbox.booked {
+  background-color: #28a745; 
+}
+
+.custom-checkbox:hover {
+  background-color: #007bff; 
+} */
+.customCheckbox {
+  color: white; /* Đặt màu chữ */
+  background-color: #1a94ad; /* Đặt màu nền cho span */
+  padding: 5px 10px; /* Đặt padding cho span */
+  border-radius: 8px; /* Bo tròn các góc của span */
+  display: inline-block; /* Đặt span thành inline-block */
+  cursor: pointer; /* Thay đổi con trỏ khi hover */
+}
+
+.customCheckboxBooked {
+  background-color: #28a745; /* Đặt màu nền cho "Booked" */
+}
+
+.customCheckboxHover:hover {
+  background-color: #007bff; /* Đặt màu nền khi hover */
+}
+.no-close-btn .ant-modal-close {
+  display: none;
+}
+.close-button-close:hover {
+  transform: rotate(90deg);
+}
+.css-dev-only-do-not-override-wb61s4.ant-layout {
+  /* Các thuộc tính CSS bạn muốn áp dụng */
+  background-color: #F4F2EB;
+  /* Thêm các thuộc tính khác tùy theo nhu cầu */
+}
+.css-dev-only-do-not-override-wb61s4 .ant-row {
+  display: flex;
+  flex-flow: nowrap;
+  justify-content: flex-start;
+}
+@media (max-width: 768px) {
+  .detail-salon-col-1 {
+    margin-left: 0;
+  }
+  .detail-salon-col-2 {
+    margin-left: 0;
+  }
+ 
+}
+
+.rating-overlay {
+  position: absolute;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: right;
+  z-index: 2;
+}
+
+.rating-score {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.carousel-image {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.space-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.custom-collapse .ant-collapse-header {
+  padding: 0 !important;
+}
+
+.rating-stats-container {
+  display: flex;
+  flex-direction: row;
+  border: 1px solid #ccc;
+  margin-bottom: 20px;
+  padding: 15px;
+  border-radius: 1rem;
+}
+
+.rating-summary {
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+
+.rating-summary h3 {
+  /* padding-top: 3rem; */
+  font-size: 1.5rem;
+}
+
+.rating-summary h3 span {
+  display: inline;
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.rating-summary,
+.rating-distribution {
+  flex: 1;
+}
+
+.rating-bar-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.star-value {
+  flex-basis: 20%;
+  text-align: right;
+  padding-right: 10px;
+}
+
+.rating-progress-bar {
+  flex-basis: 60%;
+  margin: 0 10px;
+}
+
+:global(:where(.css-dev-only-do-not-override-wb61s4).ant-progress .ant-progress-bg) {
+  background-color: gold;
+}
+:global(:where(.css-dev-only-do-not-override-wb61s4).ant-layout){
+  background-color: #F4F2EB;
+}
+:global(:where(.css-dev-only-do-not-override-wb61s4).ant-collapse>.ant-collapse-item >.ant-collapse-header .ant-collapse-header-text){
+  text-align: center;
+}
+.review-count {
+  flex-basis: 20%;
+}
+
+.sticky-col {
+  position: -webkit-sticky; /* Safari */
+  position: sticky;
+  top: 0; /* Adjust as needed for your header height */
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.scroll-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.scroll-wrapper {
+  overflow-x: auto;
+  flex: 1;
+  width: 100%;
+  white-space: nowrap; /* Đảm bảo nội dung không bị xuống dòng */
+  scroll-behavior: smooth; /* Cuộn mượt mà */
+  padding-bottom: 16px;
+}
+.scroll-wrapper::-webkit-scrollbar {
+  width: 16px; /* Độ rộng của thanh cuộn dọc */
+  height: 16px; /* Chiều cao của thanh cuộn ngang */
+}
+
+.scroll-wrapper::-webkit-scrollbar-thumb {
+  background-color: #888; /* Màu của thanh kéo */
+  border-radius: 4px; /* Bo góc thanh kéo */
+}
+
+.scroll-wrapper::-webkit-scrollbar-thumb:hover {
+  background-color: #555; /* Màu khi hover vào thanh kéo */
+}
+
+.scroll-wrapper::-webkit-scrollbar-track {
+  background-color: #f1f1f1; /* Màu nền của thanh cuộn */
+  border-radius: 4px;
+}
+
+.scroll-content {
+  display: flex;
+  flex-wrap: nowrap; /* Đảm bảo các phần tử con nằm trên một dòng */
+  gap: 8px; /* Khoảng cách giữa các phần tử */
+}
+
+.arrow-button {
+  margin: 0 5px;
+  background-color: #3b6cf5; /* Màu nền cho nút */
+  color: white; /* Màu biểu tượng */
+  border: none;
+  padding: 8px;
+  border-radius: 50%; /* Làm nút thành hình tròn */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.arrow-button:hover {
+  background-color: #007bff; /* Màu nền khi hover */
+}
+
+.arrow-button:active {
+  background-color: #0056b3; /* Màu nền khi nhấn */
+}
+
+.arrow-button svg {
+  font-size: 1.5rem; /* Kích thước của biểu tượng */
+}
+.arrow-button {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Thêm bóng đổ */
+}
+
+.arrow-button:active {
+  transform: scale(0.95); /* Giảm kích thước khi nhấn */
+}
+
+
+.selected {
+  background-color: #1890ff;
+  color: white;
+}
+
+.time-picker {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.time-selector {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.time-slots {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.time-slots button {
+  flex: 0 0 auto;
+}
+
+.date-picker {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.warning-title {
+  color: #0059ff !important;
+  -webkit-box-shadow: 0px 0px 50px 15px #00b7ff;
+  -moz-box-shadow: 0px 0px 50px 15px #00b7ff;
+  box-shadow: 0px 0px 50px 15px #00b7ff;
+  border-radius: 50px;
+  margin: 0 auto;
+}
+
+.listItem {
+  background-color: #E9E6D9; 
+  padding: 20px; 
+  margin-bottom: 20px; 
+  border-radius: 8px; 
+}
+
+.listItemMeta {
+  /* display: flex;
+  flex-direction: column; */
+}
+
+.listItemMeta > div:first-child {
+  /* margin-bottom: 10px;  */
+}
+
+.listItemMeta > div:last-child {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.feedback-images {
+  display: flex;
+  gap: 10px; 
+  margin-top: 10px; 
+}
+
+.feedback-image {
+  width: 80px; 
+  height: 80px; 
+  object-fit: cover; 
+  border-radius: 4px; 
+}
+
+@media (max-width: 1600px) {
+  /* .detail-salon-col-1,
+  .detail-salon-col-2 {
+    margin-left: auto;
+    margin-right: auto;
+  } */
+  
+  .detail-salon-col-1 {
+    margin-right: 5%;
+  }
+  
+  .detail-salon-col-2 {
+    margin-left: 5%;
+  }
+  
+  /* .container {
+    padding: 0 60px;
+  } */
+}
+
+/* Medium screens: 1350px */
+@media (max-width: 1250px) {
+  .detail-salon-col-1 {
+    margin-right: 3%;
+  }
+  .detail-salon-col-2 {
+    margin-left: 5%;
+  }
+ 
+}
+
+/* Small screens: 768px and below */
+@media (max-width: 768px) {
+  .detail-salon-col-1,
+  .detail-salon-col-2 {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+
+  /* Adjust other elements for mobile screens */
+  .rating-overlay {
+    right: 5px;
+    padding: 8px;
+  }
+
+  .rating-score {
+    font-size: 1.5rem;
+  }
+
+  .carousel-image {
+    border-radius: 4px;
+  }
+
+  .rating-stats-container {
+    flex-direction: column;
+    padding: 10px;
+  }
+
+  .rating-summary h3 span {
+    font-size: 2rem;
+  }
+
+  .rating-summary h3 {
+    font-size: 1.2rem;
+  }
+
+  .time-slots {
+    flex-wrap: wrap;
+  }
+
+  .feedback-image {
+    width: 60px;
+    height: 60px;
+  }
+
+  /* Additional adjustments for smaller screens */
+  .arrow-button {
+    padding: 6px;
+    font-size: 1.2rem;
+  }
+}
