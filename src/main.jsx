@@ -1,4 +1,4 @@
-import { ConfigProvider } from "antd";
+import { ConfigProvider, Table } from "antd";
 import viVn from "antd/lib/locale/vi_VN";
 import React from "react";
 import ReactDOM from "react-dom/client";
