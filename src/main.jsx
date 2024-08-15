@@ -1,4 +1,4 @@
-import { ConfigProvider } from "antd";
+import { ConfigProvider, Table } from "antd";
 import viVn from "antd/lib/locale/vi_VN";
 import React from "react";
 import ReactDOM from "react-dom/client";
@@ -7,7 +7,7 @@ import {
   Route,
   RouterProvider,
   Routes,
-  createBrowserRouter
+  createBrowserRouter,
 } from "react-router-dom";
 import "rsuite/dist/rsuite.min.css";
 import App1 from "./App.jsx";

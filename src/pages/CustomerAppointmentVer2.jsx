@@ -4,7 +4,8 @@ import {
   actDeleteAppointmentByCustomerId,
   actGetAppointmentByCustomerId,
 } from "../store/customerAppointments/action";
-import "../css/customerAppointmentV2.css";
+import styles from "../css/customerAppointment.module.css";
+import "../css/customerAppointmentTable.css";
 import {
   Pagination,
   Table,
@@ -450,7 +451,10 @@ function CustomerAppointmentVer2(props) {
       title: "Chi tiết",
       key: "detail",
       render: (text, record) => (
-        <Button onClick={() => showAppointmentDetail(record)}>
+        <Button
+          className={styles.detailBtn}
+          onClick={() => showAppointmentDetail(record)}
+        >
           Xem chi tiết
         </Button>
       ),
@@ -496,8 +500,8 @@ function CustomerAppointmentVer2(props) {
   ];
 
   return (
-    <div className="cus-appointment-container">
-      <div className="cus-status-filter">
+    <div className={styles.appointmentContainer}>
+      <div className={styles.statusfilter}>
         {Object.keys(statusDisplayNames).map((statusKey, index) => (
           <button
             key={statusKey}
@@ -509,12 +513,25 @@ function CustomerAppointmentVer2(props) {
                   ? "1rem"
                   : "0",
               padding: "0.5rem 1rem",
-              backgroundColor: status === statusKey ? "blue" : "gray",
+              backgroundColor:
+                status === statusKey
+                  ? status === "BOOKING"
+                    ? "#1677ff"
+                    : status === "CANCEL_BY_CUSTOMER"
+                    ? "#faa500"
+                    : status === "FAILED"
+                    ? "#ff0000"
+                    : status === "SUCCESSED"
+                    ? "#389e0d"
+                    : "gray"
+                  : "gray",
               color: "white",
               border: "none",
               borderRadius: "5px",
               cursor: "pointer",
               textAlign: "center",
+              fontSize: "1rem",
+              fontWeight: "bold",
             }}
           >
             {statusDisplayNames[statusKey]}
@@ -523,23 +540,22 @@ function CustomerAppointmentVer2(props) {
       </div>
 
       <Table
+        className={styles.appointmentTable}
         columns={columns}
-        style={{ overflowX: "auto" }}
         dataSource={customerAppointments}
         loading={loading}
         rowKey="id"
         pagination={false}
       />
 
-      <div className="pagination">
-        <Pagination
-          current={currentPage}
-          pageSize={pageSize}
-          total={totalPages * pageSize}
-          onChange={handlePageChange}
-          showSizeChanger={false}
-        />
-      </div>
+      <Pagination
+        className="paginationAppointment"
+        current={currentPage}
+        pageSize={pageSize}
+        total={totalPages * pageSize}
+        onChange={handlePageChange}
+        showSizeChanger={false}
+      />
 
       <Modal
         title="Chi tiết cuộc hẹn"

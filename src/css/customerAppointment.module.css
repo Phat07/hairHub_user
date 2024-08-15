@@ -1,0 +1,30 @@
+.appointmentContainer {
+  max-width: 1200px;
+  margin: 100px auto;
+  margin-top: 10rem;
+  padding: 20px;
+  background-color: #f4f2eb;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.statusfilter {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.appointmentTable {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-collapse: collapse;
+  width: 100%;
+  border-radius: 10px;
+}
+
+.detailBtn {
+  border-color: #bf9456;
+  color: #bf9456;
+}
