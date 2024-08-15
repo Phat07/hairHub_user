@@ -18,6 +18,7 @@ import {
   Input,
   Upload,
   message,
+  Divider,
 } from "antd";
 import moment from "moment";
 import { UploadOutlined } from "@ant-design/icons";
@@ -287,46 +288,27 @@ function CustomerAppointmentVer2(props) {
     if (!selectedAppointmentDetail) return null;
 
     return (
-      <div>
-        {/* First Main Section */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginBottom: "20px",
-          }}
-        >
-          {/* Left Part - Salon Information */}
+      <div className={styles.appointmentDetail}>
+        <div className={styles.appointmentDetailA1}>
+          {/* B1: Thông tin Salon */}
           <div
-            style={{
-              flex: 1,
-              border: "1px solid #ccc",
-              padding: "10px",
-              marginRight: "10px",
-            }}
+            className={styles.appointmentDetailB1}
+            style={{ border: "1px solid #ccc", padding: "10px" }}
           >
-            <Text strong>Thông tin Salon | Barber shop: </Text>
-            <div
-              style={{
-                border: "1px solid #ccc",
-                padding: "10px",
-                marginBottom: "10px",
-              }}
-            >
+            <Text strong style={{ fontSize: "16px" }}>
+              Thông tin Salon | Barber shop
+            </Text>
+            <div>
               <Image
                 src={selectedAppointmentDetail?.salonInformation.img}
                 preview={false}
                 style={{ marginBottom: "10px" }}
+                width={300}
+                height={200}
               />
               <p>
                 <Text strong>Tên tiệm: </Text>
                 <Text>{selectedAppointmentDetail?.salonInformation.name}</Text>
-              </p>
-              <p>
-                <Text strong>Mô tả: </Text>
-                <Text>
-                  {selectedAppointmentDetail?.salonInformation.description}
-                </Text>
               </p>
               <p>
                 <Text strong>Địa chỉ: </Text>
@@ -337,84 +319,191 @@ function CustomerAppointmentVer2(props) {
             </div>
           </div>
 
-          {/* Right Part - Services */}
-          <div style={{ flex: 1, border: "1px solid #ccc", padding: "10px" }}>
-            <Text strong>Dịch vụ: </Text>
-            {selectedAppointmentDetail.appointmentDetails.map((service) => (
-              <div
-                key={service.serviceHairId}
-                style={{
-                  border: "1px solid #ccc",
-                  padding: "10px",
-                  marginBottom: "10px",
-                }}
-              >
-                <p>
-                  <Text strong>Tên dịch vụ: </Text>
-                  <Text>{service?.serviceName}</Text>
-                </p>
-                <p>
-                  <Text strong>Giá: </Text>
-                  <Text>{formatVND(service?.priceServiceHair)}vnđ</Text>
-                </p>
-                <p>
-                  <Text strong>Thời gian bắt đầu: </Text>
-                  <Text>{moment(service?.startTime).format("HH:mm")}</Text>
-                </p>
-                <p>
-                  <Text strong>Thời gian kết thúc: </Text>
-                  <Text>{moment(service?.endTime).format("HH:mm")}</Text>
-                </p>
-                <p>
-                  <Text strong>Nhân viên: </Text>
-                  <Text>{service.salonEmployee.fullName}</Text>
-                </p>
+          {/* B2: Mã QR */}
+          <div
+            className={styles.appointmentDetailB2}
+            style={{ marginTop: "1rem" }}
+          >
+            {selectedAppointmentDetail?.status !== "CANCEL_BY_CUSTOMER" && (
+              <div style={{ padding: "10px", border: "1px solid #ccc" }}>
+                <Text strong>Mã QR xác nhận để thành công:</Text>
+                <Image
+                  src={selectedAppointmentDetail?.qrCodeImg}
+                  style={{ width: "100%", marginTop: "10px" }}
+                />
               </div>
-            ))}
+            )}
           </div>
         </div>
 
-        {/* Second Main Section - Centered Information */}
-        <div style={{ textAlign: "center" }}>
-          <p>
-            <Text strong>Mã Qr xác nhận để thành công: </Text>
-            <Image
-              style={{ width: "15rem", height: "15rem" }}
-              src={selectedAppointmentDetail?.qrCodeImg}
-            />
-          </p>
-          <p>
-            <Text strong>Ngày: </Text>
-            <Text style={{ display: "inline" }}>
-              {moment(selectedAppointmentDetail.startDate).format("DD/MM/YYYY")}{" "}
-              -{" "}
-              {moment(
-                selectedAppointmentDetail.appointmentDetails[0]?.startTime
-              ).format("HH:mm")}
+        <div
+          className={styles.appointmentDetailA2}
+          // style={{ marginLeft: "1rem" }}
+        >
+          {/* C1: Chi tiết dịch vụ */}
+          <div
+            className={styles.appointmentDetailC1}
+            style={{ border: "1px solid #ccc", padding: "10px" }}
+          >
+            <Text strong style={{ fontSize: "16px" }}>
+              Chi tiết cuộc hẹn
             </Text>
-          </p>
-          <p>
-            <Text strong>Giá gốc: </Text>
-            <Text>{formatVND(selectedAppointmentDetail.originalPrice)}vnđ</Text>
-          </p>
+            <table
+              style={{
+                width: "100%",
+                marginTop: "10px",
+                borderCollapse: "collapse",
+              }}
+            >
+              <thead>
+                <tr>
+                  <th
+                    style={{
+                      border: "1px solid #ccc",
+                      padding: "8px",
+                      textAlign: "left",
+                    }}
+                  >
+                    Dịch vụ
+                  </th>
+                  <th
+                    style={{
+                      border: "1px solid #ccc",
+                      padding: "8px",
+                      textAlign: "left",
+                    }}
+                  >
+                    Nhân Viên
+                  </th>
+                  <th
+                    style={{
+                      border: "1px solid #ccc",
+                      padding: "8px",
+                      textAlign: "left",
+                    }}
+                  >
+                    Thời gian bắt đầu
+                  </th>
+                  <th
+                    style={{
+                      border: "1px solid #ccc",
+                      padding: "8px",
+                      textAlign: "left",
+                    }}
+                  >
+                    Thời gian kết thúc
+                  </th>
+                  <th
+                    style={{
+                      border: "1px solid #ccc",
+                      padding: "8px",
+                      textAlign: "right",
+                    }}
+                  >
+                    Tiền
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {selectedAppointmentDetail.appointmentDetails.map((service) => (
+                  <tr key={service.serviceHairId}>
+                    <td style={{ border: "1px solid #ccc", padding: "8px" }}>
+                      {service?.serviceName}
+                    </td>
+                    <td style={{ border: "1px solid #ccc", padding: "8px" }}>
+                      {service.salonEmployee.fullName}
+                    </td>
+                    <td style={{ border: "1px solid #ccc", padding: "8px" }}>
+                      {moment(service?.startTime).format("HH:mm")}
+                    </td>
+                    <td style={{ border: "1px solid #ccc", padding: "8px" }}>
+                      {moment(service?.endTime).format("HH:mm")}
+                    </td>
+                    <td
+                      style={{
+                        border: "1px solid #ccc",
+                        padding: "8px",
+                        textAlign: "right",
+                      }}
+                    >
+                      {formatVND(service?.priceServiceHair)} VND
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-          {/* Hiển thị lý do và thời gian hủy nếu trạng thái là "Đã hủy" */}
-          {selectedAppointmentDetail.status === "CANCEL_BY_CUSTOMER" && (
-            <div>
+          <div
+            className={styles.appointmentDetailC2}
+            style={{ marginTop: "1rem" }}
+          >
+            {/* D1: Thông tin hủy */}
+            <div
+              className={styles.appointmentDetailD1}
+              style={{
+                border: "1px solid #ccc",
+                padding: "10px",
+              }}
+            >
               <p>
-                <Text strong>Lý do hủy: </Text>
-                <Text>{selectedAppointmentDetail.reasonCancel}</Text>
+                <Text strong>Khách Hàng: </Text>
+                <Text>{selectedAppointmentDetail?.customer.fullName}</Text>
               </p>
               <p>
-                <Text strong>Thời gian hủy: </Text>
+                <Text strong>Ngày hẹn: </Text>
+                <Text>
+                  {moment(selectedAppointmentDetail.startDate).format(
+                    "DD/MM/YYYY"
+                  )}
+                </Text>
+              </p>
+              <p>
+                <Text strong>Số tiền tạm tính: </Text>
+                <Text>
+                  {formatVND(selectedAppointmentDetail.originalPrice)} VND
+                </Text>
+              </p>
+              {/* <p>
+                <Text strong>Mã Khuyến mãi: </Text>
+                <Text>{selectedAppointmentDetail?.promoCode}</Text>
+              </p> */}
+              <p>
+                <Text strong>Giảm giá: </Text>
+                <Text>
+                  {formatVND(selectedAppointmentDetail.discountedPrice)} VND
+                </Text>
+              </p>
+              <p>
+                <Text strong>Cần thanh toán: </Text>
+                <Text strong style={{ color: "red" }}>
+                  {formatVND(selectedAppointmentDetail.totalPrice)} VND
+                </Text>
+              </p>
+            </div>
+
+            {/* D2: Tổng kết */}
+            {selectedAppointmentDetail.status === "CANCEL_BY_CUSTOMER" && (
+              <div
+                className={styles.appointmentDetailD2}
+                style={{
+                  border: "1px solid #ccc",
+                  padding: "10px",
+                  marginLeft: "1rem",
+                }}
+              >
+                <Text strong>Ngày hủy: </Text>
                 <Text>
                   {moment(selectedAppointmentDetail.cancellationTime).format(
                     "DD/MM/YYYY - HH:mm"
                   )}
                 </Text>
-              </p>
-            </div>
-          )}
+                <Divider />
+                <Text strong>Lý do hủy: </Text>
+                <Text>{selectedAppointmentDetail.reasonCancel}</Text>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -562,7 +651,7 @@ function CustomerAppointmentVer2(props) {
         visible={!!selectedAppointmentDetail}
         onCancel={handleModalClose}
         footer={null}
-        width={800}
+        width={1100}
       >
         {renderAppointmentDetail()}
       </Modal>
