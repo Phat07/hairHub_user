@@ -2,7 +2,8 @@
 .policy-container {
   display: flex;
   width: 100%;
-  height: 100vh;
+  height: 100%;
+  /* height: 100vh; */
   overflow: hidden; /* Đảm bảo không có thanh cuộn không cần thiết */
 }
 
@@ -12,7 +13,6 @@
   top: 0;
   background-color: #bf9456;
   border-right: 1px solid #d9d9d9;
-  margin-top: 95px;
   padding-top: 3rem;
   transition: all 0.3s ease; /* Thêm hiệu ứng chuyển động khi thay đổi kích thước */
 }
@@ -26,7 +26,7 @@
   width: 80%;
   padding: 20px;
   overflow-y: auto;
-  padding-top: 120px;
+  padding-top: 10px;
 }
 
 .policy-content h2 {

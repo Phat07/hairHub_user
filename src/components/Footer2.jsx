@@ -62,8 +62,8 @@ const Footer2 = () => {
           style={{
             width: "100%",
             height: "100%",
-            maxWidth: "15rem",
-            maxHeight: "15rem",
+            maxWidth: "10rem",
+            maxHeight: "10rem",
             objectFit: "cover",
             borderRadius: "0 2px 2px 0",
           }}
@@ -75,11 +75,11 @@ const Footer2 = () => {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          marginTop: "1rem",
-          marginBottom: "3rem",
+          marginTop: "0.5rem",
+          marginBottom: "1rem",
         }}
       >
-        <Title style={{ margin: "0", color: "white", fontSize: "2.5rem" }}>
+        <Title style={{ margin: "0", color: "white", fontSize: "2rem" }}>
           HairHub{" "}
         </Title>
         <Row justify="center" className="social-links">

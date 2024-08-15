@@ -477,7 +477,7 @@ function ListShopBarber(props) {
       <Menu.Item key="voucherList">Danh sách các voucher</Menu.Item>
     </Menu>
   );
-  console.log("salon", salonDetail);
+ 
   
   return (
     <div>

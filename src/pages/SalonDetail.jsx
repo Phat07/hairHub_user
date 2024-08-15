@@ -1236,7 +1236,7 @@ function SalonDetail(props) {
                     flexDirection: "row",
                     alignItems: "center",
                     justifyContent: "center",
-                    marginTop: "10px",
+                    marginTop: "30px",
                   }}
                 >
                   <h2
@@ -1283,7 +1283,6 @@ function SalonDetail(props) {
                     expandIconPosition="end"
                     className="custom-collapse"
                     style={{
-                      // marginTop: "16px",
                       backgroundColor: "transparent",
                     }}
                   >
