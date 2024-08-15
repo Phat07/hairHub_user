@@ -24,6 +24,7 @@ import moment from "moment";
 import { UploadOutlined } from "@ant-design/icons";
 import { actCreateFeedbackCustomer } from "../store/ratingCutomer/action";
 import { actCreateReportCustomer } from "../store/report/action";
+import { useNavigate } from "react-router-dom";
 
 const { Text } = Typography;
 
@@ -284,6 +285,7 @@ function CustomerAppointmentVer2(props) {
     setFileList(fileList);
   };
 
+  const navigate = useNavigate();
   const renderAppointmentDetail = () => {
     if (!selectedAppointmentDetail) return null;
 
@@ -293,7 +295,16 @@ function CustomerAppointmentVer2(props) {
           {/* B1: Thông tin Salon */}
           <div
             className={styles.appointmentDetailB1}
-            style={{ border: "1px solid #ccc", padding: "10px" }}
+            style={{
+              border: "1px solid #ccc",
+              padding: "10px",
+              paddingBottom: "30px",
+            }}
+            onClick={() =>
+              navigate(
+                `/salon_detail/${selectedAppointmentDetail?.salonInformation.id}`
+              )
+            }
           >
             <Text strong style={{ fontSize: "16px" }}>
               Thông tin Salon | Barber shop
@@ -302,7 +313,7 @@ function CustomerAppointmentVer2(props) {
               <Image
                 src={selectedAppointmentDetail?.salonInformation.img}
                 preview={false}
-                style={{ marginBottom: "10px" }}
+                style={{ marginBottom: "10px", marginTop: "10px" }}
                 width={300}
                 height={200}
               />
@@ -343,7 +354,10 @@ function CustomerAppointmentVer2(props) {
           {/* C1: Chi tiết dịch vụ */}
           <div
             className={styles.appointmentDetailC1}
-            style={{ border: "1px solid #ccc", padding: "10px" }}
+            style={{
+              border: "1px solid #ccc",
+              padding: "10px",
+            }}
           >
             <Text strong style={{ fontSize: "16px" }}>
               Chi tiết cuộc hẹn
