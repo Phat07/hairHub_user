@@ -46,11 +46,7 @@ function Header(props) {
   };
 
   const handleEmptySalon = () => {
-    if (
-      !salonServicesList ||
-      (typeof salonServicesList === "object" &&
-        Object.keys(salonServicesList).length === 0)
-    ) {
+    if (!salonDetail) {
       return "/create_shop";
     } else {
       return "/list_shop";

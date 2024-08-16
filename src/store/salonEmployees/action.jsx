@@ -60,13 +60,7 @@ export function actPostCreateSalonService(data, id) {
       .then((response) => {
         if (response.status === 200 || response.status === 201) {
           message.success("Thêm dịch vụ thành công!");
-          dispatch(
-            actGetAllServicesBySalonId(
-              id,
-              localStorage.getItem("currentPage"),
-              localStorage.getItem("pageSize")
-            )
-          );
+          dispatch(actGetAllServicesBySalonId(id, 1, 4));
         } else {
           message.error("Dịch vụ chưa được tạo!");
         }

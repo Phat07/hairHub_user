@@ -63,12 +63,8 @@ function ListServices() {
   // const [fileList, setFileList] = useState([]);
   const [imageFile, setImageFile] = useState({});
 
-  const [currentPage, setCurrentPage] = useState(
-    localStorage.getItem("currentPage") || 1
-  );
-  const [pageSize, setPageSize] = useState(
-    localStorage.getItem("pageSize") || 4
-  );
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(4);
 
   const [status, setStatus] = useState(false);
   const dispatch = useDispatch();
@@ -78,24 +74,13 @@ function ListServices() {
     (state) => state.SALONEMPLOYEES.totalPagesServices
   );
 
-  useEffect(() => {
-    const savedCurrentPage = localStorage.getItem("currentPage");
-    const savedPageSize = localStorage.getItem("pageSize");
 
-    if (savedCurrentPage && savedPageSize) {
-      setCurrentPage(Number(savedCurrentPage));
-      setPageSize(Number(savedPageSize));
-    } else {
-      setCurrentPage(1);
-      setPageSize(1);
-    }
-  }, []);
 
-  useEffect(() => {
-    // Lưu trạng thái trang hiện tại vào local storage
-    localStorage.setItem("currentPage", currentPage);
-    localStorage.setItem("pageSize", pageSize);
-  }, [currentPage, pageSize]);
+  // useEffect(() => {
+  //   // Lưu trạng thái trang hiện tại vào local storage
+  //   localStorage.setItem("currentPage", currentPage);
+  //   localStorage.setItem("pageSize", pageSize);
+  // }, [currentPage, pageSize]);
 
   useEffect(() => {
     if (id && currentPage && pageSize) {
@@ -219,13 +204,7 @@ function ListServices() {
           message.success(`Bạn đã cập nhật dịch vụ ${serviceName} thành công!`);
           form.resetFields();
           setisUpdateModalService(false);
-          dispatch(
-            actGetAllServicesBySalonId(
-              salonDetail.id,
-              localStorage.getItem("currentPage"),
-              localStorage.getItem("pageSize")
-            )
-          );
+          dispatch(actGetAllServicesBySalonId(salonDetail.id, 1, 4));
         })
         .catch((err) => {
           console.log(err, "errors");
@@ -246,13 +225,7 @@ function ListServices() {
           message.success(`Bạn đã cập nhật dịch vụ ${serviceName} thành công!`);
           form.resetFields();
           setisUpdateModalService(false);
-          dispatch(
-            actGetAllServicesBySalonId(
-              salonDetail.id,
-              localStorage.getItem("currentPage"),
-              localStorage.getItem("pageSize")
-            )
-          );
+          dispatch(actGetAllServicesBySalonId(salonDetail.id, 1, 4));
         })
         .catch((err) => {
           console.log(err, "errors");
@@ -337,8 +310,8 @@ function ListServices() {
   const onPageChange = (page, pageSize) => {
     setCurrentPage(page);
     setPageSize(pageSize);
-    localStorage.setItem("currentPage", page);
-    localStorage.setItem("pageSize", pageSize);
+    // localStorage.setItem("currentPage", page);
+    // localStorage.setItem("pageSize", pageSize);
   };
   return (
     <>
@@ -378,7 +351,7 @@ function ListServices() {
                 Hoàn thành
               </Button>,
             ]}
-          > 
+          >
             <AddServiceForm
               status={handleChange}
               isReset={(e) => {
