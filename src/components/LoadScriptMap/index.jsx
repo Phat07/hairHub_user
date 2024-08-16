@@ -32,6 +32,7 @@ function LoadScriptMap({salonList, currentLocation, mapStyle}) {
               setScriptLoaded(true);
             }}
           >
+            {/* tui muốn thêm ở đây  */}
             <GoogleMap
               mapContainerStyle={mapStyle}
               center={currentLocation}

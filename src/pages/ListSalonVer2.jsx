@@ -153,6 +153,12 @@ function ListSalonVer2(props) {
   const libraries = ["places"];
   const [selectedProvince, setSelectedProvince] = useState(locationSalon);
   const [selectedDistrict, setSelectedDistrict] = useState("");
+
+  const [searchBox, setSearchBox] = useState(null);
+  const [inputLocation, setInputLocation] = useState(""); // Lưu giá trị nhập vào của vị trí
+
+  const [mapsLoaded, setMapsLoaded] = useState(false);
+
   const [mapStyle, setMapStyle] = useState({
     height: "500px",
     width: "850px",
@@ -433,8 +439,8 @@ function ListSalonVer2(props) {
       message.info(
         <>
           Có {salons.length || 0} salon gần bạn
-          {servicesName && <> với dịch vụ {servicesName}</>}
-          {salonName && <> với tên salon {salonName}</>}
+          {servicesName && <> với dịch vụ: {servicesName}</>}
+          {salonName && <> , salon: {salonName}</>}
         </>
       );
     } catch (err) {
@@ -485,14 +491,122 @@ function ListSalonVer2(props) {
     setModalVisible(false); // Close the modal
   };
   const [form] = Form.useForm();
+  // const handleSearch = async () => {
+  //   const validateDistance = async () => {
+  //     try {
+  //       const values = await form.validateFields(["distance"]);
+  //       return values.distance;
+  //     } catch (error) {
+  //       message.error("Vui lòng nhập khoảng cách hợp lệ.");
+  //       throw error;
+  //     }
+  //   };
+
+  //   document.body.style.overflow = "hidden";
+  //   Modal.confirm({
+  //     title: "Bật vị trí hiện tại",
+  //     content: (
+  //       <Form form={form} layout="vertical">
+  //         <Form.Item
+  //           label="Nhập khoảng cách bạn muốn tìm (km)"
+  //           name="distance"
+  //           rules={[
+  //             { required: true, message: "Vui lòng nhập khoảng cách!" },
+  //             { pattern: /^\d+$/, message: "Khoảng cách phải là số!" },
+  //           ]}
+  //         >
+  //           <Input placeholder="Nhập khoảng cách" />
+  //         </Form.Item>
+  //       </Form>
+  //     ),
+  //     async onOk() {
+  //       try {
+  //         const distance = await validateDistance();
+  //         if ("geolocation" in navigator) {
+  //           setLoading(true); // Gọi setLoading(true) ngay khi bắt đầu quá trình
+
+  //           navigator.geolocation.getCurrentPosition(
+  //             async (pos) => {
+  //               const { latitude, longitude } = pos.coords;
+  //               const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${
+  //                 import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
+  //               }&loading=async`;
+
+  //               try {
+  //                 await fetchSalonDataNear(latitude, longitude, distance);
+  //                 message.success("Cảm ơn bạn đã kích hoạt dịch vụ định vị.");
+  //               } catch (error) {
+  //                 message.error("Có lỗi xảy ra khi tìm kiếm salon.");
+  //               } finally {
+  //                 setLoading(false); // Đảm bảo setLoading(false) được gọi khi kết thúc
+  //                 document.body.style.overflow = "";
+  //               }
+  //             },
+  //             (error) => {
+  //               setLoading(false);
+  //               message.error("Bạn đã từ chối quyền truy cập vị trí!");
+  //               document.body.style.overflow = "";
+  //             }
+  //           );
+  //         } else {
+  //           message.error(
+  //             "Định vị địa lý không được trình duyệt của bạn hỗ trợ."
+  //           );
+  //           document.body.style.overflow = "";
+  //         }
+  //       } catch (error) {
+  //         document.body.style.overflow = "";
+  //       }
+  //     },
+  //     onCancel() {
+  //       message.error("Bạn đã từ chối quyền truy cập vị trí.");
+  //       document.body.style.overflow = "";
+  //     },
+  //   });
+  // };
   const handleSearch = async () => {
     const validateDistance = async () => {
       try {
         const values = await form.validateFields(["distance"]);
         return values.distance;
       } catch (error) {
+        document.body.style.overflow = "";
         message.error("Vui lòng nhập khoảng cách hợp lệ.");
-        throw error;
+        return null; // Trả về null để báo lỗi nhưng không đóng modal
+      }
+    };
+
+    const handleOk = async () => {
+      const distance = await validateDistance();
+      if (!distance) {
+        return Promise.reject(); // Trả về Promise.reject() để ngăn việc đóng modal
+      }
+
+      if ("geolocation" in navigator) {
+        setLoading(true);
+        navigator.geolocation.getCurrentPosition(
+          async (pos) => {
+            const { latitude, longitude } = pos.coords;
+            try {
+              await fetchSalonDataNear(latitude, longitude, distance);
+              // message.success("Cảm ơn bạn đã kích hoạt dịch vụ định vị.");
+              document.body.style.overflow = "";
+            } catch (error) {
+              message.error("Có lỗi xảy ra khi tìm kiếm salon.");
+            } finally {
+              document.body.style.overflow = "";
+
+              setLoading(false);
+            }
+          },
+          (error) => {
+            setLoading(false);
+            document.body.style.overflow = "";
+            message.error("Bạn đã từ chối quyền truy cập vị trí!");
+          }
+        );
+      } else {
+        message.error("Định vị địa lý không được trình duyệt của bạn hỗ trợ.");
       }
     };
 
@@ -514,33 +628,7 @@ function ListSalonVer2(props) {
         </Form>
       ),
       async onOk() {
-        const distance = await validateDistance();
-        if ("geolocation" in navigator) {
-          navigator.geolocation.getCurrentPosition(
-            async (pos) => {
-              setLoading(true);
-              const { latitude, longitude } = pos.coords;
-              const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${
-                import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
-              }&loading=async`;
-              const dataDistance = form.getFieldValue("distance");
-              await fetchSalonDataNear(latitude, longitude, dataDistance);
-
-              message.success("Cảm ơn bạn đã kích hoạt dịch vụ định vị.");
-              document.body.style.overflow = "";
-            },
-            (error) => {
-              setLoading(false);
-              message.error("Bạn đã từ chối quyền truy cập vị trí!");
-              document.body.style.overflow = "";
-            }
-          );
-        } else {
-          message.error(
-            "Định vị địa lý không được trình duyệt của bạn hỗ trợ."
-          );
-          document.body.style.overflow = "";
-        }
+        await handleOk(); // Chỉ đóng modal nếu handleOk không trả về Promise.reject()
       },
       onCancel() {
         message.error("Bạn đã từ chối quyền truy cập vị trí.");
@@ -548,6 +636,164 @@ function ListSalonVer2(props) {
       },
     });
   };
+
+  const onPlacesChanged = () => {
+    const places = searchBox.getPlaces();
+    if (places.length > 0) {
+      setInputLocation(places[0].formatted_address);
+    }
+  };
+
+  const [showModal, setShowModal] = useState(true);
+
+  // Hàm kiểm tra và cập nhật trạng thái tải API
+  // const checkMapsLoaded = () => {
+  //   if (!mapsLoaded) {
+  //     setTimeout(checkMapsLoaded, 1000); // Kiểm tra lại sau 1 giây
+  //   } else {
+  //     setShowModal(true); // Hiển thị modal khi API đã tải xong
+  //   }
+  // };
+  // useEffect(() => {
+  //   const timeoutId = setTimeout(() => {
+  //     if (!mapsLoaded) {
+  //       window.location.reload();
+  //     }
+  //   }, 1000); // 5 seconds timeout
+
+  //   return () => clearTimeout(timeoutId);
+  // }, [mapsLoaded]);
+  // const handleSearch = async () => {
+  //   const validateDistance = async () => {
+  //     try {
+  //       const values = await form.validateFields(["distance"]);
+  //       return values.distance;
+  //     } catch (error) {
+  //       message.error("Vui lòng nhập khoảng cách hợp lệ.");
+  //       return null;
+  //     }
+  //   };
+
+  //   const handleOk = async () => {
+  //     if (!mapsLoaded) {
+  //       message.error("Google Maps API chưa được tải xong. Vui lòng chờ.");
+  //       return Promise.reject(); // Không đóng modal nếu API chưa tải xong
+  //     }
+
+  //     const distance = await validateDistance();
+  //     if (!distance) {
+  //       return Promise.reject();
+  //     }
+
+  //     let latitude, longitude;
+  //     let inputLocationAddress = form?.inputLocationAddress;
+  //     if (inputLocationAddress) {
+  //       try {
+  //         const geocoder = new window.google.maps.Geocoder();
+  //         const results = await geocoder.geocode({
+  //           address: inputLocationAddress,
+  //         });
+  //         if (results.status === "OK" && results.results[0]) {
+  //           latitude = results.results[0].geometry.location.lat();
+  //           longitude = results.results[0].geometry.location.lng();
+  //         } else {
+  //           message.error("Không thể xác định vị trí từ địa chỉ nhập vào.");
+  //           return Promise.reject();
+  //         }
+  //       } catch (error) {
+  //         message.error("Có lỗi xảy ra khi xác định vị trí.");
+  //         return Promise.reject();
+  //       }
+  //     } else if ("geolocation" in navigator) {
+  //       setLoading(true);
+  //       return new Promise((resolve, reject) => {
+  //         navigator.geolocation.getCurrentPosition(
+  //           async (pos) => {
+  //             latitude = pos.coords.latitude;
+  //             longitude = pos.coords.longitude;
+
+  //             try {
+  //               await fetchSalonDataNear(latitude, longitude, distance);
+  //               message.success("Cảm ơn bạn đã kích hoạt dịch vụ định vị.");
+  //               resolve();
+  //             } catch (error) {
+  //               message.error("Có lỗi xảy ra khi tìm kiếm salon.");
+  //               reject();
+  //             } finally {
+  //               setLoading(false);
+  //             }
+  //           },
+  //           (error) => {
+  //             setLoading(false);
+  //             message.error("Bạn đã từ chối quyền truy cập vị trí!");
+  //             reject();
+  //           }
+  //         );
+  //       });
+  //     } else {
+  //       message.error("Định vị địa lý không được trình duyệt của bạn hỗ trợ.");
+  //       return Promise.reject();
+  //     }
+  //   };
+
+  //   // Bắt đầu kiểm tra khi modal mở
+  //   if (showModal) {
+  //     document.body.style.overflow = "hidden";
+  //     Modal.confirm({
+  //       title: "Bật vị trí hiện tại",
+  //       content: (
+  //         <LoadScript
+  //           googleMapsApiKey={`${
+  //             import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
+  //           }&loading=async`}
+  //           libraries={["places"]}
+  //           onLoad={() => setMapsLoaded(true)}
+  //         >
+  //           {/* {mapsLoaded ? ( */}
+  //           <Form form={form}>
+  //             <Form.Item
+  //               label="Nhập khoảng cách bạn muốn tìm (km)"
+  //               name="distance"
+  //               rules={[
+  //                 { required: true, message: "Vui lòng nhập khoảng cách!" },
+  //                 { pattern: /^\d+$/, message: "Khoảng cách phải là số!" },
+  //               ]}
+  //             >
+  //               <Input placeholder="Nhập khoảng cách" />
+  //             </Form.Item>
+  //             <StandaloneSearchBox
+  //               onLoad={(ref) => setSearchBox(ref)}
+  //               onPlacesChanged={onPlacesChanged}
+  //             >
+  //               <Form.Item
+  //                 name="inputLocationAddress"
+  //                 label="Nhập vị trí hiện tại của bạn"
+  //               >
+  //                 <Input placeholder="Nhập vị trí hiện tại của bạn" />
+  //               </Form.Item>
+  //             </StandaloneSearchBox>
+  //           </Form>
+  //           {/* ) : (
+  //             <Spin tip="Đang tải Google Maps API..." />
+  //           )} */}
+  //         </LoadScript>
+  //       ),
+  //       async onOk() {
+  //         try {
+  //           await handleOk();
+  //         } catch (error) {
+  //           // Xử lý lỗi nếu cần thiết
+  //         }
+  //       },
+  //       onCancel() {
+  //         message.error("Bạn đã từ chối quyền truy cập vị trí.");
+  //         document.body.style.overflow = "";
+  //       },
+  //       okButtonProps: { disabled: !mapsLoaded }, // Vô hiệu hóa nút OK nếu mapsLoaded là false
+  //     });
+  //   }
+  // };
+
   return (
     <main className="list-salon-container">
       <div className="left-side">
@@ -886,7 +1132,7 @@ function ListSalonVer2(props) {
             whileHover={{ scale: 1.05 }} // Tăng nhẹ kích thước khi hover
             whileTap={{ scale: 0.95 }} // Giảm nhẹ kích thước khi nhấn
             transition={{ duration: 0.3 }} // Thời gian chuyển đổi
-            style={{marginRight:"10px"}}
+            style={{ marginRight: "10px" }}
           >
             <Select
               value={selectedProvince || undefined}
