@@ -34,28 +34,53 @@ main.list-salon-container {
 .select_2 {
   width: 15rem;
 }
+.tinhHuyen {
+  display: flex;
+  justify-content: space-around;
+}
+
 @media (max-width: 768px) {
   main.list-salon-container {
     flex-direction: column;
     padding: 0 20px;
-    /* height: 1950px; */
-    margin-top: 95px;
+    /* height: 130rem; */
+    min-height: 100vh;
   }
 
-  .left-side {
+  /* .left-side {
     margin-right: 0;
     margin-bottom: 20px;
   }
 
   .right-side {
     margin-bottom: 0;
+  } */
+  .left-side {
+    margin-right: 0;
+    width: 100%;
+    /* position: absolute; */
+  }
+  .ant-spin-container{
+    top: 20rem;
+    overflow: hidden;
+  }
+
+  .right-side {
+    width: 100%;
+    top: 25rem;
+    margin: 1rem 0; /* Margin on top and bottom to space it from other content */
+    position: absolute;
   }
   .select_1 {
-    width: 10rem;
+    width: 8rem;
     margin-right: "10px";
   }
   .select_2 {
-    width: 10rem;
+    width: 8rem;
+  }
+  .tinhHuyen {
+    display: flex;
+    justify-content: start;
   }
 }
 
@@ -262,20 +287,19 @@ main.list-salon-container {
 }
 
 .ant-btn.book-button {
-  background-color: #bc8d4a; 
-  color: #000; 
-  border: 1px solid #d9d9d9; 
-  border-radius: 4px; 
-  padding: 6px 12px; 
-  cursor: pointer; 
+  background-color: #bc8d4a;
+  color: #000;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  padding: 6px 12px;
+  cursor: pointer;
   /* transition: all 0.3s;  */
 }
 
-
 .ant-btn.book-button:hover {
-  background-color: #e6b97b !important; 
-  color: rgb(15, 14, 14) !important; 
-  border: none; 
+  background-color: #e6b97b !important;
+  color: rgb(15, 14, 14) !important;
+  border: none;
 }
 
 .pagination {

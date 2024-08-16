@@ -176,7 +176,7 @@ function ListSalonVer2(props) {
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth <= 480) {
-        setMapStyle({ height: "250px", width: "425px" });
+        setMapStyle({ height: "250px", width: "350px" });
       } else if (window.innerWidth <= 768) {
         setMapStyle({ height: "300px", width: "425px" });
       } else {
@@ -1119,7 +1119,7 @@ function ListSalonVer2(props) {
         </Spin>
       </div>
       <div className="right-side">
-        <div style={{ display: "flex", justifyContent: "space-around" }}>
+        <div className="tinhHuyen" >
           {/* <Select
             value={selectedProvince || undefined}
             style={{ width: 250, marginRight: "10px" }}
