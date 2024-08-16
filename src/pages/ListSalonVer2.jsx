@@ -180,7 +180,7 @@ function ListSalonVer2(props) {
       } else if (window.innerWidth <= 768) {
         setMapStyle({ height: "300px", width: "425px" });
       } else {
-        setMapStyle({ height: "300px", width: "500px" });
+        setMapStyle({ height: "300px", width: "620px" });
       }
     };
 

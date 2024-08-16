@@ -108,7 +108,7 @@ function Header(props) {
                 </Link>
               </li>
               <li className={style.navItem}>
-                <Link to={"/system_shop"} className={style.navLink}>
+                <Link to={"/list_salon_ver2"} className={style.navLink}>
                   Hệ thống cửa hàng
                 </Link>
               </li>

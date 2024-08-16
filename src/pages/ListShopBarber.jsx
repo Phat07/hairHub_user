@@ -316,6 +316,8 @@ import {
   Form,
   InputNumber,
   DatePicker,
+  TimePicker,
+  Upload,
 } from "antd";
 import styles from "../css/listShopBarber.module.css";
 import Header from "../components/Header";
@@ -338,6 +340,7 @@ import {
   PlusCircleOutlined,
   PlusOutlined,
   SearchOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import axios from "axios";
@@ -395,6 +398,16 @@ function ListShopBarber(props) {
 
   const [filterName, setFilterName] = useState("");
   const [filterLocation, setFilterLocation] = useState("");
+  const [isUpdateModalService, setisUpdateModalService] = useState(false);
+  const [imageFile, setImageFile] = useState({});
+  const [imageUrl, setImageUrl] = useState(null);
+  const [updateService, setServiceUpdate] = useState({});
+
+
+
+
+  const timeFormat = "HH:mm";
+  const [serviceTime, setServiceTime] = useState(dayjs("00:00", timeFormat));
 
   const salonDetail = useSelector(
     (state) => state.SALONINFORMATION.getSalonByOwnerId
@@ -553,7 +566,16 @@ function ListShopBarber(props) {
     };
     return daysMapping[dayOfWeek] || dayOfWeek;
   };
+  function convertServiceTimeFromBe(serviceTime) {
+    // Extract hours and minutes
+    let hours = Math.floor(serviceTime);
+    let minutes = Math.round((serviceTime - hours) * 60);
 
+    // Use dayjs to format the time
+    let formattedTime = dayjs().hour(hours).minute(minutes);
+
+    return formattedTime;
+  }
   const sortSchedules = (schedules) => {
     const dayOrder = [
       "Monday",
@@ -799,7 +821,7 @@ function ListShopBarber(props) {
       render: (_, record) => (
         <Space size={"small"} className="service-actions">
           <Button
-            onClick={() => {}}
+            onClick={() => {handleUpdate(record)}}
             className="editButtonStyle"
             icon={<EditOutlined />}
           >
@@ -954,7 +976,125 @@ function ListShopBarber(props) {
     </Menu>
   );
   console.log("salon", salonDetail);
+  const handleUpdate = (service) => {
+    setServiceUpdate(service);
+    setisUpdateModalService(true);
+    console.log(service.time, "service time update");
+    console.log(
+      convertServiceTimeFromBe(service.time),
+      "Converted Service Time"
+    );
+    form.setFieldsValue({
+      serviceName: service.serviceName,
+      description: service.description,
+      price: service.price,
+      time: convertServiceTimeFromBe(service.time),
+    });
 
+    setCurrencyValueUpdate(service.price);
+    setServiceTime(convertServiceTimeFromBe(service.time));
+    setImageUrl(service.img); // Set the initial image URL
+  };
+  const handleUpdateOk = async () => {
+    const serviceName = await form.getFieldValue("serviceName");
+    const description = await form.getFieldValue("description");
+    const price = await form.getFieldValue("price");
+    const time = await form.getFieldValue("time");
+    const formDataUpdate = new FormData();
+
+    const formattedTime = await onTimeChange(time);
+    if (isEmptyObject(imageFile)) {
+      await formDataUpdate.append("ServiceName", serviceName);
+      await formDataUpdate.append("Description", description);
+      await formDataUpdate.append("Price", price);
+      await formDataUpdate.append("Time", formattedTime);
+      await formDataUpdate.append("IsActive", true);
+
+      await ServiceHairServices.updateServiceHairById(
+        updateService?.id,
+        formDataUpdate
+      )
+        .then(() => {
+          message.success(`Bạn đã cập nhật dịch vụ ${serviceName} thành công!`);
+          form.resetFields();
+          setisUpdateModalService(false);
+          dispatch(
+            actGetAllServicesBySalonId(
+              salonDetail.id,
+              localStorage.getItem("currentPage"),
+              localStorage.getItem("pageSize")
+            )
+          );
+        })
+        .catch((err) => {
+          console.log(err, "errors");
+        });
+    } else {
+      await formDataUpdate.append("ServiceName", serviceName);
+      await formDataUpdate.append("Description", description);
+      await formDataUpdate.append("Price", price);
+      await formDataUpdate.append("Img", imageFile);
+      await formDataUpdate.append("Time", formattedTime);
+      await formDataUpdate.append("IsActive", true);
+
+      await ServiceHairServices.updateServiceHairById(
+        updateService.id,
+        formDataUpdate
+      )
+        .then(() => {
+          message.success(`Bạn đã cập nhật dịch vụ ${serviceName} thành công!`);
+          form.resetFields();
+          setisUpdateModalService(false);
+          dispatch(
+            actGetAllServicesBySalonId(
+              salonDetail.id,
+              localStorage.getItem("currentPage"),
+              localStorage.getItem("pageSize")
+            )
+          );
+        })
+        .catch((err) => {
+          console.log(err, "errors");
+        });
+    }
+  };
+  const onTimeChange = (time) => {
+    const { $H, $m, ...rest } = time;
+    const serviceTimeString = parseFloat(`${$H}.${$m}`); //convert string to float number
+    const rounded15 = roundUpToNearestIncrement(serviceTimeString, 0.25); //0.25
+    const rounded30 = roundUpToNearestIncrement(serviceTimeString, 0.5); //0.5
+    const rounded45 = roundUpToNearestIncrement(serviceTimeString, 0.75); //0.75
+    const rounded1 = roundUpToNearestIncrement(serviceTimeString, 1);
+    for (let i = 0; i < 10; i++) {
+      //chọn khoảng thời gian cho phép làm tóc 10 = 10 tiếng :))
+      if (serviceTimeString + 0.1 === i + 0.25) {
+        console.log(`rounded15: ${rounded15}, expected: ${i + 0.25}`);
+        setServiceTime(rounded15);
+        return rounded15;
+      } else if (serviceTimeString + 0.2 === i + 0.5) {
+        // < 0.0001
+        console.log(`rounded30: ${rounded30}, expected: ${i + 0.5}`);
+        setServiceTime(rounded30);
+        return rounded30;
+      } else if (serviceTimeString + 0.3 === i + 0.75) {
+        console.log(`rounded45: ${rounded45}, expected: ${i + 0.75}`);
+        setServiceTime(rounded45);
+        return rounded45;
+      } else if (Number.isInteger(serviceTimeString)) {
+        console.log(`rounded00: ${rounded1}, expected: ${i}`);
+        setServiceTime(rounded1);
+        return rounded1;
+      }
+    }
+  };
+  const handleImageChange = (info) => {
+    console.log("infor", info);
+    setImageFile(info.file);
+
+    getBase64(info.file, (imageUrl) => {
+      setImageUrl(imageUrl);
+    });
+  };
   return (
     <div>
       <div className={styles["container_list"]}>
@@ -1468,6 +1608,67 @@ function ListShopBarber(props) {
                   salonInformation={salonDetail}
                   isOpen={(e) => setOpenEmployee(!e)}
                 />
+              </Modal>
+              <Modal
+                title="Cập nhật dịch vụ"
+                visible={isUpdateModalService}
+                onOk={handleUpdateOk}
+                onCancel={() => {
+                  setisUpdateModalService(!isUpdateModalService);
+                  form.resetFields(); // Reset form when closing the Modal
+                  setImageUrl(null); // Reset image URL
+                }}
+              >
+                <Form form={form} layout="vertical">
+                  <Form.Item name="serviceName" label="Dịch vụ">
+                    <Input />
+                  </Form.Item>
+                  <Form.Item name="description" label="Mô tả">
+                    <Input />
+                  </Form.Item>
+                  <Form.Item label="Giá (VND)" name="price">
+                    <InputNumber
+                      onChange={(value) => setCurrencyValueUpdate(value)}
+                      min={1}
+                      type="number"
+                      style={{ width: "100%" }}
+                    />
+                  </Form.Item>
+                  <Flex className="mt-3" gap={"small"}>
+                    <DollarCircleOutlined />
+                    <Typography.Text strong>
+                      Currency: {formatCurrency(currencyValueUpdate)}
+                    </Typography.Text>
+                  </Flex>
+                  <Form.Item
+                    initialValue={dayjs("00:15", timeFormat)}
+                    name="time"
+                    label="Thời lượng (khoảng cách 15 phút)"
+                  >
+                    <TimePicker
+                      onChange={onTimeChange}
+                      format={timeFormat}
+                      minuteStep={15}
+                    />
+                  </Form.Item>
+                  <Form.Item name="img" label="Ảnh">
+                    <Upload
+                      listType="picture"
+                      beforeUpload={() => false}
+                      onChange={handleImageChange}
+                      showUploadList={false} // Hide default list
+                    >
+                      <Button icon={<UploadOutlined />}>Tải ảnh</Button>
+                    </Upload>
+                    {imageUrl && (
+                      <Image
+                        src={imageUrl}
+                        alt="Service Image"
+                        style={{ width: "100%", marginTop: "10px" }}
+                      />
+                    )}
+                  </Form.Item>
+                </Form>
               </Modal>
             </Card>
           </>
