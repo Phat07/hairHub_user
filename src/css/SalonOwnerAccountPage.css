@@ -99,12 +99,34 @@
     flex-direction: column;
     align-items: center;
   }
+  .form-item-custom .ant-row{
+    flex-flow: column;
+  }
+  .change-password-button {
+    width: 100%;
+    background-color: #bf9456;
+    color: white;
+    margin-bottom: 5px;
+  }
+  .change-password-button:hover {
+    width: 100%;
+    background-color: white;
+    color: #bf9456;
+    border-color: #bf9456;
+  }
   
   @media (max-width: 768px) {
     .salon-layout {
       flex-direction: column;
       margin-top: 3rem;
       margin-bottom: 1rem;
+    }
+    .salon-right .ant-row {
+      flex-flow: column;
+    }
+
+    .form-item-custom .ant-row{
+      width: 100%;
     }
   
     .salon-left, .salon-right {
