@@ -38,6 +38,13 @@
     width: 100%;
     min-width: 600px; /* Set a minimum width for the table */
   }
+
+  .custom-header{
+    color: rgb(0, 0, 0);
+    text-align: start;
+    font-weight: bold;
+  }
+  
   
   @media (max-width: 768px) {
     .container_list {
