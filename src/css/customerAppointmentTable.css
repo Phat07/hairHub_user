@@ -1,0 +1,40 @@
+.ant-table-thead > tr > th {
+  font-weight: bold !important;
+  font-size: 1rem;
+}
+
+.ant-table-tbody > tr > td {
+  font-size: 1rem;
+}
+
+.ant-table-content .ant-table-thead > tr > th {
+  background-color: #bf9456 !important;
+}
+
+.ant-table-content .ant-table-tbody > tr > td {
+  background-color: #f4f2eb !important;
+}
+
+.paginationAppointment {
+  text-align: center;
+}
+
+.paginationAppointment .ant-pagination-item {
+  background-color: #bf9456;
+  border: unset;
+}
+
+.paginationAppointment .ant-pagination-item a {
+  color: #fff;
+}
+
+.paginationAppointment .ant-pagination-item:hover,
+.paginationAppointment .ant-pagination-item-active {
+  background-color: #a86c40;
+  border: unset;
+}
+
+.paginationAppointment .ant-pagination-item:hover a,
+.paginationAppointment .ant-pagination-item-active a {
+  color: #fff;
+}

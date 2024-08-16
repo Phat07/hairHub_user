@@ -1,4 +1,4 @@
-import { ConfigProvider } from "antd";
+import { ConfigProvider, Table } from "antd";
 import viVn from "antd/lib/locale/vi_VN";
 import React from "react";
 import ReactDOM from "react-dom/client";
@@ -7,7 +7,7 @@ import {
   Route,
   RouterProvider,
   Routes,
-  createBrowserRouter
+  createBrowserRouter,
 } from "react-router-dom";
 import "rsuite/dist/rsuite.min.css";
 import App1 from "./App.jsx";
@@ -48,6 +48,7 @@ import SucessPayment from "./pages/SucessPayment.jsx";
 import SystemBarberPage from "./pages/SystemBarberPage.jsx";
 import RequireAuth from "./PrivateRoute.js";
 import store from "./store";
+import Footer2 from "./components/Footer2.jsx";
 
 const router = createBrowserRouter([
   {
@@ -97,7 +98,14 @@ const router = createBrowserRouter([
         path: "list_shop",
         element: (
           <RequireAuth fallbackPath="/login">
-            <ListShopBarber />
+            {/* <ListShopBarber /> */}
+            <Routes>
+              <Route path="/" element={<ListShopBarber />} />
+              <Route
+                path="account_details/:employeeId"
+                element={<AccountPage />}
+              />
+            </Routes>
           </RequireAuth>
         ),
       },

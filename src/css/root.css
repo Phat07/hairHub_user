@@ -26,11 +26,15 @@
 }
 
 body {
-
     background-color: #f4f2eb;
 }
-
-.root {
-    /* min-height: 100vh; */
-    background-color: #f4f2eb;
+.super-container {
+    flex: 1;
+    min-height: 100vh;
 }
+
+/* .root {
+    background-color: #f4f2eb;
+    min-height: calc(100vh - 100px); 
+    padding-bottom: 100px; 
+} */

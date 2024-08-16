@@ -132,11 +132,13 @@ function App() {
 
   return (
     <>
-      {localStorage.getItem("refreshToken") ? <Header /> : <HeaderUnAuth />}
-      {/* {localStorage.getItem("refreshToken") ? <HeaderUnAuth /> :<></>} */}
-      {/* <ChatBox /> */}
-      {/* <ChatComponent /> */}
-      {/* <Footer /> */}
+      <div className="super-container">
+        {localStorage.getItem("refreshToken") ? <Header /> : <HeaderUnAuth />}
+        {/* {localStorage.getItem("refreshToken") ? <HeaderUnAuth /> :<></>} */}
+        <ChatBox />
+        {/* <ChatComponent /> */}
+        {/* <Footer /> */}
+      </div>
       <Footer2 />
     </>
   );

@@ -33,6 +33,7 @@ import axios from "axios";
 import LoadScriptMap from "../components/LoadScriptMap";
 import { motion } from "framer-motion";
 import "antd/dist/reset.css";
+import { set } from "rsuite/esm/internals/utils/date";
 const defaultCenter = {
   lat: 10.8231, // Default to Ho Chi Minh City
   lng: 106.6297,
@@ -356,7 +357,7 @@ function ListSalonVer2(props) {
   const fetchSalonData = async () => {
     try {
       console.log("test");
-      
+
       setLoading(true);
       let dataAddress = selectedProvince;
       if (selectedDistrict) {
@@ -398,7 +399,6 @@ function ListSalonVer2(props) {
   const fetchSalonDataNear = async (latitude, longtitude, distance) => {
     try {
       setLoading(true);
-      console.log("56", selectedProvince);
       let dataAddress = selectedProvince;
       if (selectedDistrict) {
         dataAddress = `${selectedDistrict}, ${selectedProvince}`;
@@ -415,7 +415,7 @@ function ListSalonVer2(props) {
           pageSize
         );
       const salons = salonRes.data.items;
-        
+
       const servicePromises = await salons.map((salon) =>
         ServiceHairServices.getServiceHairBySalonNotPaging(salon.id).then(
           (serviceData) => ({
@@ -430,7 +430,13 @@ function ListSalonVer2(props) {
       setSalonList(salonsWithServices);
       setTotalPages(salonRes.data.total);
       setTotal(salonRes.data.total);
-      message.info(`Có ${salons.length} salon gần bạn`)
+      message.info(
+        <>
+          Có {salons.length || 0} salon gần bạn
+          {servicesName && <> với dịch vụ {servicesName}</>}
+          {salonName && <> với tên salon {salonName}</>}
+        </>
+      );
     } catch (err) {
       console.log(err, "errors");
     } finally {
@@ -512,6 +518,7 @@ function ListSalonVer2(props) {
         if ("geolocation" in navigator) {
           navigator.geolocation.getCurrentPosition(
             async (pos) => {
+              setLoading(true);
               const { latitude, longitude } = pos.coords;
               const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${
                 import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
@@ -523,6 +530,7 @@ function ListSalonVer2(props) {
               document.body.style.overflow = "";
             },
             (error) => {
+              setLoading(false);
               message.error("Bạn đã từ chối quyền truy cập vị trí!");
               document.body.style.overflow = "";
             }
@@ -878,6 +886,7 @@ function ListSalonVer2(props) {
             whileHover={{ scale: 1.05 }} // Tăng nhẹ kích thước khi hover
             whileTap={{ scale: 0.95 }} // Giảm nhẹ kích thước khi nhấn
             transition={{ duration: 0.3 }} // Thời gian chuyển đổi
+            style={{marginRight:"10px"}}
           >
             <Select
               value={selectedProvince || undefined}
