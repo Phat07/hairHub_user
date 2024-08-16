@@ -26,6 +26,7 @@ function Header(props) {
   console.log("salonServicesList", salonServicesList);
 
   const account = useSelector((state) => state.ACCOUNT.username);
+  console.log("idCustomer", idCustomer);
 
   useEffect(() => {
     if (idOwner) {

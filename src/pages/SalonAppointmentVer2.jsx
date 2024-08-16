@@ -7,12 +7,14 @@ import {
 } from "../store/salonAppointments/action";
 import {
   Button,
+  Divider,
   Image,
   Input,
   message,
   Modal,
   Pagination,
   Spin,
+  Table,
   Typography,
   Upload,
 } from "antd";
@@ -20,7 +22,8 @@ import moment from "moment";
 import { actCreateReportSalon } from "../store/report/action";
 import { AppointmentService } from "../services/appointmentServices";
 import { EmptyComponent } from "../components/EmptySection/DisplayEmpty";
-import "../css/salonAppointmentV2.css";
+import styles from "../css/salonAppointment.module.css";
+import { useNavigate } from "react-router-dom";
 const { Text, Title } = Typography;
 function SalonAppointmentVer2(props) {
   const dispatch = useDispatch();
@@ -64,18 +67,7 @@ function SalonAppointmentVer2(props) {
       return () => clearTimeout(timer);
     }
   }, [isModalVisible]);
-  // useEffect(() => {
-  //   if (salonInformationByOwnerId || status) {
-  //     dispatch(
-  //       actGetAppointmentBySalonId(
-  //         currentPage,
-  //         pageSize,
-  //         salonInformationByOwnerId?.id,
-  //         status
-  //       )
-  //     );
-  //   }
-  // }, [salonInformationByOwnerId, status, currentPage]);
+
   useEffect(() => {
     const fetchAppointments = async () => {
       if (salonInformationByOwnerId || status) {
@@ -112,12 +104,15 @@ function SalonAppointmentVer2(props) {
   };
 
   const formatDate = (dateString) => {
-    const dateObj = new Date(dateString);
-    const day = dateObj.getDate().toString().padStart(2, "0");
-    const month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
-    const year = dateObj.getFullYear();
-    return `${day}/${month}/${year}`;
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    return `${day}/${month}/${year} - ${hours}:${minutes}`;
   };
+
   function formatVND(amount) {
     // Chuyển đổi số tiền sang chuỗi và ngược lại để xử lý dễ dàng hơn
     let amountStr = String(amount);
@@ -141,11 +136,13 @@ function SalonAppointmentVer2(props) {
     // Trả về chuỗi kết quả đã định dạng
     return formattedAmount;
   }
+
   const showModal = (appointment) => {
     setCurrentAppointment(appointment);
     console.log(appointment);
     setIsModalVisible(true);
   };
+
   const handleCancelAppointment = async (appointmentId, customerId) => {
     // Lấy cuộc hẹn tương ứng từ danh sách salonAppointments
 
@@ -167,16 +164,19 @@ function SalonAppointmentVer2(props) {
         console.log("err", error);
       });
   };
+
   const handleReport = (appointmentId) => {
     console.log("Report appointment with ID:", appointmentId);
     setIsReportModalVisible(true);
     setItemReport(appointmentId);
   };
+
   const handleReportCancel = () => {
     // Reset state if canceling report
     setReportImage(null);
     setIsReportModalVisible(false);
   };
+
   const handleReportOk = () => {
     const formData = new FormData();
     formData.append("SalonId", itemReport?.salonInformation?.id); // Replace with actual value
@@ -207,6 +207,7 @@ function SalonAppointmentVer2(props) {
         setIsReportModalVisible(false);
       });
   };
+
   const handleUploadChange = (info) => {
     const { status, fileList } = info; // Get fileList from info
     console.log("info", info);
@@ -222,15 +223,296 @@ function SalonAppointmentVer2(props) {
     // Update fileList state
     setFileList(fileList);
   };
+
   const handleCancel = () => {
     setIsModalVisible(false);
+    console.log("isModalVisible", isModalVisible);
   };
-  return (
-    <div className="salon-appointment-container">
-      <div className="header">
-        <Title level={2}>Cuộc hẹn của salon</Title>
+
+  const navigate = useNavigate();
+  const renderAppointmentDetail = () => {
+    if (!currentAppointment) return null;
+
+    return (
+      <div className={styles.appointmentDetail}>
+        <div className={styles.appointmentDetailA1}>
+          {/* B1: Thông tin Salon */}
+          <div
+            className={styles.appointmentDetailB1}
+            style={{
+              border: "1px solid #ccc",
+              padding: "10px",
+              paddingBottom: "50px",
+            }}
+            onClick={() =>
+              navigate(
+                `/salon_detail/${currentAppointment?.salonInformation.id}`
+              )
+            }
+          >
+            <Text strong style={{ fontSize: "16px" }}>
+              Thông tin Salon | Barber shop
+            </Text>
+            <div>
+              <Image
+                src={currentAppointment?.salonInformation.img}
+                preview={false}
+                style={{ marginBottom: "10px", marginTop: "10px" }}
+                width={300}
+                height={200}
+              />
+              <p>
+                <Text strong>Tên tiệm: </Text>
+                <Text>{currentAppointment?.salonInformation.name}</Text>
+              </p>
+              <p>
+                <Text strong>Địa chỉ: </Text>
+                <Text>{currentAppointment?.salonInformation.address}</Text>
+              </p>
+            </div>
+          </div>
+
+          {/* B2: Mã QR */}
+          <div
+            className={styles.appointmentDetailB2}
+            style={{ marginTop: "1rem" }}
+          >
+            {currentAppointment?.status !== "CANCEL_BY_CUSTOMER" && (
+              <div style={{ padding: "10px", border: "1px solid #ccc" }}>
+                <Text strong>Mã QR xác nhận để thành công:</Text>
+                <Image
+                  src={currentAppointment?.qrCodeImg}
+                  style={{ width: "100%", marginTop: "10px" }}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div
+          className={styles.appointmentDetailA2}
+          // style={{ marginLeft: "1rem" }}
+        >
+          {/* C1: Chi tiết dịch vụ */}
+          <div
+            className={styles.appointmentDetailC1}
+            style={{
+              border: "1px solid #ccc",
+              padding: "10px",
+            }}
+          >
+            <Text strong style={{ fontSize: "16px" }}>
+              Thông tin dịch vụ
+            </Text>
+            <table
+              style={{
+                width: "100%",
+                marginTop: "10px",
+                borderCollapse: "collapse",
+              }}
+            >
+              <thead>
+                <tr>
+                  <th
+                    style={{
+                      border: "1px solid #ccc",
+                      padding: "8px",
+                      textAlign: "left",
+                    }}
+                  >
+                    Dịch vụ
+                  </th>
+                  <th
+                    style={{
+                      border: "1px solid #ccc",
+                      padding: "8px",
+                      textAlign: "left",
+                    }}
+                  >
+                    Nhân Viên
+                  </th>
+                  <th
+                    style={{
+                      border: "1px solid #ccc",
+                      padding: "8px",
+                      textAlign: "left",
+                    }}
+                  >
+                    Thời gian bắt đầu
+                  </th>
+                  <th
+                    style={{
+                      border: "1px solid #ccc",
+                      padding: "8px",
+                      textAlign: "left",
+                    }}
+                  >
+                    Thời gian kết thúc
+                  </th>
+                  <th
+                    style={{
+                      border: "1px solid #ccc",
+                      padding: "8px",
+                      textAlign: "right",
+                    }}
+                  >
+                    Tiền
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentAppointment.appointmentDetails.map((service) => (
+                  <tr key={service.serviceHairId}>
+                    <td style={{ border: "1px solid #ccc", padding: "8px" }}>
+                      {service?.serviceName}
+                    </td>
+                    <td style={{ border: "1px solid #ccc", padding: "8px" }}>
+                      {service.salonEmployee.fullName}
+                    </td>
+                    <td style={{ border: "1px solid #ccc", padding: "8px" }}>
+                      {moment(service?.startTime).format("HH:mm")}
+                    </td>
+                    <td style={{ border: "1px solid #ccc", padding: "8px" }}>
+                      {moment(service?.endTime).format("HH:mm")}
+                    </td>
+                    <td
+                      style={{
+                        border: "1px solid #ccc",
+                        padding: "8px",
+                        textAlign: "right",
+                      }}
+                    >
+                      {formatVND(service?.priceServiceHair)} VND
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div
+            className={styles.appointmentDetailC2}
+            style={{ marginTop: "1rem" }}
+          >
+            {/* D1: Thông tin hủy */}
+            <div
+              className={styles.appointmentDetailD1}
+              style={{
+                border: "1px solid #ccc",
+                padding: "10px",
+              }}
+            >
+              <p>
+                <Text strong>Khách Hàng: </Text>
+                <Text>{currentAppointment?.customer.fullName}</Text>
+              </p>
+              <p>
+                <Text strong>Ngày hẹn: </Text>
+                <Text>
+                  {moment(currentAppointment.startDate).format("DD/MM/YYYY")}
+                </Text>
+              </p>
+              <p>
+                <Text strong>Số tiền tạm tính: </Text>
+                <Text>{formatVND(currentAppointment.originalPrice)} VND</Text>
+              </p>
+              {/* <p>
+                <Text strong>Mã Khuyến mãi: </Text>
+                <Text>{currentAppointment?.promoCode}</Text>
+              </p> */}
+              <p>
+                <Text strong>Giảm giá: </Text>
+                <Text>{formatVND(currentAppointment.discountedPrice)} VND</Text>
+              </p>
+              <p>
+                <Text strong>Cần thanh toán: </Text>
+                <Text strong style={{ color: "red" }}>
+                  {formatVND(currentAppointment.totalPrice)} VND
+                </Text>
+              </p>
+            </div>
+
+            {/* D2: Tổng kết */}
+            {currentAppointment.status === "CANCEL_BY_CUSTOMER" && (
+              <div
+                className={styles.appointmentDetailD2}
+                style={{
+                  border: "1px solid #ccc",
+                  padding: "10px",
+                  marginLeft: "1rem",
+                }}
+              >
+                <Text strong>Ngày hủy: </Text>
+                <Text>
+                  {moment(currentAppointment.cancellationTime).format(
+                    "DD/MM/YYYY - HH:mm"
+                  )}
+                </Text>
+                <Divider />
+                <Text strong>Lý do hủy: </Text>
+                <Text>{currentAppointment.reasonCancel}</Text>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
-      <div className="status-filter">
+    );
+  };
+
+  const columns = [
+    {
+      title: "Khách hàng",
+      dataIndex: "customer",
+      key: "fullName",
+      render: (customer) => customer?.fullName,
+    },
+    {
+      title: "Ngày tạo",
+      dataIndex: "createdDate",
+      key: "createdDate",
+      render: (createdDate) => formatDate(createdDate),
+    },
+    {
+      title: "Tổng tiền",
+      dataIndex: "totalPrice",
+      key: "totalPrice",
+      render: (text) => `${text.toLocaleString()} VND`,
+    },
+    {
+      title: "Hành động",
+      key: "actions",
+      render: (text, record) => {
+        const startTime = moment(record.appointmentDetails[0]?.startTime);
+        const startDate = moment(record.startDate);
+        const currentTime = moment();
+        const isSameDay = startDate.isSame(currentTime, "day");
+        const isReportButtonVisible =
+          isSameDay && currentTime.isSameOrAfter(startTime);
+
+        return (
+          <>
+            <Button
+              className={styles.detailBtn}
+              onClick={() => showModal(record)}
+            >
+              Xem chi tiết
+            </Button>
+            {isReportButtonVisible && (
+              <Button onClick={() => handleReport(record)}>
+                {record?.isReportBySalon === true
+                  ? "Đã báo cáo cho admin"
+                  : "Báo cáo"}
+              </Button>
+            )}
+          </>
+        );
+      },
+    },
+  ];
+
+  return (
+    <div className={styles.appointmentContainer}>
+      <div className={styles.statusfilter}>
         {Object.keys(statusDisplayNames).map((statusKey, index) => (
           <button
             key={statusKey}
@@ -242,7 +524,18 @@ function SalonAppointmentVer2(props) {
                   ? "1rem"
                   : "0",
               padding: "0.5rem 1rem",
-              backgroundColor: status === statusKey ? "blue" : "gray",
+              backgroundColor:
+                status === statusKey
+                  ? status === "BOOKING"
+                    ? "#1677ff"
+                    : status === "CANCEL_BY_CUSTOMER"
+                    ? "#faa500"
+                    : status === "FAILED"
+                    ? "#ff0000"
+                    : status === "SUCCESSED"
+                    ? "#389e0d"
+                    : "gray"
+                  : "gray",
               color: "white",
               border: "none",
               borderRadius: "5px",
@@ -254,78 +547,28 @@ function SalonAppointmentVer2(props) {
           </button>
         ))}
       </div>
-      <Spin spinning={loading}>
-        {salonAppointments.length === 0 ? (
-          <EmptyComponent description={"Hiện tại không có lịch hẹn nào!"} />
-        ) : (
-          <div className="appointment-list">
-            {salonAppointments.map((appointment, key) => {
-              const startTime = moment(
-                appointment.appointmentDetails[0]?.startTime
-              );
-              const startDate = moment(appointment.startDate);
-              const currentTime = moment();
 
-              // Kiểm tra nếu ngày của startDate là ngày hôm nay
-              const isSameDay = startDate.isSame(currentTime, "day");
+      <Table
+        className={styles.appointmentTable}
+        columns={columns}
+        dataSource={salonAppointments}
+        loading={loading}
+        rowKey="id"
+        pagination={false}
+      />
 
-              // Kiểm tra nếu currentTime không trễ hơn startTime (và cũng không sớm hơn)
-              const isReportButtonVisible =
-                isSameDay && currentTime.isSameOrAfter(startTime);
-              return (
-                <>
-                  <div key={appointment.id} className="appointment-item">
-                    <h3>{appointment.customer.fullName}</h3>
-                    <p>Ngày đặt: {formatDate(appointment.startDate)}</p>
-                    <p>
-                      Thời gian bắt đầu:{" "}
-                      {moment(
-                        appointment.appointmentDetails[0]?.startTime
-                      ).format("HH:mm")}
-                    </p>
-                    <p>
-                      Tổng tiền: {appointment.totalPrice.toLocaleString()} VND
-                    </p>
-                    <Button
-                      onClick={() => showModal(appointment)}
-                      className="mr-3"
-                    >
-                      Cuộc hẹn
-                    </Button>
-                    {isReportButtonVisible && (
-                      <Button onClick={() => handleReport(appointment)}>
-                        {/* {appointment?.status === "SUCCESSED" ||
-                      appointment?.status === "BOOKING" ? (
-                        "Đánh giá"
-                      ) : ( */}
-                        {appointment?.isReportBySalon === true
-                          ? "Đã báo cáo cho admin"
-                          : "Báo cáo"}
-                        {/* )} */}
-                      </Button>
-                    )}
-                  </div>
-                </>
-              );
-            })}
-          </div>
-        )}
-      </Spin>
-      <div className="pagination">
-        <Pagination
-          current={currentPage}
-          total={totalPages * pageSize}
-          pageSize={pageSize}
-          onChange={handlePageChange}
-        />
-      </div>
+      <Pagination
+        className="paginationAppointment"
+        current={currentPage}
+        total={totalPages * pageSize}
+        pageSize={pageSize}
+        onChange={handlePageChange}
+      />
+
       <Modal
-        title="Thông tin cuộc hẹn"
+        title="Chi tiết cuộc hẹn"
         visible={isModalVisible}
         onCancel={handleCancel}
-        // closable={false}
-        // outsideClickClosable={false}
-        wrapClassName="no-close-on-outside-click"
         footer={
           currentAppointment &&
           currentAppointment.status === "BOOKING" &&
@@ -345,81 +588,11 @@ function SalonAppointmentVer2(props) {
               ]
             : null
         }
+        width={1100}
       >
-        {currentAppointment && (
-          <>
-            <p>
-              <Text strong>Khách hàng: </Text>
-              <Text>{currentAppointment?.customer.fullName}</Text>
-            </p>
-            <p>
-              <Text strong>Ngày: </Text>
-              <Text>
-                {moment(currentAppointment.startDate).format("DD/MM/YYYY")}
-              </Text>
-            </p>
-            <p>
-              <Text strong>Giờ: </Text>
-              <Text>
-                {moment(
-                  currentAppointment.appointmentDetails[0]?.startTime
-                ).format("HH:mm")}
-              </Text>
-            </p>
-            <p>
-              <Text strong>Mã Qr xác nhận để thành công: </Text>
-              <Image src={currentAppointment?.qrCodeImg} />
-            </p>
-            <p>
-              <Text strong>Dịch vụ: </Text>
-            </p>
-            {currentAppointment.appointmentDetails.map((service) => (
-              <div
-                key={service.serviceHairId}
-                style={{
-                  border: "1px solid #ccc",
-                  padding: "10px",
-                  marginBottom: "10px",
-                }}
-              >
-                <p>
-                  <Text strong>Tên dịch vụ: </Text>
-                  <Text>{service?.serviceName}</Text>
-                </p>
-                <p>
-                  <Text strong>Giá: </Text>
-                  <Text>{formatVND(service?.priceServiceHair)}</Text>
-                  vnđ
-                </p>
-                <p>
-                  <Text strong>Thời gian bắt đầu: </Text>
-                  <Text>{moment(service?.startTime).format("HH:mm")}</Text>
-                </p>
-                <p>
-                  <Text strong>Thời gian kết thúc: </Text>
-                  <Text>{moment(service?.endTime).format("HH:mm")}</Text>
-                </p>
-                <p>
-                  <Text strong>Nhân viên: </Text>
-                  <Text>{service.salonEmployee.fullName}</Text>
-                </p>
-              </div>
-            ))}
-            <p>
-              <Text strong>Giá gốc: </Text>
-              <Text>{formatVND(currentAppointment.originalPrice)}vnđ</Text>
-            </p>
-            <p>
-              <Text strong>Giảm: </Text>
-              <Text>{formatVND(currentAppointment.discountedPrice)}vnđ</Text>
-            </p>
-            <p>
-              <Text strong>Tổng: </Text>
-              <Text>{formatVND(currentAppointment.totalPrice)}vnđ</Text>
-            </p>
-          </>
-        )}
+        {renderAppointmentDetail()}
       </Modal>
+
       <Modal
         title="Báo cáo vấn đề"
         visible={isReportModalVisible}
