@@ -684,6 +684,7 @@ function CustomerAppointmentVer2(props) {
           placeholder="Nhập lý do hủy cuộc hẹn"
         />
       </Modal>
+
       <Modal
         title="Đánh giá dịch vụ"
         visible={isRatingModalVisible}
@@ -716,6 +717,7 @@ function CustomerAppointmentVer2(props) {
           <Button icon={<UploadOutlined />}></Button>
         </Upload>
       </Modal>
+      
       <Modal
         title="Báo cáo vấn đề"
         visible={isReportModalVisible}
