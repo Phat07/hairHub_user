@@ -393,29 +393,7 @@ function ManageVoucher(props) {
     setVoucherUpdate(values);
     setIsUpdateModalVisible(!isUpdateModalVisible);
     setCurrencyValueUpdate(values.minimumOrderAmount);
-    console.log(values, "Handle Update Voucher");
-    // const configExpiryDateUpdated = () => {
-    //   // const newDate = new Date();
-    //   const expiryDate1 = expiryDateUpdated.toDate();
-    //   const newExpiryDate = expiryDate1.getDate() + 1;
-    //   expiryDate1.setDate(newExpiryDate);
-    //   return expiryDate1;
-    // };
-    // const configCurrentDate = () => {
-    //   const currentDate1 = currentDate.toDate();
-    //   const newCurrentDate = currentDate1.getDate() + 1;
-    //   currentDate1.setDate(newCurrentDate);
-    //   return currentDate1;
-    // };
-
-    // form.setFieldsValue({
-    //   descriptionUpdate: description,
-    //   minimumOrderAmountUpdate: minimumOrderAmount,
-    //   discountPercentageUpdate: discountPercentage,
-    //   expiryDateUpdate: expiryDate,
-    // });
-
-    // setData(newData);
+    
   };
   const handleUpdateOk = () => {
     form

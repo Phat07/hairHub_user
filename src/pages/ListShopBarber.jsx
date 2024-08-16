@@ -327,6 +327,7 @@ import AddEmployeeForm from "../components/SalonShop/EmployeeForm";
 import { MdDesignServices } from "react-icons/md";
 import { BsPersonCircle } from "react-icons/bs";
 import {
+  CaretRightOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
   DeleteOutlined,
@@ -357,6 +358,7 @@ import { actGetVoucherBySalonId } from "../store/manageVoucher/action";
 import moment from "moment";
 import dayjs from "dayjs";
 import { voucherServices } from "../services/voucherServices";
+import { ServiceHairServices } from "../services/servicesHairServices";
 
 const count = 3;
 
@@ -596,27 +598,32 @@ function ListShopBarber(props) {
       title: "Hình ảnh",
       dataIndex: "img",
       key: "img",
+      align: "center",
       render: (text) => <Avatar shape="square" size={"large"} src={text} />,
     },
     {
       title: "Họ và tên",
       dataIndex: "fullName",
       key: "fullName",
+      align: "center",
     },
     {
       title: "Giới tính",
       dataIndex: "gender",
       key: "gender",
+      align: "center",
     },
     {
       title: "Số điện thoại",
       dataIndex: "phone",
       key: "phone",
+      align: "center",
     },
     {
       title: "Trạng thái",
       dataIndex: "isActive",
       key: "isActive",
+      align: "center",
       render: (isActive) =>
         isActive ? (
           <Tag icon={<CheckCircleOutlined />} color="green">
@@ -631,8 +638,10 @@ function ListShopBarber(props) {
     {
       title: "Hành động",
       key: "action",
+      align: "center",
+      width: "10rem",
       render: (_, record) => (
-        <>
+        <Space size="middle">
           <Link to={`account_details/${record.id}`}>
             <Button
               className="editButtonStyle"
@@ -656,7 +665,7 @@ function ListShopBarber(props) {
               Xóa
             </Button>
           </Popconfirm>
-        </>
+        </Space>
       ),
     },
   ];
@@ -690,46 +699,54 @@ function ListShopBarber(props) {
       title: "Mã giảm giá",
       dataIndex: "code",
       key: "code",
+      align: "center",
     },
     {
       title: "Mô tả",
       dataIndex: "description",
       key: "description",
+      align: "center",
     },
     {
       title: "Số tiền tối thiểu",
       dataIndex: "minimumOrderAmount",
       key: "minimumOrderAmount",
+      align: "center",
       render: (value) => formatCurrency(value),
     },
     {
       title: "Phần trăm giảm giá",
       dataIndex: "discountPercentage",
       key: "discountPercentage",
+      align: "center",
       render: (value) => formatDiscount(value),
     },
     {
       title: "Ngày hết hạn",
       dataIndex: "expiryDate",
       key: "expiryDate",
+      align: "center",
       render: (date) => formatDateTime(date), // Định dạng ngày giờ
     },
     {
       title: "Ngày tạo",
       dataIndex: "createdDate",
       key: "createdDate",
+      align: "center",
       render: (date) => formatDateTime(date), // Định dạng ngày giờ
     },
     {
       title: "Ngày sửa đổi",
       dataIndex: "modifiedDate",
       key: "modifiedDate",
+      align: "center",
       render: (date) => (date ? formatDateTime(date) : "Chưa sửa đổi"), // Định dạng ngày giờ hoặc hiển thị thông báo nếu chưa sửa đổi
     },
     {
       title: "Trạng thái",
       dataIndex: "isActive",
       key: "isActive",
+      align: "center",
       render: (isActive) =>
         isActive ? (
           <Tag icon={<CheckCircleOutlined />} color="green">
@@ -745,7 +762,7 @@ function ListShopBarber(props) {
       title: "Hành động",
       key: "action",
       align: "center",
-      width: "20rem",
+      width: "10rem",
       // dataSource: { data },
       render: (_, record) => (
         <Space size="middle">
@@ -773,21 +790,27 @@ function ListShopBarber(props) {
       title: "Hình ảnh",
       dataIndex: "img",
       key: "img",
-      render: (text) => <img src={text} alt="service" width={50} />,
+      align: "center",
+      render: (text) => (
+        <Avatar shape="square" size={"large"} src={text} alt="service" />
+      ),
     },
     {
       title: "Tên dịch vụ",
       dataIndex: "serviceName",
       key: "serviceName",
+      align: "center",
     },
     {
       title: "Mô tả",
       dataIndex: "description",
       key: "description",
+      align: "center",
     },
     {
       title: "Giá",
       dataIndex: "price",
+      align: "center",
       key: "price",
       render: (price) => formatCurrency(price),
     },
@@ -795,12 +818,14 @@ function ListShopBarber(props) {
       title: "Thời gian",
       dataIndex: "time",
       key: "time",
+      align: "center",
       render: (time) => formatTime(time),
     },
     {
       title: "Trạng thái",
       dataIndex: "isActive",
       key: "isActive",
+      align: "center",
       render: (isActive) =>
         isActive ? (
           <Tag icon={<CheckCircleOutlined />} color="green">
@@ -816,7 +841,7 @@ function ListShopBarber(props) {
       title: "Hành động",
       key: "action",
       align: "center",
-      width: "20rem",
+      width: "10rem",
       // dataSource: { data },
       render: (_, record) => (
         <Space size={"small"} className="service-actions">
@@ -975,7 +1000,7 @@ function ListShopBarber(props) {
       <Menu.Item key="voucherList">Danh sách các voucher</Menu.Item>
     </Menu>
   );
-  console.log("salon", salonDetail);
+
   const handleUpdate = (service) => {
     setServiceUpdate(service);
     setisUpdateModalService(true);
@@ -1058,6 +1083,12 @@ function ListShopBarber(props) {
         });
     }
   };
+  function roundUpToNearestIncrement(number, increment) {
+    const roundedValue = Math.ceil(number / increment) * increment; //Math.ceil làm tròn lên, 1 * increment
+    return roundedValue === number
+      ? roundedValue
+      : Math.ceil(number / increment) * increment;
+  }
   const onTimeChange = (time) => {
     const { $H, $m, ...rest } = time;
     const serviceTimeString = parseFloat(`${$H}.${$m}`); //convert string to float number
@@ -1288,8 +1319,21 @@ function ListShopBarber(props) {
               </Row>
               <Row gutter={16} style={{ marginTop: "20px" }}>
                 <Col span={24}>
-                  <Collapse defaultActiveKey={["1"]}>
-                    <Panel header="Nhân viên" key="1">
+                  <Collapse
+                    defaultActiveKey={["1"]}
+                    expandIcon={({ isActive }) => (
+                      <CaretRightOutlined rotate={isActive ? 90 : 0} />
+                    )}
+                    ghost
+                    expandIconPosition={"end"}
+                  >
+                    <Panel
+                      header={
+                        <div className={styles["custom-header"]}>Nhân viên</div>
+                      }
+                      key="1"
+                      className={styles["title-table-collapse"]}
+                    >
                       <div className={styles["table-fillter"]}>
                         <Button
                           className={styles["table-fillter-item"]}
@@ -1348,8 +1392,21 @@ function ListShopBarber(props) {
               </Row>
               <Row gutter={16} style={{ marginTop: "20px" }}>
                 <Col span={24}>
-                  <Collapse defaultActiveKey={["1"]}>
-                    <Panel header="Dịch vụ" key="1">
+                  <Collapse
+                    defaultActiveKey={["1"]}
+                    expandIcon={({ isActive }) => (
+                      <CaretRightOutlined rotate={isActive ? 90 : 0} />
+                    )}
+                    ghost
+                    expandIconPosition={"end"}
+                  >
+                    <Panel
+                      header={
+                        <div className={styles["custom-header"]}>Dịch vụ</div>
+                      }
+                      key="1"
+                      className={styles["title-table-collapse"]}
+                    >
                       <div className={styles["table-fillter"]}>
                         <Button
                           className={styles["table-fillter-item"]}
@@ -1408,8 +1465,21 @@ function ListShopBarber(props) {
               </Row>
               <Row gutter={16} style={{ marginTop: "20px" }}>
                 <Col span={24}>
-                  <Collapse defaultActiveKey={["1"]}>
-                    <Panel header="Voucher" key="1">
+                  <Collapse
+                    defaultActiveKey={["1"]}
+                    expandIcon={({ isActive }) => (
+                      <CaretRightOutlined rotate={isActive ? 90 : 0} />
+                    )}
+                    ghost
+                    expandIconPosition={"end"}
+                  >
+                    <Panel
+                      header={
+                        <div className={styles["custom-header"]}>Voucher</div>
+                      }
+                      key="1"
+                      className={styles["title-table-collapse"]}
+                    >
                       <div className={styles["table-fillter"]}>
                         <Button
                           className={styles["table-fillter-item"]}
