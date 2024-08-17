@@ -62,7 +62,7 @@ function HeaderUnAuth(props) {
                 </Link>
               </li>
               <li className={style.navItem}>
-                <Link to={"/"} className={style.navLink}>
+                <Link to={"/about"} className={style.navLink}>
                   Giới thiệu
                 </Link>
               </li>

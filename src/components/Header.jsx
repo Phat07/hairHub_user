@@ -4,12 +4,13 @@ import { DownOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons";
 import { Avatar, Button, Dropdown, Menu, message } from "antd";
 import { IoMenu } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet, useNavigate, useParams } from "react-router-dom";
 import hairHubLogo from "../assets/images/hairHubLogo.png";
 import style from "../css/header.module.css";
 import { actGetSalonInformationByOwnerIdByCheck } from "../store/salonInformation/action";
 
 function Header(props) {
+  const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const userName = useSelector((state) => state.ACCOUNT.userName);
@@ -103,11 +104,11 @@ function Header(props) {
                   Trang chủ
                 </Link>
               </li>
-              <li className={style.navItem}>
+              {/* <li className={style.navItem}>
                 <Link to={"/"} className={style.navLink}>
                   Giới thiệu
                 </Link>
-              </li>
+              </li> */}
               <li className={style.navItem}>
                 <Link to={"/system_shop"} className={style.navLink}>
                   Hệ thống cửa hàng
@@ -149,13 +150,13 @@ function Header(props) {
                   </Link>
                 </li>
               )}
-              {menuActive && (
+              {/* {menuActive && (
                 <li className={style.navItemRepo}>
                   <Link to={"/"} className={style.navLink}>
                     Giới thiệu
                   </Link>
                 </li>
-              )}
+              )} */}
               {menuActive && (
                 <li className={style.navItemRepo}>
                   <Link to={"/system_shop"} className={style.navLink}>

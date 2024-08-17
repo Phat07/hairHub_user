@@ -29,6 +29,11 @@
   color: #bf9456;
 }
 
+.select {
+  width: 7rem;
+  margin-bottom: 1rem;
+}
+
 .appointmentDetail {
   display: flex;
 }
