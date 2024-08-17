@@ -97,96 +97,102 @@ function Header(props) {
             </Link>
           </div>
 
-          <nav className={style.navbar}>
-            <ul className={style.navList}>
-              <li className={style.navItem}>
-                <Link to={"/"} className={style.navLink}>
-                  Trang chủ
-                </Link>
-              </li>
-              {/* <li className={style.navItem}>
-                <Link to={"/"} className={style.navLink}>
-                  Giới thiệu
-                </Link>
-              </li> */}
-              <li className={style.navItem}>
-                <Link to={"/system_shop"} className={style.navLink}>
-                  Hệ thống cửa hàng
-                </Link>
-              </li>
-              <li className={style.navItem}>
-                {(idCustomer || idOwner) && (
-                  <Link
-                    to={
-                      idOwner ? "/salon_appointment" : "/customer_appointment"
-                    }
-                    className={style.navLink}
-                  >
-                    Cuộc hẹn
-                  </Link>
-                )}
-              </li>
-              <li
-                className={style.navItem}
-                style={{ display: idCustomer ? "none" : "block" }}
-              >
-                {idOwner && (
-                  <Link className={style.navLink} to={handleEmptySalon()}>
-                    Quản lý Salon
-                  </Link>
-                )}
-              </li>
-
-              {/* <li className={style.navItem}>
-                <Link to={"/listPackage"}>Dịch vụ hệ thống</Link>
-              </li>
-              <li className={style.navItem}>
-                <Link to={"/listPayment"}>Dịch vụ đã thanh toán</Link>
-              </li> */}
-              {menuActive && (
-                <li className={style.navItemRepo}>
+          {/* Customer Navigation */}
+          {idCustomer && (
+            <nav className={style.navbar}>
+              <ul className={style.navList}>
+                <li className={style.navItem}>
                   <Link to={"/"} className={style.navLink}>
                     Trang chủ
                   </Link>
                 </li>
-              )}
-              {/* {menuActive && (
-                <li className={style.navItemRepo}>
-                  <Link to={"/"} className={style.navLink}>
-                    Giới thiệu
-                  </Link>
-                </li>
-              )} */}
-              {menuActive && (
-                <li className={style.navItemRepo}>
+                <li className={style.navItem}>
                   <Link to={"/system_shop"} className={style.navLink}>
                     Hệ thống cửa hàng
                   </Link>
                 </li>
-              )}
-              {menuActive && (
-                <li className={style.navItemRepo}>
-                  {(idCustomer || idOwner) && (
-                    <Link
-                      to={
-                        idOwner ? "/salon_appointment" : "/customer_appointment"
-                      }
-                      className={style.navLink}
-                    >
-                      Cuộc hẹn
-                    </Link>
-                  )}
+                <li className={style.navItem}>
+                  <Link to={"/customer_appointment"} className={style.navLink}>
+                    Cuộc hẹn
+                  </Link>
                 </li>
-              )}
-              {menuActive && (
-                <li className={style.navItemRepo}>
-                  {idOwner && (
-                    <Link to={handleEmptySalon()}>Quản lý Salon</Link>
-                  )}
+                {menuActive && (
+                  <>
+                    <li className={style.navItemRepo}>
+                      <Link to={"/"} className={style.navLink}>
+                        Trang chủ
+                      </Link>
+                    </li>
+                    <li className={style.navItemRepo}>
+                      <Link to={"/system_shop"} className={style.navLink}>
+                        Hệ thống cửa hàng
+                      </Link>
+                    </li>
+                    <li className={style.navItemRepo}>
+                      <Link
+                        to={"/customer_appointment"}
+                        className={style.navLink}
+                      >
+                        Cuộc hẹn
+                      </Link>
+                    </li>
+                  </>
+                )}
+              </ul>
+            </nav>
+          )}
+
+          {/* Salon Navigation */}
+          {idOwner && (
+            <nav className={style.navbar}>
+              <ul className={style.navList}>
+                <li className={style.navItem}>
+                  <Link to={"/"} className={style.navLink}>
+                    Trang chủ
+                  </Link>
                 </li>
-              )}
-            </ul>
-          </nav>
+                <li className={style.navItem}>
+                  <Link to={"/system_shop"} className={style.navLink}>
+                    Hệ thống cửa hàng
+                  </Link>
+                </li>
+                <li className={style.navItem}>
+                  <Link to={"/salon_appointment"} className={style.navLink}>
+                    Cuộc hẹn
+                  </Link>
+                </li>
+                <li className={style.navItem}>
+                  <Link className={style.navLink} to={handleEmptySalon()}>
+                    Quản lý Salon
+                  </Link>
+                </li>
+                {menuActive && (
+                  <>
+                    <li className={style.navItemRepo}>
+                      <Link to={"/"} className={style.navLink}>
+                        Trang chủ
+                      </Link>
+                    </li>
+                    <li className={style.navItemRepo}>
+                      <Link to={"/system_shop"} className={style.navLink}>
+                        Hệ thống cửa hàng
+                      </Link>
+                    </li>
+                    <li className={style.navItemRepo}>
+                      <Link to={"/salon_appointment"} className={style.navLink}>
+                        Cuộc hẹn
+                      </Link>
+                    </li>
+                    <li className={style.navItemRepo}>
+                      <Link className={style.navLink} to={handleEmptySalon()}>
+                        Quản lý Salon
+                      </Link>
+                    </li>
+                  </>
+                )}
+              </ul>
+            </nav>
+          )}
 
           <button
             aria-label="toggle menu"
