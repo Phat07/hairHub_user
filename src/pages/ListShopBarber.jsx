@@ -104,6 +104,11 @@ function ListShopBarber(props) {
   const [imageUrl, setImageUrl] = useState(null);
   const [updateService, setServiceUpdate] = useState({});
 
+  const [currencyValueVoucherUpdate, setCurrencyValueVoucherUpdate] =
+    useState(null);
+  const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
+  const [voucherUpdate, setVoucherUpdate] = useState({});
+
   const timeFormat = "HH:mm";
   const [serviceTime, setServiceTime] = useState(dayjs("00:00", timeFormat));
 
@@ -181,6 +186,26 @@ function ListShopBarber(props) {
       );
     }
   }, [salonDetail, currentPageVoucher, pageSizeVoucher]);
+  useEffect(() => {
+    const { description, minimumOrderAmount, discountPercentage, expiryDate } =
+      voucherUpdate;
+
+    const configDiscountPercentage = discountPercentage * 100;
+    if (isUpdateModalVisible && voucherUpdate) {
+      form.setFieldsValue({
+        descriptionUpdate: description,
+        minimumOrderAmountUpdate: minimumOrderAmount,
+        discountPercentageUpdate: configDiscountPercentage,
+        expiryDateUpdate: dayjs(expiryDate), // Use moment to format date
+      });
+    }
+  }, [isUpdateModalVisible, voucherUpdate]);
+
+  const handleUpdateVoucher = (values) => {
+    setVoucherUpdate(values);
+    setIsUpdateModalVisible(!isUpdateModalVisible);
+    setCurrencyValueUpdate(values.minimumOrderAmount);
+  };
 
   const handleOpenPopover = (newOpen, id) => {
     setOpenPopoverId(newOpen ? id : null);
@@ -383,6 +408,24 @@ function ListShopBarber(props) {
   const formatTime = (value) => {
     return `${value * 60} phút`;
   };
+  const handleDelete = async (voucher) => {
+    console.log(voucher.id);
+    voucherServices
+      .deleteVoucherById(voucher.id)
+      .then(async (res) => {
+        setStatus(!status);
+        await dispatch(
+          actGetVoucherBySalonId(
+            currentPageVoucher,
+            pageSizeVoucher,
+            salonDetail?.id
+          )
+        );
+        message.success(`Xóa ${voucher.description} voucher thành công!`);
+      })
+      .catch((err) => console.log(err, "errors"));
+    // Thêm logic xóa voucher ở đây (ví dụ: call API)
+  };
 
   // Cấu hình cột của bảng
   const columnsVoucher = [
@@ -457,16 +500,21 @@ function ListShopBarber(props) {
       // dataSource: { data },
       render: (_, record) => (
         <Space size="middle">
-          <Button
-            className="editButtonStyle"
-            onClick={() => {}}
-            icon={<EditOutlined />}
-          >
-            Chỉnh sửa
-          </Button>
+          {record?.isActive ? (
+            <Button
+              className="editButtonStyle"
+              onClick={() => handleUpdateVoucher(record)}
+              icon={<EditOutlined />}
+            >
+              Chỉnh sửa
+            </Button>
+          ) : (
+            <></>
+          )}
+
           <Button
             className="deleteButtonStyle"
-            onClick={() => {}}
+            onClick={() => handleDelete(record)}
             icon={<DeleteOutlined />}
           >
             Xóa
@@ -658,8 +706,6 @@ function ListShopBarber(props) {
       currentDate1.setDate(newCurrentDate);
       return currentDate1;
     };
-    console.log(configExpiryDate(), "config ExpiryDate"); //config + 1 day :v, because New Date get system timezone so it deducted 1 day compare to my timezone
-    console.log(configCurrentDate(), "config CurrentDate"); //config + 1 day :v
 
     const formVoucherData = {
       salonInformationId: salonDetail.id, //salonInformationId
@@ -814,6 +860,45 @@ function ListShopBarber(props) {
       setOpenEmployee(true);
     }
   };
+  const handleUpdateVoucherOk = () => {
+    form
+      .validateFields()
+      .then((values) => {
+        const {
+          descriptionUpdate,
+          minimumOrderAmountUpdate,
+          discountPercentageUpdate,
+          expiryDateUpdate,
+        } = values;
+        const configDiscountPercentageUpdate = discountPercentageUpdate / 100;
+        const updatedVoucher = {
+          ...voucherUpdate,
+          description: descriptionUpdate,
+          minimumOrderAmount: minimumOrderAmountUpdate,
+          discountPercentage: configDiscountPercentageUpdate,
+          expiryDate: expiryDateUpdate,
+        };
+
+        voucherServices
+          .updateVoucherById(voucherUpdate?.id, updatedVoucher)
+          .then((res) => {
+            console.log(res, "res");
+            message.success(
+              `Cập  nhật voucher ${voucherUpdate.description} thành công!`
+            );
+          })
+          .catch((err) => console.log(err, "errors"));
+
+        // Call API or perform update operation
+        // console.log("Updated Voucher Data:", updatedVoucher);
+        setIsUpdateModalVisible(false); // Close modal after update
+        form.resetFields(); // Reset form fields
+      })
+      .catch((error) => {
+        console.error("Validation Failed:", error);
+      });
+  };
+
   return (
     <div>
       <div className={styles["container_list"]}>
@@ -1355,6 +1440,63 @@ function ListShopBarber(props) {
                   </Form.Item>
                 </Form>
               </Modal>
+
+              <Modal
+                title="Cập nhật Voucher"
+                visible={isUpdateModalVisible}
+                onOk={handleUpdateVoucherOk}
+                onCancel={() => {
+                  setIsUpdateModalVisible(!isUpdateModalVisible);
+                  form.resetFields(); // Reset form khi đóng Modal
+                }}
+              >
+                <Form form={form} layout="vertical">
+                  <Form.Item name="descriptionUpdate" label="Description">
+                    <Input />
+                  </Form.Item>
+                  <Form.Item
+                    label="Minimum Order Amount"
+                    name="minimumOrderAmountUpdate"
+                  >
+                    <InputNumber
+                      onChange={(value) => setCurrencyValueVoucherUpdate(value)}
+                      min={1}
+                      style={{ width: "100%" }}
+                    />
+                  </Form.Item>
+                  <div
+                    className="mt-3"
+                    style={{ display: "flex", gap: "small" }}
+                  >
+                    <DollarCircleOutlined />
+                    <Typography.Text strong>
+                      Currency: {formatCurrency(currencyValueVoucherUpdate)}
+                    </Typography.Text>
+                  </div>
+                  <Form.Item
+                    label="Discount Percentage (%)"
+                    name="discountPercentageUpdate"
+                  >
+                    <InputNumber
+                      min={1}
+                      max={100}
+                      formatter={(value) => `${value}`}
+                      parser={(value) => value.replace("%", "")}
+                      style={{ width: "100%" }}
+                    />
+                  </Form.Item>
+                  <Form.Item label="Expiry Date" name="expiryDateUpdate">
+                    <DatePicker
+                      style={{ width: "100%" }}
+                      format="YYYY-MM-DD"
+                      disabledDate={(current) => {
+                        return current && current < dayjs().startOf("day");
+                      }}
+                    />
+                  </Form.Item>
+                </Form>
+              </Modal>
+
               <Modal
                 width={800}
                 title="Tạo nhân viên mới"
