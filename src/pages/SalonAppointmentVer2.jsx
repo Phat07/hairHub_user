@@ -17,6 +17,7 @@ import {
   Table,
   Typography,
   Upload,
+  Select,
 } from "antd";
 import moment from "moment";
 import { actCreateReportSalon } from "../store/report/action";
@@ -24,7 +25,11 @@ import { AppointmentService } from "../services/appointmentServices";
 import { EmptyComponent } from "../components/EmptySection/DisplayEmpty";
 import styles from "../css/salonAppointment.module.css";
 import { useNavigate } from "react-router-dom";
+import { DownOutlined } from "@ant-design/icons";
+
 const { Text, Title } = Typography;
+const { Option } = Select;
+
 function SalonAppointmentVer2(props) {
   const dispatch = useDispatch();
   const [status, setStatus] = useState("BOOKING");
@@ -38,6 +43,7 @@ function SalonAppointmentVer2(props) {
   const [reportDescription, setReportDescription] = useState("");
   const [itemReport, setItemReport] = useState({});
   const [loading, setLoading] = useState(false);
+  const [filteredAppointments, setFilteredAppointments] = useState([]);
   const pageSize = 4;
 
   const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
@@ -86,6 +92,24 @@ function SalonAppointmentVer2(props) {
 
     fetchAppointments();
   }, [salonInformationByOwnerId, status, currentPage]);
+
+  useEffect(() => {
+    setFilteredAppointments(salonAppointments);
+  }, [salonAppointments]);
+
+  const handleFilterChange = (value) => {
+    let sortedAppointments;
+    if (value === "newest") {
+      sortedAppointments = [...salonAppointments].sort(
+        (a, b) => new Date(b.createdDate) - new Date(a.createdDate)
+      );
+    } else if (value === "oldest") {
+      sortedAppointments = [...salonAppointments].sort(
+        (a, b) => new Date(a.createdDate) - new Date(b.createdDate)
+      );
+    }
+    setFilteredAppointments(sortedAppointments);
+  };
 
   const statusDisplayNames = {
     BOOKING: "Đang đặt",
@@ -403,6 +427,12 @@ function SalonAppointmentVer2(props) {
               }}
             >
               <p>
+                <Text strong>Mã đơn: </Text>
+                <Text style={{ color: "green" }} strong>
+                  {currentAppointment?.id}
+                </Text>
+              </p>
+              <p>
                 <Text strong>Khách Hàng: </Text>
                 <Text>{currentAppointment?.customer.fullName}</Text>
               </p>
@@ -548,10 +578,22 @@ function SalonAppointmentVer2(props) {
         ))}
       </div>
 
+      <Select
+        defaultValue="newest"
+        className={styles.select}
+        onChange={handleFilterChange}
+        suffixIcon={
+          <DownOutlined style={{ color: "#bf9456", pointerEvents: "none" }} />
+        }
+      >
+        <Option value="newest">Mới nhất</Option>
+        <Option value="oldest">Cũ nhất</Option>
+      </Select>
+
       <Table
         className={styles.appointmentTable}
         columns={columns}
-        dataSource={salonAppointments}
+        dataSource={filteredAppointments}
         loading={loading}
         rowKey="id"
         pagination={false}
