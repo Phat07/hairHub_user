@@ -274,8 +274,8 @@ text-align: center;
     padding: 5rem 0;
     border-radius: 10px;
     background-color: #f4f2eb;
-    border-width: 10px;
-    border-color: #bf9456;
+    /* border-width: 10px;
+    border-color: #bf9456; */
   }
   .title-card-homepage{
     font-weight: bold;
@@ -310,7 +310,7 @@ text-align: center;
     font-size: 3rem;
     color: white;
     background-color: #bf9456;
-    border-radius: 5px;
+    border-radius: 50%;
     padding: 5px;
     position: absolute;
     top: 50%;
@@ -420,8 +420,8 @@ text-align: center;
       padding: 3rem 0;
       border-radius: 1rem;
       background-color: #f4f2eb;
-      border-width: 10px;
-      border-color: #bf9456;
+      /* border-width: 10px;
+      border-color: #bf9456; */
       /* height: max-content; */
     }
     .card-homepage .ant-card-body .ant-row {
