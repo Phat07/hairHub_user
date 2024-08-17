@@ -19,14 +19,16 @@ import {
   Upload,
   message,
   Divider,
+  Select,
 } from "antd";
 import moment from "moment";
-import { UploadOutlined } from "@ant-design/icons";
+import { DownOutlined, UploadOutlined } from "@ant-design/icons";
 import { actCreateFeedbackCustomer } from "../store/ratingCutomer/action";
 import { actCreateReportCustomer } from "../store/report/action";
 import { useNavigate } from "react-router-dom";
 
 const { Text } = Typography;
+const { Option } = Select;
 
 function CustomerAppointmentVer2(props) {
   const dispatch = useDispatch();
@@ -50,6 +52,7 @@ function CustomerAppointmentVer2(props) {
   const [fileList, setFileList] = useState([]);
   const [reportImage, setReportImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [filteredAppointments, setFilteredAppointments] = useState([]);
   const pageSize = 5;
 
   const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
@@ -81,6 +84,24 @@ function CustomerAppointmentVer2(props) {
 
     fetchAppointments();
   }, [idCustomer, status, currentPage]);
+
+  useEffect(() => {
+    setFilteredAppointments(customerAppointments);
+  }, [customerAppointments]);
+
+  const handleFilterChange = (value) => {
+    let sortedAppointments;
+    if (value === "newest") {
+      sortedAppointments = [...customerAppointments].sort(
+        (a, b) => new Date(b.createdDate) - new Date(a.createdDate)
+      );
+    } else if (value === "oldest") {
+      sortedAppointments = [...customerAppointments].sort(
+        (a, b) => new Date(a.createdDate) - new Date(b.createdDate)
+      );
+    }
+    setFilteredAppointments(sortedAppointments);
+  };
 
   const statusDisplayNames = {
     BOOKING: "Đang đặt",
@@ -461,6 +482,12 @@ function CustomerAppointmentVer2(props) {
               }}
             >
               <p>
+                <Text strong>Mã đơn: </Text>
+                <Text style={{ color: "green" }} strong>
+                  {selectedAppointmentDetail?.id}
+                </Text>
+              </p>
+              <p>
                 <Text strong>Khách Hàng: </Text>
                 <Text>{selectedAppointmentDetail?.customer.fullName}</Text>
               </p>
@@ -642,10 +669,22 @@ function CustomerAppointmentVer2(props) {
         ))}
       </div>
 
+      <Select
+        defaultValue="newest"
+        className={styles.select}
+        onChange={handleFilterChange}
+        suffixIcon={
+          <DownOutlined style={{ color: "#bf9456", pointerEvents: "none" }} />
+        }
+      >
+        <Option value="newest">Mới nhất</Option>
+        <Option value="oldest">Cũ nhất</Option>
+      </Select>
+
       <Table
         className={styles.appointmentTable}
         columns={columns}
-        dataSource={customerAppointments}
+        dataSource={filteredAppointments}
         loading={loading}
         rowKey="id"
         pagination={false}
@@ -662,7 +701,7 @@ function CustomerAppointmentVer2(props) {
 
       <Modal
         title="Chi tiết cuộc hẹn"
-        visible={!!selectedAppointmentDetail}
+        visible={selectedAppointmentDetail}
         onCancel={handleModalClose}
         footer={null}
         width={1100}
@@ -717,7 +756,7 @@ function CustomerAppointmentVer2(props) {
           <Button icon={<UploadOutlined />}></Button>
         </Upload>
       </Modal>
-      
+
       <Modal
         title="Báo cáo vấn đề"
         visible={isReportModalVisible}

@@ -38,3 +38,7 @@
 .paginationAppointment .ant-pagination-item-active a {
   color: #fff;
 }
+
+.ant-select .ant-select-selector .ant-select-selection-item {
+  color: #bf9456;
+}

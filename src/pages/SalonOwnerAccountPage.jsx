@@ -105,8 +105,17 @@ import {
   DatePicker,
   Upload,
   Modal,
+  Col,
+  Row,
 } from "antd";
-import { UploadOutlined, UserOutlined } from "@ant-design/icons";
+import {
+  BarChartOutlined,
+  CheckCircleOutlined,
+  FormOutlined,
+  InfoCircleOutlined,
+  UploadOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import { AccountServices } from "../services/accountServices";
 import { Link, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -350,10 +359,20 @@ function SalonOwnerAccountPage() {
                 {idOwner && (
                   <>
                     <Link to="/salon_report">
-                      <Button type="primary">Danh sách báo cáo của bạn</Button>
+                      <Button
+                        icon={<InfoCircleOutlined />}
+                        className="change-password-button"
+                      >
+                        Danh sách báo cáo của bạn
+                      </Button>
                     </Link>
                     <Link to="/dashboardTransaction">
-                      <Button type="primary">Thống kê doanh thu</Button>
+                      <Button
+                        icon={<BarChartOutlined />}
+                        className="change-password-button"
+                      >
+                        Thống kê doanh thu
+                      </Button>
                     </Link>
                   </>
                 )}
@@ -386,114 +405,171 @@ function SalonOwnerAccountPage() {
             <Form form={form} layout="vertical" onFinish={handleSave}>
               <Form.Item
                 label="Avatar"
+                className="form-item-custom"
                 name="avatar"
                 rules={[
                   { required: true, message: "Avatar không được để trống" },
                 ]}
               >
-                <Upload
-                  beforeUpload={() => false}
-                  onChange={handleAvatarChange}
-                  accept="image/*"
-                  showUploadList={false}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexDirection: "column",
+                  }}
                 >
-                  <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
-                </Upload>
+                  <Avatar
+                    src={avatarUrl || salonData.img || <UserOutlined />}
+                    size={200}
+                    className="salon-avatar"
+                  />
+                  <Upload
+                    beforeUpload={() => false}
+                    onChange={handleAvatarChange}
+                    accept="image/*"
+                    showUploadList={false}
+                  >
+                    <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
+                  </Upload>
+                </div>
               </Form.Item>
-              <Avatar
-                src={avatarUrl || salonData.img || <UserOutlined />}
-                size={100}
-                className="salon-avatar"
-              />
-              <Form.Item
-                label="Họ và tên"
-                name="fullName"
-                rules={[
-                  { required: true, message: "Họ và tên không được để trống" },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-              <Form.Item
-                label="Số điện thoại"
-                name="phone"
-                rules={[
-                  {
-                    required: true,
-                    message: "Số điện thoại không được để trống",
-                  },
-                  {
-                    pattern: /^\d{10}$/,
-                    message: "Số điện thoại phải đúng 10 số",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
+              <Row gutter={[16, 16]} align="top">
+                <Col xs={24} md={10}>
+                  <Form.Item
+                    label="Họ và tên"
+                    className="form-item-custom"
+                    name="fullName"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Họ và tên không được để trống",
+                      },
+                    ]}
+                  >
+                    <Input />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} md={8}>
+                  <Form.Item
+                    label="Ngày sinh"
+                    className="form-item-custom"
+                    name="dayOfBirth"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Ngày sinh không được để trống",
+                      },
+                      {
+                        validator: (_, value) =>
+                          value && value.isAfter(dayjs())
+                            ? Promise.reject(
+                                new Error(
+                                  "Ngày sinh không được là ngày tương lai"
+                                )
+                              )
+                            : Promise.resolve(),
+                      },
+                    ]}
+                  >
+                    <DatePicker style={{ width: "100%" }} format="YYYY-MM-DD" />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} md={6}>
+                  <Form.Item
+                    label="Giới tính"
+                    className="form-item-custom"
+                    name="gender"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Giới tính không được để trống",
+                      },
+                    ]}
+                  >
+                    <Select>
+                      <Option value="male">Nam</Option>
+                      <Option value="female">Nữ</Option>
+                      <Option value="other">Khác</Option>
+                    </Select>
+                  </Form.Item>
+                </Col>
+              </Row>
+
+              <Row gutter={[16, 16]} align="top">
+                <Col xs={24} md={16}>
+                  <Form.Item
+                    label="Địa chỉ"
+                    className="form-item-custom"
+                    name="address"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Địa chỉ không được để trống",
+                      },
+                    ]}
+                  >
+                    <Input />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} md={8}>
+                  <Form.Item
+                    label="Số điện thoại"
+                    className="form-item-custom"
+                    name="phone"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Số điện thoại không được để trống",
+                      },
+                      {
+                        pattern: /^\d{10}$/,
+                        message: "Số điện thoại phải đúng 10 số",
+                      },
+                    ]}
+                  >
+                    <Input />
+                  </Form.Item>
+                </Col>
+              </Row>
+
               <Form.Item
                 label="Email"
+                className="form-item-custom"
                 name="email"
-                rules={[
-                  { required: true, message: "Email không được để trống" },
-                  { type: "email", message: "Email không đúng định dạng" },
-                ]}
+                // rules={[
+                //   { required: true, message: "Email không được để trống" },
+                //   { type: "email", message: "Email không đúng định dạng" },
+                // ]}
               >
                 <Input disabled />
               </Form.Item>
-              <Form.Item
-                label="Ngày sinh"
-                name="dayOfBirth"
-                rules={[
-                  { required: true, message: "Ngày sinh không được để trống" },
-                  {
-                    validator: (_, value) =>
-                      value && value.isAfter(dayjs())
-                        ? Promise.reject(
-                            new Error("Ngày sinh không được là ngày tương lai")
-                          )
-                        : Promise.resolve(),
-                  },
-                ]}
-              >
-                <DatePicker style={{ width: "100%" }} format="YYYY-MM-DD" />
-              </Form.Item>
-              <Form.Item
-                label="Giới tính"
-                name="gender"
-                rules={[
-                  { required: true, message: "Giới tính không được để trống" },
-                ]}
-              >
-                <Select>
-                  <Option value="male">Nam</Option>
-                  <Option value="female">Nữ</Option>
-                  <Option value="other">Khác</Option>
-                </Select>
-              </Form.Item>
-              <Form.Item
-                label="Địa chỉ"
-                name="address"
-                rules={[
-                  { required: true, message: "Địa chỉ không được để trống" },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-              <Form.Item label="Mật khẩu" name="password">
-                <Input disabled />
-              </Form.Item>
-              <Button
-                type="link"
-                onClick={showChangePasswordModal}
-                style={{ marginBottom: "10px" }}
-              >
-                Thay đổi mật khẩu
-              </Button>
+              <Row gutter={[16, 16]} align="top">
+                <Col xs={24} md={16}>
+                  <Form.Item
+                    label="Mật khẩu"
+                    // className="form-item-custom"
+                    name="password"
+                  >
+                    <Input disabled />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} md={8}>
+                  <Button
+                    icon={<FormOutlined />}
+                    onClick={showChangePasswordModal}
+                    className="change-password-button"
+                  >
+                    Thay đổi mật khẩu
+                  </Button>
+                </Col>
+              </Row>
+
               <Form.Item>
                 <Button
-                  type="primary"
                   htmlType="submit"
-                  style={{ width: "100%" }}
+                  className="change-password-button"
+                  icon={<CheckCircleOutlined />}
                 >
                   Lưu thông tin
                 </Button>
@@ -524,6 +600,7 @@ function SalonOwnerAccountPage() {
         >
           <Form.Item
             label="Nhập mật khẩu cũ"
+            className="form-item-custom"
             name="currentPassword"
             rules={[{ required: true, message: "Vui lòng nhập mật khẩu cũ" }]}
           >
@@ -531,6 +608,7 @@ function SalonOwnerAccountPage() {
           </Form.Item>
           <Form.Item
             label="Nhập mật khẩu mới"
+            className="form-item-custom"
             name="newPassword"
             rules={[{ required: true, message: "Vui lòng nhập mật khẩu mới" }]}
           >
@@ -538,6 +616,7 @@ function SalonOwnerAccountPage() {
           </Form.Item>
           <Form.Item
             label="Nhập lại mật khẩu mới"
+            className="form-item-custom"
             name="confirmNewPassword"
             dependencies={["newPassword"]}
             rules={[
@@ -558,7 +637,15 @@ function SalonOwnerAccountPage() {
             <Button style={{ marginRight: 8 }} onClick={handleCancel}>
               Đóng
             </Button>
-            <Button type="primary" htmlType="submit">
+            <Button
+              type="primary"
+              htmlType="submit"
+              icon={<FormOutlined />}
+              style={{
+                backgroundColor: "#bf9456",
+                color: "white",
+              }}
+            >
               Thay đổi mật khẩu
             </Button>
           </Form.Item>

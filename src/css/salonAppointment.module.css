@@ -27,6 +27,12 @@
 .detailBtn {
   border-color: #bf9456;
   color: #bf9456;
+  margin-right: 1rem;
+}
+
+.select {
+  width: 7rem;
+  margin-bottom: 1rem;
 }
 
 .appointmentDetail {

@@ -422,7 +422,7 @@ function HomePage(props) {
               Dịch vụ nổi bật
             </div>
             <div className="container-service-list">
-              <ArrowLeftOutlined
+              <LeftCircleOutlined
                 className="scroll-icon2 left-icon"
                 onClick={scrollLeft}
               />
@@ -674,7 +674,7 @@ function HomePage(props) {
                   </div>
                 </li>
               </ul>
-              <ArrowRightOutlined
+              <RightCircleOutlined
                 className="scroll-icon2 right-icon"
                 onClick={scrollRight}
               />
@@ -934,20 +934,19 @@ function HomePage(props) {
                     Đặt lịch tiện lợi, quản lý dễ dàng
                   </Title>
                   <Text className="text-card-homepage">
-                    Bạn hoàn toàn có thể đặt lịch hẹn trực tuyến với cửa tiệm
-                    tóc chỉ vài thao tác đơn giản.
+                    Đặt lịch hẹn trực tuyến với cửa tiệm tóc chỉ vài thao tác
+                    đơn giản.
                   </Text>
                   <Text className="text-card-homepage">
-                    Đặt lịch hẹn theo cửa tiệm tóc, khung giờ và dịch vụ giúp
-                    bạn tiết kiệm thời gian hơn mà không phải chờ đợi
+                    Đặt lịch hẹn giúp bạn tiết kiệm thời gian hơn mà không phải
+                    chờ đợi
                   </Text>
                   <Text className="text-card-homepage">
-                    Bạn cũng có thể dễ dàng quản lý lịch hẹn sẽ giúp bạn có thể
-                    bám sát lịch trình rõ ràng hơn.
+                    Quản lý lịch hẹn dễ dàng
                   </Text>
                   <Text className="text-card-homepage">
-                    Nhận được nhiều voucher hấp dẫn từ hệ thống và cửa tiệm tóc
-                    khi sử dụng ứng dụng Hairhub trên điện thoại.
+                    Nhận được nhiều khuyến mãi hấp dẫn từ hệ thống và cửa tiệm
+                    tóc
                   </Text>
                 </Col>
               </Row>
@@ -961,13 +960,11 @@ function HomePage(props) {
                     Check in tức thời, đánh giá thuận tiện
                   </Title>
                   <Text className="text-card-homepage">
-                    Khi đến barber shop, salon hãy quét mã QR để check in nhanh
-                    chóng cho đơn đặt lịch của mình.
+                    Quét mã QR để check in nhanh chóng cho đơn đặt lịch.
                   </Text>
                   <Text className="text-card-homepage">
-                    Ngoài ra, sau khi hoàn thành đơn cắt tóc của mình, bạn cũng
-                    có thể đánh giá cho salon, barber shop và xem nó ở phần
-                    thông tin của cửa tiệm tóc trên Hairhub.
+                    Đánh giá cho salon, barber shop và xem ở phần thông tin của
+                    cửa tiệm tóc trên Hairhub.
                   </Text>
                 </Col>
                 <Col xs={24} md={10}>
