@@ -260,8 +260,6 @@ function SalonDetail(props) {
           pageSizeEmployee
         )
           .then((response) => {
-            console.log("response.data.items", response.data.items);
-
             setEmployees(response.data.items);
             setTotal(response.data.totalPages);
           })
@@ -338,32 +336,32 @@ function SalonDetail(props) {
         setError(err);
       });
 
-    AppointmentService.calculatePrice(calculateAppointmentData)
-      .then((res) => {
-        const { originalPrice, totalPrice, discountedPrice } = res.data;
-        const getEmployeeServiceId = dataBooking.map(
-          ({ serviceHairId }) => serviceHairId
-        );
-        const getEmployeeId = dataBooking.map(({ employeeId }) => employeeId);
-        const appointmentFormData = {
-          customerId: userId,
-          startDate: currentDate,
-          totalPrice: totalPrice,
-          originalPrice: originalPrice,
-          discountedPrice: discountedPrice,
-          appointmentDetails: [
-            {
-              salonEmployeeId: getEmployeeId,
-              serviceHairId: getEmployeeServiceId,
-              description: "string",
-              endTime: "2024-06-23T04:34:56.026Z",
-              startTime: "2024-06-23T04:34:56.026Z",
-            },
-          ],
-          voucherIds: ["3fa85f64-5717-4562-b3fc-2c963f66afa6"],
-        };
-      })
-      .catch((err) => setError(err));
+    // AppointmentService.calculatePrice(calculateAppointmentData)
+    //   .then((res) => {
+    //     const { originalPrice, totalPrice, discountedPrice } = res.data;
+    //     const getEmployeeServiceId = dataBooking.map(
+    //       ({ serviceHairId }) => serviceHairId
+    //     );
+    //     const getEmployeeId = dataBooking.map(({ employeeId }) => employeeId);
+    //     const appointmentFormData = {
+    //       customerId: userId,
+    //       startDate: currentDate,
+    //       totalPrice: totalPrice,
+    //       originalPrice: originalPrice,
+    //       discountedPrice: discountedPrice,
+    //       appointmentDetails: [
+    //         {
+    //           salonEmployeeId: getEmployeeId,
+    //           serviceHairId: getEmployeeServiceId,
+    //           description: "string",
+    //           endTime: "2024-06-23T04:34:56.026Z",
+    //           startTime: "2024-06-23T04:34:56.026Z",
+    //         },
+    //       ],
+    //       voucherIds: ["3fa85f64-5717-4562-b3fc-2c963f66afa6"],
+    //     };
+    //   })
+    //   .catch((err) => setError(err));
     // fetchData();
   }, [id, voucherSelected, additionalServices, calculateAppointmentData]);
 
@@ -412,9 +410,6 @@ function SalonDetail(props) {
       };
 
       const formattedDate = formatDate(currentDate);
-      console.log("service", service);
-
-      console.log("formattedDate34", formattedDate);
       const postData = {
         day: formattedDate, // Chuyển đổi date thành ISO string
         salonId: id,
@@ -430,8 +425,6 @@ function SalonDetail(props) {
             postData
           )
           .then((res) => {
-            console.log("ressTest", res?.data);
-
             setTimeSlots(res?.data);
           })
           .catch((err) => {
@@ -1205,7 +1198,7 @@ function SalonDetail(props) {
     : listFeedback;
 
   return (
-    <div style={{marginTop:"97px"}}>
+    <div style={{ marginTop: "97px" }}>
       <Layout>
         <Content>
           <Row justify="center" gutter={0}>
@@ -1556,7 +1549,7 @@ function SalonDetail(props) {
                                           className={style["scroll-content"]}
                                           // className="scroll-content"
                                         >
-                                          {timeSlots?.availableTimes?.map(
+                                          {/* {timeSlots?.availableTimes?.map(
                                             (slot, index) => {
                                               let timeString = "";
                                               const timeParts = slot?.timeSlot
@@ -1601,6 +1594,75 @@ function SalonDetail(props) {
                                                 slotTime.isSameOrBefore(
                                                   currentTime
                                                 );
+
+                                              return (
+                                                <Button
+                                                  key={index}
+                                                  onClick={() =>
+                                                    handleTimeSlotSelect(
+                                                      slot?.timeSlot
+                                                    )
+                                                  }
+                                                  className={
+                                                    selectedTimeSlot ===
+                                                    slot?.timeSlot
+                                                      ? style.selected
+                                                      : ""
+                                                  }
+                                                  disabled={isDisabled}
+                                                >
+                                                  {timeString}
+                                                </Button>
+                                              );
+                                            }
+                                          )} */}
+                                          {timeSlots?.availableTimes?.map(
+                                            (slot, index) => {
+                                              let timeString = "";
+                                              const timeParts = slot?.timeSlot
+                                                .toString()
+                                                .split(".");
+                                              const hour = parseInt(
+                                                timeParts[0],
+                                                10
+                                              );
+                                              const minutes =
+                                                timeParts.length > 1
+                                                  ? Math.round(
+                                                      parseFloat(
+                                                        "0." + timeParts[1]
+                                                      ) * 60
+                                                    )
+                                                  : 0;
+
+                                              if (minutes === 0) {
+                                                timeString = `${hour}h00`;
+                                              } else if (minutes === 15) {
+                                                timeString = `${hour}h15`;
+                                              } else if (minutes === 30) {
+                                                timeString = `${hour}h30`;
+                                              } else if (minutes === 45) {
+                                                timeString = `${hour}h45`;
+                                              }
+
+                                              const vietnamTimezone =
+                                                "Asia/Ho_Chi_Minh";
+                                              const currentTime =
+                                                dayjs().tz(vietnamTimezone);
+
+                                              const slotTime = dayjs()
+                                                .tz(vietnamTimezone)
+                                                .set("hour", hour)
+                                                .set("minute", minutes)
+                                                .set("second", 0)
+                                                .set("millisecond", 0);
+
+                                              const isDisabled =
+                                                selectedDate &&
+                                                dayjs(selectedDate)
+                                                  .tz(vietnamTimezone)
+                                                  .isSame(currentTime, "day") &&
+                                                slotTime.isBefore(currentTime);
 
                                               return (
                                                 <Button

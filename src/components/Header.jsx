@@ -20,14 +20,12 @@ function Header(props) {
   const salonDetail = useSelector(
     (state) => state.SALONINFORMATION.getSalonByOwnerId
   );
-  console.log("salonDetail", salonDetail);
+  
   const salonServicesList = useSelector(
     (state) => state.SALONEMPLOYEES.salonServicesList
   );
-  console.log("salonServicesList", salonServicesList);
 
   const account = useSelector((state) => state.ACCOUNT.username);
-  console.log("idCustomer", idCustomer);
 
   useEffect(() => {
     if (idOwner) {
@@ -76,8 +74,6 @@ function Header(props) {
     setMenuActive(!menuActive);
   };
 
-  console.log("idCustomer", idCustomer);
-  console.log("idOwner", idOwner);
 
   return (
     <div>
@@ -103,7 +99,7 @@ function Header(props) {
                   </Link>
                 </li>
                 <li className={style.navItem}>
-                  <Link to={"/system_shop"} className={style.navLink}>
+                  <Link to={"/list_salon_ver2"} className={style.navLink}>
                     Hệ thống cửa hàng
                   </Link>
                 </li>
@@ -120,7 +116,7 @@ function Header(props) {
                       </Link>
                     </li>
                     <li className={style.navItemRepo}>
-                      <Link to={"/system_shop"} className={style.navLink}>
+                      <Link to={"/list_salon_ver2"} className={style.navLink}>
                         Hệ thống cửa hàng
                       </Link>
                     </li>
@@ -148,7 +144,7 @@ function Header(props) {
                   </Link>
                 </li>
                 <li className={style.navItem}>
-                  <Link to={"/system_shop"} className={style.navLink}>
+                  <Link to={"/list_salon_ver2"} className={style.navLink}>
                     Hệ thống cửa hàng
                   </Link>
                 </li>
