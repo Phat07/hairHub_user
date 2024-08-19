@@ -292,7 +292,7 @@ function HomePage(props) {
                                   textAlign: "center",
                                 }}
                               >
-                                <div>{item.totalRating}/5</div>
+                                <div>{item.totalRating / item.totalReviewer}/5</div>
                                 <div>{item.totalReviewer} đánh giá</div>
                               </div>
                             ) : (
@@ -305,7 +305,7 @@ function HomePage(props) {
                   ) : (
                     <EmptyComponent description={"Hiện không có salon nào!"} />
                   )}
-                  {recommendedSalons?.length > 0 ? (
+                  {/* {recommendedSalons?.length > 0 ? (
                     recommendedSalons?.map((item, index) => (
                       <Card
                         hoverable
@@ -407,7 +407,7 @@ function HomePage(props) {
                     ))
                   ) : (
                     <EmptyComponent description={"Hiện không có salon nào!"} />
-                  )}
+                  )} */}
                 </div>
 
                 <RightCircleOutlined
