@@ -844,7 +844,7 @@ function ListSalonVer2(props) {
             <Row gutter={[16, 16]}>
               <Col span={8}>
                 <MotionDiv
-                  whileHover={{ scale: 1.05 }} // Tăng nhẹ kích thước khi hover
+                  whileHover={{ scale: 1.02 }} // Tăng nhẹ kích thước khi hover
                   whileTap={{ scale: 0.95 }} // Giảm nhẹ kích thước khi nhấn
                   transition={{ duration: 0.3 }} // Thời gian chuyển đổi
                 >
@@ -857,7 +857,14 @@ function ListSalonVer2(props) {
                   />
                 </MotionDiv>
               </Col>
-              <Col style={{ backgroundColor: "#ECE8DE" }} span={16}>
+              <Col
+                style={{
+                  backgroundColor: "#ECE8DE",
+                  paddingLeft: "0px",
+                  paddingRight: "0px",
+                }}
+                span={16}
+              >
                 <Popover
                   content={popularServices}
                   visible={searchVisible}
@@ -1018,111 +1025,113 @@ function ListSalonVer2(props) {
           </div>
         </div>
         <div className={styles["custom_spin"]}>
-        <Spin spinning={loading}>
-          <div className={styles["list-salon-center"]}>
-            <div>
-              <p className={styles["list-salon-result"]}>Kết quả: ({total})</p>
+          <Spin spinning={loading}>
+            <div className={styles["list-salon-center"]}>
+              <div>
+                <p className={styles["list-salon-result"]}>
+                  Kết quả: ({total})
+                </p>
+              </div>
             </div>
-          </div>
-          <Divider />
-          <div className={styles["list-salon-end"]}>
-            <div className={styles["list-salon-actbtn"]}>
-              <div className={styles["list-salon-filmap"]}>
-                <Popover
-                  content={filterOptions}
-                  visible={filterVisible}
-                  onVisibleChange={handleFilterClick}
-                  trigger="click"
-                  placement="bottom"
-                  overlayClassName="popover-overlay"
-                >
-                  <Button
-                    className={styles["sort-button"]}
-                    icon={<SortAscendingOutlined />}
+            <Divider />
+            <div className={styles["list-salon-end"]}>
+              <div className={styles["list-salon-actbtn"]}>
+                <div className={styles["list-salon-filmap"]}>
+                  <Popover
+                    content={filterOptions}
+                    visible={filterVisible}
+                    onVisibleChange={handleFilterClick}
+                    trigger="click"
+                    placement="bottom"
+                    overlayClassName="popover-overlay"
                   >
-                    Sắp xếp
-                  </Button>
-                </Popover>
-                {/* <Button
+                    <Button
+                      className={styles["sort-button"]}
+                      icon={<SortAscendingOutlined />}
+                    >
+                      Sắp xếp
+                    </Button>
+                  </Popover>
+                  {/* <Button
                 className="view-map-button"
                 icon={<EnvironmentOutlined />}
               >
                 View Map
               </Button> */}
+                </div>
               </div>
-            </div>
-            <div className={styles["list-salon-content"]}>
-              {salonList.length !== 0 ? (
-                salonList.map((salon) => (
-                  <div className={styles["list-salon-item"]} key={salon.id}>
-                    <div
-                      className={styles["list-salon-image"]}
-                      style={{ width: "30%" }}
-                    >
-                      <img
-                        src={salon.img}
-                        alt={salon.name}
-                        style={{ width: "100%" }}
-                      />
-                    </div>
-                    <div
-                      className={styles["list-salon-info"]}
-                      style={{ width: "70%", paddingLeft: "16px" }}
-                    >
-                      {/* <h3>{salon.name}</h3> */}
-                      <p style={{ fontSize: "1.5rem" }}>{salon.name}</p>
-                      <p style={{ fontSize: "1rem" }}>
-                        <strong>Mô tả:</strong> {salon.description}
-                      </p>
-                      <p style={{ fontSize: "1rem" }}>
-                        <strong>Địa chỉ:</strong> {salon.address}
-                      </p>
-                      <ul>
-                        {salon.services.map((service, index) => (
-                          <li
-                            key={index}
-                            className={styles["service-list-item"]}
-                          >
-                            <div className={styles["service-details"]}>
-                              <span className={styles["service-name"]}>
-                                {service.serviceName}:
-                              </span>
-                              <span className={styles["service-description"]}>
-                                {service.description} - {service.price} Vnđ
-                              </span>
-                            </div>
-                            <Button
-                              onClick={() =>
-                                navigate(`/salon_detail/${salon?.id}`)
-                              }
-                              className={styles["book-button"]}
+              <div className={styles["list-salon-content"]}>
+                {salonList.length !== 0 ? (
+                  salonList.map((salon) => (
+                    <div className={styles["list-salon-item"]} key={salon.id}>
+                      <div
+                        className={styles["list-salon-image"]}
+                        style={{ width: "30%" }}
+                      >
+                        <img
+                          src={salon.img}
+                          alt={salon.name}
+                          style={{ width: "100%" }}
+                        />
+                      </div>
+                      <div
+                        className={styles["list-salon-info"]}
+                        style={{ width: "70%", paddingLeft: "16px" }}
+                      >
+                        {/* <h3>{salon.name}</h3> */}
+                        <p style={{ fontSize: "1.5rem" }}>{salon.name}</p>
+                        <p style={{ fontSize: "1rem" }}>
+                          <strong>Mô tả:</strong> {salon.description}
+                        </p>
+                        <p style={{ fontSize: "1rem" }}>
+                          <strong>Địa chỉ:</strong> {salon.address}
+                        </p>
+                        <ul>
+                          {salon.services.map((service, index) => (
+                            <li
+                              key={index}
+                              className={styles["service-list-item"]}
                             >
-                              Đặt lịch
-                            </Button>
-                          </li>
-                        ))}
-                      </ul>
+                              <div className={styles["service-details"]}>
+                                <span className={styles["service-name"]}>
+                                  {service.serviceName}:
+                                </span>
+                                <span className={styles["service-description"]}>
+                                  {service.description} - {service.price} Vnđ
+                                </span>
+                              </div>
+                              <Button
+                                onClick={() =>
+                                  navigate(`/salon_detail/${salon?.id}`)
+                                }
+                                className={styles["book-button"]}
+                              >
+                                Đặt lịch
+                              </Button>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     </div>
-                  </div>
-                ))
-              ) : (
-                <>
-                  <Empty />
-                </>
+                  ))
+                ) : (
+                  <>
+                    <Empty />
+                  </>
+                )}
+              </div>
+              {salonList.length !== 0 && (
+                <Pagination
+                  className={styles["custom-pagination"]}
+                  current={currentPage}
+                  pageSize={pageSize}
+                  total={totalPages}
+                  onChange={(page) => setCurrentPage(page)}
+                  style={{ textAlign: "center", marginTop: "20px" }}
+                />
               )}
             </div>
-            {salonList.length !== 0 && (
-              <Pagination
-                className={styles["custom-pagination"]}
-                current={currentPage}
-                pageSize={pageSize}
-                total={totalPages}
-                onChange={(page) => setCurrentPage(page)}
-                style={{ textAlign: "center", marginTop: "20px" }}
-              />
-            )}
-          </div>
-        </Spin>
+          </Spin>
         </div>
       </div>
       <div className={styles["right-side"]}>
