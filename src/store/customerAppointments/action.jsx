@@ -116,11 +116,13 @@ export function actDeleteAppointmentByCustomerId(id, customerId, reasonCancel) {
       reasonCancel
     );
     await result
-      .then((response) => {
+      .then(async (response) => {
         if (response.status === 200 || response.status === 201) {
           console.log("ressData", response);
-          dispatch(actGetAllAppointmentByCustomerId(customerId, 1, 5));
-          dispatch(actGetAllAppointmentHistoryByCustomerId(customerId, 1, 5));
+          await dispatch(actGetAllAppointmentByCustomerId(customerId, 1, 5));
+          await dispatch(
+            actGetAllAppointmentHistoryByCustomerId(customerId, 1, 5)
+          );
           message.success("Hủy lịch hẹn thành công");
         } else {
           message.error("Hủy lịch hẹn thất bại!!!");

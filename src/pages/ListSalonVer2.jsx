@@ -362,8 +362,6 @@ function ListSalonVer2(props) {
   };
   const fetchSalonData = async () => {
     try {
-      console.log("test");
-
       setLoading(true);
       let dataAddress = selectedProvince;
       if (selectedDistrict) {

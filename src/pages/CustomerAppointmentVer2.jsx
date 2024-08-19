@@ -59,9 +59,7 @@ function CustomerAppointmentVer2(props) {
   const customerAppointments = useSelector(
     (state) => state.CUSTOMERAPPOINTMENTS.appointment
   );
-  console.log("idCustomer", idCustomer);
-  console.log("customerAppointments", customerAppointments);
-
+ 
   const totalPages = useSelector(
     (state) => state.CUSTOMERAPPOINTMENTS.totalPages
   );
@@ -148,13 +146,13 @@ function CustomerAppointmentVer2(props) {
     setSelectedAppointmentDetail(null);
   };
 
-  const handleOk = () => {
+  const handleOk = async () => {
     if (!reasonCancel) {
       message.error("Vui lòng cung cấp lý do hủy.");
       return;
     }
 
-    dispatch(
+    await dispatch(
       actDeleteAppointmentByCustomerId(
         selectedAppointmentId,
         idCustomer,
