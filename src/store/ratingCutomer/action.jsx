@@ -14,7 +14,8 @@ export const getAllFeedbackBySalonId = (list) => {
     type: GET_ALL_FEEDBACK_BY_SALONID,
     payload: {
       list: list.items,
-      totalPages: list.totalPages,
+      // totalPages: list.totalPages,
+      totalPages: list.total,
     },
   };
 };
@@ -34,6 +35,8 @@ export function actGetAllFeedbackBySalonId(id, page, size, rating) {
     const result = RatingService.GetFeedbackBySalonId(id, page, size, rating);
     await result
       .then((response) => {
+        console.log("1,",response.data);
+        
         if (response.status === 200 || response.status === 201) {
           dispatch(getAllFeedbackBySalonId(response.data));
         } else {

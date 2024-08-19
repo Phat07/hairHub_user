@@ -181,7 +181,7 @@ function HomePage(props) {
           <Text className="titleHomePage">
             HỆ THỐNG ĐẶT LỊCH SALON, BARBER SHOP
           </Text>
-          <Link to={"/list_salon"}>
+          <Link to={"/list_salon_ver2"}>
             <Text className="btn has-before text-white hover:text-white-600">
               Đặt lịch ngay
             </Text>
