@@ -24,7 +24,7 @@ import {
   Form,
 } from "antd";
 import React, { useEffect, useRef, useState } from "react";
-import "../css/ListSalonVer2.css";
+import styles from "../css/ListSalonVer2.module.css";
 import { SalonInformationServices } from "../services/salonInformationServices";
 import { ServiceHairServices } from "../services/servicesHairServices";
 import { useNavigate } from "react-router-dom";
@@ -44,7 +44,7 @@ const Button = ({ children, className, ...props }) => (
     whileHover={{ scale: 0.9, backgroundColor: "#1890ff", color: "black" }}
     whileTap={{ scale: 0.9 }}
     transition={{ duration: 0.3 }}
-    className={`ant-btn book-button ${className}`}
+    className={`${styles[className] || ""} ${className}`}
     {...props} // Spread props để truyền tất cả các thuộc tính khác
   >
     {children}
@@ -793,14 +793,15 @@ function ListSalonVer2(props) {
   // };
 
   return (
-    <div className="list-salon-container">
-      <div className="left-side">
-        <div className="list-salon-header">
-          <div className="list-salon-search">
+    <div className={styles["list-salon-container"]}>
+      <div className={styles["left-side"]}>
+        <div className={styles["list-salon-header"]}>
+          <div className={styles["list-salon-search"]}>
             <div style={{ marginBottom: "10px" }}>
               <Button
                 // icon={<EnvironmentOutlined />}
                 onClick={handleSearch}
+                className={"book-button"}
               >
                 <EnvironmentOutlined
                   style={{ fontSize: "24px", marginRight: "8px" }}
@@ -887,46 +888,46 @@ function ListSalonVer2(props) {
                   />
                   {/* </MotionDiv> */}
                 </Popover>
-                <div className="list-salon-service">
+                <div className={styles["list-salon-service"]}>
                   <div
                     onClick={() => handleServiceSelect("Cắt tóc")}
-                    className="service-item"
+                    className={styles["service-item"]}
                   >
                     Cắt tóc
                   </div>
                   <div
                     onClick={() => handleServiceSelect("Nhuộm tóc")}
-                    className="service-item"
+                    className={styles["service-item"]}
                   >
                     Nhuộm tóc
                   </div>
                   <div
                     onClick={() => handleServiceSelect("Uốn tóc")}
-                    className="service-item"
+                    className={styles["service-item"]}
                   >
                     Uốn tóc
                   </div>
                   <div
                     onClick={() => handleServiceSelect("Duỗi tóc")}
-                    className="service-item"
+                    className={styles["service-item"]}
                   >
                     Duỗi tóc
                   </div>
                   <div
                     onClick={() => handleServiceSelect("Gội đầu")}
-                    className="service-item"
+                    className={styles["service-item"]}
                   >
                     Gội đầu
                   </div>
                   <div
                     onClick={() => handleServiceSelect("Ráy tai")}
-                    className="service-item"
+                    className={styles["service-item"]}
                   >
                     Ráy tai
                   </div>
                   <div
                     onClick={() => handleServiceSelect("Cạo râu")}
-                    className="service-item"
+                    className={styles["service-item"]}
                   >
                     Cạo râu
                   </div>
@@ -1016,16 +1017,17 @@ function ListSalonVer2(props) {
             </Row>
           </div>
         </div>
-        <Spin className="spin-loading" spinning={loading}>
-          <div className="list-salon-center">
+        <div className={styles["custom_spin"]}>
+        <Spin spinning={loading}>
+          <div className={styles["list-salon-center"]}>
             <div>
-              <p className="list-salon-result">Kết quả: ({total})</p>
+              <p className={styles["list-salon-result"]}>Kết quả: ({total})</p>
             </div>
           </div>
           <Divider />
-          <div className="list-salon-end">
-            <div className="list-salon-actbtn">
-              <div className="list-salon-filmap">
+          <div className={styles["list-salon-end"]}>
+            <div className={styles["list-salon-actbtn"]}>
+              <div className={styles["list-salon-filmap"]}>
                 <Popover
                   content={filterOptions}
                   visible={filterVisible}
@@ -1035,7 +1037,7 @@ function ListSalonVer2(props) {
                   overlayClassName="popover-overlay"
                 >
                   <Button
-                    className="sort-button"
+                    className={styles["sort-button"]}
                     icon={<SortAscendingOutlined />}
                   >
                     Sắp xếp
@@ -1049,11 +1051,14 @@ function ListSalonVer2(props) {
               </Button> */}
               </div>
             </div>
-            <div className="list-salon-content">
+            <div className={styles["list-salon-content"]}>
               {salonList.length !== 0 ? (
                 salonList.map((salon) => (
-                  <div className="list-salon-item" key={salon.id}>
-                    <div className="list-salon-image" style={{ width: "30%" }}>
+                  <div className={styles["list-salon-item"]} key={salon.id}>
+                    <div
+                      className={styles["list-salon-image"]}
+                      style={{ width: "30%" }}
+                    >
                       <img
                         src={salon.img}
                         alt={salon.name}
@@ -1061,7 +1066,7 @@ function ListSalonVer2(props) {
                       />
                     </div>
                     <div
-                      className="list-salon-info"
+                      className={styles["list-salon-info"]}
                       style={{ width: "70%", paddingLeft: "16px" }}
                     >
                       {/* <h3>{salon.name}</h3> */}
@@ -1074,12 +1079,15 @@ function ListSalonVer2(props) {
                       </p>
                       <ul>
                         {salon.services.map((service, index) => (
-                          <li key={index} className="service-list-item">
-                            <div className="service-details">
-                              <span className="service-name">
+                          <li
+                            key={index}
+                            className={styles["service-list-item"]}
+                          >
+                            <div className={styles["service-details"]}>
+                              <span className={styles["service-name"]}>
                                 {service.serviceName}:
                               </span>
-                              <span className="service-description">
+                              <span className={styles["service-description"]}>
                                 {service.description} - {service.price} Vnđ
                               </span>
                             </div>
@@ -1087,7 +1095,7 @@ function ListSalonVer2(props) {
                               onClick={() =>
                                 navigate(`/salon_detail/${salon?.id}`)
                               }
-                              className="book-button"
+                              className={styles["book-button"]}
                             >
                               Đặt lịch
                             </Button>
@@ -1105,7 +1113,7 @@ function ListSalonVer2(props) {
             </div>
             {salonList.length !== 0 && (
               <Pagination
-                className="custom-pagination"
+                className={styles["custom-pagination"]}
                 current={currentPage}
                 pageSize={pageSize}
                 total={totalPages}
@@ -1115,9 +1123,10 @@ function ListSalonVer2(props) {
             )}
           </div>
         </Spin>
+        </div>
       </div>
-      <div className="right-side">
-        <div className="tinhHuyen" >
+      <div className={styles["right-side"]}>
+        <div className={styles["tinhHuyen"]}>
           {/* <Select
             value={selectedProvince || undefined}
             style={{ width: 250, marginRight: "10px" }}
@@ -1137,7 +1146,7 @@ function ListSalonVer2(props) {
               onChange={handleChange}
               options={[{ value: null, label: "ĐẶT LẠI" }, ...provinces]}
               placeholder="Tỉnh/Thành phố"
-              className="select_1"
+              className={styles["select_1"]}
             />
           </MotionDiv>
           <MotionDiv
@@ -1150,11 +1159,11 @@ function ListSalonVer2(props) {
               onChange={handleChangeDistrict}
               options={selectedProvince ? districts : <Empty />}
               placeholder="Quận/Huyện" // Set the placeholder text
-              className="select_2"
+              className={styles["select_2"]}
             />
           </MotionDiv>
         </div>
-        <div className="showMap">
+        <div className={styles["showMap"]}>
           <LoadScriptMap
             salonList={salonList}
             mapStyle={mapStyle}
