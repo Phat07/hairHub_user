@@ -180,7 +180,7 @@ function ListSalonVer2(props) {
       } else if (window.innerWidth <= 768) {
         setMapStyle({ height: "300px", width: "425px" });
       } else {
-        setMapStyle({ height: "300px", width: "620px" });
+        setMapStyle({ height: "300px", width: "500px" });
       }
     };
 
@@ -793,7 +793,7 @@ function ListSalonVer2(props) {
   // };
 
   return (
-    <main className="list-salon-container">
+    <div className="list-salon-container">
       <div className="left-side">
         <div className="list-salon-header">
           <div className="list-salon-search">
@@ -1016,7 +1016,7 @@ function ListSalonVer2(props) {
             </Row>
           </div>
         </div>
-        <Spin spinning={loading}>
+        <Spin className="spin-loading" spinning={loading}>
           <div className="list-salon-center">
             <div>
               <p className="list-salon-result">Kết quả: ({total})</p>
@@ -1162,7 +1162,7 @@ function ListSalonVer2(props) {
           />
         </div>
       </div>
-    </main>
+    </div>
   );
 }
 

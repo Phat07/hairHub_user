@@ -1,4 +1,4 @@
-main.list-salon-container {
+.list-salon-container {
   display: flex;
   justify-content: space-between;
   padding: 0 40px;
@@ -40,11 +40,12 @@ main.list-salon-container {
 }
 
 @media (max-width: 768px) {
-  main.list-salon-container {
+  .list-salon-container {
     flex-direction: column;
-    padding: 0 20px;
+    padding: 20px;
     /* height: 130rem; */
     min-height: 100vh;
+    /* margin-top: -10rem; */
   }
 
   /* .left-side {
@@ -60,11 +61,14 @@ main.list-salon-container {
     width: 100%;
     /* position: absolute; */
   }
-  .ant-spin-container{
+  .ant-spin-container {
     /* top: 20rem; */
     overflow: hidden;
   }
-
+  .ant-spin-nested-loading {
+    top: 20rem;
+    margin-bottom: 300px;
+  }
   .right-side {
     width: 100%;
     top: 25rem;
