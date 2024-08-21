@@ -163,7 +163,6 @@ function SalonAppointmentVer2(props) {
 
   const showModal = (appointment) => {
     setCurrentAppointment(appointment);
-    console.log(appointment);
     setIsModalVisible(true);
   };
 
@@ -234,8 +233,6 @@ function SalonAppointmentVer2(props) {
 
   const handleUploadChange = (info) => {
     const { status, fileList } = info; // Get fileList from info
-    console.log("info", info);
-
     if (status === "done") {
       message.success(`${info.file.name} đã được tải lên thành công.`);
       setReportImage(info.file);
