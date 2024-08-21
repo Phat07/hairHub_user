@@ -40,7 +40,7 @@ export function actGetAllServicesBySalonId(id, currentPage, pageSize) {
       pageSize
     )
       .then((res) => {
-        dispatch(getAllService(res?.data?.items, res?.data?.totalPages));
+        dispatch(getAllService(res?.data?.items, res?.data?.total));
       })
       .catch((err) => console.log(err, "errors"));
   };
@@ -79,26 +79,46 @@ export function actGetAllEmployees(id, currentPage, pageSize) {
       pageSize
     )
       .then((res) => {
-        dispatch(getAllEmployee(res?.data?.items, res?.data?.totalPages));
+        console.log("ré1",res.data);
+        
+        dispatch(getAllEmployee(res?.data?.items, res?.data?.total));
       })
-      .catch((err) => console.log(err, "errors"));
+      .catch((err) => {
+        // message.error("Nhân viên chưa được thêm!");
+      });
   };
 }
 
+// export function actPostCreateSalonEmployees(data, id) {
+//   return (dispatch) => {
+//     SalonEmployeesServices.createSalonEmployees(data)
+//       .then((response) => {
+//         if (response.status === 200 || response.status === 201) {
+//           message.success("Thêm nhân viên thành công!");
+//           dispatch(actGetAllEmployees(id));
+//         } else {
+//           message.error("Nhân viên chưa được thêm!");
+//         }
+//       })
+//       .catch((error) => {
+//         // Xử lý lỗi nếu có
+//         // console.error("Error while fetching all config money:", error);
+//       });
+//   };
+// }
 export function actPostCreateSalonEmployees(data, id) {
-  return (dispatch) => {
-    SalonEmployeesServices.createSalonEmployees(data)
-      .then((response) => {
-        if (response.status === 200 || response.status === 201) {
-          message.success("Thêm nhân viên thành công!");
-          dispatch(actGetAllEmployees(id));
-        } else {
-          message.error("Nhân viên chưa được thêm!");
-        }
-      })
-      .catch((error) => {
-        // Xử lý lỗi nếu có
-        // console.error("Error while fetching all config money:", error);
-      });
+  return async (dispatch) => {
+    try {
+      const response = await SalonEmployeesServices.createSalonEmployees(data);
+
+      if (response.status === 200 || response.status === 201) {
+        await dispatch(actGetAllEmployees(id, 1, 4));
+      }
+
+      return response;
+    } catch (error) {
+      console.error("Error while creating salon employee:", error);
+      throw error;
+    }
   };
 }

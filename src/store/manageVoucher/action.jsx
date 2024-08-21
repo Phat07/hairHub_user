@@ -22,7 +22,7 @@ export function actGetVoucherBySalonId(page, size, id) {
       .then((response) => {
         if (response.status === 200 || response.status === 201) {
           dispatch(
-            getVoucherBySalonId(response.data.items, response.data.totalPages)
+            getVoucherBySalonId(response.data.items, response.data.total)
           );
         } else {
           message.error("Do not have any voucher!!!");

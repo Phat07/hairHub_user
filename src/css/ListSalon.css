@@ -65,35 +65,7 @@
 }
 
 /* EmployeeForm.css */
-.custom-timepicker .ant-picker-input {
-  /* background-color: #f0f2f5; Light grey background */
-  color: #333; /* Text color */
-  border-radius: 8px; /* Rounded corners */
-  margin-left: 10rem;
-}
 
-.custom-timepicker .ant-picker-input input {
-  font-size: 16px; /* Font size */
-  padding: 5px; /* Padding */
-}
-
-.custom-timepicker .ant-picker-clear {
-  color: #ff4d4f; /* Clear icon color */
-}
-
-.custom-timepicker .ant-picker-clock-icon {
-  color: #1890ff; /* Clock icon color */
-}
-
-.custom-timepicker .ant-picker {
-  border: 1px solid #d9d9d9; /* Border color */
-}
-
-.custom-timepicker .ant-picker:hover,
-.custom-timepicker .ant-picker-focused {
-  border-color: #40a9ff; /* Border color on hover/focus */
-  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2); /* Box shadow on hover/focus */
-}
 
 .ButtonHoverable {
   margin-left: 2rem;

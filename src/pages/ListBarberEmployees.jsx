@@ -468,32 +468,32 @@ function ListBarberEmployees() {
   const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
   const ownerId = useSelector((state) => state.ACCOUNT.idOwner);
 
-  useEffect(() => {
-    if (ownerId) {
-      dispatch(actGetSalonInformationByOwnerId(ownerId));
-    }
-  }, [dispatch, ownerId]);
-  useEffect(() => {
-    if (id || currentPage) {
-      dispatch(actGetAllEmployees(id, currentPage, pageSize));
-    }
-  }, [id, currentPage]);
+  // useEffect(() => {
+  //   if (ownerId) {
+  //     dispatch(actGetSalonInformationByOwnerId(ownerId));
+  //   }
+  // }, [dispatch, ownerId]);
+  // useEffect(() => {
+  //   if (id || currentPage) {
+  //     dispatch(actGetAllEmployees(id, currentPage, pageSize));
+  //   }
+  // }, [id, currentPage]);
   const onPageChange = (page) => {
     setCurrentPage(page);
   };
-  const handleDelete = (employee) => {
-    axios
-      .put(
-        `http://14.225.218.91:8080/api/v1/salonemployees/DeleteSalonEmployee/${employee.id}`
-      )
-      .then(() => {
-        const updatedEmployeeList = listEmployee.filter(
-          (emp) => emp.id !== employee.id
-        );
-        dispatch(actGetAllEmployees(id));
-        message.success("Employee was deleted!");
-      });
-  };
+  // const handleDelete = (employee) => {
+  //   axios
+  //     .put(
+  //       `http://14.225.218.91:8080/api/v1/salonemployees/DeleteSalonEmployee/${employee.id}`
+  //     )
+  //     .then(() => {
+  //       const updatedEmployeeList = listEmployee.filter(
+  //         (emp) => emp.id !== employee.id
+  //       );
+  //       dispatch(actGetAllEmployees(id));
+  //       message.success("Employee was deleted!");
+  //     });
+  // };
 
   const handleDetail = (employee) => {
     setDetailEmployee(employee);

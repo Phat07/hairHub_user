@@ -366,7 +366,7 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
   };
 
   return (
-    <div className="container_list">
+    <div className="container_list" style={{marginBottom:"2rem"}}>
       <LoadScript
         googleMapsApiKey={`${
           import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
@@ -381,13 +381,14 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
       >
         {form && (
           <Card
-            className="bg-slate-100"
+            style={{ backgroundColor: "#ece8de" }}
             title={
               <Flex justify="space-between" align="center">
                 {/* -translate-y-1: căng thêm trên dưới vì trục y, scale-105: phóng to content thêm 5 vì 100 là cơ bản, dưới 100 thì thu nhỏ  */}
                 <Typography.Title
                   level={4}
-                  className="bg-slate-300 p-3 mt-3 border border2 rounded-md text-slate-500 hover:text-blue-500 transition ease-in-out hover:-translate-y-1 hover:scale-105 duration-300"
+                  style={{ backgroundColor: "#bf9456" }}
+                  className=" p-3 mt-3 border border2 rounded-md text-slate-500 hover:text-blue-500 transition ease-in-out hover:-translate-y-1 hover:scale-105 duration-300"
                 >
                   {salonDetail ? "CHỈNH SỬA TIỆM CỦA BẠN" : "TẠO TIỆM CỦA BẠN"}
                 </Typography.Title>
@@ -471,7 +472,7 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
                 {renderTimePickers()}
                 <Form.Item>
                   <Button
-                    style={{ width: "100%" }}
+                    style={{ width: "100%", backgroundColor:"#bf9456" }}
                     type="primary"
                     htmlType="submit"
                   >

@@ -1,0 +1,122 @@
+.colWithBorder {
+  border: 1px solid #716b6b; /* Màu viền */
+  /* padding: 16px; */
+  padding-top: 20px;
+  border-radius: 4px; /* Tạo góc bo cho viền */
+  background-color: "#ece8de"; /* Màu nền của cột */
+  box-shadow: 0 2px 6px rgba(125, 122, 122, 0.5); /* Thêm shadow nhẹ cho viền */
+  margin: 0 1rem;
+}
+
+.colWithBorder1 {
+  border: 1px solid #716b6b; /* Màu viền */
+  /* padding: 16px; */
+  padding-top: 20px;
+  border-radius: 4px; /* Tạo góc bo cho viền */
+  background-color: "#ece8de"; /* Màu nền của cột */
+  box-shadow: 0 2px 6px rgba(125, 122, 122, 0.5); /* Thêm shadow nhẹ cho viền */
+}
+.workDemo {
+  font-size: 2rem;
+}
+@media (max-width: 768px) {
+  .rowContainer {
+    flex-direction: column;
+  }
+
+  /* .colWithBorder,
+  .colWithBorder1 {
+    height: 100%;
+    margin: 0;
+  } */
+ .colWithBorder {
+  margin-bottom: 15px;
+ }
+
+
+
+  .header {
+    font-size: 1.5rem;
+  }
+  .workDemo {
+    font-size: 25px;
+  }
+  :global(.ant-col-11) {
+    max-width: 100%;
+  }
+  :global(.ant-col-12) {
+    max-width: 100%;
+  }
+}
+
+.custom-timepicker .ant-picker-input {
+  /* background-color: #f0f2f5; Light grey background */
+  color: #333; /* Text color */
+  border-radius: 8px; /* Rounded corners */
+  margin-left: 10rem;
+}
+
+.custom-timepicker .ant-picker-input input {
+  font-size: 16px; /* Font size */
+  padding: 5px; /* Padding */
+}
+
+.custom-timepicker .ant-picker-clear {
+  color: #ff4d4f; /* Clear icon color */
+}
+
+.custom-timepicker .ant-picker-clock-icon {
+  color: #1890ff; /* Clock icon color */
+}
+
+.custom-timepicker .ant-picker {
+  border: 1px solid #d9d9d9; /* Border color */
+}
+
+.custom-timepicker .ant-picker:hover,
+.custom-timepicker .ant-picker-focused {
+  border-color: #40a9ff; /* Border color on hover/focus */
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2); /* Box shadow on hover/focus */
+}
+.custom-timepicker {
+  margin-left: 10px;
+}
+
+.customModal .ant-modal {
+  background-color: #ece8de; /* Màu nền bạn muốn */
+}
+
+/* Thay đổi màu nền của nội dung bên trong modal */
+.customModal .ant-modal-content {
+  background-color: #ece8de; /* Màu nền bạn muốn */
+}
+
+/* Thay đổi màu nền của tiêu đề modal */
+.customModal .ant-modal-header {
+  background-color: #ece8de; /* Màu nền bạn muốn */
+}
+
+/* Thay đổi màu nền của footer modal (nếu có) */
+.customModal .ant-modal-footer {
+  background-color: #ece8de; /* Màu nền bạn muốn */
+}
+/* ModalStyles.module.css */
+.customModalContent {
+  background-color: #ece8de !important; /* Ghi đè màu nền mặc định */
+  border-radius: 12px !important; /* Thay đổi border-radius */
+}
+
+.customModalHeader {
+  font-size: 2rem;
+  background-color: #ece8de !important; /* Ghi đè màu nền của header */
+}
+
+.customModalFooter {
+  background-color: #ece8de !important; /* Ghi đè màu nền của footer */
+}
+:global(.ant-modal .ant-modal-content) {
+  background-color: #ece8de;
+}
+.selectOption {
+  cursor: pointer;
+}

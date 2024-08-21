@@ -50,6 +50,7 @@ import { isEmptyObject } from "../components/formatCheckValue/checkEmptyObject";
 import AddEmployeeForm from "../components/SalonShop/EmployeeForm";
 import AddServiceForm from "../components/SalonShop/ServiceForm";
 import styles from "../css/listShopBarber.module.css";
+import stylesModal from "../css/employeeForm.module.css";
 import { ServiceHairServices } from "../services/servicesHairServices";
 import { voucherServices } from "../services/voucherServices";
 import { actGetVoucherBySalonId } from "../store/manageVoucher/action";
@@ -59,7 +60,6 @@ import {
 } from "../store/salonEmployees/action";
 import { actGetSalonInformationByOwnerId } from "../store/salonInformation/action";
 
-const count = 3;
 
 function ListShopBarber(props) {
   dayjs.locale("vi");
@@ -75,7 +75,7 @@ function ListShopBarber(props) {
   const [currentPageEmployee, setCurrentPageEmployee] = useState(1);
   const [pageSizeEmployee, setPageSizeEmployee] = useState(4);
   const [currentPageService, setCurrentPageService] = useState(1);
-  const [pageSizeService, setPageSizeService] = useState(4);
+  const [pageSizeService, setPageSizeService] = useState(2);
   const [currentPageVoucher, setCurrentPageVoucher] = useState(1);
   const [pageSizeVoucher, setPageSizeVoucher] = useState(4);
   const [open, setOpen] = useState(false);
@@ -121,6 +121,9 @@ function ListShopBarber(props) {
   const totalPagesEmployee = useSelector(
     (state) => state.SALONEMPLOYEES.totalPages
   );
+  console.log("totals", totalPagesEmployee);
+  console.log("listE", listEmployee);
+  
   const listTotalService = useSelector(
     (state) => state.SALONEMPLOYEES.listService
   );
@@ -144,14 +147,15 @@ function ListShopBarber(props) {
     if (salonDetail || currentPageEmployee) {
       dispatch(
         actGetAllEmployees(
-          salonDetail.id,
+          salonDetail?.id,
           currentPageEmployee,
           pageSizeEmployee
         )
       );
     }
-  }, [salonDetail, currentPageEmployee]);
-
+  }, [salonDetail, currentPageEmployee, pageSizeEmployee]);
+  console.log("currentPagee", currentPageEmployee);
+  
   useEffect(() => {
     if (
       salonDetail &&
@@ -239,7 +243,6 @@ function ListShopBarber(props) {
       navigate(`/list_barber_employees/${salonDetail.id}`);
     }
   };
-  console.log("salonDeaa", salonDetail);
 
   useEffect(() => {
     if (isEmptyObject(salonDetail)) {
@@ -258,7 +261,7 @@ function ListShopBarber(props) {
   }, [ownerId]);
 
   useEffect(() => {
-    if (salonDetail?.id) dispatch(actGetAllEmployees(salonDetail?.id));
+    if (salonDetail?.id) dispatch(actGetAllEmployees(salonDetail?.id, 1, 4));
   }, [salonDetail?.id]);
 
   const handleDeleteEmployee = (employee) => {
@@ -267,7 +270,7 @@ function ListShopBarber(props) {
         `http://14.225.218.91:8080/api/v1/salonemployees/DeleteSalonEmployee/${employee.id}`
       )
       .then(() => {
-        dispatch(actGetAllEmployees(salonDetail.id));
+        dispatch(actGetAllEmployees(salonDetail.id, 1, 4));
         message.success("Employee was deleted!");
       });
   };
@@ -511,14 +514,17 @@ function ListShopBarber(props) {
           ) : (
             <></>
           )}
-
-          <Button
-            className="deleteButtonStyle"
-            onClick={() => handleDelete(record)}
-            icon={<DeleteOutlined />}
-          >
-            Xóa
-          </Button>
+          {record?.isActive ? (
+            <Button
+              className="deleteButtonStyle"
+              onClick={() => handleDelete(record)}
+              icon={<DeleteOutlined />}
+            >
+              Xóa
+            </Button>
+          ) : (
+            <></>
+          )}
         </Space>
       ),
     },
@@ -688,7 +694,6 @@ function ListShopBarber(props) {
   };
 
   const onFinish = (values) => {
-    console.log("Voucher Values", values);
     const { description, minimumOrderAmount, discountPercentage, expiryDate } =
       values;
     const configDiscountPercentage = discountPercentage / 100;
@@ -743,11 +748,6 @@ function ListShopBarber(props) {
   const handleUpdate = (service) => {
     setServiceUpdate(service);
     setisUpdateModalService(true);
-    console.log(service.time, "service time update");
-    console.log(
-      convertServiceTimeFromBe(service.time),
-      "Converted Service Time"
-    );
     form.setFieldsValue({
       serviceName: service.serviceName,
       description: service.description,
@@ -845,10 +845,14 @@ function ListShopBarber(props) {
       }
     }
   };
+  const getBase64 = (file, callback) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file); //mấu chốt ở đây!
+    reader.onload = () => callback(reader.result);
+    reader.onerror = (error) => console.log("Error: ", error);
+  };
   const handleImageChange = (info) => {
-    console.log("infor", info);
     setImageFile(info.file);
-
     getBase64(info.file, (imageUrl) => {
       setImageUrl(imageUrl);
     });
@@ -1149,7 +1153,7 @@ function ListShopBarber(props) {
                           dataSource={listEmployee}
                           columns={columnsEmployee}
                           pagination={false}
-                          rowKey="phone"
+                          // rowKey="phone"
                         />
                       </div>
 
@@ -1312,7 +1316,12 @@ function ListShopBarber(props) {
               </Row>
               <Modal
                 width={500}
-                title="Tạo dịch vụ mới"
+                title={
+                  <div className={stylesModal.customModalHeader}>
+                    Tạo dịch vụ mới
+                  </div>
+                }
+                // title="Tạo dịch vụ mới"
                 open={open}
                 onOk={handleOk}
                 onCancel={handleCancel}
@@ -1442,7 +1451,12 @@ function ListShopBarber(props) {
               </Modal>
 
               <Modal
-                title="Cập nhật Voucher"
+                // title="Cập nhật Voucher"
+                title={
+                  <div className={stylesModal.customModalHeader}>
+                    Cập nhật voucher
+                  </div>
+                }
                 visible={isUpdateModalVisible}
                 onOk={handleUpdateVoucherOk}
                 onCancel={() => {
@@ -1498,12 +1512,20 @@ function ListShopBarber(props) {
               </Modal>
 
               <Modal
-                width={800}
-                title="Tạo nhân viên mới"
+                width={1200}
+                // title="Tạo nhân viên mới"
+                title={
+                  <div className={stylesModal.customModalHeader}>
+                    Tạo nhân viên mới
+                  </div>
+                }
                 open={openEmployee}
                 onOk={() => setOpenEmployee(false)}
                 onCancel={() => setOpenEmployee(false)}
-                footer={null}
+                // footer={null}
+                footer={<div className={stylesModal.customModalFooter}></div>}
+                className={stylesModal.customModalContent}
+                bodyStyle={{ backgroundColor: "#ece8de" }}
               >
                 <AddEmployeeForm
                   salonInformation={salonDetail}
@@ -1511,7 +1533,12 @@ function ListShopBarber(props) {
                 />
               </Modal>
               <Modal
-                title="Cập nhật dịch vụ"
+                // title="Cập nhật dịch vụ"
+                title={
+                  <div className={stylesModal.customModalHeader}>
+                    Cập nhật nhân viên
+                  </div>
+                }
                 visible={isUpdateModalService}
                 onOk={handleUpdateOk}
                 onCancel={() => {
