@@ -4,12 +4,23 @@ export const SalonEmployeesServices = {
   createSalonEmployees(data) {
     return API.post("/salonemployees/CreateSalonEmployee", data);
   },
-  getSalonEmployeeBySalonInformationId(salonId, page, size) {
+  getSalonEmployeeBySalonInformationId(
+    salonId,
+    page,
+    size,
+    orderByName,
+    isActive,
+    nameEmployee
+  ) {
     return API.get(
-      `/salonemployees/GetSalonEmployeeBySalonInformationId/${salonId}`, {
+      `/salonemployees/GetSalonEmployeeBySalonInformationId/${salonId}`,
+      {
         params: {
           page,
-          size
+          size,
+          orderByName,
+          isActive,
+          nameEmployee,
         },
       }
     );

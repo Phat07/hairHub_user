@@ -9,11 +9,21 @@ export const ServiceHairServices = {
       },
     });
   },
-  getServiceHairBySalonInformationId(salonId, page, size) {
+  getServiceHairBySalonInformationId(
+    salonId,
+    page,
+    size,
+    search,
+    filter,
+    orderby
+  ) {
     return API.get(`/servicehairs/GetServiceHairBySalonIdPaging/${salonId}`, {
       params: {
         page,
         size,
+        search,
+        filter,
+        orderby,
       },
     });
   },

@@ -12,11 +12,14 @@ export const voucherServices = {
   getVoucherById(id) {
     return API.get(`/vouchers/GetVoucherById/${id}`);
   },
-  getVoucherBySalonId(page, size, salonId) {
+  getVoucherBySalonId(page, size, salonId, search, filter, orderby) {
     return API.get(`/vouchers/GetVoucherBySalonId/${salonId}`, {
       params: {
         page,
         size,
+        search,
+        filter,
+        orderby,
       },
     });
   },
