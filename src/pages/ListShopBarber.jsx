@@ -60,7 +60,6 @@ import {
 } from "../store/salonEmployees/action";
 import { actGetSalonInformationByOwnerId } from "../store/salonInformation/action";
 
-
 function ListShopBarber(props) {
   dayjs.locale("vi");
   const [form] = Form.useForm();
@@ -75,7 +74,7 @@ function ListShopBarber(props) {
   const [currentPageEmployee, setCurrentPageEmployee] = useState(1);
   const [pageSizeEmployee, setPageSizeEmployee] = useState(4);
   const [currentPageService, setCurrentPageService] = useState(1);
-  const [pageSizeService, setPageSizeService] = useState(2);
+  const [pageSizeService, setPageSizeService] = useState(4);
   const [currentPageVoucher, setCurrentPageVoucher] = useState(1);
   const [pageSizeVoucher, setPageSizeVoucher] = useState(4);
   const [open, setOpen] = useState(false);
@@ -123,7 +122,7 @@ function ListShopBarber(props) {
   );
   console.log("totals", totalPagesEmployee);
   console.log("listE", listEmployee);
-  
+
   const listTotalService = useSelector(
     (state) => state.SALONEMPLOYEES.listService
   );
@@ -139,6 +138,169 @@ function ListShopBarber(props) {
   const hidePopover = () => {
     setOpenPopoverId(null);
   };
+
+  //logic fillter
+  const [searchEmployee, setSearchEmployee] = useState("");
+  const [searchService, setSearchService] = useState("");
+  const [searchVoucher, setSearchVoucher] = useState("");
+
+  const [searchEmployeeKey, setSearchEmployeeKey] = useState("");
+  const [searchServiceKey, setSearchServiceKey] = useState("");
+  const [searchVoucherKey, setSearchVoucherKey] = useState("");
+
+  const [SortEmployee, setSortEmployee] = useState(null);
+  const [SortService, setSortService] = useState(null);
+  const [SortVoucher, setSortVoucher] = useState(null);
+
+  const [FillterEmployee, setFillterEmployee] = useState(null);
+  const [FillterService, setFillterService] = useState("");
+  const [FillterVoucher, setFillterVoucher] = useState("");
+
+  const [sortLabelEmployee, setSortLabelEmployee] = useState("Sắp xếp");
+  const [filterLabelEmployee, setFilterLabelEmployee] = useState("Lọc");
+
+  const [sortLabelService, setSortLabelService] = useState("Sắp xếp");
+  const [filterLabelService, setFilterLabelService] = useState("Lọc");
+
+  const [sortLabelVoucher, setSortLabelVoucher] = useState("Sắp xếp");
+  const [filterLabelVoucher, setFilterLabelVoucher] = useState("Lọc");
+
+  const handleMenuClickEmpoyeeSort = (e) => {
+    console.log("handleMenuClickEmpoyeeSort on:", e.key);
+    setSortEmployee(e.key === "" ? null : e.key === "true");
+    setSortLabelEmployee(
+      e.key === ""
+        ? "Tất cả"
+        : e.key === "true"
+        ? "Sắp xếp theo tên A-Z"
+        : "Sắp xếp theo tên Z-A"
+    );
+  };
+
+  const handleMenuClickEmpoyeeFillter = (e) => {
+    console.log("handleMenuClickEmpoyeeFillter on:", e.key);
+    setFillterEmployee(e.key === "" ? null : e.key === "true");
+    setFilterLabelEmployee(
+      e.key === ""
+        ? "Tất cả"
+        : e.key === "true"
+        ? "Lọc theo trạng thái đang hoạt động"
+        : "Lọc theo trạng thái không hoạt động"
+    );
+  };
+
+  const handleMenuClickServiceSort = (e) => {
+    console.log("handleMenuClickServiceSort on:", e.key);
+    setSortService(e.key);
+    setSortLabelService(e.key === "" ? "Tất cả" : `Sắp xếp theo ${e.key}`);
+  };
+
+  const handleMenuClickServiceFillter = (e) => {
+    console.log("handleMenuClickServiceFillter on:", e.key);
+    setFillterService(e.key);
+    setFilterLabelService(
+      e.key === ""
+        ? "Tất cả"
+        : e.key === "true"
+        ? "Lọc theo trạng thái đang hoạt động"
+        : "Lọc theo trạng thái không hoạt động"
+    );
+  };
+
+  const handleMenuClickVoucherSort = (e) => {
+    console.log("handleMenuClickVoucherSort on:", e.key);
+    setSortVoucher(e.key);
+    setSortLabelVoucher(e.key === "" ? "Tất cả" : `Sắp xếp theo ${e.key}`);
+  };
+
+  const handleMenuClickVoucherFillter = (e) => {
+    console.log("handleMenuClickVoucherFillter on:", e.key);
+    setFillterVoucher(e.key);
+    setFilterLabelVoucher(
+      e.key === ""
+        ? "Tất cả"
+        : e.key === "true"
+        ? "Lọc theo trạng thái đang hoạt động"
+        : "Lọc theo trạng thái không hoạt động"
+    );
+  };
+
+  const sortMenu = (
+    <Menu onClick={handleMenuClickEmpoyeeSort}>
+      <Menu.Item key="">Tất cả</Menu.Item>
+      <Menu.Item key="true">Sắp xếp theo tên A-Z</Menu.Item>
+      <Menu.Item key="false">Sắp xếp theo tên Z-A</Menu.Item>
+    </Menu>
+  );
+
+  const filterMenu = (
+    <Menu onClick={handleMenuClickEmpoyeeFillter}>
+      <Menu.Item key="">Tất cả</Menu.Item>
+      <Menu.Item key="true">Lọc theo trạng thái đang hoạt động</Menu.Item>
+      <Menu.Item key="false">Lọc theo trạng thái không hoạt động</Menu.Item>
+    </Menu>
+  );
+  const sortMenuService = (
+    <Menu onClick={handleMenuClickServiceSort}>
+      <Menu.Item key="">Tất cả</Menu.Item>
+      <Menu.Item key="giá tăng dần">Sắp xếp theo theo giá tăng dần</Menu.Item>
+      <Menu.Item key="giá giảm dần">Sắp xếp theo theo giá giảm dần</Menu.Item>
+      <Menu.Item key="thời gian tăng dần">
+        Sắp xếp theo theo thời gian tăng dần
+      </Menu.Item>
+      <Menu.Item key="thời gian giảm dần">
+        Sắp xếp theo theo thời gian giảm dần
+      </Menu.Item>
+    </Menu>
+  );
+  const filterMenuService = (
+    <Menu onClick={handleMenuClickServiceFillter}>
+      <Menu.Item key="">Tất cả</Menu.Item>
+      <Menu.Item key="true">Lọc theo trạng thái đang hoạt động</Menu.Item>
+      <Menu.Item key="false">Lọc theo trạng thái không hoạt động</Menu.Item>
+    </Menu>
+  );
+
+  const sortMenuVoucher = (
+    <Menu onClick={handleMenuClickVoucherSort}>
+      <Menu.Item key="">Tất cả</Menu.Item>
+      <Menu.Item key="giá tăng dần">Sắp xếp theo theo tiền tăng dần</Menu.Item>
+      <Menu.Item key="giá giảm dần">Sắp xếp theo theo tiền giảm dần</Menu.Item>
+      <Menu.Item key="ngày hết hạn tăng dần">
+        Sắp xếp theo theo thời gian tăng dần
+      </Menu.Item>
+      <Menu.Item key="ngày hết hạn giảm dần">
+        Sắp xếp theo theo thời gian giảm dần
+      </Menu.Item>
+      <Menu.Item key="phần trăm giảm dần">
+        Sắp xếp theo theo ngày hết hạn tăng dần
+      </Menu.Item>
+      <Menu.Item key="phần trăm tăng dần">
+        Sắp xếp theo theo ngày hết hạn giảm dần
+      </Menu.Item>
+    </Menu>
+  );
+  const filterMenuVoucher = (
+    <Menu onClick={handleMenuClickVoucherFillter}>
+      <Menu.Item key="">Tất cả</Menu.Item>
+      <Menu.Item key="true">Lọc theo trạng thái đang hoạt động</Menu.Item>
+      <Menu.Item key="false">Lọc theo trạng thái không hoạt động</Menu.Item>
+    </Menu>
+  );
+
+  const handleSearchEmployee = () => {
+    console.log("Tìm kiếm với từ khóa:", searchEmployee);
+    setSearchEmployeeKey(searchEmployee);
+  };
+  const handleSearchService = () => {
+    console.log("Tìm kiếm với từ khóa:", searchService);
+    setSearchServiceKey(searchService);
+  };
+  const handleSearchVoucher = () => {
+    console.log("Tìm kiếm với từ khóa:", searchVoucher);
+    setSearchVoucherKey(searchVoucher);
+  };
+
   useEffect(() => {
     dispatch(actGetSalonInformationByOwnerId(ownerId));
   }, []);
@@ -149,13 +311,23 @@ function ListShopBarber(props) {
         actGetAllEmployees(
           salonDetail?.id,
           currentPageEmployee,
-          pageSizeEmployee
+          pageSizeEmployee,
+          SortEmployee,
+          FillterEmployee,
+          searchEmployeeKey
         )
       );
     }
-  }, [salonDetail, currentPageEmployee, pageSizeEmployee]);
-  console.log("currentPagee", currentPageEmployee);
-  
+  }, [
+    salonDetail,
+    currentPageEmployee,
+    pageSizeEmployee,
+    SortEmployee,
+    FillterEmployee,
+    searchEmployeeKey,
+    dispatch,
+  ]);
+
   useEffect(() => {
     if (
       salonDetail &&
@@ -167,12 +339,22 @@ function ListShopBarber(props) {
         actGetAllServicesBySalonId(
           salonDetail.id,
           currentPageService,
-          pageSizeService
+          pageSizeService,
+          searchServiceKey,
+          FillterService,
+          SortService
         )
       );
       // setIsLoading(false);
     }
-  }, [salonDetail, currentPageService, pageSizeService]);
+  }, [
+    salonDetail,
+    currentPageService,
+    pageSizeService,
+    searchServiceKey,
+    FillterService,
+    SortService,
+  ]);
 
   useEffect(() => {
     if (
@@ -185,11 +367,21 @@ function ListShopBarber(props) {
         actGetVoucherBySalonId(
           currentPageService,
           pageSizeService,
-          salonDetail.id
+          salonDetail.id,
+          searchVoucherKey,
+          FillterVoucher,
+          SortVoucher
         )
       );
     }
-  }, [salonDetail, currentPageVoucher, pageSizeVoucher]);
+  }, [
+    salonDetail,
+    currentPageVoucher,
+    pageSizeVoucher,
+    searchVoucherKey,
+    FillterVoucher,
+    SortVoucher,
+  ]);
   useEffect(() => {
     const { description, minimumOrderAmount, discountPercentage, expiryDate } =
       voucherUpdate;
@@ -618,24 +810,6 @@ function ListShopBarber(props) {
       ),
     },
   ];
-
-  const handleMenuClick1 = (e) => {
-    console.log("Clicked on:", e.key);
-  };
-
-  const sortMenu = (
-    <Menu onClick={handleMenuClick1}>
-      <Menu.Item key="name">Sắp xếp theo tên</Menu.Item>
-      <Menu.Item key="gender">Sắp xếp theo giới tính</Menu.Item>
-    </Menu>
-  );
-
-  const filterMenu = (
-    <Menu onClick={handleMenuClick1}>
-      <Menu.Item key="active">Lọc theo trạng thái hoạt động</Menu.Item>
-      <Menu.Item key="gender">Lọc theo giới tính</Menu.Item>
-    </Menu>
-  );
 
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
@@ -1126,7 +1300,7 @@ function ListShopBarber(props) {
                           className={styles["table-fillter-item"]}
                         >
                           <Button>
-                            Sắp xếp <DownOutlined />
+                            {sortLabelEmployee} <DownOutlined />
                           </Button>
                         </Dropdown>
 
@@ -1135,17 +1309,22 @@ function ListShopBarber(props) {
                           className={styles["table-fillter-item"]}
                         >
                           <Button>
-                            Lọc <DownOutlined />
+                            {filterLabelEmployee} <DownOutlined />
                           </Button>
                         </Dropdown>
                         <Input
-                          placeholder="Tìm kiếm nhân viên"
+                          placeholder="Tìm kiếm theo tên nhân viên"
                           className={styles["table-fillter-item"]}
                           style={{ maxWidth: "20rem" }}
                           suffix={
-                            <SearchOutlined style={{ cursor: "pointer" }} />
+                            <SearchOutlined
+                              style={{ cursor: "pointer" }}
+                              onClick={handleSearchEmployee} // Trigger search on icon click
+                            />
                           }
-                          onPressEnter={() => {}} // Trigger search on Enter key press
+                          value={searchEmployee} // Liên kết state với giá trị input
+                          onChange={(e) => setSearchEmployee(e.target.value)} // Cập nhật state khi người dùng nhập
+                          onPressEnter={handleSearchEmployee} // Trigger search on Enter key press
                         />
                       </div>
                       <div className={styles["table-container"]}>
@@ -1195,30 +1374,35 @@ function ListShopBarber(props) {
                           Thêm dịch vụ
                         </Button>
                         <Dropdown
-                          overlay={sortMenu}
+                          overlay={sortMenuService}
                           className={styles["table-fillter-item"]}
                         >
                           <Button>
-                            Sắp xếp <DownOutlined />
+                            {sortLabelService} <DownOutlined />
                           </Button>
                         </Dropdown>
 
                         <Dropdown
-                          overlay={filterMenu}
+                          overlay={filterMenuService}
                           className={styles["table-fillter-item"]}
                         >
                           <Button>
-                            Lọc <DownOutlined />
+                            {filterLabelService} <DownOutlined />
                           </Button>
                         </Dropdown>
                         <Input
-                          placeholder="Tìm kiếm nhân viên"
+                          placeholder="Tìm kiếm theo tên dịch vụ"
                           className={styles["table-fillter-item"]}
                           style={{ maxWidth: "20rem" }}
                           suffix={
-                            <SearchOutlined style={{ cursor: "pointer" }} />
+                            <SearchOutlined
+                              style={{ cursor: "pointer" }}
+                              onClick={handleSearchService} // Trigger search on icon click
+                            />
                           }
-                          onPressEnter={() => {}} // Trigger search on Enter key press
+                          value={searchService} // Liên kết state với giá trị input
+                          onChange={(e) => setSearchService(e.target.value)} // Cập nhật state khi người dùng nhập
+                          onPressEnter={handleSearchService} // Trigger search on Enter key press
                         />
                       </div>
                       <div className={styles["table-container"]}>
@@ -1253,7 +1437,9 @@ function ListShopBarber(props) {
                   >
                     <Panel
                       header={
-                        <div className={styles["custom-header"]}>Voucher</div>
+                        <div className={styles["custom-header"]}>
+                          Khuyến mãi
+                        </div>
                       }
                       key="1"
                       className={styles["title-table-collapse"]}
@@ -1265,33 +1451,38 @@ function ListShopBarber(props) {
                           icon={<PlusOutlined />}
                           onClick={showModalVoucher}
                         >
-                          Thêm Voucher
+                          Thêm khuyến mãi
                         </Button>
                         <Dropdown
-                          overlay={sortMenu}
+                          overlay={sortMenuVoucher}
                           className={styles["table-fillter-item"]}
                         >
                           <Button>
-                            Sắp xếp <DownOutlined />
+                            {sortLabelVoucher} <DownOutlined />
                           </Button>
                         </Dropdown>
 
                         <Dropdown
-                          overlay={filterMenu}
+                          overlay={filterMenuVoucher}
                           className={styles["table-fillter-item"]}
                         >
                           <Button>
-                            Lọc <DownOutlined />
+                            {filterLabelVoucher} <DownOutlined />
                           </Button>
                         </Dropdown>
                         <Input
-                          placeholder="Tìm kiếm nhân viên"
+                          placeholder="Tìm kiếm theo mã khuyến mãi"
                           className={styles["table-fillter-item"]}
                           style={{ maxWidth: "20rem" }}
                           suffix={
-                            <SearchOutlined style={{ cursor: "pointer" }} />
+                            <SearchOutlined
+                              style={{ cursor: "pointer" }}
+                              onClick={handleSearchVoucher} // Trigger search on icon click
+                            />
                           }
-                          onPressEnter={() => {}} // Trigger search on Enter key press
+                          value={searchVoucher} // Liên kết state với giá trị input
+                          onChange={(e) => setSearchVoucher(e.target.value)} // Cập nhật state khi người dùng nhập
+                          onPressEnter={handleSearchVoucher} // Trigger search on Enter key press
                         />
                       </div>
                       <div className={styles["table-container"]}>

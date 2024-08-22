@@ -15,10 +15,17 @@ export const getVoucherBySalonIdNotPaging = (list) => {
     payload: list,
   };
 };
-export function actGetVoucherBySalonId(page, size, id) {
+export function actGetVoucherBySalonId(
+  page,
+  size,
+  id,
+  search,
+  filter,
+  orderby
+) {
   return (dispatch) => {
     voucherServices
-      .getVoucherBySalonId(page, size, id)
+      .getVoucherBySalonId(page, size, id, search, filter, orderby)
       .then((response) => {
         if (response.status === 200 || response.status === 201) {
           dispatch(

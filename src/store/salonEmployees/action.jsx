@@ -32,12 +32,22 @@ export const getAllServiceList = (list) => {
   };
 };
 
-export function actGetAllServicesBySalonId(id, currentPage, pageSize) {
+export function actGetAllServicesBySalonId(
+  id,
+  currentPage,
+  pageSize,
+  search,
+  filter,
+  orderby
+) {
   return (dispatch) => {
     ServiceHairServices.getServiceHairBySalonInformationId(
       id,
       currentPage,
-      pageSize
+      pageSize,
+      search,
+      filter,
+      orderby
     )
       .then((res) => {
         dispatch(getAllService(res?.data?.items, res?.data?.total));
@@ -71,16 +81,26 @@ export function actPostCreateSalonService(data, id) {
       });
   };
 }
-export function actGetAllEmployees(id, currentPage, pageSize) {
+export function actGetAllEmployees(
+  id,
+  currentPage,
+  pageSize,
+  orderByName,
+  isActive,
+  nameEmployee
+) {
   return (dispatch) => {
     SalonEmployeesServices.getSalonEmployeeBySalonInformationId(
       id,
       currentPage,
-      pageSize
+      pageSize,
+      orderByName,
+      isActive,
+      nameEmployee
     )
       .then((res) => {
-        console.log("ré1",res.data);
-        
+        console.log("ré1", res.data);
+
         dispatch(getAllEmployee(res?.data?.items, res?.data?.total));
       })
       .catch((err) => {
