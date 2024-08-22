@@ -261,7 +261,7 @@ function SalonDetail(props) {
         )
           .then((response) => {
             setEmployees(response.data.items);
-            setTotal(response.data.totalPages);
+            setTotal(response.data.total);
           })
           .catch((err) => {});
 

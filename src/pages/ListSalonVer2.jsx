@@ -33,6 +33,8 @@ import axios from "axios";
 import LoadScriptMap from "../components/LoadScriptMap";
 import { motion } from "framer-motion";
 import "antd/dist/reset.css";
+import "../css/customerAppointmentTable.css";
+
 import { set } from "rsuite/esm/internals/utils/date";
 const defaultCenter = {
   lat: 10.8231, // Default to Ho Chi Minh City
@@ -1122,7 +1124,8 @@ function ListSalonVer2(props) {
               </div>
               {salonList.length !== 0 && (
                 <Pagination
-                  className={styles["custom-pagination"]}
+                  // className={styles["custom-pagination"]}
+                  className="paginationAppointment"
                   current={currentPage}
                   pageSize={pageSize}
                   total={totalPages}
