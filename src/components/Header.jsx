@@ -84,7 +84,7 @@ function Header(props) {
             <Link to={"/"}>
               <img
                 className={style.logo}
-                src={hairHubLogoVer2}
+                src={hairHubLogo}
                 alt="HairHub Logo"
               />
             </Link>

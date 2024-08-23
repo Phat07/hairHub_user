@@ -1,5 +1,5 @@
 .dashboard-container {
-  margin-top: 15rem;
+  margin-top: 10rem;
   margin-left: 20rem;
   margin-right: 20rem;
 }
@@ -18,7 +18,7 @@
 
 @media (max-width: 767px) {
   .dashboard-container {
-    margin-top: 15rem;
+    margin-top: 10rem;
     margin-left: 0;
     margin-right: 0;
   }

@@ -1,22 +1,21 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { Line } from "react-chartjs-2";
+import { Button, message, Table } from "antd";
 import {
-  Chart as ChartJS,
   CategoryScale,
+  Chart as ChartJS,
+  Legend,
   LinearScale,
-  PointElement,
   LineElement,
+  PointElement,
   Title,
   Tooltip,
-  Legend,
 } from "chart.js";
-import { Button, message, Table } from "antd";
+import React, { useEffect, useMemo, useState } from "react";
+import { Line } from "react-chartjs-2";
 import { useDispatch, useSelector } from "react-redux";
-import useAuthUser from "react-auth-kit/hooks/useAuthUser";
+import { Link } from "react-router-dom";
+import "../css/dashboardTransaction.css";
 import { actGetSalonInformationByOwnerIdAsync } from "../store/salonAppointments/action";
 import { actGetAppointmentTransaction } from "../store/salonTransaction/action";
-import "../css/dashboardTransaction.css";
-import { Link } from "react-router-dom";
 
 ChartJS.register(
   CategoryScale,
@@ -64,7 +63,6 @@ function DashboardTransactionPage(props) {
       }
     }
   }, [salonInformationByOwnerId, filterDays]);
-  console.log("salonTransaction", salonTransaction);
 
   const handleFilterChange = (event) => {
     const value = event.target.value;
@@ -168,7 +166,6 @@ function DashboardTransactionPage(props) {
         style={{
           display: "flex",
           justifyContent: "space-between",
-          marginTop: "10rem",
         }}
       >
         <div style={{ flex: 1 }}>
@@ -193,7 +190,12 @@ function DashboardTransactionPage(props) {
             </span>
           </p>
           <Link to="/payment_commission">
-            <Button type="primary">Thanh toán</Button>
+            <Button
+              disabled={+unpaidCommission?.toLocaleString() === 0}
+              type="primary"
+            >
+              Thanh toán
+            </Button>
           </Link>
         </div>
       </div>

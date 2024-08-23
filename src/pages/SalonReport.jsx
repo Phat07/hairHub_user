@@ -126,7 +126,7 @@ function SalonReport(props) {
     : [];
 
   return (
-    <div style={{ padding: "20px", marginTop: "25rem" }}>
+    <div style={{ padding: "20px", marginTop: "7rem" }}>
       <Space style={{ marginBottom: "20px" }}>
         <Button
           type={status === "PENDING" ? "primary" : "default"}

@@ -41,7 +41,6 @@ function AccountPage() {
     Saturday: false,
     Sunday: false,
   });
-  // console.log(salonId);
   const [user, setUser] = useState({});
   const [accountEmployeeDetail, setAccountEmployeeDetail] = useState(null);
   const [servicesList, setServicesList] = useState([]);
@@ -111,28 +110,67 @@ function AccountPage() {
       }
     });
   };
+  const convertScheduleFormat = (scheduleData) => {
+    const daysOfWeek = [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+    ];
+    const convertedSchedule = [];
 
+    daysOfWeek.forEach((day) => {
+      const dayData = {
+        DayOfWeek: day,
+        StartTime: "00:00",
+        EndTime: "00:00",
+        IsActive: false,
+      };
+
+      const dayInfo = scheduleData[day];
+      if (dayInfo && dayInfo.start !== "00:00" && dayInfo.end !== "00:00") {
+        dayData.StartTime = dayInfo.start;
+        dayData.EndTime = dayInfo.end;
+        dayData.IsActive = true;
+      }
+
+      convertedSchedule.push(dayData);
+    });
+
+    return convertedSchedule;
+  };
   useEffect(() => {
     SalonEmployeesServices.getSalonEmployeeById(employeeId)
       .then((res) => {
         setAccountEmployeeDetail(res.data);
-        setSchedules(res.data.schedules);
+        // setSchedules(res.data.schedules);
         // const userAccount = res.data.id === id;
         const userData = res.data;
         setUser(res.data);
         if (userData) {
-          const birthDay = dayjs(userData.dayOfBirth);
+          const birthDay = dayjs(userData?.dayOfBirth);
           const schedules = {};
-          // Format schedule times using dayjs
-          for (const day in userData) {
-            schedules[day.toLowerCase()] = {
-              start: dayjs(userData[day].startTime).format("HH:mm"),
-              end: dayjs(userData[day].endTime).format("HH:mm"),
-            };
+          for (const index in userData?.schedules) {
+            const daySchedule = userData?.schedules[index];
+
+            // Kiểm tra nếu đối tượng daySchedule tồn tại và chứa các thuộc tính cần thiết
+            if (daySchedule && daySchedule.startTime && daySchedule.endTime) {
+              // Sử dụng dayjs để định dạng startTime và endTime
+              schedules[daySchedule.dayOfWeek] = {
+                start: dayjs(daySchedule.startTime, "HH:mm:ss").format("HH:mm"),
+                end: dayjs(daySchedule.endTime, "HH:mm:ss").format("HH:mm"),
+              };
+            } else {
+              console.error("Invalid schedule data:", daySchedule);
+            }
           }
 
           const formattedSchedules = convertScheduleFormat(schedules);
-
+          console.log("formetSCh", formattedSchedules);
+          setSchedules(formattedSchedules);
           const serviceHairs = userData.serviceHairs.map(
             ({ id, serviceName }) => ({
               id,
@@ -157,7 +195,6 @@ function AccountPage() {
           });
           setSelectedServices(serviceHairs);
         } else {
-          // console.log("Chạy cl");
         }
         // setSalonId(res.data.salonInformationId);
       })
@@ -166,47 +203,12 @@ function AccountPage() {
       });
     ServiceHairServices.getServiceHairBySalonNotPaging(salonDetail.id)
       .then((res) => {
-        console.log("resSer", res);
-
         setServicesList(res.data);
       })
       .catch((err) => {
         console.log(err, "errrors");
       });
   }, [employeeId]);
-
-  const convertScheduleFormat = (scheduleData) => {
-    const daysOfWeek = [
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-      "Sunday",
-    ];
-    const convertedSchedule = [];
-
-    daysOfWeek.forEach((day) => {
-      const dayData = {
-        DayOfWeek: day,
-        StartTime: "00:00",
-        EndTime: "00:00",
-        IsActive: false,
-      };
-
-      const dayInfo = scheduleData[day.toLowerCase()];
-      if (dayInfo && dayInfo.start !== "00:00" && dayInfo.end !== "00:00") {
-        dayData.StartTime = dayInfo.start;
-        dayData.EndTime = dayInfo.end;
-        dayData.IsActive = true;
-      }
-
-      convertedSchedule.push(dayData);
-    });
-
-    return convertedSchedule;
-  };
 
   const handleDayOffChange = (day) => {
     setDayOff((prevDayOff) => ({
@@ -218,9 +220,6 @@ function AccountPage() {
   const onFinish = async (item) => {
     const gender = await form.getFieldValue("gender");
     const phone = await form.getFieldValue("phone");
-    console.log("gender", gender);
-    console.log("finish");
-    console.log("item", item);
     const imageFile = fileList.length > 0 ? fileList[0].originFileObj : null;
     const formData = await new FormData();
     // formData.append("id", employeeId);
@@ -236,7 +235,6 @@ function AccountPage() {
         navigate(`/list_barber_employees/${salonDetail.id}`);
         dispatch(actGetAllEmployees(salonDetail.id));
         message.success("Chỉnh sửa thông tin nhân viên thành công");
-        console.log(res, "res neeeee");
       })
       .catch((err) => message.error(err));
   };
@@ -244,8 +242,6 @@ function AccountPage() {
   const handleEdit = async () => {
     const imageFile = fileList.length > 0 ? fileList[0].originFileObj : null;
     const formData = new FormData();
-    console.log(form.name);
-    console.log("phone", form.phone);
     // formData.append("id", employeeId);
     await formData.append("SalonInformationId", salonDetail.id);
     await formData.append("Gender", form.gender);
@@ -435,16 +431,16 @@ function AccountPage() {
                   </Form.Item>
                   {schedules?.map((day) => (
                     <Space
-                      key={day.id}
+                      key={day.DayOfWeek}
                       direction="vertical"
                       style={{ marginBottom: 10, marginLeft: 20 }}
                     >
                       {/* Các trường schedule như đã có */}
                       <Checkbox
-                        onChange={() => handleDayOffChange(day.dayOfWeek)}
-                        checked={dayOff[day.dayOfWeek]}
+                        onChange={() => handleDayOffChange(day.DayOfWeek)}
+                        checked={dayOff[day.DayOfWeek]}
                       >
-                        {day.dayOfWeek} Day Off
+                        {day.DayOfWeek} Day Off
                       </Checkbox>
                       <Space
                         align="baseline"
@@ -455,8 +451,8 @@ function AccountPage() {
                         }}
                       >
                         <Form.Item
-                          name={[day.dayOfWeek, "start"]}
-                          label={`Start Time (${day.dayOfWeek})`}
+                          name={[day.DayOfWeek, "start"]}
+                          label={`Start Time (${day.DayOfWeek})`}
                           // rules={[
                           //   {
                           //     required: !dayOff[day],
@@ -467,13 +463,14 @@ function AccountPage() {
                           <TimePicker
                             format="HH:mm"
                             disabled={
-                              !editableStates[day.id] || dayOff[day.dayOfWeek]
+                              !editableStates[day.DayOfWeek] ||
+                              dayOff[day.DayOfWeek]
                             }
                           />
                         </Form.Item>
                         <Form.Item
-                          name={[day.dayOfWeek, "end"]}
-                          label={`End Time (${day.dayOfWeek})`}
+                          name={[day.DayOfWeek, "end"]}
+                          label={`End Time (${day.DayOfWeek})`}
                           // rules={[
                           //   {
                           //     required: !dayOff[day.dayOfWeek],
@@ -484,7 +481,8 @@ function AccountPage() {
                           <TimePicker
                             format="HH:mm"
                             disabled={
-                              !editableStates[day.id] || dayOff[day.dayOfWeek]
+                              !editableStates[day.DayOfWeek] ||
+                              dayOff[day.DayOfWeek]
                             }
                           />
                         </Form.Item>
