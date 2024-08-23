@@ -208,7 +208,6 @@ function ListShopBarber(props) {
   };
 
   const handleMenuClickVoucherSort = (e) => {
-    console.log("handleMenuClickVoucherSort on:", e.key);
     setSortVoucher(e.key);
     setSortLabelVoucher(e.key === "" ? "Tất cả" : `Sắp xếp theo ${e.key}`);
   };

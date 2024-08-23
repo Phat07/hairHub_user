@@ -241,27 +241,27 @@ function AccountPage() {
       .catch((err) => message.error(err));
   };
 
-  // const handleEdit = async () => {
-  //   const imageFile = fileList.length > 0 ? fileList[0].originFileObj : null;
-  //   const formData = new FormData();
-  //   console.log(form.name);
-  //   console.log("phone", form.phone);
-  //   // formData.append("id", employeeId);
-  //   await formData.append("SalonInformationId", salonDetail.id);
-  //   await formData.append("Gender", form.gender);
-  //   await formData.append("Img", imageFile);
-  //   await formData.append("Phone", form.phone);
-  //   await formData.append("IsActive", true);
+  const handleEdit = async () => {
+    const imageFile = fileList.length > 0 ? fileList[0].originFileObj : null;
+    const formData = new FormData();
+    console.log(form.name);
+    console.log("phone", form.phone);
+    // formData.append("id", employeeId);
+    await formData.append("SalonInformationId", salonDetail.id);
+    await formData.append("Gender", form.gender);
+    await formData.append("Img", imageFile);
+    await formData.append("Phone", form.phone);
+    await formData.append("IsActive", true);
 
-  //   await axios
-  //     .put(EMPLOYEESDETAILS_URL_UPDATE + `${employeeId}`, formData)
-  //     .then((res) => {
-  //       navigate(`/list_barber_employees/${salonDetail.id}`);
-  //       dispatch(actGetAllEmployees(salonDetail.id));
-  //       message.success("Chỉnh sửa thông tin nhân viên thành công");
-  //     })
-  //     .catch((err) => message.error(err));
-  // };
+    await axios
+      .put(EMPLOYEESDETAILS_URL_UPDATE + `${employeeId}`, formData)
+      .then((res) => {
+        navigate(`/list_barber_employees/${salonDetail.id}`);
+        dispatch(actGetAllEmployees(salonDetail.id));
+        message.success("Chỉnh sửa thông tin nhân viên thành công");
+      })
+      .catch((err) => message.error(err));
+  };
 
   const handleUploadChange = ({ fileList }) => setFileList(fileList);
 
