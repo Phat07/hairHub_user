@@ -86,7 +86,7 @@ function HomePage(props) {
   }, [orderCode, amount, configId, id]);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
-
+  
   useEffect(() => {
     dispatch(actGetAllSalonInformation());
   }, []);

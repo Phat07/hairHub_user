@@ -29,11 +29,9 @@
     height: 100%;
     margin: 0;
   } */
- .colWithBorder {
-  margin-bottom: 15px;
- }
-
-
+  .colWithBorder {
+    margin-bottom: 15px;
+  }
 
   .header {
     font-size: 1.5rem;
@@ -114,9 +112,17 @@
 .customModalFooter {
   background-color: #ece8de !important; /* Ghi đè màu nền của footer */
 }
-:global(.ant-modal .ant-modal-content) {
-  background-color: #ece8de;
+:where(.css-dev-only-do-not-override-wb61s4).ant-modal .ant-modal-content {
+  background-color: #ece8de !important;
+  /* Các thuộc tính khác */
 }
+:global(.my-custom-modal .ant-modal-content) {
+  background-color: #ece8de !important;
+}
+
+/* :global(.ant-modal .ant-modal-content) {
+  background-color: #ece8de;
+} */
 .selectOption {
   cursor: pointer;
 }

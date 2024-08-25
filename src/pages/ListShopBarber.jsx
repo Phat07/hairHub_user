@@ -1505,6 +1505,7 @@ function ListShopBarber(props) {
                 </Col>
               </Row>
               <Modal
+               wrapClassName="my-custom-modal"
                 width={500}
                 title={
                   <div className={stylesModal.customModalHeader}>
@@ -1536,7 +1537,12 @@ function ListShopBarber(props) {
                 />
               </Modal>
               <Modal
-                title="Thêm voucher"
+               wrapClassName="my-custom-modal"
+               title={
+                <div className={stylesModal.customModalHeader}>
+                  Thêm voucher
+                </div>
+              }
                 visible={isModalVisible}
                 onOk={handleOkVoucher}
                 onCancel={handleCancelVoucher}
@@ -1642,6 +1648,7 @@ function ListShopBarber(props) {
 
               <Modal
                 // title="Cập nhật Voucher"
+               wrapClassName="my-custom-modal"
                 title={
                   <div className={stylesModal.customModalHeader}>
                     Cập nhật voucher
@@ -1702,6 +1709,7 @@ function ListShopBarber(props) {
               </Modal>
 
               <Modal
+               wrapClassName="my-custom-modal"
                 width={1200}
                 // title="Tạo nhân viên mới"
                 title={
@@ -1714,7 +1722,7 @@ function ListShopBarber(props) {
                 onCancel={() => setOpenEmployee(false)}
                 // footer={null}
                 footer={<div className={stylesModal.customModalFooter}></div>}
-                className={stylesModal.customModalContent}
+                // className={stylesModal.customModalContent}
                 bodyStyle={{ backgroundColor: "#ece8de" }}
               >
                 <AddEmployeeForm
@@ -1723,6 +1731,7 @@ function ListShopBarber(props) {
                 />
               </Modal>
               <Modal
+               wrapClassName="my-custom-modal"
                 // title="Cập nhật dịch vụ"
                 title={
                   <div className={stylesModal.customModalHeader}>
