@@ -112,10 +112,7 @@
 .customModalFooter {
   background-color: #ece8de !important; /* Ghi đè màu nền của footer */
 }
-:where(.css-dev-only-do-not-override-wb61s4).ant-modal .ant-modal-content {
-  background-color: #ece8de !important;
-  /* Các thuộc tính khác */
-}
+
 :global(.my-custom-modal .ant-modal-content) {
   background-color: #ece8de !important;
 }

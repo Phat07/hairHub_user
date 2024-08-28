@@ -1,5 +1,5 @@
 import { API } from "./api";
-
+const token= localStorage.getItem("accessToken");
 export const SalonInformationServices = {
   createSalonInformation(data) {
     return API.post("/saloninformations/CreateSalonInformation/", data);
@@ -15,6 +15,7 @@ export const SalonInformationServices = {
   getAllSalonSuggestionInformation() {
     return API.get("/saloninformations/GetAllSalonInformation");
   },
+
   getAllSalonInformationNotPaging() {
     return API.get("/saloninformations/GetAllSalonInformationNoPaging");
   },
@@ -26,7 +27,7 @@ export const SalonInformationServices = {
     longtitude,
     distance,
     page,
-    size,
+    size
   ) {
     return API.get("/saloninformations/GetSalonByServiceNameAddress", {
       params: {
@@ -46,7 +47,18 @@ export const SalonInformationServices = {
   },
   getSalonInformationByOwnerId(ownerId) {
     return API.get(
-      `/saloninformations/GetSalonInformationByOwnerId/${ownerId}`
+      `/saloninformations/GetSalonInformationByOwnerId/${ownerId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
+  },
+  getGetAvailableTime(data) {
+    return API.post(`/appointments/GetAvailableTime`, data);
+  },
+  getBookAppointment(data) {
+    return API.post(`/appointments/BookAppointment`, data);
   },
 };

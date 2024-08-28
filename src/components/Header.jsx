@@ -27,7 +27,7 @@ function Header(props) {
   );
 
   const account = useSelector((state) => state.ACCOUNT.username);
-
+  
   useEffect(() => {
     if (idOwner) {
       try {

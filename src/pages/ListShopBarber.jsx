@@ -120,8 +120,6 @@ function ListShopBarber(props) {
   const totalPagesEmployee = useSelector(
     (state) => state.SALONEMPLOYEES.totalPages
   );
-  console.log("totals", totalPagesEmployee);
-  console.log("listE", listEmployee);
 
   const listTotalService = useSelector(
     (state) => state.SALONEMPLOYEES.listService
@@ -166,7 +164,6 @@ function ListShopBarber(props) {
   const [filterLabelVoucher, setFilterLabelVoucher] = useState("Lọc");
 
   const handleMenuClickEmpoyeeSort = (e) => {
-    console.log("handleMenuClickEmpoyeeSort on:", e.key);
     setSortEmployee(e.key === "" ? null : e.key === "true");
     setSortLabelEmployee(
       e.key === ""
@@ -178,7 +175,6 @@ function ListShopBarber(props) {
   };
 
   const handleMenuClickEmpoyeeFillter = (e) => {
-    console.log("handleMenuClickEmpoyeeFillter on:", e.key);
     setFillterEmployee(e.key === "" ? null : e.key === "true");
     setFilterLabelEmployee(
       e.key === ""
@@ -190,13 +186,11 @@ function ListShopBarber(props) {
   };
 
   const handleMenuClickServiceSort = (e) => {
-    console.log("handleMenuClickServiceSort on:", e.key);
     setSortService(e.key);
     setSortLabelService(e.key === "" ? "Tất cả" : `Sắp xếp theo ${e.key}`);
   };
 
   const handleMenuClickServiceFillter = (e) => {
-    console.log("handleMenuClickServiceFillter on:", e.key);
     setFillterService(e.key);
     setFilterLabelService(
       e.key === ""
@@ -213,7 +207,6 @@ function ListShopBarber(props) {
   };
 
   const handleMenuClickVoucherFillter = (e) => {
-    console.log("handleMenuClickVoucherFillter on:", e.key);
     setFillterVoucher(e.key);
     setFilterLabelVoucher(
       e.key === ""
@@ -288,15 +281,12 @@ function ListShopBarber(props) {
   );
 
   const handleSearchEmployee = () => {
-    console.log("Tìm kiếm với từ khóa:", searchEmployee);
     setSearchEmployeeKey(searchEmployee);
   };
   const handleSearchService = () => {
-    console.log("Tìm kiếm với từ khóa:", searchService);
     setSearchServiceKey(searchService);
   };
   const handleSearchVoucher = () => {
-    console.log("Tìm kiếm với từ khóa:", searchVoucher);
     setSearchVoucherKey(searchVoucher);
   };
 
@@ -603,7 +593,6 @@ function ListShopBarber(props) {
     return `${value * 60} phút`;
   };
   const handleDelete = async (voucher) => {
-    console.log(voucher.id);
     voucherServices
       .deleteVoucherById(voucher.id)
       .then(async (res) => {
@@ -845,7 +834,6 @@ function ListShopBarber(props) {
     }, 2000);
   };
   const handleCancel = () => {
-    console.log("Clicked cancel button");
     setOpen(false);
   };
   const handleChange = () => {
@@ -899,9 +887,7 @@ function ListShopBarber(props) {
     voucherServices
       .createNewVoucher(formVoucherData)
       .then((res) => {
-        console.log(formVoucherData);
         message.success("Voucher is created!");
-        console.log(res.data, "Voucher is created");
         setStatus(!status);
         setIsModalVisible(!isModalVisible);
       })
@@ -958,7 +944,6 @@ function ListShopBarber(props) {
           dispatch(actGetAllServicesBySalonId(salonDetail.id, 1, 4));
         })
         .catch((err) => {
-          console.log(err, "errors");
         });
     } else {
       await formDataUpdate.append("ServiceName", serviceName);
@@ -979,7 +964,6 @@ function ListShopBarber(props) {
           dispatch(actGetAllServicesBySalonId(salonDetail.id, 1, 4));
         })
         .catch((err) => {
-          console.log(err, "errors");
         });
     }
   };
@@ -999,20 +983,16 @@ function ListShopBarber(props) {
     for (let i = 0; i < 10; i++) {
       //chọn khoảng thời gian cho phép làm tóc 10 = 10 tiếng :))
       if (serviceTimeString + 0.1 === i + 0.25) {
-        console.log(`rounded15: ${rounded15}, expected: ${i + 0.25}`);
         setServiceTime(rounded15);
         return rounded15;
       } else if (serviceTimeString + 0.2 === i + 0.5) {
         // < 0.0001
-        console.log(`rounded30: ${rounded30}, expected: ${i + 0.5}`);
         setServiceTime(rounded30);
         return rounded30;
       } else if (serviceTimeString + 0.3 === i + 0.75) {
-        console.log(`rounded45: ${rounded45}, expected: ${i + 0.75}`);
         setServiceTime(rounded45);
         return rounded45;
       } else if (Number.isInteger(serviceTimeString)) {
-        console.log(`rounded00: ${rounded1}, expected: ${i}`);
         setServiceTime(rounded1);
         return rounded1;
       }
@@ -1059,7 +1039,6 @@ function ListShopBarber(props) {
         voucherServices
           .updateVoucherById(voucherUpdate?.id, updatedVoucher)
           .then((res) => {
-            console.log(res, "res");
             message.success(
               `Cập  nhật voucher ${voucherUpdate.description} thành công!`
             );

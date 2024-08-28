@@ -51,6 +51,7 @@ import { actGetVoucherBySalonIdNotPaging } from "../store/manageVoucher/action";
 import { actGetAllFeedbackBySalonId } from "../store/ratingCutomer/action";
 import { actGetAllSalonInformation } from "../store/salonInformation/action";
 import { set } from "rsuite/esm/internals/utils/date";
+import { SalonInformationServices } from "../services/salonInformationServices";
 const { Panel } = Collapse;
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -419,11 +420,9 @@ function SalonDetail(props) {
       };
       setSelectedDate(currentDate);
       try {
-        const response = await axios
-          .post(
-            "https://hairhub.gahonghac.net/api/v1/appointments/GetAvailableTime",
-            postData
-          )
+        const response = await SalonInformationServices.getGetAvailableTime(
+          postData
+        )
           .then((res) => {
             setTimeSlots(res?.data);
           })
@@ -540,11 +539,9 @@ function SalonDetail(props) {
     setSelectedTimeSlot(null);
 
     try {
-      const response = await axios
-        .post(
-          "https://hairhub.gahonghac.net/api/v1/appointments/GetAvailableTime",
-          postData
-        )
+      const response = await SalonInformationServices.getGetAvailableTime(
+        postData
+      )
         .then((res) => {
           setTimeSlots(res?.data);
           const availableTimes = res?.data?.availableTimes?.map((e) => {
@@ -582,11 +579,7 @@ function SalonDetail(props) {
         bookingDetail: databooking,
       };
       setDataBooking(requestBody); //serviceHairId, salonEmployeeId
-      axios
-        .post(
-          "https://hairhub.gahonghac.net/api/v1/appointments/BookAppointment",
-          requestBody
-        )
+      SalonInformationServices.getBookAppointment(requestBody)
         .then((response) => {
           const updatedAdditionalServices = additionalServices.map(
             (service) => {
@@ -648,11 +641,7 @@ function SalonDetail(props) {
       bookingDetail: databooking,
     };
 
-    axios
-      .post(
-        "https://hairhub.gahonghac.net/api/v1/appointments/BookAppointment",
-        requestBody
-      )
+    SalonInformationServices.getBookAppointment(requestBody)
       .then((response) => {
         // Xử lý kết quả từ server nếu cần
         const updatedAdditionalServices = [...additionalServices];
@@ -760,11 +749,7 @@ function SalonDetail(props) {
       };
       setDataBooking(databooking); //serviceHairId, salonEmployeeId
 
-      axios
-        .post(
-          "https://hairhub.gahonghac.net/api/v1/appointments/BookAppointment",
-          requestBody
-        )
+      SalonInformationServices.getBookAppointment(requestBody)
         .then((response) => {
           // Xử lý kết quả từ server nếu cần
           const updatedAdditionalServices = [...dataMapping];
@@ -1005,11 +990,7 @@ function SalonDetail(props) {
     };
     setDataBooking(databooking); //serviceHairId, salonEmployeeId
 
-    axios
-      .post(
-        "https://hairhub.gahonghac.net/api/v1/appointments/BookAppointment",
-        requestBody
-      )
+    SalonInformationServices.getBookAppointment(requestBody)
       .then((response) => {
         // Xử lý kết quả từ server nếu cần
         const updatedAdditionalServices = [...additionalServices];

@@ -30,16 +30,6 @@ function App() {
   const token = useSelector((state) => state.ACCOUNT.token);
   const ownerId = useSelector((state) => state.ACCOUNT.ownerId);
 
-  // const fetchUserByToken = async (token) => {
-  //   // console.log("Fetching user by token:", token);
-  //   try {
-  //     await dispatch(fetchUserByTokenApi(token));
-  //   } catch (err) {
-  //     console.error("Error fetching user by token:", err);
-  //     navigate("/login");
-  //   }
-  // };
-
   const isTokenExpired = (token) => {
     try {
       const decodedToken = jwtDecode(token);
@@ -49,26 +39,6 @@ function App() {
       return true;
     }
   };
-
-  // const refreshToken = async () => {
-  //   try {
-  //     const refreshToken = localStorage.getItem("refreshToken");
-
-  //     if (refreshToken) {
-  //       const res = await AccountServices.refreshToken(refreshToken);
-  //       if (res.data && res.data.accessToken) {
-  //         localStorage.setItem("accessToken", res.data.accessToken);
-  //         localStorage.setItem("refreshToken", res.data.refreshToken);
-  //         return res.data.accessToken;
-  //       } else {
-  //         message.warning("Đăng nhập lại!!, quá phiên đăng nhập");
-  //         navigate("/login");
-  //       }
-  //     } else {
-  //       return;
-  //     }
-  //   } catch (error) {}
-  // };
   const refreshToken = async () => {
     try {
       const refreshToken = localStorage.getItem("refreshToken");

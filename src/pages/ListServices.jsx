@@ -89,7 +89,6 @@ function ListServices() {
     }
   }, [id, currentPage, pageSize]);
 
-  console.log("pageSize", pageSize);
 
   //delete Service
   const handleDelete = (service) => {

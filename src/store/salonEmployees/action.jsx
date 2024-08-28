@@ -99,8 +99,6 @@ export function actGetAllEmployees(
       nameEmployee
     )
       .then((res) => {
-        console.log("ré1", res.data);
-
         dispatch(getAllEmployee(res?.data?.items, res?.data?.total));
       })
       .catch((err) => {

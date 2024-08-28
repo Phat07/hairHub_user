@@ -99,6 +99,10 @@ const LoginPage = () => {
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const submitButtonRef = useRef(null);
 
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
+  const [otpForgot, setOtpForgot] = useState('');
+
   const renderInput = (props) => (
     <input
       {...props}
@@ -138,8 +142,10 @@ const LoginPage = () => {
 
   const verifyOtp = () => {
     const email = form.getFieldValue("email");
+    const emailForgot=form.getFieldValue("emailForgot")
 
-    axios
+    if(email){
+      axios
       .post("https://hairhub.gahonghac.net/api/v1/otps/checkOtp", {
         otpRequest: otp,
         email: email,
@@ -158,6 +164,30 @@ const LoginPage = () => {
       .finally(() => {
         setLoading(false);
       });
+    }
+
+    if(emailForgot){
+      axios
+      .post("https://hairhub.gahonghac.net/api/v1/otps/checkOtp", {
+        otpRequest: otpForgot,
+        email: emailForgot,
+      })
+      .then(() => {
+        setLoading(true);
+        setOtp("");
+        setEmailVerified(true);
+        setIsOtpModalOpen(false);
+        message.success("Otp xác thực thành công!");
+      })
+      .catch((error) => {
+        message.error(error?.response?.data?.message);
+        setOtp("");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+    }
+    
   };
 
   const showOtpModal = async () => {
@@ -197,38 +227,47 @@ const LoginPage = () => {
 
   const showOtpNewPasswordModal = async () => {
     setLoading(true);
-    const email = form.getFieldValue("email");
+    const email = form.getFieldValue("emailForgot");
     if (!email || !emailPattern.test(email)) {
       setLoading(false);
       message.error("Email chưa đúng hoặc chưa điền!");
     } else {
       setLoading(false);
       setIsOtpModalOpen(true);
-      // try {
-      //   const response = await axios
-      //     .post("https://gahonghac.net/api/v1/otps/CheckExistEmail", {
-      //       email,
-      //     })
-      //     .then((res) => {
-      //       if (res.data == "Email đã tồn tại trên hệ thống!") {
-      //         setLoading(false);
-      //         setIsOtpModalOpen(true);
-      //       } else {
-      //         message.error("Email này chưa đăng ký vào hệ thống!!!")
-      //         setLoading(false);
-      //         // sendOtp();
-      //       }
-      //     })
-      //     .catch((err) => {
-      //       message.error("Lấy lại mật khẩu thất bại. Thử lại sau!!!");
-      //     })
-      //     .finally(() => {
-      //       setLoading(false);
-      //     });
-      // } catch (error) {
-      //   setLoading(false);
-      //   message.error(error);
-      // }
+      try {
+        const response = await axios
+          .post("https://hairhub.gahonghac.net/api/v1/otps/CheckExistEmail", {
+            email,
+          })
+          .then((res) => {
+            if (res.data == "Email đã tồn tại trên hệ thống!") {
+              setLoading(false);
+              setIsOtpModalOpen(true);
+            } else {
+              message.error("Email này chưa đăng ký vào hệ thống!!!")
+              setLoading(false);
+              // sendOtp();
+            }
+          })
+          .catch((err) => {
+            message.error("Lấy lại mật khẩu thất bại. Thử lại sau!!!");
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      } catch (error) {
+        setLoading(false);
+        message.error(error);
+      }
+    }
+  };
+  const handleVerifyOtp = async () => {
+    // Call the function to verify OTP
+    const isOtpValid = await verifyOtpResetPassword(otpForgot);
+    if (isOtpValid) {
+      setOtpVerified(true);
+    } else {
+      // Handle OTP verification failure (e.g., show an error message)
     }
   };
 
@@ -529,11 +568,11 @@ const LoginPage = () => {
           height: "100vh",
         }}
       >
-         <Modal
+        <Modal
           title="Quên mật khẩu"
           visible={isPasswordModalOpen}
-          onOk={() => verifyOtpResetPassword(otp)}
           onCancel={() => setIsPasswordModalOpen(false)}
+          footer={null}
         >
           <div
             style={{
@@ -544,26 +583,24 @@ const LoginPage = () => {
           >
             <Card>
               <Form
-                {...formItemLayout}
+                // {...formItemLayout}
                 layout="horizontal"
                 labelCol={{ span: 6 }}
                 wrapperCol={{ span: 18 }}
                 style={{ maxWidth: 600 }}
                 form={form}
-                // onFinish={onFinish}
-                // onFinishFailed={onFinishFailed}
                 initialValues={{
                   remember: true,
                 }}
               >
                 <Form.Item
                   label="Email:"
-                  name="email"
+                  name="emailForgot"
                   rules={[
-                    { required: true, message: "This fields is required!" },
+                    { required: true, message: "This field is required!" },
                     {
                       pattern: emailPattern,
-                      message: "Please input email include @!",
+                      message: "Please input email including @!",
                     },
                   ]}
                   tooltip="example@gmail.com"
@@ -575,7 +612,8 @@ const LoginPage = () => {
                     />
                   </Space>
                 </Form.Item>
-                {!emailVerifiedNew && (
+
+                {!otpSent && (
                   <Button
                     loading={loading}
                     type="primary"
@@ -584,38 +622,50 @@ const LoginPage = () => {
                     Gửi OTP
                   </Button>
                 )}
-                {emailVerifiedNew && (
+
+                {otpSent && !otpVerified && (
                   <>
                     <Form.Item
-                      label="Pass mới:"
-                      name="newPassword"
+                      label="OTP:"
+                      name="otp"
                       rules={[
-                        { required: true, message: "Vui lòng không bỏ trống!" },
-                        {
-                          pattern: pwdPattern,
-                          message:
-                            "Chữ cái đầu phải viết hoa và có từ 8 đến 40 ký tự!",
-                        },
+                        { required: true, message: "Please enter the OTP!" },
                       ]}
                     >
-                      <Input.Password />
+                      <Input
+                        value={otpForgot}
+                        onChange={(e) => setOtpForgot(e.target.value)}
+                      />
                     </Form.Item>
-                    {/* <Button
-                      style={{ width: "100%" }}
+                    <Button
+                      loading={loading}
                       type="primary"
-                      htmlType="submit"
+                      onClick={handleVerifyOtp}
                     >
-                      Tạo
-                    </Button> */}
+                      Xác nhận OTP
+                    </Button>
                   </>
+                )}
+
+                {otpVerified && (
+                  <Form.Item
+                    label="Pass mới:"
+                    name="newPassword"
+                    rules={[
+                      { required: true, message: "Vui lòng không bỏ trống!" },
+                      {
+                        pattern: pwdPattern,
+                        message:
+                          "Chữ cái đầu phải viết hoa và có từ 8 đến 40 ký tự!",
+                      },
+                    ]}
+                  >
+                    <Input.Password />
+                  </Form.Item>
                 )}
               </Form>
             </Card>
           </div>
-
-          {/* <Button type="link" onClick={handleResendCode} disabled={timer > 0}>
-            Gửi lại OTP {timer > 0 && `(${formatTime(timer)})`}
-          </Button> */}
         </Modal>
         <Modal
           title="Enter OTP"
@@ -640,10 +690,11 @@ const LoginPage = () => {
               inputStyle={{
                 borderRadius: "50%",
                 border: "2px solid #1119",
-                width: "6rem",
-                height: "6rem",
+                width: "4rem",
+                height: "4rem",
                 margin: "0 0.5rem",
-                fontSize: "2.5rem",
+                fontSize: "2rem",
+                color:"black",
                 textAlign: "center",
               }}
             />

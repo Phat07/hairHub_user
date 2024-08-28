@@ -64,17 +64,15 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
   const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
   const ownerId = useSelector((state) => state.ACCOUNT.idOwner);
   const uid = useSelector((state) => state.ACCOUNT.uid);
-  // const auth = useAuthUser();
-
-  // const ownerId = auth?.idOwner;
   const salonDetail = useSelector(
     (state) => state.SALONINFORMATION.getSalonByOwnerId
   );
   useEffect(() => {
-    dispatch(actGetSalonInformationByOwnerId(ownerId));
-  }, []);
+    if (ownerId) {
+      dispatch(actGetSalonInformationByOwnerId(ownerId));
+    }
+  }, [ownerId]);
 
-  // Monitor Google Maps API loading state
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (!isApiLoaded) {
@@ -366,7 +364,7 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
   };
 
   return (
-    <div className="container_list" style={{marginBottom:"2rem"}}>
+    <div className="container_list" style={{ marginBottom: "2rem" }}>
       <LoadScript
         googleMapsApiKey={`${
           import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
@@ -472,7 +470,7 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
                 {renderTimePickers()}
                 <Form.Item>
                   <Button
-                    style={{ width: "100%", backgroundColor:"#bf9456" }}
+                    style={{ width: "100%", backgroundColor: "#bf9456" }}
                     type="primary"
                     htmlType="submit"
                   >

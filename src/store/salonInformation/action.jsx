@@ -39,7 +39,7 @@ export function actGetSalonInformationByOwnerId(id) {
         if (response.status === 200 || response.status === 201) {
           dispatch(getSalonInformationByOwnerId(response.data));
         } else {
-          message.error("Can't get salon by Owner id!!!");
+          message.error("không thể lấy thông tin salon!!!");
         }
       })
       .catch((error) => {
@@ -54,11 +54,11 @@ export function actGetSalonInformationByOwnerIdByCheck(id, navigate) {
     const result = SalonInformationServices.getSalonInformationByOwnerId(id);
     await result
       .then((response) => {
-        if (response.status === 200 || response.status === 201) {
+        // if (response.status === 200 || response.status === 201) {
           dispatch(getSalonInformationByOwnerId(response.data));
-        } else {
-          message.error("Không tìm thấy salon của bạn!!!");
-        }
+        // } else {
+        //   message.error("Không tìm thấy salon của bạn!!!");
+        // }
       })
       .catch((error) => {
         navigate('/create_shop')
