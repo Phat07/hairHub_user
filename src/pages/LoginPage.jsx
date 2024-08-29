@@ -587,12 +587,21 @@ const LoginPage = () => {
   const handleSubmitChangePassword = () => {
     const pass = form.getFieldValue("newPassword");
     const email = form.getFieldValue("emailForgot");
-
+    const emailConfirm = form.getFieldValue("confirmPassword");
     const data = {
       email: email,
       newPassword: pass,
       confirmNewPassword: pass,
     };
+    if (!email || !pass || !emailConfirm) {
+      message.error("Vui lòng nhập đầy đủ thông tin.");
+      return;
+    }
+
+    if (emailConfirm !== pass) {
+      message.error("Mật khẩu xác nhận không khớp.");
+      return;
+    }
     AccountServices.forgotPassword(data)
       .then((res) => {
         message.success("Bạn đã thay đổi mật khẩu thành công");

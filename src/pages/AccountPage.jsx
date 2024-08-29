@@ -271,11 +271,6 @@ function AccountPage() {
         }}
       >
         <>
-          {/* <div style={{ display: "flex", justifyContent: "flex-end" }}>
-            <Button onClick={handleEdit} type="primary">
-              Chỉnh sửa nhưng không chỉnh sửa lịch làm
-            </Button>
-          </div> */}
           <Flex justify="center">
             <Card className="bg-slate-100">
               <Space
