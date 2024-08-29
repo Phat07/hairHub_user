@@ -101,7 +101,7 @@ const LoginPage = () => {
 
   const [otpSent, setOtpSent] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
-  const [otpForgot, setOtpForgot] = useState('');
+  const [otpForgot, setOtpForgot] = useState("");
 
   const renderInput = (props) => (
     <input
@@ -118,76 +118,100 @@ const LoginPage = () => {
   const sendOtp = async () => {
     setLoading(true);
     const email = form.getFieldValue("email");
-    try {
-      await axios
-        .post("https://hairhub.gahonghac.net/api/v1/otps/SendOTPToEmail", {
-          email,
-        })
-        .then((res) => {
-          setLoading(false);
-          message.success("Xác thực Email thành công! Vui lòng điền otp!");
-          // call api gửi otp
-          setIsOtpModalOpen(true);
-        })
-        .catch((err) => {
-          message.error(err);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    } catch (error) {
-      message.error("Gửi otp thất bại! Vui lòng chọn gửi lại!");
+    const emailForgot = form.getFieldValue("emailForgot");
+    if (email) {
+      try {
+        await axios
+          .post("https://hairhub.gahonghac.net/api/v1/otps/SendOTPToEmail", {
+            email,
+          })
+          .then((res) => {
+            setLoading(false);
+            message.success("Xác thực Email thành công! Vui lòng điền otp!");
+            // call api gửi otp
+            setIsOtpModalOpen(true);
+          })
+          .catch((err) => {
+            message.error(err);
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      } catch (error) {
+        message.error("Gửi otp thất bại! Vui lòng chọn gửi lại!");
+      }
+    }
+    if (emailForgot) {
+      try {
+        await axios
+          .post("https://hairhub.gahonghac.net/api/v1/otps/SendOTPToEmail", {
+            email: emailForgot,
+          })
+          .then((res) => {
+            setLoading(false);
+            message.success("Xác thực Email thành công! Vui lòng điền otp!");
+            // call api gửi otp
+            setIsOtpModalOpen(true);
+          })
+          .catch((err) => {
+            message.error(err);
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      } catch (error) {
+        message.error("Gửi otp thất bại! Vui lòng chọn gửi lại!");
+      }
     }
   };
 
   const verifyOtp = () => {
     const email = form.getFieldValue("email");
-    const emailForgot=form.getFieldValue("emailForgot")
+    const emailForgot = form.getFieldValue("emailForgot");
 
-    if(email){
+    if (email) {
       axios
-      .post("https://hairhub.gahonghac.net/api/v1/otps/checkOtp", {
-        otpRequest: otp,
-        email: email,
-      })
-      .then(() => {
-        setLoading(true);
-        setOtp("");
-        setEmailVerified(true);
-        setIsOtpModalOpen(false);
-        message.success("Otp xác thực thành công!");
-      })
-      .catch((error) => {
-        message.error(error?.response?.data?.message);
-        setOtp("");
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+        .post("https://hairhub.gahonghac.net/api/v1/otps/checkOtp", {
+          otpRequest: otp,
+          email: email,
+        })
+        .then(() => {
+          setLoading(true);
+          setOtp("");
+          setEmailVerified(true);
+          setIsOtpModalOpen(false);
+          message.success("Otp xác thực thành công!");
+        })
+        .catch((error) => {
+          message.error(error?.response?.data?.message);
+          setOtp("");
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     }
 
-    if(emailForgot){
+    if (emailForgot) {
       axios
-      .post("https://hairhub.gahonghac.net/api/v1/otps/checkOtp", {
-        otpRequest: otpForgot,
-        email: emailForgot,
-      })
-      .then(() => {
-        setLoading(true);
-        setOtp("");
-        setEmailVerified(true);
-        setIsOtpModalOpen(false);
-        message.success("Otp xác thực thành công!");
-      })
-      .catch((error) => {
-        message.error(error?.response?.data?.message);
-        setOtp("");
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+        .post("https://hairhub.gahonghac.net/api/v1/otps/checkOtp", {
+          otpRequest: otp,
+          email: emailForgot,
+        })
+        .then(() => {
+          setLoading(true);
+          setOtp("");
+          setOtpVerified(true);
+          setIsOtpModalOpen(false);
+          message.success("Otp xác thực thành công!");
+        })
+        .catch((error) => {
+          message.error(error?.response?.data?.message);
+          setOtp("");
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     }
-    
   };
 
   const showOtpModal = async () => {
@@ -224,7 +248,6 @@ const LoginPage = () => {
     }
   };
 
-
   const showOtpNewPasswordModal = async () => {
     setLoading(true);
     const email = form.getFieldValue("emailForgot");
@@ -232,21 +255,23 @@ const LoginPage = () => {
       setLoading(false);
       message.error("Email chưa đúng hoặc chưa điền!");
     } else {
-      setLoading(false);
-      setIsOtpModalOpen(true);
       try {
         const response = await axios
-          .post("https://hairhub.gahonghac.net/api/v1/otps/CheckExistEmail", {
-            email,
-          })
+          .post(
+            "https://hairhub.gahonghac.net/api/v1/otps/CheckNonExistEmail",
+            {
+              email,
+            }
+          )
           .then((res) => {
-            if (res.data == "Email đã tồn tại trên hệ thống!") {
+            if (res.data === "gửi OTP thành công") {
+              message.success("Gửi otp thành công");
+              setOtpSent(true);
               setLoading(false);
               setIsOtpModalOpen(true);
-            } else {
-              message.error("Email này chưa đăng ký vào hệ thống!!!")
-              setLoading(false);
-              // sendOtp();
+              sendOtp();
+            } else if (res.data === "Email không tồn tại trên hệ thống!") {
+              message.info("Email không tồn tại trên hệ thống!");
             }
           })
           .catch((err) => {
@@ -559,6 +584,24 @@ const LoginPage = () => {
       //   .catch((err) => message.error(err?.response?.data?.message || "Đã xảy ra lỗi!"));
     }
   };
+  const handleSubmitChangePassword = () => {
+    const pass = form.getFieldValue("newPassword");
+    const email = form.getFieldValue("emailForgot");
+
+    const data = {
+      email: email,
+      newPassword: pass,
+      confirmNewPassword: pass,
+    };
+    AccountServices.forgotPassword(data)
+      .then((res) => {
+        message.success("Bạn đã thay đổi mật khẩu thành công");
+        setIsPasswordModalOpen(false);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return (
     <>
@@ -623,7 +666,7 @@ const LoginPage = () => {
                   </Button>
                 )}
 
-                {otpSent && !otpVerified && (
+                {/* {otpSent && !otpVerified && (
                   <>
                     <Form.Item
                       label="OTP:"
@@ -645,23 +688,53 @@ const LoginPage = () => {
                       Xác nhận OTP
                     </Button>
                   </>
-                )}
+                )} */}
 
                 {otpVerified && (
-                  <Form.Item
-                    label="Pass mới:"
-                    name="newPassword"
-                    rules={[
-                      { required: true, message: "Vui lòng không bỏ trống!" },
-                      {
-                        pattern: pwdPattern,
-                        message:
-                          "Chữ cái đầu phải viết hoa và có từ 8 đến 40 ký tự!",
-                      },
-                    ]}
-                  >
-                    <Input.Password />
-                  </Form.Item>
+                  <>
+                    <Form.Item
+                      label="Pass mới:"
+                      name="newPassword"
+                      rules={[
+                        { required: true, message: "Vui lòng không bỏ trống!" },
+                        {
+                          pattern: pwdPattern,
+                          message:
+                            "Chữ cái đầu phải viết hoa và có từ 8 đến 40 ký tự!",
+                        },
+                      ]}
+                    >
+                      <Input.Password />
+                    </Form.Item>
+                    <Form.Item
+                      label="Xác nhận:"
+                      name="confirmPassword"
+                      dependencies={["newPassword"]}
+                      rules={[
+                        { required: true, message: "Vui lòng không bỏ trống!" },
+                        ({ getFieldValue }) => ({
+                          validator(_, value) {
+                            if (
+                              !value ||
+                              getFieldValue("newPassword") === value
+                            ) {
+                              return Promise.resolve();
+                            }
+                            return Promise.reject(
+                              new Error(
+                                "Mật khẩu xác nhận không khớp với mật khẩu mới!"
+                              )
+                            );
+                          },
+                        }),
+                      ]}
+                    >
+                      <Input.Password />
+                    </Form.Item>
+                    <Button onClick={handleSubmitChangePassword}>
+                      Xác nhận mật khẩu
+                    </Button>
+                  </>
                 )}
               </Form>
             </Card>
@@ -694,7 +767,7 @@ const LoginPage = () => {
                 height: "4rem",
                 margin: "0 0.5rem",
                 fontSize: "2rem",
-                color:"black",
+                color: "black",
                 textAlign: "center",
               }}
             />

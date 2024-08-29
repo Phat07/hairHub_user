@@ -33,4 +33,7 @@ export const AccountServices = {
   updatePasswordUserById(id, data) {
     return API.put(`/accounts/ChangePassword/${id}`, data);
   },
+  forgotPassword(data){
+    return API.post("/accounts/ForgotPassword", data)
+  }
 };
