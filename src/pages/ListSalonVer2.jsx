@@ -1095,10 +1095,10 @@ function ListSalonVer2(props) {
                             >
                               <div className={styles["service-details"]}>
                                 <span className={styles["service-name"]}>
-                                  {service.serviceName}:
+                                  {service.serviceName}:{" "}
                                 </span>
                                 <span className={styles["service-description"]}>
-                                  {service.description} - {service.price} Vnđ
+                                  {service.description} - {service.price} vnđ
                                 </span>
                               </div>
                               <Button
