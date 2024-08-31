@@ -2108,7 +2108,7 @@ function SalonDetail(props) {
                                 month: "long",
                                 day: "numeric",
                               })}{" "}
-                              | Service:
+                              | Dịch vụ:{" "}
                               {feedback?.appointment?.appointmentDetails?.map(
                                 (e, index, array) => (
                                   <span key={index}>
