@@ -6,7 +6,6 @@ import { IoMenu } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, Outlet, useNavigate, useParams } from "react-router-dom";
 import hairHubLogo from "../assets/images/hairHubLogo.png";
-import hairHubLogoVer2 from "../assets/images/logoHairHubver2.png";
 import style from "../css/header.module.css";
 import { actGetSalonInformationByOwnerIdByCheck } from "../store/salonInformation/action";
 
@@ -84,7 +83,7 @@ function Header(props) {
             <Link to={"/"}>
               <img
                 className={style.logo}
-                src={hairHubLogoVer2}
+                src={hairHubLogo}
                 alt="HairHub Logo"
               />
             </Link>
