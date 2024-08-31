@@ -11,7 +11,7 @@ import { isEmptyObject } from "./formatCheckValue/checkEmptyObject";
 import { useDispatch, useSelector } from "react-redux";
 import { actGetSalonInformationByOwnerId } from "../store/salonInformation/action";
 import hairHubLogo from "../assets/images/hairHubLogo.png";
-import hairHubLogoVer2 from "../assets/images/logoHairHubver2";
+import hairHubLogoVer2 from "../assets/images/logoHairHubver2.png";
 
 import style from "../css/header.module.css";
 
