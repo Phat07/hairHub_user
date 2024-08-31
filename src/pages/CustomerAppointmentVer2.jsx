@@ -131,7 +131,8 @@ function CustomerAppointmentVer2(props) {
     const year = date.getFullYear();
     const hours = date.getHours().toString().padStart(2, "0");
     const minutes = date.getMinutes().toString().padStart(2, "0");
-    return `${day}/${month}/${year} - ${hours}:${minutes}`;
+    // return `${day}/${month}/${year} - ${hours}:${minutes}`;
+    return `${day}/${month}/${year}`;
   };
 
   function formatVND(amount) {
@@ -196,7 +197,6 @@ function CustomerAppointmentVer2(props) {
         setFeedbackFileList([]);
         setSelectedAppointment(null);
         // Handle success here
-        console.log("Feedback created successfully:", response);
       })
       .catch((error) => {
         // Handle error here
@@ -269,7 +269,6 @@ function CustomerAppointmentVer2(props) {
           )
         );
         // Handle success here
-        console.log("Report created successfully:", response);
       })
       .catch((error) => {
         // Handle error here
@@ -290,7 +289,6 @@ function CustomerAppointmentVer2(props) {
 
   const handleUploadChange = (info) => {
     const { status, fileList } = info; // Get fileList from info
-    console.log("info", info);
 
     if (status === "done") {
       message.success(`${info.file.name} đã được tải lên thành công.`);
@@ -547,7 +545,7 @@ function CustomerAppointmentVer2(props) {
       </div>
     );
   };
-
+  
   const columns = [
     {
       title: "Tên salon",
@@ -556,10 +554,10 @@ function CustomerAppointmentVer2(props) {
       render: (salonInformation) => salonInformation?.name,
     },
     {
-      title: "Ngày tạo",
-      dataIndex: "createdDate",
-      key: "createdDate",
-      render: (createdDate) => formatDate(createdDate),
+      title: "Ngày hẹn",
+      dataIndex: "startDate",
+      key: "startDate",
+      render: (startDate) => formatDate(startDate),
     },
     {
       title: "Tổng giá",
