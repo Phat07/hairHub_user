@@ -488,6 +488,14 @@ function CustomerAppointmentVer2(props) {
                 <Text>{selectedAppointmentDetail?.customer.fullName}</Text>
               </p>
               <p>
+                <Text strong>Ngày tạo: </Text>
+                <Text>
+                  {moment(selectedAppointmentDetail.createdDate).format(
+                    "DD/MM/YYYY"
+                  )}
+                </Text>
+              </p>
+              <p>
                 <Text strong>Ngày hẹn: </Text>
                 <Text>
                   {moment(selectedAppointmentDetail.startDate).format(
