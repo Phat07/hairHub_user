@@ -817,7 +817,7 @@ const LoginPage = () => {
             >
               <img
                 style={{ width: "100%" }}
-                src="https://res.cloudinary.com/dtlvihfka/image/upload/v1719936805/xov2xoo8jqppdas53kva.png"
+                src="https://res.cloudinary.com/dw4fjdcu7/image/upload/v1725114358/hairHubLogo_g1wp1d.png"
                 alt=""
               />
             </div>

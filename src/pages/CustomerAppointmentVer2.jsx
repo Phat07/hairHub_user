@@ -59,7 +59,7 @@ function CustomerAppointmentVer2(props) {
   const customerAppointments = useSelector(
     (state) => state.CUSTOMERAPPOINTMENTS.appointment
   );
- 
+
   const totalPages = useSelector(
     (state) => state.CUSTOMERAPPOINTMENTS.totalPages
   );
@@ -174,37 +174,45 @@ function CustomerAppointmentVer2(props) {
     setIsModalVisible(true);
   };
 
-  const handleRatingOk = () => {
-    setIsLoading(true);
-    const formData = new FormData();
-    formData.append("SalonId", selectedAppointment?.salonInformation?.id);
-    formData.append("CustomerId", idCustomer);
-    formData.append(
-      "AppointmentId",
-      selectedAppointment?.appointmentDetails[0]?.appointmentId
-    );
-    formData.append("Rating", rating);
-    formData.append("Comment", comment);
-    feedbackFileList.forEach((file) => {
-      formData.append("ImgFeedbacks", file.originFileObj);
-    });
-    setIsRatingModalVisible(false);
-    dispatch(actCreateFeedbackCustomer(formData, idCustomer))
-      .then((response) => {
-        setIsLoading(false);
-        setRating(null);
-        setComment(null);
-        setFeedbackFileList([]);
-        setSelectedAppointment(null);
-        // Handle success here
-      })
-      .catch((error) => {
-        // Handle error here
-        console.error("Error creating feedback:", error);
-      })
-      .finally((e) => {
-        setIsLoading(false);
+  const handleRatingOk = async () => {
+    try {
+      setIsLoading(true);
+      setLoading(true);
+
+      const formData = new FormData();
+      formData.append("SalonId", selectedAppointment?.salonInformation?.id);
+      formData.append("CustomerId", idCustomer);
+      formData.append(
+        "AppointmentId",
+        selectedAppointment?.appointmentDetails[0]?.appointmentId
+      );
+      formData.append("Rating", rating);
+      formData.append("Comment", comment);
+      feedbackFileList.forEach((file) => {
+        formData.append("ImgFeedbacks", file.originFileObj);
       });
+
+      setIsRatingModalVisible(false);
+
+      await dispatch(actCreateFeedbackCustomer(formData, idCustomer));
+
+      await dispatch(
+        actGetAppointmentByCustomerId(idCustomer, currentPage, pageSize, status)
+      );
+
+      // Reset state sau khi thành công
+      setRating(null);
+      setComment(null);
+      setFeedbackFileList([]);
+      setSelectedAppointment(null);
+    } catch (error) {
+      // Xử lý lỗi
+      console.error("Error creating feedback:", error);
+    } finally {
+      // Đảm bảo rằng trạng thái loading luôn được reset
+      setIsLoading(false);
+      setLoading(false);
+    }
   };
 
   const handleRatingCancel = () => {
@@ -240,8 +248,9 @@ function CustomerAppointmentVer2(props) {
     setIsReportModalVisible(true);
   };
 
-  const handleReportOk = () => {
+  const handleReportOk = async () => {
     setIsLoading(true);
+    setLoading(true);
     const formData = new FormData();
     formData.append("SalonId", selectedAppointment?.salonInformation?.id); // Replace with actual value
     formData.append("CustomerId", idCustomer);
@@ -255,28 +264,25 @@ function CustomerAppointmentVer2(props) {
       formData.append("ImgeReportRequest", file.originFileObj);
     });
     setIsReportModalVisible(false);
-    dispatch(actCreateReportCustomer(formData))
+    await dispatch(actCreateReportCustomer(formData))
       .then((response) => {
+        setLoading(false);
         setIsLoading(false);
         setStatus("SUCCESSED");
         setSelectedAppointment(null);
-        dispatch(
-          actGetAppointmentByCustomerId(
-            idCustomer,
-            currentPage,
-            pageSize,
-            status
-          )
-        );
-        // Handle success here
       })
       .catch((error) => {
         // Handle error here
         console.error("Error creating report:", error);
       })
       .finally((e) => {
+        setLoading(false);
         setIsLoading(false);
       });
+    await dispatch(
+      actGetAppointmentByCustomerId(idCustomer, currentPage, pageSize, status)
+    );
+    // Handle success here
 
     // Example fetch usage
   };
@@ -553,7 +559,7 @@ function CustomerAppointmentVer2(props) {
       </div>
     );
   };
-  
+
   const columns = [
     {
       title: "Tên salon",
