@@ -356,11 +356,11 @@ function CustomerAppointmentVer2(props) {
           >
             {selectedAppointmentDetail?.status !== "CANCEL_BY_CUSTOMER" && (
               <div style={{ padding: "10px", border: "1px solid #ccc" }}>
-                <Text strong>Mã QR xác nhận để thành công:</Text>
-                <Image
+                {/* <Text strong>Mã QR xác nhận để thành công:</Text> */}
+                {/* <Image
                   src={selectedAppointmentDetail?.qrCodeImg}
                   style={{ width: "100%", marginTop: "10px" }}
-                />
+                /> */}
               </div>
             )}
           </div>
