@@ -298,7 +298,6 @@ function ListSalonVer2(props) {
     const places = searchBoxRef.current.getPlaces();
 
     if (places.length === 0) return;
-    console.log("places", places);
 
     const userInputAddress = locationInput; // This is the full address the user entered
 
