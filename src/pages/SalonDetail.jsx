@@ -55,6 +55,7 @@ import { SalonInformationServices } from "../services/salonInformationServices";
 import {
   onReceiveAppointmentCreated,
   startConnection,
+  stopConnection,
 } from "../services/signalRService";
 const { Panel } = Collapse;
 const { Title, Text } = Typography;
@@ -1120,6 +1121,17 @@ function SalonDetail(props) {
   //     message.warning("Tạo lịch không thành công");
   //   }
   // };
+  useEffect(() => {
+    const setupConnection = async () => {
+      try {
+        await startConnection();
+      } catch (error) {
+        console.error("Error setting up SignalR connection:", error);
+      }
+    };
+
+    setupConnection();
+  }, []);
   const handleConfirmBooking = async () => {
     if (additionalServices.length === 0) {
       message.info("Vui lòng chọn dịch vụ!!!");
@@ -1138,35 +1150,38 @@ function SalonDetail(props) {
       setIsPriceModalVisible(false);
       setIsBookingModalVisible(false);
 
-      // Start the SignalR connection
-      await startConnection();
-
-      // Listen for appointment creation events
-      onReceiveAppointmentCreated((appointmentMessage) => {
-        console.log("AppointmentCreated event received:", appointmentMessage);
-        // Handle real-time updates or conflicts here
-        if (
-          appointmentMessage.AppointmentDetails.timeSlot === selectedTimeSlot
-        ) {
-          message.warning(
-            "Thời gian đã được đặt bởi người khác. Vui lòng chọn thời gian khác."
-          );
-        }
-      });
-
       // Create the appointment
       const res = await AppointmentService.createAppointment(appointmentData)
-        .then((res) => {
+        .then(async (res) => {
           setIsLoading(false);
           message.success("Tạo lịch cắt tóc thành công");
           setAdditionalServices([]);
           setVoucherSelected([]);
+
+          // Start the SignalR connection after appointment creation
+          // await startConnection();
+
+          // Listen for appointment creation events
+          onReceiveAppointmentCreated(async (appointmentMessage) => {
+            console.log(
+              "AppointmentCreated event received:",
+              appointmentMessage
+            );
+            message.success(appointmentMessage);
+
+            // Handle real-time updates or conflicts here
+            // Example: if (appointmentMessage.AppointmentDetails.timeSlot === selectedTimeSlot) {
+            //   message.warning("Thời gian đã được đặt bởi người khác. Vui lòng chọn thời gian khác.");
+            // }
+
+            // Disconnect the SignalR connection after handling the event
+            await stopConnection();
+          }); 
         })
         .catch((err) => {
           message.error("Tạo lịch cắt tóc không thành công!!");
+          setIsLoading(false);
         });
-
-      // Handle successful creation
     } catch (err) {
       message.warning("Tạo lịch không thành công");
       setIsLoading(false);

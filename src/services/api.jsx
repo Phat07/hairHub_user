@@ -26,7 +26,7 @@ API.interceptors.response.use(
       try {
         // Thay đổi endpoint và logic để làm mới token của bạn
         const response = await axios.post(
-          `https://hairhub.gahonghac.net/api/v1/auth/refresh`,
+          `https://hairhub.gahonghac.net/api/v1/auth/RefreshToken`,
           {
             refreshToken: localStorage.getItem("refreshToken"),
           }
