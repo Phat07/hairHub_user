@@ -132,7 +132,7 @@ const LoginPage = () => {
             setIsOtpModalOpen(true);
           })
           .catch((err) => {
-            message.error(err);
+            message.error("Gửi otp thất bại! Vui lòng thử lại!");
           })
           .finally(() => {
             setLoading(false);
@@ -809,7 +809,7 @@ const LoginPage = () => {
           }}
           onKeyDown={handleKeyDown}
           onFinish={handleFinish}
-          backgroundImageUrl="https://res.cloudinary.com/dtlvihfka/image/upload/v1719936805/xov2xoo8jqppdas53kva.png"
+          backgroundImageUrl="https://res.cloudinary.com/dw4fjdcu7/image/upload/v1725114358/hairHubLogo_g1wp1d.png"
           logo={
             <div
               onClick={() => navigate("/")}
