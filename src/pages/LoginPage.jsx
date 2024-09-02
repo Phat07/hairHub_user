@@ -49,6 +49,7 @@ import { AccountServices } from "../services/accountServices";
 import { useDispatch } from "react-redux";
 import { loginAccount } from "../store/account/action";
 // import LoginGoogle from "../components/googleSignIn/LoginGoogle";
+import hairhubLogo from "../assets/images/hairHubLogo.png";
 
 const { Meta } = Card;
 //icon
@@ -809,16 +810,13 @@ const LoginPage = () => {
           }}
           onKeyDown={handleKeyDown}
           onFinish={handleFinish}
-          backgroundImageUrl="https://res.cloudinary.com/dtlvihfka/image/upload/v1719936805/xov2xoo8jqppdas53kva.png"
+          // backgroundImageUrl="https://res.cloudinary.com/dtlvihfka/image/upload/v1719936805/xov2xoo8jqppdas53kva.png"
           logo={
-            <div
-              onClick={() => navigate("/")}
-              className="w-[5rem] border border-spacing-10 border-blue-600 rounded cursor-pointer"
-            >
+            <div onClick={() => navigate("/")} className="w-[3rem]">
               <img
-                style={{ width: "100%" }}
-                src="https://res.cloudinary.com/dtlvihfka/image/upload/v1719936805/xov2xoo8jqppdas53kva.png"
-                alt=""
+                style={{ width: "100%", borderRadius: "50%" }}
+                src={hairhubLogo}
+                alt="HairHub Logo"
               />
             </div>
           }

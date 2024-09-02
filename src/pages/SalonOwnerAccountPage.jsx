@@ -107,12 +107,15 @@ import {
   Modal,
   Col,
   Row,
+  Menu,
+  Dropdown,
 } from "antd";
 import {
   BarChartOutlined,
   CheckCircleOutlined,
   FormOutlined,
   InfoCircleOutlined,
+  MenuOutlined,
   UploadOutlined,
   UserOutlined,
 } from "@ant-design/icons";
@@ -324,6 +327,33 @@ function SalonOwnerAccountPage() {
     ///api/v1/accounts/ChangePassword/{id}
   };
 
+  const menuFunction = (
+    <Menu>
+      {idOwner && (
+        <>
+          <Menu.Item icon={<InfoCircleOutlined />}>
+            <Link to="/salon_report">Danh sách báo cáo của bạn</Link>
+          </Menu.Item>
+          <Menu.Item icon={<BarChartOutlined />}>
+            <Link to="/dashboardTransaction">Thống kê doanh thu</Link>
+          </Menu.Item>
+        </>
+      )}
+      {idCustomer && (
+        <>
+          <Menu.Item>
+            <Link to="/customer_report">Danh sách báo cáo của bạn</Link>
+          </Menu.Item>
+          <Menu.Item>
+            <Button onClick={() => setShowScanner(true)} type="primary">
+              Bật quét Qr
+            </Button>
+          </Menu.Item>
+        </>
+      )}
+    </Menu>
+  );
+
   return (
     <div className="salon-owner-account">
       {isLoading && (
@@ -333,61 +363,29 @@ function SalonOwnerAccountPage() {
       )}
       {uid ? (
         <div className="salon-layout">
-          <div className="salon-left">
-            <Card className="salon-card">
-              <Avatar
-                src={salonData.img || <UserOutlined />}
-                size={100}
-                className="salon-avatar"
-              />
-              <Descriptions className="salon-info" column={1}>
-                <Descriptions.Item
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    textAlign: "center",
-                  }}
-                >
-                  <Typography.Text strong>
-                    {salonData?.fullName}
-                  </Typography.Text>
-                </Descriptions.Item>
-              </Descriptions>
-
-              <div className="salon-buttons">
-                {idOwner && (
-                  <>
-                    <Link to="/salon_report">
-                      <Button
-                        icon={<InfoCircleOutlined />}
-                        className="change-password-button"
-                      >
-                        Danh sách báo cáo của bạn
-                      </Button>
-                    </Link>
-                    <Link to="/dashboardTransaction">
-                      <Button
-                        icon={<BarChartOutlined />}
-                        className="change-password-button"
-                      >
-                        Thống kê doanh thu
-                      </Button>
-                    </Link>
-                  </>
-                )}
-                {idCustomer && (
-                  <>
-                    <Link to="/customer_report">
-                      <Button type="primary">Danh sách báo cáo của bạn</Button>
-                    </Link>
-                    <Button onClick={() => setShowScanner(true)} type="primary">
-                      Bật quét Qr
-                    </Button>
-                  </>
-                )}
-              </div>
-              {showScanner && (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginBottom: "2rem",
+            }}
+          >
+            <Dropdown overlay={menuFunction} trigger={["click"]}>
+              <Button
+                style={{
+                  backgroundColor: "#f4f2eb",
+                  border: "none",
+                  boxShadow: "none",
+                  padding: 0,
+                }}
+              >
+                <span style={{ fontSize: "24px" }}>
+                  <MenuOutlined />
+                </span>
+              </Button>
+            </Dropdown>
+            {showScanner && (
+              <div style={{ margin: "0 auto" }}>
                 <QrScanner
                   delay={300}
                   onError={handleError}
@@ -395,16 +393,16 @@ function SalonOwnerAccountPage() {
                   style={previewStyle}
                   facingMode="environment"
                 />
-              )}
-            </Card>
+              </div>
+            )}
           </div>
-          <div className="salon-right">
-            <Typography.Text strong>
+          <div>
+            <Typography.Text strong style={{ fontSize: "2rem" }}>
               Chỉnh sửa thông tin người dùng
             </Typography.Text>
             <Form form={form} layout="vertical" onFinish={handleSave}>
               <Form.Item
-                label="Avatar"
+                label={<span style={{ fontSize: "1.1rem" }}>Avatar</span>}
                 className="form-item-custom"
                 name="avatar"
                 rules={[
@@ -437,7 +435,9 @@ function SalonOwnerAccountPage() {
               <Row gutter={[16, 16]} align="top">
                 <Col xs={24} md={10}>
                   <Form.Item
-                    label="Họ và tên"
+                    label={
+                      <span style={{ fontSize: "1.1rem" }}>Họ và tên</span>
+                    }
                     className="form-item-custom"
                     name="fullName"
                     rules={[
@@ -452,7 +452,9 @@ function SalonOwnerAccountPage() {
                 </Col>
                 <Col xs={24} md={8}>
                   <Form.Item
-                    label="Ngày sinh"
+                    label={
+                      <span style={{ fontSize: "1.1rem" }}>Ngày sinh</span>
+                    }
                     className="form-item-custom"
                     name="dayOfBirth"
                     rules={[
@@ -477,7 +479,9 @@ function SalonOwnerAccountPage() {
                 </Col>
                 <Col xs={24} md={6}>
                   <Form.Item
-                    label="Giới tính"
+                    label={
+                      <span style={{ fontSize: "1.1rem" }}>Giới tính</span>
+                    }
                     className="form-item-custom"
                     name="gender"
                     rules={[
@@ -499,7 +503,7 @@ function SalonOwnerAccountPage() {
               <Row gutter={[16, 16]} align="top">
                 <Col xs={24} md={16}>
                   <Form.Item
-                    label="Địa chỉ"
+                    label={<span style={{ fontSize: "1.1rem" }}>Địa chỉ</span>}
                     className="form-item-custom"
                     name="address"
                     rules={[
@@ -514,7 +518,9 @@ function SalonOwnerAccountPage() {
                 </Col>
                 <Col xs={24} md={8}>
                   <Form.Item
-                    label="Số điện thoại"
+                    label={
+                      <span style={{ fontSize: "1.1rem" }}>Số điện thoại</span>
+                    }
                     className="form-item-custom"
                     name="phone"
                     rules={[
@@ -534,7 +540,7 @@ function SalonOwnerAccountPage() {
               </Row>
 
               <Form.Item
-                label="Email"
+                label={<span style={{ fontSize: "1.1rem" }}>Email</span>}
                 className="form-item-custom"
                 name="email"
                 // rules={[
@@ -547,7 +553,7 @@ function SalonOwnerAccountPage() {
               <Row gutter={[16, 16]} align="top">
                 <Col xs={24} md={16}>
                   <Form.Item
-                    label="Mật khẩu"
+                    label={<span style={{ fontSize: "1.1rem" }}>Mật khẩu</span>}
                     // className="form-item-custom"
                     name="password"
                   >
@@ -559,6 +565,7 @@ function SalonOwnerAccountPage() {
                     icon={<FormOutlined />}
                     onClick={showChangePasswordModal}
                     className="change-password-button"
+                    style={{ marginTop: "2.2rem" }}
                   >
                     Thay đổi mật khẩu
                   </Button>
