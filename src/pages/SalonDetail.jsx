@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import {
   CloseOutlined,
   HeartOutlined,
@@ -9,18 +8,20 @@ import {
   StarFilled,
   StarOutlined,
 } from "@ant-design/icons";
+import * as signalR from "@microsoft/signalr";
+import RandomIcon from "@rsuite/icons/Random";
 import {
   Avatar,
   Button,
   Card,
   Carousel,
-  Checkbox,
   Col,
   Collapse,
   Divider,
   Image,
   Layout,
   List,
+  message,
   Modal,
   Pagination,
   Progress,
@@ -28,35 +29,34 @@ import {
   Select,
   Space,
   Spin,
-  Typography,
-  message,
+  Typography
 } from "antd";
 import { Content } from "antd/es/layout/layout";
 import axios from "axios";
 import dayjs from "dayjs";
-import React, { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import style from "../css/salonDetail.module.css";
-import { ServiceHairServices } from "../services/servicesHairServices";
-import RandomIcon from "@rsuite/icons/Random";
-import timezone from "dayjs/plugin/timezone";
 import duration from "dayjs/plugin/duration";
-import utc from "dayjs/plugin/utc";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
+import { motion } from "framer-motion";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import Loader from "../components/Loader";
+import style from "../css/salonDetail.module.css";
 import { AppointmentService } from "../services/appointmentServices";
 import { SalonEmployeesServices } from "../services/salonEmployeesServices";
+import { SalonInformationServices } from "../services/salonInformationServices";
+import { ServiceHairServices } from "../services/servicesHairServices";
+import {
+  onBookAppointmentMessage,
+  sendMessage,
+  startConnection,
+  stopConnection
+} from "../services/signalRService";
 import { actGetVoucherBySalonIdNotPaging } from "../store/manageVoucher/action";
 import { actGetAllFeedbackBySalonId } from "../store/ratingCutomer/action";
 import { actGetAllSalonInformation } from "../store/salonInformation/action";
-import { set } from "rsuite/esm/internals/utils/date";
-import { SalonInformationServices } from "../services/salonInformationServices";
-import {
-  onReceiveAppointmentCreated,
-  startConnection,
-  stopConnection,
-} from "../services/signalRService";
 const { Panel } = Collapse;
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -1121,17 +1121,77 @@ function SalonDetail(props) {
   //     message.warning("Tạo lịch không thành công");
   //   }
   // };
-  useEffect(() => {
-    const setupConnection = async () => {
-      try {
-        await startConnection();
-      } catch (error) {
-        console.error("Error setting up SignalR connection:", error);
-      }
+  const fetchAvailable = async (currentDate, id, service) => {
+    // Format the date as an ISO string or any other required format
+    const formattedDate = currentDate.toISOString(); // Assuming currentDate is a Date object
+
+    // Prepare the post data
+    const postData = {
+      day: formattedDate,
+      salonId: id,
+      serviceHairId: service?.id,
+      salonEmployeeId: null,
+      isAnyOne: true,
     };
 
-    setupConnection();
+    // Update the selected date (if needed)
+    setSelectedDate(currentDate);
+
+    try {
+      // Call the API to get available time slots
+      const response = await SalonInformationServices.getGetAvailableTime(
+        postData
+      );
+
+      // Update the time slots state with the received data
+      if (response && response.data) {
+        setTimeSlots(response.data);
+      } else {
+        setTimeSlots([]); // Handle empty or null response data
+      }
+    } catch (error) {
+      console.error("Error posting data:", error);
+      setTimeSlots([]); // Clear time slots in case of an error
+    }
+  };
+
+  // useEffect(() => {
+  //   const setupSignalR = async () => {
+  //     try {
+  //       await startConnection();
+        
+  //       onBookAppointmentMessage(async (message) => {
+  //         console.log('Message from server:', message);
+  //         // Handle the received message
+  //         await fetchAvailable(currentDate, id, service);
+  //       });
+  //     } catch (error) {
+  //       console.error('Error setting up SignalR:', error);
+  //     }
+  //   };
+
+  //   setupSignalR();
+
+  //   // Clean up the connection when the component unmounts
+  //   return () => {
+  //     stopConnection();
+  //   };
+  // }, []);
+
+  useEffect(() => {
+    const initiateConnection = async () => {
+      // try {
+        await startConnection();
+      // } catch (error) {
+      //   console.error("Failed to start the SignalR connection:", error);
+      // }
+    };
+
+    initiateConnection();
+
+    // Optionally, you can clean up the connection when the component unmounts
   }, []);
+
   const handleConfirmBooking = async () => {
     if (additionalServices.length === 0) {
       message.info("Vui lòng chọn dịch vụ!!!");
@@ -1159,24 +1219,11 @@ function SalonDetail(props) {
           setVoucherSelected([]);
 
           // Start the SignalR connection after appointment creation
-          // await startConnection();
+          await startConnection();
 
           // Listen for appointment creation events
-          onReceiveAppointmentCreated(async (appointmentMessage) => {
-            console.log(
-              "AppointmentCreated event received:",
-              appointmentMessage
-            );
-            message.success(appointmentMessage);
-
-            // Handle real-time updates or conflicts here
-            // Example: if (appointmentMessage.AppointmentDetails.timeSlot === selectedTimeSlot) {
-            //   message.warning("Thời gian đã được đặt bởi người khác. Vui lòng chọn thời gian khác.");
-            // }
-
-            // Disconnect the SignalR connection after handling the event
-            await stopConnection();
-          }); 
+          await sendMessage("Booking confirmed");
+          // await stopConnection();
         })
         .catch((err) => {
           message.error("Tạo lịch cắt tóc không thành công!!");

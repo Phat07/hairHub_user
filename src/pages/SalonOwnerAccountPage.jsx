@@ -207,26 +207,81 @@ function SalonOwnerAccountPage() {
     if (!password) return "";
     return "*".repeat(password.length - 2) + password.slice(-2);
   };
+  const [avatarUrl, setAvatarUrl] = useState(null);
 
-  const handleSave = (values) => {
+
+  const handleAvatarChange = (info) => {
+    const isLt5M = info.file.size / 1024 / 1024 < 5;
+    if (!isLt5M) {
+      message.error("Ảnh phải nhỏ hơn 5MB!");
+      return;
+    }
+    const file = info.file;
+    console.log("File info:", info.file);
+    console.log("Origin File Object:", info.file.originFileObj);
+    if (file) {
+      console.log("File selected:", file); // Debugging log
+      setAvatarFile(file);
+      const url = URL.createObjectURL(file);
+      setAvatarUrl(url);
+      form.setFieldsValue({ avatar: url });
+    } else {
+      console.log("No file selected or invalid file");
+    }
+  };
+  async function addFileFromUrlToFormData(url) {
+    const formData = new FormData();
+  
+    try {
+      // Tải tệp từ URL
+      const response = await fetch(url);
+      const blob = await response.blob(); // Chuyển đổi dữ liệu tải về thành Blob
+  
+      // Tạo đối tượng File từ Blob
+      const filename = url.split('/').pop(); // Lấy tên tệp từ URL
+      const file = new File([blob], filename, { type: blob.type });
+  
+      // Thêm đối tượng File vào FormData
+      formData.append("Img", file);
+  
+      return formData;
+    } catch (error) {
+      console.error("Lỗi tải tệp từ URL:", error);
+      throw error;
+    }
+  }
+  const handleSave =async  (values) => {
     const formData = new FormData();
     setIsLoading(true);
     formData.append("roleId", idCustomer);
-    formData.append("phone", values.phone ?? salonData.phone);
+    formData.append("Phone", values.phone ?? salonData.phone);
     formData.append("password", salonData.password);
-    formData.append("fullName", values.fullName ?? salonData.fullName);
+    formData.append("FullName", values.fullName ?? salonData.fullName);
+    // formData.append(
+    //   "dayOfBirth",
+    //   values.dayOfBirth
+    //     ? values.dayOfBirth.format("YYYY-MM-DD")
+    //     : salonData.dayOfBirth
+    // );
     formData.append(
-      "dayOfBirth",
-      values.dayOfBirth
-        ? values.dayOfBirth.format("YYYY-MM-DD")
-        : salonData.dayOfBirth
+      "DayOfBirth",
+      null
     );
-    formData.append("gender", values.gender ?? salonData.gender);
-    formData.append("email", values.email ?? salonData.email);
-    formData.append("address", values.address ?? salonData.address);
+    formData.append("Gender", values.gender ?? salonData.gender);
+    formData.append("Email", values.email ?? salonData.email);
+    formData.append("Address", values.address ?? salonData.address);
 
     if (avatarFile) {
-      formData.append("img", avatarFile);
+      formData.append("Img", avatarFile);
+    } else if (avatarUrl) {
+      try {
+        const urlFormData = await addFileFromUrlToFormData(avatarUrl);
+        for (const [key, value] of urlFormData.entries()) {
+          formData.append(key, value);
+        }
+      } catch (error) {
+        console.error("Error adding file from URL:", error);
+      }
     }
 
     AccountServices.updateUserById(id, formData)
@@ -257,29 +312,7 @@ function SalonOwnerAccountPage() {
       });
   };
 
-  const [avatarUrl, setAvatarUrl] = useState(null);
-  console.log(avatarUrl);
-  console.log(avatarUrl);
-
-  const handleAvatarChange = (info) => {
-    const isLt5M = info.file.size / 1024 / 1024 < 5;
-    if (!isLt5M) {
-      message.error("Ảnh phải nhỏ hơn 5MB!");
-      return;
-    }
-    const file = info.file;
-    console.log("File info:", info.file);
-    console.log("Origin File Object:", info.file.originFileObj);
-    if (file) {
-      console.log("File selected:", file); // Debugging log
-      setAvatarFile(file);
-      const url = URL.createObjectURL(file);
-      setAvatarUrl(url);
-      form.setFieldsValue({ avatar: url });
-    } else {
-      console.log("No file selected or invalid file");
-    }
-  };
+ 
 
   const showChangePasswordModal = () => {
     setIsModalVisible(true);
