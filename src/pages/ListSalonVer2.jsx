@@ -36,6 +36,7 @@ import "antd/dist/reset.css";
 import "../css/customerAppointmentTable.css";
 
 import { set } from "rsuite/esm/internals/utils/date";
+import { useTransition } from "@react-spring/web";
 const defaultCenter = {
   lat: 10.8231, // Default to Ho Chi Minh City
   lng: 106.6297,
@@ -159,21 +160,10 @@ function ListSalonVer2(props) {
   const [searchBox, setSearchBox] = useState(null);
   const [inputLocation, setInputLocation] = useState(""); // Lưu giá trị nhập vào của vị trí
 
-  const [mapsLoaded, setMapsLoaded] = useState(false);
-
   const [mapStyle, setMapStyle] = useState({
     height: "500px",
     width: "850px",
   });
-  // useEffect(() => {
-  //   const timeoutId = setTimeout(() => {
-  //     if (!isApiLoaded) {
-  //       window.location.reload();
-  //     }
-  //   }, 1000); // 5 seconds timeout
-
-  //   return () => clearTimeout(timeoutId);
-  // }, [isApiLoaded]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -490,79 +480,6 @@ function ListSalonVer2(props) {
     setModalVisible(false); // Close the modal
   };
   const [form] = Form.useForm();
-  // const handleSearch = async () => {
-  //   const validateDistance = async () => {
-  //     try {
-  //       const values = await form.validateFields(["distance"]);
-  //       return values.distance;
-  //     } catch (error) {
-  //       message.error("Vui lòng nhập khoảng cách hợp lệ.");
-  //       throw error;
-  //     }
-  //   };
-
-  //   document.body.style.overflow = "hidden";
-  //   Modal.confirm({
-  //     title: "Bật vị trí hiện tại",
-  //     content: (
-  //       <Form form={form} layout="vertical">
-  //         <Form.Item
-  //           label="Nhập khoảng cách bạn muốn tìm (km)"
-  //           name="distance"
-  //           rules={[
-  //             { required: true, message: "Vui lòng nhập khoảng cách!" },
-  //             { pattern: /^\d+$/, message: "Khoảng cách phải là số!" },
-  //           ]}
-  //         >
-  //           <Input placeholder="Nhập khoảng cách" />
-  //         </Form.Item>
-  //       </Form>
-  //     ),
-  //     async onOk() {
-  //       try {
-  //         const distance = await validateDistance();
-  //         if ("geolocation" in navigator) {
-  //           setLoading(true); // Gọi setLoading(true) ngay khi bắt đầu quá trình
-
-  //           navigator.geolocation.getCurrentPosition(
-  //             async (pos) => {
-  //               const { latitude, longitude } = pos.coords;
-  //               const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${
-  //                 import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
-  //               }&loading=async`;
-
-  //               try {
-  //                 await fetchSalonDataNear(latitude, longitude, distance);
-  //                 message.success("Cảm ơn bạn đã kích hoạt dịch vụ định vị.");
-  //               } catch (error) {
-  //                 message.error("Có lỗi xảy ra khi tìm kiếm salon.");
-  //               } finally {
-  //                 setLoading(false); // Đảm bảo setLoading(false) được gọi khi kết thúc
-  //                 document.body.style.overflow = "";
-  //               }
-  //             },
-  //             (error) => {
-  //               setLoading(false);
-  //               message.error("Bạn đã từ chối quyền truy cập vị trí!");
-  //               document.body.style.overflow = "";
-  //             }
-  //           );
-  //         } else {
-  //           message.error(
-  //             "Định vị địa lý không được trình duyệt của bạn hỗ trợ."
-  //           );
-  //           document.body.style.overflow = "";
-  //         }
-  //       } catch (error) {
-  //         document.body.style.overflow = "";
-  //       }
-  //     },
-  //     onCancel() {
-  //       message.error("Bạn đã từ chối quyền truy cập vị trí.");
-  //       document.body.style.overflow = "";
-  //     },
-  //   });
-  // };
   const handleSearch = async () => {
     const validateDistance = async () => {
       try {
@@ -642,157 +559,6 @@ function ListSalonVer2(props) {
       setInputLocation(places[0].formatted_address);
     }
   };
-
-  const [showModal, setShowModal] = useState(true);
-
-  // Hàm kiểm tra và cập nhật trạng thái tải API
-  // const checkMapsLoaded = () => {
-  //   if (!mapsLoaded) {
-  //     setTimeout(checkMapsLoaded, 1000); // Kiểm tra lại sau 1 giây
-  //   } else {
-  //     setShowModal(true); // Hiển thị modal khi API đã tải xong
-  //   }
-  // };
-  // useEffect(() => {
-  //   const timeoutId = setTimeout(() => {
-  //     if (!mapsLoaded) {
-  //       window.location.reload();
-  //     }
-  //   }, 1000); // 5 seconds timeout
-
-  //   return () => clearTimeout(timeoutId);
-  // }, [mapsLoaded]);
-  // const handleSearch = async () => {
-  //   const validateDistance = async () => {
-  //     try {
-  //       const values = await form.validateFields(["distance"]);
-  //       return values.distance;
-  //     } catch (error) {
-  //       message.error("Vui lòng nhập khoảng cách hợp lệ.");
-  //       return null;
-  //     }
-  //   };
-
-  //   const handleOk = async () => {
-  //     if (!mapsLoaded) {
-  //       message.error("Google Maps API chưa được tải xong. Vui lòng chờ.");
-  //       return Promise.reject(); // Không đóng modal nếu API chưa tải xong
-  //     }
-
-  //     const distance = await validateDistance();
-  //     if (!distance) {
-  //       return Promise.reject();
-  //     }
-
-  //     let latitude, longitude;
-  //     let inputLocationAddress = form?.inputLocationAddress;
-  //     if (inputLocationAddress) {
-  //       try {
-  //         const geocoder = new window.google.maps.Geocoder();
-  //         const results = await geocoder.geocode({
-  //           address: inputLocationAddress,
-  //         });
-  //         if (results.status === "OK" && results.results[0]) {
-  //           latitude = results.results[0].geometry.location.lat();
-  //           longitude = results.results[0].geometry.location.lng();
-  //         } else {
-  //           message.error("Không thể xác định vị trí từ địa chỉ nhập vào.");
-  //           return Promise.reject();
-  //         }
-  //       } catch (error) {
-  //         message.error("Có lỗi xảy ra khi xác định vị trí.");
-  //         return Promise.reject();
-  //       }
-  //     } else if ("geolocation" in navigator) {
-  //       setLoading(true);
-  //       return new Promise((resolve, reject) => {
-  //         navigator.geolocation.getCurrentPosition(
-  //           async (pos) => {
-  //             latitude = pos.coords.latitude;
-  //             longitude = pos.coords.longitude;
-
-  //             try {
-  //               await fetchSalonDataNear(latitude, longitude, distance);
-  //               message.success("Cảm ơn bạn đã kích hoạt dịch vụ định vị.");
-  //               resolve();
-  //             } catch (error) {
-  //               message.error("Có lỗi xảy ra khi tìm kiếm salon.");
-  //               reject();
-  //             } finally {
-  //               setLoading(false);
-  //             }
-  //           },
-  //           (error) => {
-  //             setLoading(false);
-  //             message.error("Bạn đã từ chối quyền truy cập vị trí!");
-  //             reject();
-  //           }
-  //         );
-  //       });
-  //     } else {
-  //       message.error("Định vị địa lý không được trình duyệt của bạn hỗ trợ.");
-  //       return Promise.reject();
-  //     }
-  //   };
-
-  //   // Bắt đầu kiểm tra khi modal mở
-  //   if (showModal) {
-  //     document.body.style.overflow = "hidden";
-  //     Modal.confirm({
-  //       title: "Bật vị trí hiện tại",
-  //       content: (
-  //         <LoadScript
-  //           googleMapsApiKey={`${
-  //             import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
-  //           }&loading=async`}
-  //           libraries={["places"]}
-  //           onLoad={() => setMapsLoaded(true)}
-  //         >
-  //           {/* {mapsLoaded ? ( */}
-  //           <Form form={form}>
-  //             <Form.Item
-  //               label="Nhập khoảng cách bạn muốn tìm (km)"
-  //               name="distance"
-  //               rules={[
-  //                 { required: true, message: "Vui lòng nhập khoảng cách!" },
-  //                 { pattern: /^\d+$/, message: "Khoảng cách phải là số!" },
-  //               ]}
-  //             >
-  //               <Input placeholder="Nhập khoảng cách" />
-  //             </Form.Item>
-  //             <StandaloneSearchBox
-  //               onLoad={(ref) => setSearchBox(ref)}
-  //               onPlacesChanged={onPlacesChanged}
-  //             >
-  //               <Form.Item
-  //                 name="inputLocationAddress"
-  //                 label="Nhập vị trí hiện tại của bạn"
-  //               >
-  //                 <Input placeholder="Nhập vị trí hiện tại của bạn" />
-  //               </Form.Item>
-  //             </StandaloneSearchBox>
-  //           </Form>
-  //           {/* ) : (
-  //             <Spin tip="Đang tải Google Maps API..." />
-  //           )} */}
-  //         </LoadScript>
-  //       ),
-  //       async onOk() {
-  //         try {
-  //           await handleOk();
-  //         } catch (error) {
-  //           // Xử lý lỗi nếu cần thiết
-  //         }
-  //       },
-  //       onCancel() {
-  //         message.error("Bạn đã từ chối quyền truy cập vị trí.");
-  //         document.body.style.overflow = "";
-  //       },
-  //       okButtonProps: { disabled: !mapsLoaded }, // Vô hiệu hóa nút OK nếu mapsLoaded là false
-  //     });
-  //   }
-  // };
-
   return (
     <div className={styles["list-salon-container"]}>
       <div className={styles["left-side"]}>
@@ -874,19 +640,11 @@ function ListSalonVer2(props) {
                   placement="bottom"
                   overlayClassName="popover-overlay"
                 >
-                  {/* <MotionDiv
-                    whileHover={{ scale: 1.05 }} // Tăng nhẹ kích thước khi hover
-                    whileTap={{ scale: 0.95 }} // Giảm nhẹ kích thước khi nhấn
-                    transition={{ duration: 0.3 }} // Thời gian chuyển đổi
-                  > */}
                   <Input
                     placeholder="Tìm kiếm dịch vụ"
                     prefix={<SearchOutlined />}
                     suffix={
                       servicesName && (
-                        // <CloseCircleOutlined
-                        //   onClick={() => setServicesName("")}
-                        // />
                         <CloseCircleOutlined onClick={handleClick} />
                       )
                     }
@@ -894,7 +652,6 @@ function ListSalonVer2(props) {
                     onChange={handleServiceNameChange}
                     onKeyUp={handleKeyPress}
                   />
-                  {/* </MotionDiv> */}
                 </Popover>
                 <div className={styles["list-salon-service"]}>
                   <div
@@ -941,87 +698,6 @@ function ListSalonVer2(props) {
                   </div>
                 </div>
               </Col>
-              <Col span={8}>
-                {/* <Popover
-                content={
-                  <Button icon={<EnvironmentOutlined />}>
-                    Bật quyền truy cập vị trí
-                  </Button>
-                }
-                visible={locationVisible}
-                onVisibleChange={handleLocationClick}
-                trigger="click"
-                placement="bottom"
-                overlayClassName="popover-overlay"
-              >
-                <Input
-                  placeholder="Nơi chốn?"
-                  prefix={<EnvironmentOutlined />}
-                  onClick={handleLocationClick}
-                  onChange={handleLocationChange}
-                  onKeyDown={handleKeyPress}
-                />
-              </Popover> */}
-                {/* <Popover
-                content={
-                  <Button
-                    icon={<EnvironmentOutlined />}
-                    onClick={handleLocationClick}
-                  >
-                    Nhấn vào đây để tìm salon gần bạn
-                  </Button>
-                }
-                visible={locationVisible}
-                onVisibleChange={setLocationVisible}
-                trigger="click"
-                placement="bottom"
-                overlayClassName="popover-overlay"
-              >
-                <Input
-                  name="locationInput"
-                  placeholder="Điền vị trí salon, baberShop bạn muốn đến?"
-                  prefix={<EnvironmentOutlined />}
-                  onClick={() => setLocationVisible(!locationVisible)}
-                  onChange={handleLocationChange}
-                  value={locationSalon}
-                  onKeyDown={handleKeyPress}
-                />
-              </Popover> */}
-
-                {/* <Modal
-                title="Nhập vị trí hiện tại của bạn"
-                visible={modalVisible}
-                onCancel={handleModalClose}
-                footer={[
-                  <Button key="close" onClick={handleModalClose}>
-                    Đóng
-                  </Button>,
-                ]}
-              >
-                <LoadScript
-                  googleMapsApiKey={`${
-                    import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
-                  }&loading=async`}
-                  libraries={libraries}
-                  onLoad={() => setIsApiLoaded(true)}
-                >
-                  {isApiLoaded && (
-                    <StandaloneSearchBox
-                      onLoad={(ref) => (searchBoxRef.current = ref)}
-                      onPlacesChanged={handlePlacesChanged}
-                    >
-                      <Input
-                        name="salonLocationInput"
-                        value={locationInput}
-                        placeholder="Nhập vị trí hiện tại của bạn"
-                        onChange={(e) => setLocationInput(e.target.value)}
-                        onKeyDown={handleKeyPress}
-                      />
-                    </StandaloneSearchBox>
-                  )}
-                </LoadScript>
-              </Modal> */}
-              </Col>
             </Row>
           </div>
         </div>
@@ -1061,10 +737,79 @@ function ListSalonVer2(props) {
               </Button> */}
                 </div>
               </div>
+              {/* <div className={styles["list-salon-content"]}>
+                  {salonList.length !== 0 ? (
+                    salonList.map((salon) => (
+                      <div className={styles["list-salon-item"]} key={salon.id}>
+                        <div
+                          className={styles["list-salon-image"]}
+                          style={{ width: "30%" }}
+                        >
+                          <img
+                            src={salon.img}
+                            alt={salon.name}
+                            style={{ width: "100%" }}
+                          />
+                        </div>
+                        <div
+                          className={styles["list-salon-info"]}
+                          style={{ width: "70%", paddingLeft: "16px" }}
+                        >
+                          <p style={{ fontSize: "1.5rem" }}>{salon.name}</p>
+                          <p style={{ fontSize: "1rem" }}>
+                            <strong>Mô tả:</strong> {salon.description}
+                          </p>
+                          <p style={{ fontSize: "1rem" }}>
+                            <strong>Địa chỉ:</strong> {salon.address}
+                          </p>
+                          <ul>
+                            {salon.services.map((service, index) => (
+                              <li
+                                key={index}
+                                className={styles["service-list-item"]}
+                              >
+                                <div className={styles["service-details"]}>
+                                  <span className={styles["service-name"]}>
+                                    {service.serviceName}:{" "}
+                                  </span>
+                                  <span
+                                    className={styles["service-description"]}
+                                  >
+                                    {service.description} - {service.price} vnđ
+                                  </span>
+                                </div>
+                                <Button
+                                  onClick={() =>
+                                    navigate(`/salon_detail/${salon?.id}`)
+                                  }
+                                  className={styles["book-button"]}
+                                >
+                                  Đặt lịch
+                                </Button>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <>
+                      <Empty />
+                    </>
+                  )}
+                </div> */}
               <div className={styles["list-salon-content"]}>
                 {salonList.length !== 0 ? (
                   salonList.map((salon) => (
-                    <div className={styles["list-salon-item"]} key={salon.id}>
+                    <motion.div
+                      className={styles["list-salon-item"]}
+                      key={salon.id}
+                      whileHover={{ scale: 1.05,border: '1px solid #bc8d4a' }} // Scale effect on hover
+                      transition={{ duration: 0.3 }} // Transition duration
+                      initial={{ opacity: 0 }} // Initial opacity for scroll effect
+                      animate={{ opacity: 1 }} // Final opacity for scroll effect
+                      exit={{ opacity: 0 }} // Fade out on exit
+                    >
                       <div
                         className={styles["list-salon-image"]}
                         style={{ width: "30%" }}
@@ -1079,7 +824,6 @@ function ListSalonVer2(props) {
                         className={styles["list-salon-info"]}
                         style={{ width: "70%", paddingLeft: "16px" }}
                       >
-                        {/* <h3>{salon.name}</h3> */}
                         <p style={{ fontSize: "1.5rem" }}>{salon.name}</p>
                         <p style={{ fontSize: "1rem" }}>
                           <strong>Mô tả:</strong> {salon.description}
@@ -1089,9 +833,14 @@ function ListSalonVer2(props) {
                         </p>
                         <ul>
                           {salon.services.map((service, index) => (
-                            <li
+                            <motion.li
                               key={index}
                               className={styles["service-list-item"]}
+                              whileHover={{ scale: 1.03 }} // Scale effect on hover
+                              transition={{ duration: 0.2 }} // Transition duration for hover
+                              initial={{ opacity: 0.8 }} // Initial opacity for scroll effect
+                              animate={{ opacity: 1 }} // Final opacity for scroll effect
+                              exit={{ opacity: 0.8 }} // Fade out on exit
                             >
                               <div className={styles["service-details"]}>
                                 <span className={styles["service-name"]}>
@@ -1109,11 +858,11 @@ function ListSalonVer2(props) {
                               >
                                 Đặt lịch
                               </Button>
-                            </li>
+                            </motion.li>
                           ))}
                         </ul>
                       </div>
-                    </div>
+                    </motion.div>
                   ))
                 ) : (
                   <>
@@ -1138,14 +887,6 @@ function ListSalonVer2(props) {
       </div>
       <div className={styles["right-side"]}>
         <div className={styles["tinhHuyen"]}>
-          {/* <Select
-            value={selectedProvince || undefined}
-            style={{ width: 250, marginRight: "10px" }}
-            onChange={handleChange}
-            // options={provinces}
-            options={[{ value: null, label: "ĐẶT LẠI" }, ...provinces]}
-            placeholder="Tỉnh/Thành phố" // Set the placeholder text
-          /> */}
           <MotionDiv
             whileHover={{ scale: 1.05 }} // Tăng nhẹ kích thước khi hover
             whileTap={{ scale: 0.95 }} // Giảm nhẹ kích thước khi nhấn

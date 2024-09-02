@@ -1,5 +1,5 @@
 import { API } from "./api";
-const token= localStorage.getItem("accessToken");
+const token = localStorage.getItem("accessToken");
 export const SalonInformationServices = {
   createSalonInformation(data) {
     return API.post("/saloninformations/CreateSalonInformation/", data);
@@ -56,9 +56,17 @@ export const SalonInformationServices = {
     );
   },
   getGetAvailableTime(data) {
-    return API.post(`/appointments/GetAvailableTime`, data);
+    return API.post(`/appointments/GetAvailableTime`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
   },
   getBookAppointment(data) {
-    return API.post(`/appointments/BookAppointment`, data);
+    return API.post(`/appointments/BookAppointment`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
   },
 };

@@ -133,7 +133,7 @@ const LoginPage = () => {
             setIsOtpModalOpen(true);
           })
           .catch((err) => {
-            message.error(err);
+            message.error("Gửi otp thất bại! Vui lòng thử lại!");
           })
           .finally(() => {
             setLoading(false);

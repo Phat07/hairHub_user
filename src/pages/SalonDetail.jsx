@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import {
   CloseOutlined,
   HeartOutlined,
@@ -37,7 +38,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import style from "../css/salonDetail.module.css";
 import { ServiceHairServices } from "../services/servicesHairServices";
-
 import RandomIcon from "@rsuite/icons/Random";
 import timezone from "dayjs/plugin/timezone";
 import duration from "dayjs/plugin/duration";
@@ -52,6 +52,11 @@ import { actGetAllFeedbackBySalonId } from "../store/ratingCutomer/action";
 import { actGetAllSalonInformation } from "../store/salonInformation/action";
 import { set } from "rsuite/esm/internals/utils/date";
 import { SalonInformationServices } from "../services/salonInformationServices";
+import {
+  onReceiveAppointmentCreated,
+  startConnection,
+  stopConnection,
+} from "../services/signalRService";
 const { Panel } = Collapse;
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -84,30 +89,6 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(duration);
 dayjs.extend(isSameOrBefore);
-// function renderStars(stars) {
-//   const filledStars = Math.floor(stars);
-//   const hasHalfStar = stars % 1 !== 0;
-
-//   const starIcons = [];
-
-//   for (let i = 0; i < filledStars; i++) {
-//     starIcons.push(<StarFilled key={i} style={{ color: "#FFD700" }} />);
-//   }
-
-//   if (hasHalfStar) {
-//     starIcons.push(
-//       <StarOutlined key={filledStars} style={{ color: "#FFD700" }} />
-//     );
-//   }
-
-//   const remainingStars = 5 - filledStars - (hasHalfStar ? 1 : 0);
-
-//   for (let i = 0; i < remainingStars; i++) {
-//     starIcons.push(<StarOutlined key={filledStars + i + 1} />);
-//   }
-
-//   return starIcons;
-// }
 function renderStars(stars) {
   const filledStars = Math.floor(stars); // Số sao đầy đủ
   const fraction = stars % 1; // Phần thập phân của số sao
@@ -166,6 +147,11 @@ function renderStars(stars) {
 
 const vietnamTimezone = "Asia/Ho_Chi_Minh";
 const currentTime = dayjs().tz(vietnamTimezone);
+const listItemVariants = {
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: { opacity: 1, scale: 1 },
+  hover: { scale: 1.05 },
+};
 
 function SalonDetail(props) {
   const { id } = useParams();
@@ -384,7 +370,7 @@ function SalonDetail(props) {
   const currentMonthDays = generateNextSevenDays();
 
   const handleBookClick = async (service) => {
-    if (userId === salonDetail?.salonOwner?.id) {
+    if (userId === salonDetail?.salonOwner?.id && userId) {
       message.warning("Bạn là chủ cửa hàng không thể đặt lịch");
       return;
     }
@@ -428,7 +414,6 @@ function SalonDetail(props) {
           })
           .catch((err) => {
             setTimeSlots("");
-            console.log("err", err);
           });
       } catch (error) {
         console.error("Error posting data:", error);
@@ -1099,7 +1084,54 @@ function SalonDetail(props) {
       setError(err);
     }
   };
+  // useEffect(() => {
+  //   startConnection();
+  // }, []);
+  // const handleConfirmBooking = async () => {
+  //   if (additionalServices.length === 0) {
+  //     message.info("Vui lòng chọn dịch vụ!!!");
+  //     setIsPriceModalVisible(false);
+  //     return;
+  //   }
 
+  //   if (selectedTimeSlot === null) {
+  //     message.warning("Vui lòng chọn giờ để đặt lịch");
+  //     setIsPriceModalVisible(false);
+  //     return;
+  //   }
+  //   try {
+  //     setIsLoading(true);
+  //     setIsPriceModalVisible(false);
+  //     setIsBookingModalVisible(false);
+  //     const res = await AppointmentService.createAppointment(appointmentData)
+  //       .then((res) => {
+  //         setIsLoading(false);
+  //         message.success("Tạo lịch cắt tóc thành công");
+  //         setAdditionalServices([]);
+  //         setVoucherSelected([]);
+  //       })
+  //       .catch((err) => {
+  //         message.error(err.response.data.message);
+  //         console.log(err);
+  //       })
+  //       .finally((e) => {
+  //         setIsLoading(false);
+  //       });
+  //   } catch (err) {
+  //     message.warning("Tạo lịch không thành công");
+  //   }
+  // };
+  useEffect(() => {
+    const setupConnection = async () => {
+      try {
+        await startConnection();
+      } catch (error) {
+        console.error("Error setting up SignalR connection:", error);
+      }
+    };
+
+    setupConnection();
+  }, []);
   const handleConfirmBooking = async () => {
     if (additionalServices.length === 0) {
       message.info("Vui lòng chọn dịch vụ!!!");
@@ -1112,26 +1144,48 @@ function SalonDetail(props) {
       setIsPriceModalVisible(false);
       return;
     }
+
     try {
       setIsLoading(true);
       setIsPriceModalVisible(false);
       setIsBookingModalVisible(false);
+
+      // Create the appointment
       const res = await AppointmentService.createAppointment(appointmentData)
-        .then((res) => {
+        .then(async (res) => {
           setIsLoading(false);
           message.success("Tạo lịch cắt tóc thành công");
           setAdditionalServices([]);
           setVoucherSelected([]);
+
+          // Start the SignalR connection after appointment creation
+          // await startConnection();
+
+          // Listen for appointment creation events
+          onReceiveAppointmentCreated(async (appointmentMessage) => {
+            console.log(
+              "AppointmentCreated event received:",
+              appointmentMessage
+            );
+            message.success(appointmentMessage);
+
+            // Handle real-time updates or conflicts here
+            // Example: if (appointmentMessage.AppointmentDetails.timeSlot === selectedTimeSlot) {
+            //   message.warning("Thời gian đã được đặt bởi người khác. Vui lòng chọn thời gian khác.");
+            // }
+
+            // Disconnect the SignalR connection after handling the event
+            await stopConnection();
+          }); 
         })
         .catch((err) => {
-          message.error(err.response.data.message);
-          console.log(err);
-        })
-        .finally((e) => {
+          message.error("Tạo lịch cắt tóc không thành công!!");
           setIsLoading(false);
         });
     } catch (err) {
       message.warning("Tạo lịch không thành công");
+      setIsLoading(false);
+      console.error(err);
     }
   };
 
@@ -1211,14 +1265,26 @@ function SalonDetail(props) {
                   marginTop: "30px",
                 }}
               >
-                <h2
+                <motion.h2
                   style={{
                     fontSize: "3rem",
                     fontWeight: "bold",
                   }}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5 }}
+                  whileHover={{
+                    scale: 1.1, // Tăng kích thước khi hover
+                    color: "#ff6347", // Thay đổi màu sắc khi hover (tùy chỉnh theo ý muốn)
+                    transition: {
+                      duration: 0.3, // Thời gian hiệu ứng hover
+                      type: "spring", // Loại chuyển động
+                      stiffness: 300, // Độ cứng của lò xo
+                    },
+                  }}
                 >
                   {salonDetail?.name}
-                </h2>
+                </motion.h2>
                 <Space>
                   <Button
                     type="text"
@@ -1285,48 +1351,54 @@ function SalonDetail(props) {
                       // dataSource={services}
                       dataSource={data}
                       renderItem={(service) => (
-                        <List.Item
-                          actions={[
-                            <Button
-                              type="primary"
-                              key="book"
-                              onClick={() => handleBookClick(service)}
-                            >
-                              Đặt lịch
-                            </Button>,
-                          ]}
+                        <motion.div
+                          variants={listItemVariants}
+                          initial="hidden"
+                          animate="visible"
+                          whileHover="hover"
                         >
-                          <List.Item.Meta
-                            avatar={
-                              <Avatar
-                                size={{
-                                  xs: 24,
-                                  sm: 32,
-                                  md: 40,
-                                  lg: 64,
-                                  xl: 50,
-                                  xxl: 50,
-                                }}
-                                src={service?.img}
-                              />
-                            }
-                            title={
-                              <span
-                                style={{
-                                  fontSize: "1.3rem",
-                                  cursor: "pointer",
-                                }}
-                                onClick={() => setIsBookingModalVisible(true)}
+                          <List.Item
+                            actions={[
+                              <Button
+                                type="primary"
+                                key="book"
+                                onClick={() => handleBookClick(service)}
                               >
-                                {service?.serviceName}
-                              </span>
-                            }
-                            description={`${service?.price} vnđ • ${formatTime(
-                              service?.time
-                            )}`}
-                            // description={`${service?.price} vnđ • ${service?.time}`}
-                          />
-                        </List.Item>
+                                Đặt lịch
+                              </Button>,
+                            ]}
+                          >
+                            <List.Item.Meta
+                              avatar={
+                                <Avatar
+                                  size={{
+                                    xs: 24,
+                                    sm: 32,
+                                    md: 40,
+                                    lg: 64,
+                                    xl: 50,
+                                    xxl: 50,
+                                  }}
+                                  src={service?.img}
+                                />
+                              }
+                              title={
+                                <span
+                                  style={{
+                                    fontSize: "1.3rem",
+                                    cursor: "pointer",
+                                  }}
+                                  onClick={() => setIsBookingModalVisible(true)}
+                                >
+                                  {service?.serviceName}
+                                </span>
+                              }
+                              description={`${
+                                service?.price
+                              } vnđ • ${formatTime(service?.time)}`}
+                            />
+                          </List.Item>
+                        </motion.div>
                       )}
                       style={{ backgroundColor: "transparent" }}
                     />
@@ -1479,23 +1551,45 @@ function SalonDetail(props) {
                         <Divider />
                         <div>
                           <div>
-                            <div className={style["date-picker"]}>
+                            <motion.div
+                              className={style["date-picker"]}
+                              initial={{ opacity: 0, scale: 0.9 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              transition={{ duration: 0.5 }}
+                            >
                               {currentMonthDays.map((day, index) => (
-                                <Button
+                                <motion.div
                                   key={index}
-                                  onClick={() => handleDateSelect(day)}
-                                  className={
-                                    selectedDate &&
-                                    selectedDate.toDateString() ===
-                                      day.toDateString()
-                                      ? style.selected
-                                      : ""
-                                  }
+                                  whileHover={{
+                                    scale: 1.05, // Phóng to khi hover
+                                    transition: {
+                                      duration: 0.3,
+                                      type: "spring",
+                                      stiffness: 300,
+                                    },
+                                  }}
+                                  whileTap={{
+                                    scale: 0.95, // Thu nhỏ khi nhấp
+                                    transition: {
+                                      duration: 0.2,
+                                    },
+                                  }}
                                 >
-                                  {formatDate(day)}
-                                </Button>
+                                  <Button
+                                    onClick={() => handleDateSelect(day)}
+                                    className={
+                                      selectedDate &&
+                                      selectedDate.toDateString() ===
+                                        day.toDateString()
+                                        ? style.selected
+                                        : ""
+                                    }
+                                  >
+                                    {formatDate(day)}
+                                  </Button>
+                                </motion.div>
                               ))}
-                            </div>
+                            </motion.div>
                           </div>
                         </div>
                         {/* <Divider /> */}
@@ -1530,73 +1624,6 @@ function SalonDetail(props) {
                                           className={style["scroll-content"]}
                                           // className="scroll-content"
                                         >
-                                          {/* {timeSlots?.availableTimes?.map(
-                                            (slot, index) => {
-                                              let timeString = "";
-                                              const timeParts = slot?.timeSlot
-                                                .toString()
-                                                .split(".");
-                                              const hour = parseInt(
-                                                timeParts[0],
-                                                10
-                                              );
-                                              const minutes =
-                                                timeParts.length > 1
-                                                  ? parseInt(timeParts[1], 10)
-                                                  : 0;
-
-                                              if (minutes === 0) {
-                                                timeString = `${hour}h00`;
-                                              } else if (minutes === 25) {
-                                                timeString = `${hour}h15`;
-                                              } else if (minutes === 5) {
-                                                timeString = `${hour}h30`;
-                                              } else if (minutes === 75) {
-                                                timeString = `${hour}h45`;
-                                              }
-
-                                              const vietnamTimezone =
-                                                "Asia/Ho_Chi_Minh";
-                                              const currentTime =
-                                                dayjs().tz(vietnamTimezone);
-
-                                              const slotTime = dayjs()
-                                                .tz(vietnamTimezone)
-                                                .set("hour", hour)
-                                                .set("minute", minutes)
-                                                .set("second", 0)
-                                                .set("millisecond", 0);
-
-                                              const isDisabled =
-                                                selectedDate &&
-                                                dayjs(selectedDate)
-                                                  .tz(vietnamTimezone)
-                                                  .isSame(dayjs(), "day") &&
-                                                slotTime.isSameOrBefore(
-                                                  currentTime
-                                                );
-
-                                              return (
-                                                <Button
-                                                  key={index}
-                                                  onClick={() =>
-                                                    handleTimeSlotSelect(
-                                                      slot?.timeSlot
-                                                    )
-                                                  }
-                                                  className={
-                                                    selectedTimeSlot ===
-                                                    slot?.timeSlot
-                                                      ? style.selected
-                                                      : ""
-                                                  }
-                                                  disabled={isDisabled}
-                                                >
-                                                  {timeString}
-                                                </Button>
-                                              );
-                                            }
-                                          )} */}
                                           {timeSlots?.availableTimes?.map(
                                             (slot, index) => {
                                               let timeString = "";
@@ -2176,13 +2203,12 @@ function SalonDetail(props) {
             <Col xs={24} md={6}>
               <div
                 style={{
-                  // marginTop:"30px",
                   padding: "10px",
                   background: "#E9E6D9",
                   borderLeft: "3px solid black",
                   borderRight: "3px solid black",
-                  borderBottom: "3px solid black", // Đường viền phía dưới
-                  borderBottomLeftRadius: "8px", // Bo góc phía dưới bên trái (tùy chọn)
+                  borderBottom: "3px solid black",
+                  borderBottomLeftRadius: "8px",
                   borderBottomRightRadius: "8px",
                 }}
                 className={style["detail-salon-col-2"]}
@@ -2201,7 +2227,6 @@ function SalonDetail(props) {
                 <div>
                   <Title level={4}>Nhân viên</Title>
                   <List
-                    // loading={loading}
                     dataSource={employees}
                     renderItem={(employee) => (
                       <List.Item key={employee.id}>
@@ -2218,7 +2243,6 @@ function SalonDetail(props) {
                     pageSize={pageSizeEmployee}
                     total={total}
                     onChange={handlePageChangeEmployees}
-                    // className={styles.pagination}
                   />
                   <Divider />
                 </div>
@@ -2231,7 +2255,6 @@ function SalonDetail(props) {
                         <PhoneOutlined /> {salonDetail?.salonOwner?.phone}
                       </Text>
                     </Col>
-                    {/* <Button type="primary">Gọi</Button> */}
                   </Row>
                   <Divider />
                 </div>
@@ -2240,40 +2263,6 @@ function SalonDetail(props) {
                   <Title level={4}>Thời gian làm việc</Title>
                   {sortedSchedules?.map((e) => {
                     return (
-                      // <Row  justify="space-between" key={e?.dayOfWeek}>
-                      //   <Text strong>{daysOfWeek[e?.dayOfWeek]}:&nbsp; </Text>
-                      //   {/* <Text>
-                      //     {e?.startTime?.slice(0, 5)} AM -{" "}
-                      //     {e?.endTime?.slice(0, 5)} PM
-                      //   </Text> */}
-                      //   <Text>
-                      //     {e?.startTime?.slice(0, 5) === "00:00" &&
-                      //     e?.endTime?.slice(0, 5) === "00:00"
-                      //       ? "Không hoạt động"
-                      //       : `${e?.startTime?.slice(
-                      //           0,
-                      //           5
-                      //         )} AM - ${e?.endTime?.slice(0, 5)} PM`}
-                      //   </Text>
-                      // </Row>
-                      // <Row
-                      //   justify="space-evenly"
-                      //   key={e?.dayOfWeek}
-                      //   style={{ width: "100%" }}
-                      // >
-                      //   <Text strong style={{ flex: 1 }}>
-                      //     {daysOfWeek[e?.dayOfWeek]}:&nbsp;{" "}
-                      //   </Text>
-                      //   <Text style={{ flex: 1, textAlign: "right" }}>
-                      //     {e?.startTime?.slice(0, 5) === "00:00" &&
-                      //     e?.endTime?.slice(0, 5) === "00:00"
-                      //       ? "Không hoạt động"
-                      //       : `${e?.startTime?.slice(
-                      //           0,
-                      //           5
-                      //         )} AM - ${e?.endTime?.slice(0, 5)} PM`}
-                      //   </Text>
-                      // </Row>
                       <Row
                         justify="space-between"
                         key={e?.dayOfWeek}
@@ -2297,11 +2286,6 @@ function SalonDetail(props) {
                   <Divider />
                 </div>
 
-                {/* <div>
-                    <Button danger block onClick={showReportModal}>
-                      Report Shop
-                    </Button>
-                  </div> */}
                 <Modal
                   title="Xác nhận cuộc hẹn"
                   visible={isPriceModalVisible}
@@ -2392,61 +2376,6 @@ function SalonDetail(props) {
                     </Text>
                   </Typography>
                 </Modal>
-                <div>
-                  <Modal
-                    title="Report Shop"
-                    centered
-                    visible={isReportModalVisible}
-                    onOk={handleReport}
-                    onCancel={handleCancel}
-                    okText="Report"
-                    cancelText="Cancel"
-                    width={400}
-                    style={{ textAlign: "center" }}
-                    footer={null}
-                  >
-                    <Checkbox.Group
-                      style={{ width: "100%" }}
-                      onChange={onChangeCheckbox}
-                    >
-                      {reportOptions.map((option, index) => (
-                        <div
-                          key={index}
-                          style={{
-                            display: "block",
-                            textAlign: "left",
-                            width: "100%",
-                            padding: "8px 0",
-                          }}
-                        >
-                          <Checkbox value={option}>{option}</Checkbox>
-                          {index < reportOptions.length - 1 && <Divider />}
-                        </div>
-                      ))}
-                    </Checkbox.Group>
-                    <div
-                      style={{
-                        textAlign: "center",
-                        paddingTop: "10px",
-                      }}
-                    >
-                      <Button
-                        key="back"
-                        onClick={handleCancel}
-                        style={{ marginRight: "8px" }}
-                      >
-                        Cancel
-                      </Button>
-                      <Button
-                        key="submit"
-                        type="primary"
-                        onClick={handleReport}
-                      >
-                        Report
-                      </Button>
-                    </div>
-                  </Modal>
-                </div>
               </div>
             </Col>
           </Row>
