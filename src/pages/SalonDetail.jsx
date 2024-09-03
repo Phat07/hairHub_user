@@ -29,7 +29,7 @@ import {
   Select,
   Space,
   Spin,
-  Typography
+  Typography,
 } from "antd";
 import { Content } from "antd/es/layout/layout";
 import axios from "axios";
@@ -52,7 +52,7 @@ import {
   onBookAppointmentMessage,
   sendMessage,
   startConnection,
-  stopConnection
+  stopConnection,
 } from "../services/signalRService";
 import { actGetVoucherBySalonIdNotPaging } from "../store/manageVoucher/action";
 import { actGetAllFeedbackBySalonId } from "../store/ratingCutomer/action";
@@ -1159,7 +1159,7 @@ function SalonDetail(props) {
   //   const setupSignalR = async () => {
   //     try {
   //       await startConnection();
-        
+
   //       onBookAppointmentMessage(async (message) => {
   //         console.log('Message from server:', message);
   //         // Handle the received message
@@ -1181,7 +1181,7 @@ function SalonDetail(props) {
   useEffect(() => {
     const initiateConnection = async () => {
       // try {
-        await startConnection();
+      await startConnection();
       // } catch (error) {
       //   console.error("Failed to start the SignalR connection:", error);
       // }
@@ -1410,6 +1410,7 @@ function SalonDetail(props) {
                                 type="primary"
                                 key="book"
                                 onClick={() => handleBookClick(service)}
+                                style={{ backgroundColor: "#bf9456" }}
                               >
                                 Đặt lịch
                               </Button>,
@@ -2070,7 +2071,12 @@ function SalonDetail(props) {
                         <div style={{ marginTop: "16px" }}>
                           <Title level={4}>Tổng</Title>
                           <p style={{ fontSize: "2rem" }}>{calculateTotal()}</p>
-                          <Button onClick={handleBooking} type="primary" block>
+                          <Button
+                            style={{ backgroundColor: "#bf9456" }}
+                            onClick={handleBooking}
+                            type="primary"
+                            block
+                          >
                             Đặt lịch
                           </Button>
                         </div>
