@@ -806,6 +806,10 @@ const LoginPage = () => {
             htmlType: "button",
             submitButtonProps: {
               ref: submitButtonRef,
+              style: {
+                backgroundColor: "#bf9456",
+                width: "100%",
+              },
             }, // uncomment this line
           }}
           onKeyDown={handleKeyDown}
@@ -861,6 +865,9 @@ const LoginPage = () => {
                 setIsModalOpen(true);
               }
               setAccessType(activeKey);
+            }}
+            tabBarStyle={{
+              color: "#bf9456",
             }}
           >
             <Tabs.TabPane key={"login"} tab={"Đăng nhập"} />
