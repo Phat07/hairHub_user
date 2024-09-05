@@ -218,7 +218,7 @@
 
 .arrow-button {
   margin: 0 5px;
-  background-color: #3b6cf5; /* Màu nền cho nút */
+  background-color: #bf9456; /* Màu nền cho nút */
   color: white; /* Màu biểu tượng */
   border: none;
   padding: 8px;
@@ -248,7 +248,7 @@
 
 
 .selected {
-  background-color: #1890ff;
+  background-color: #bf9456;
   color: white;
 }
 

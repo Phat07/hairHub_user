@@ -89,13 +89,13 @@ export const onBookAppointmentMessage = (callback) => {
   });
 };
 
-export const sendMessage = async (message) => {
+export const sendMessage = async (date,serviceHairIds) => {
   try {
     // Kiểm tra trạng thái kết nối
     if (connection.state === signalR.HubConnectionState.Connected) {
       console.log("demo");
       
-      await connection.invoke('SendMessage', message);
+      await connection.invoke('SendMessage', date,serviceHairIds);
     } else {
       console.log('Kết nối không ở trạng thái Connected. Không thể gửi dữ liệu.');
     }

@@ -558,7 +558,8 @@ function SalonDetail(props) {
       });
       const requestBody = {
         day: formattedDate, // Thay bằng ngày bạn muốn book
-        availableSlot: selectedTimeSlot, // Thay bằng slot bạn muốn book
+        // availableSlot: selectedTimeSlot||0,
+        availableSlot: 0, // Thay bằng slot bạn muốn book
         salonId: id, // Thay bằng id của salon
         bookingDetail: databooking,
       };
@@ -620,7 +621,7 @@ function SalonDetail(props) {
     const formattedDate = formatDate(selectedDate);
     const requestBody = {
       day: formattedDate, // Thay bằng ngày bạn muốn book
-      availableSlot: slot, // Thay bằng slot bạn muốn book
+      availableSlot: slot || 0, // Thay bằng slot bạn muốn book
       salonId: id, // Thay bằng id của salon
       bookingDetail: databooking,
     };
@@ -727,7 +728,7 @@ function SalonDetail(props) {
       const formattedDate = formatDate(selectedDate);
       const requestBody = {
         day: formattedDate, // Thay bằng ngày bạn muốn book
-        availableSlot: selectedTimeSlot, // Thay bằng slot bạn muốn book
+        availableSlot: selectedTimeSlot || 0, // Thay bằng slot bạn muốn book
         salonId: id, // Thay bằng id của salon
         bookingDetail: databooking,
       };
@@ -968,7 +969,7 @@ function SalonDetail(props) {
     const formattedDate = formatDate(selectedDate);
     const requestBody = {
       day: formattedDate, // Thay bằng ngày bạn muốn book
-      availableSlot: selectedTimeSlot, // Thay bằng slot bạn muốn book
+      availableSlot: selectedTimeSlot || 0, // Thay bằng slot bạn muốn book
       salonId: id, // Thay bằng id của salon
       bookingDetail: databooking,
     };
@@ -1120,23 +1121,12 @@ function SalonDetail(props) {
   //     message.warning("Tạo lịch không thành công");
   //   }
   // };
-  const fetchAvailable = async (currentDate, id, service) => {
-    console.log("server1", service);
-
-    const formatDate = (date) => {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate()).padStart(2, "0");
-      return `${year}-${month}-${day}`;
-    };
-    // Format the date as an ISO string or any other required format
-    let formattedDate = await formatDate(currentDate);
-
-    // Prepare the post data
+  const fetchAvailable = async (currentDate) => {
+    console.log("Inside fetchAvailable with dateAppointment:", currentDate);
     const postData = {
-      day: formattedDate,
+      day: currentDate,
       salonId: id,
-      serviceHairId: service[0]?.id,
+      serviceHairId: additionalServices[0]?.id,
       salonEmployeeId: null,
       isAnyOne: true,
     };
@@ -1149,7 +1139,8 @@ function SalonDetail(props) {
       const response = await SalonInformationServices.getGetAvailableTime(
         postData
       );
-
+      console.log("respon", response);
+      
       // Update the time slots state with the received data
       if (response && response.data) {
         setTimeSlots(response.data);
@@ -1167,10 +1158,10 @@ function SalonDetail(props) {
   //     try {
   //       await startConnection();
 
-  //       onBookAppointmentMessage(async (date) => {
-  //         console.log("Extracted date from server message:", date);
-  //         // Handle the extracted date
-  //         await fetchAvailable(date, id, additionalServices);
+  //       onBookAppointmentMessage(async (message) => {
+  //         console.log('Message from server:', message);
+  //         // Handle the received message
+  //         await fetchAvailable(currentDate, id, service);
   //       });
   //     } catch (error) {
   //       console.error("Error setting up SignalR:", error);
@@ -1191,43 +1182,55 @@ function SalonDetail(props) {
       try {
         // Create the SignalR connection
         connection = new signalR.HubConnectionBuilder()
-          .withUrl("https://hairhub.gahonghac.net/book-appointment-hub") // Replace with your SignalR hub URL
+          .withUrl("https://hairhub.gahonghac.net/book-appointment-hub") 
           .withAutomaticReconnect()
           .build();
-
+  
         // Start the connection
         await connection.start();
-
+  
         // Set up the event listener directly inside useEffect
-        connection.on("ReceiveMessage", async (message) => {
-          console.log("ReceiveMessage event received:", message);
-
-          // Extract the date from the message
-          const parts = message.split(":");
-          if (parts.length > 1) {
-            const dateStr = parts[1].trim();
-            const date = new Date(dateStr);
-
-            console.log("Extracted date:", date);
-
-            // Directly call fetchAvailable with the extracted date
-            await fetchAvailable(date, id, additionalServices);
-          } else {
-            console.warn("Unexpected message format:", message);
+        connection.on("ReceiveMessage", async (message, dateAppointment, datenow, salonId, serviceId) => {
+          // Make sure selectedDate is properly defined
+          if (!selectedDate) {
+            console.error("selectedDate is not defined");
+            return;
+          }
+  
+          // Function to format the date
+          const formatDate = (date) => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, "0");
+            const day = String(date.getDate()).padStart(2, "0");
+            return `${year}-${month}-${day}`;
+          };
+  
+          // Format the date
+          const formattedDate = formatDate(selectedDate);
+  
+          // Make sure the condition is valid before calling the API
+          if (dateAppointment === formattedDate && salonId === id) {
+            try {
+              await fetchAvailable(dateAppointment);
+            } catch (error) {
+              console.error("Error in fetchAvailable:", error);
+            }
           }
         });
       } catch (error) {
         console.error("Error setting up SignalR:", error);
       }
     };
-
+  
     setupSignalR();
-
+  
     // Clean up the connection when the component unmounts
     return () => {
       connection.stop().then(() => console.log("SignalR Disconnected."));
     };
-  }, []);
+  }, [selectedDate]); // Make sure selectedDate is part of the dependency array
+  
+
 
   useEffect(() => {
     const initiateConnection = async () => {
@@ -1265,17 +1268,19 @@ function SalonDetail(props) {
       const res = await AppointmentService.createAppointment(appointmentData)
         .then(async (res) => {
           await startConnection();
-          const serviceHairIds = appointmentData.appointmentDetails.map(
-            (detail) => detail.serviceHairId
-          );
-          let data = {
-            date: appointmentData?.startDate,
-            serviceHairIds: serviceHairIds,
+          const serviceHairIds =
+            appointmentData?.appointmentDetails?.map(
+              (detail) => detail.serviceHairId // Convert each ID to a string
+            ) || [];
+          let mappingData = {
+            message: "send serviceId",
+            dateAppointment: appointmentData?.startDate,
+            salonId: salonDetail?.id,
+            serviceId: serviceHairIds,
           };
           // Listen for appointment creation events
-          await connection
-            .invoke("SendMessage", data.date, data.serviceHairIds)
-            .catch((err) => console.error("Lỗi gửi tin nhắn:", err));
+          // await sendMessage(data.date,data.serviceHairIds);
+          await AppointmentService.broadcastMessage(mappingData);
           setIsLoading(false);
           message.success("Tạo lịch cắt tóc thành công");
           setAdditionalServices([]);
@@ -1470,6 +1475,7 @@ function SalonDetail(props) {
                                 type="primary"
                                 key="book"
                                 onClick={() => handleBookClick(service)}
+                                style={{ backgroundColor: "#bf9456" }}
                               >
                                 Đặt lịch
                               </Button>,
@@ -1646,7 +1652,7 @@ function SalonDetail(props) {
                               onClick={() => {
                                 setShowServiceList(false);
                               }}
-                              disabled={hasError}
+                              // disabled={hasError}
                             >
                               Trở về
                             </Button>
@@ -2130,7 +2136,12 @@ function SalonDetail(props) {
                         <div style={{ marginTop: "16px" }}>
                           <Title level={4}>Tổng</Title>
                           <p style={{ fontSize: "2rem" }}>{calculateTotal()}</p>
-                          <Button onClick={handleBooking} type="primary" block>
+                          <Button
+                            style={{ backgroundColor: "#bf9456" }}
+                            onClick={handleBooking}
+                            type="primary"
+                            block
+                          >
                             Đặt lịch
                           </Button>
                         </div>

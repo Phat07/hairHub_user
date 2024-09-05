@@ -62,4 +62,7 @@ export const AppointmentService = {
       reasonCancel: reasonCancel,
     });
   },
+  broadcastMessage(data){
+    return API.post('/signalRs/BroadcastMessage/broadcast',data)
+  }
 };
