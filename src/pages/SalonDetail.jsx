@@ -29,7 +29,7 @@ import {
   Select,
   Space,
   Spin,
-  Typography
+  Typography,
 } from "antd";
 import { Content } from "antd/es/layout/layout";
 import axios from "axios";
@@ -52,7 +52,7 @@ import {
   onBookAppointmentMessage,
   sendMessage,
   startConnection,
-  stopConnection
+  stopConnection,
 } from "../services/signalRService";
 import { actGetVoucherBySalonIdNotPaging } from "../store/manageVoucher/action";
 import { actGetAllFeedbackBySalonId } from "../store/ratingCutomer/action";
@@ -502,7 +502,6 @@ function SalonDetail(props) {
     };
 
     const formattedDate = formatDate(day);
-    console.log("formatDay", formattedDate);
 
     if (formattedDate !== selectedDate) {
       setAdditionalServices((prevServices) =>
@@ -1122,20 +1121,28 @@ function SalonDetail(props) {
   //   }
   // };
   const fetchAvailable = async (currentDate, id, service) => {
+    console.log("server1", service);
+
+    const formatDate = (date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    };
     // Format the date as an ISO string or any other required format
-    const formattedDate = currentDate.toISOString(); // Assuming currentDate is a Date object
+    let formattedDate = await formatDate(currentDate);
 
     // Prepare the post data
     const postData = {
       day: formattedDate,
       salonId: id,
-      serviceHairId: service?.id,
+      serviceHairId: service[0]?.id,
       salonEmployeeId: null,
       isAnyOne: true,
     };
 
     // Update the selected date (if needed)
-    setSelectedDate(currentDate);
+    // setSelectedDate(currentDate);
 
     try {
       // Call the API to get available time slots
@@ -1159,29 +1166,73 @@ function SalonDetail(props) {
   //   const setupSignalR = async () => {
   //     try {
   //       await startConnection();
-        
-  //       onBookAppointmentMessage(async (message) => {
-  //         console.log('Message from server:', message);
-  //         // Handle the received message
-  //         await fetchAvailable(currentDate, id, service);
+
+  //       onBookAppointmentMessage(async (date) => {
+  //         console.log("Extracted date from server message:", date);
+  //         // Handle the extracted date
+  //         await fetchAvailable(date, id, additionalServices);
   //       });
   //     } catch (error) {
-  //       console.error('Error setting up SignalR:', error);
+  //       console.error("Error setting up SignalR:", error);
   //     }
   //   };
 
   //   setupSignalR();
 
   //   // Clean up the connection when the component unmounts
-  //   return () => {
-  //     stopConnection();
-  //   };
+  //   // return () => {
+  //   //   stopConnection();
+  //   // };
   // }, []);
+
+  useEffect(() => {
+    let connection;
+    const setupSignalR = async () => {
+      try {
+        // Create the SignalR connection
+        connection = new signalR.HubConnectionBuilder()
+          .withUrl("https://hairhub.gahonghac.net/book-appointment-hub") // Replace with your SignalR hub URL
+          .withAutomaticReconnect()
+          .build();
+
+        // Start the connection
+        await connection.start();
+
+        // Set up the event listener directly inside useEffect
+        connection.on("ReceiveMessage", async (message) => {
+          console.log("ReceiveMessage event received:", message);
+
+          // Extract the date from the message
+          const parts = message.split(":");
+          if (parts.length > 1) {
+            const dateStr = parts[1].trim();
+            const date = new Date(dateStr);
+
+            console.log("Extracted date:", date);
+
+            // Directly call fetchAvailable with the extracted date
+            await fetchAvailable(date, id, additionalServices);
+          } else {
+            console.warn("Unexpected message format:", message);
+          }
+        });
+      } catch (error) {
+        console.error("Error setting up SignalR:", error);
+      }
+    };
+
+    setupSignalR();
+
+    // Clean up the connection when the component unmounts
+    return () => {
+      connection.stop().then(() => console.log("SignalR Disconnected."));
+    };
+  }, []);
 
   useEffect(() => {
     const initiateConnection = async () => {
       // try {
-        await startConnection();
+      await startConnection();
       // } catch (error) {
       //   console.error("Failed to start the SignalR connection:", error);
       // }
@@ -1213,16 +1264,25 @@ function SalonDetail(props) {
       // Create the appointment
       const res = await AppointmentService.createAppointment(appointmentData)
         .then(async (res) => {
+          await startConnection();
+          const serviceHairIds = appointmentData.appointmentDetails.map(
+            (detail) => detail.serviceHairId
+          );
+          let data = {
+            date: appointmentData?.startDate,
+            serviceHairIds: serviceHairIds,
+          };
+          // Listen for appointment creation events
+          await connection
+            .invoke("SendMessage", data.date, data.serviceHairIds)
+            .catch((err) => console.error("Lỗi gửi tin nhắn:", err));
           setIsLoading(false);
           message.success("Tạo lịch cắt tóc thành công");
           setAdditionalServices([]);
           setVoucherSelected([]);
 
           // Start the SignalR connection after appointment creation
-          await startConnection();
 
-          // Listen for appointment creation events
-          await sendMessage("Booking confirmed");
           // await stopConnection();
         })
         .catch((err) => {

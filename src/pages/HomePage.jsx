@@ -201,7 +201,7 @@ function HomePage(props) {
                   onClick={scrollLeft1}
                 />
 
-                <div className="scroll-content" ref={scrollContainerRef}>
+                <motion.div className="scroll-content" ref={scrollContainerRef} >
                   {recommendedSalons?.length > 0 ? (
                     recommendedSalons?.map((item, index) => (
                       <Card
@@ -408,7 +408,7 @@ function HomePage(props) {
                   ) : (
                     <EmptyComponent description={"Hiện không có salon nào!"} />
                   )} */}
-                </div>
+                </motion.div>
 
                 <RightCircleOutlined
                   className="scroll-icon scroll-icon-right"

@@ -70,9 +70,22 @@ export const stopConnection = async () => {
 
 export const onBookAppointmentMessage = (callback) => {
   console.log('Setting up event listener for AppointmentCreated');
-  connection.on('BookAppointmentMessage', (message) => {
-    console.log('BookAppointmentMessage event received:', message);
-    callback(message);
+  connection.on('ReceiveMessage', (message) => {
+    console.log('ReceiveMessage event received:', message);
+
+    // Assuming message is structured like the example: ["id has join","2024-09-02T22:54:39.1099985+07:00"]
+    const messageData = JSON.parse(message);
+    if (messageData.arguments && messageData.arguments.length > 1) {
+      const dateStr = messageData.arguments[1];
+      const date = new Date(dateStr);
+
+      console.log('Extracted date:', date);
+
+      // Call the callback with the parsed date
+      callback(date);
+    } else {
+      console.warn('Unexpected message format:', message);
+    }
   });
 };
 
@@ -80,6 +93,8 @@ export const sendMessage = async (message) => {
   try {
     // Kiểm tra trạng thái kết nối
     if (connection.state === signalR.HubConnectionState.Connected) {
+      console.log("demo");
+      
       await connection.invoke('SendMessage', message);
     } else {
       console.log('Kết nối không ở trạng thái Connected. Không thể gửi dữ liệu.');
