@@ -81,7 +81,7 @@ function DashboardTransactionPage(props) {
     (total, transaction) => total + transaction.totalPrice,
     0
   );
-
+  
   const unpaidCommission =
     salonTransaction && salonTransaction.currentComssion
       ? salonTransaction.currentComssion

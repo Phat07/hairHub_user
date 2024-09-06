@@ -383,6 +383,8 @@ function ListSalonVer2(props) {
       const salonsWithServices = await Promise.all(servicePromises);
 
       setSalonList(salonsWithServices);
+      console.log("salonwwith", salonsWithServices);
+
       setTotalPages(salonRes.data.total);
       setTotal(salonRes.data.total);
     } catch (err) {
@@ -737,74 +739,13 @@ function ListSalonVer2(props) {
               </Button> */}
                 </div>
               </div>
-              {/* <div className={styles["list-salon-content"]}>
-                  {salonList.length !== 0 ? (
-                    salonList.map((salon) => (
-                      <div className={styles["list-salon-item"]} key={salon.id}>
-                        <div
-                          className={styles["list-salon-image"]}
-                          style={{ width: "30%" }}
-                        >
-                          <img
-                            src={salon.img}
-                            alt={salon.name}
-                            style={{ width: "100%" }}
-                          />
-                        </div>
-                        <div
-                          className={styles["list-salon-info"]}
-                          style={{ width: "70%", paddingLeft: "16px" }}
-                        >
-                          <p style={{ fontSize: "1.5rem" }}>{salon.name}</p>
-                          <p style={{ fontSize: "1rem" }}>
-                            <strong>Mô tả:</strong> {salon.description}
-                          </p>
-                          <p style={{ fontSize: "1rem" }}>
-                            <strong>Địa chỉ:</strong> {salon.address}
-                          </p>
-                          <ul>
-                            {salon.services.map((service, index) => (
-                              <li
-                                key={index}
-                                className={styles["service-list-item"]}
-                              >
-                                <div className={styles["service-details"]}>
-                                  <span className={styles["service-name"]}>
-                                    {service.serviceName}:{" "}
-                                  </span>
-                                  <span
-                                    className={styles["service-description"]}
-                                  >
-                                    {service.description} - {service.price} vnđ
-                                  </span>
-                                </div>
-                                <Button
-                                  onClick={() =>
-                                    navigate(`/salon_detail/${salon?.id}`)
-                                  }
-                                  className={styles["book-button"]}
-                                >
-                                  Đặt lịch
-                                </Button>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <>
-                      <Empty />
-                    </>
-                  )}
-                </div> */}
               <div className={styles["list-salon-content"]}>
                 {salonList.length !== 0 ? (
                   salonList.map((salon) => (
                     <motion.div
                       className={styles["list-salon-item"]}
                       key={salon.id}
-                      whileHover={{ scale: 1.05,border: '1px solid #bc8d4a' }} // Scale effect on hover
+                      whileHover={{ scale: 1.05, border: "1px solid #bc8d4a" }} // Scale effect on hover
                       transition={{ duration: 0.3 }} // Transition duration
                       initial={{ opacity: 0 }} // Initial opacity for scroll effect
                       animate={{ opacity: 1 }} // Final opacity for scroll effect
@@ -819,6 +760,84 @@ function ListSalonVer2(props) {
                           alt={salon.name}
                           style={{ width: "100%" }}
                         />
+                        <div style={{ marginTop: "8px", fontSize: "1rem" }}>
+                          <motion.div
+                            key={salon.operatingStatus} // Ensures re-render when status changes
+                            initial={{
+                              opacity: 0,
+                              color:
+                                salon.operatingStatus ===
+                                "Không hoạt động vào hôm nay"
+                                  ? "#EF4444"
+                                  : "#10B981",
+                            }}
+                            animate={{
+                              opacity: 1,
+                              color:
+                                salon.operatingStatus ===
+                                "Không hoạt động vào hôm nay"
+                                  ? "#EF4444"
+                                  : "#10B981",
+                            }}
+                            transition={{ duration: 0.5 }} // Adjust the duration
+                            className="transform transition-transform duration-500"
+                          >
+                            <p
+                              className={`text-lg font-semibold ${
+                                salon.operatingStatus ===
+                                "Không hoạt động vào hôm nay"
+                                  ? "text-red-500"
+                                  : "text-green-500"
+                              }`}
+                            >
+                              {salon.operatingStatus}
+                            </p>
+                          </motion.div>
+
+                          <div className="flex items-center space-x-2">
+                            {salon.distance === null ? (
+                              <>
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                  className="w-6 h-6 text-gray-500"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M12 2a9 9 0 00-9 9c0 6 9 11 9 11s9-5 9-11a9 9 0 00-9-9zm0 13a3 3 0 100-6 3 3 0 000 6z"
+                                  />
+                                </svg>
+                                <p className="text-gray-500 font-medium">
+                                  Hãy dùng vị trí của bạn
+                                </p>
+                              </>
+                            ) : (
+                              <>
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                  className="w-6 h-6 text-green-500"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M12 2a9 9 0 00-9 9c0 6 9 11 9 11s9-5 9-11a9 9 0 00-9-9zm0 13a3 3 0 100-6 3 3 0 000 6z"
+                                  />
+                                </svg>
+                                <p className="text-green-500 font-medium">
+                                  {salon.distance.toFixed(1)} km
+                                </p>
+                              </>
+                            )}
+                          </div>
+                        </div>
                       </div>
                       <div
                         className={styles["list-salon-info"]}

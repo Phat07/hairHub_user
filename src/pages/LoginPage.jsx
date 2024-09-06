@@ -1,9 +1,7 @@
 import {
   LockOutlined,
-  ManOutlined,
   UserOutlined,
-  WomanOutlined,
-  createFromIconfontCN,
+  createFromIconfontCN
 } from "@ant-design/icons";
 import {
   Button,
@@ -32,21 +30,19 @@ import {
 
 import axios from "axios";
 // import { ProFormInstance } from "@ant-design/pro-components";
-import useIsAuthenticated from "react-auth-kit/hooks/useIsAuthenticated";
-import useSignIn from "react-auth-kit/hooks/useSignIn";
 import OTPInput from "react-otp-input";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
-import ResendCode from "../components/Resend/resendCode";
 import {
   emailPattern,
   fullNamePattern,
   phonePattern,
   pwdPattern,
 } from "../components/Regex/Patterns";
+import ResendCode from "../components/Resend/resendCode";
 import "../css/loader.css";
 import { AccountServices } from "../services/accountServices";
-import { useDispatch } from "react-redux";
 import { loginAccount } from "../store/account/action";
 // import LoginGoogle from "../components/googleSignIn/LoginGoogle";
 import hairhubLogo from "../assets/images/hairHubLogo.png";
@@ -127,7 +123,7 @@ const LoginPage = () => {
             email,
           })
           .then((res) => {
-            setLoading(false);
+            // setLoading(false);
             message.success("Xác thực Email thành công! Vui lòng điền otp!");
             // call api gửi otp
             setIsOtpModalOpen(true);
@@ -149,7 +145,7 @@ const LoginPage = () => {
             email: emailForgot,
           })
           .then((res) => {
-            setLoading(false);
+            // setLoading(false);
             message.success("Xác thực Email thành công! Vui lòng điền otp!");
             // call api gửi otp
             setIsOtpModalOpen(true);
