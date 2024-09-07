@@ -34,6 +34,8 @@ import LoadScriptMap from "../components/LoadScriptMap";
 import { motion } from "framer-motion";
 import "antd/dist/reset.css";
 import "../css/customerAppointmentTable.css";
+import Meteors from "@/components/magicui/meteors";
+import SparklesText from "@/components/magicui/sparkles-text";
 
 import { set } from "rsuite/esm/internals/utils/date";
 import { useTransition } from "@react-spring/web";
@@ -561,8 +563,12 @@ function ListSalonVer2(props) {
       setInputLocation(places[0].formatted_address);
     }
   };
+  function formatMoneyVND(amount) {
+    return amount.toLocaleString("vi-VN");
+  }
   return (
     <div className={styles["list-salon-container"]}>
+       {/* <Meteors number={30} /> */}
       <div className={styles["left-side"]}>
         <div className={styles["list-salon-header"]}>
           <div className={styles["list-salon-search"]}>
@@ -708,7 +714,7 @@ function ListSalonVer2(props) {
             <div className={styles["list-salon-center"]}>
               <div>
                 <p className={styles["list-salon-result"]}>
-                  Kết quả: ({total})
+                <SparklesText text={`Kết quả: (${total})`} />
                 </p>
               </div>
             </div>
@@ -739,6 +745,7 @@ function ListSalonVer2(props) {
               </Button> */}
                 </div>
               </div>
+              
               <div className={styles["list-salon-content"]}>
                 {salonList.length !== 0 ? (
                   salonList.map((salon) => (
@@ -760,7 +767,7 @@ function ListSalonVer2(props) {
                           alt={salon.name}
                           style={{ width: "100%" }}
                         />
-                        <div style={{ marginTop: "8px", fontSize: "1rem" }}>
+                        <div style={{ marginTop: "8px", fontSize: "1rem", textAlign:"center" }}>
                           <motion.div
                             key={salon.operatingStatus} // Ensures re-render when status changes
                             initial={{
@@ -796,7 +803,7 @@ function ListSalonVer2(props) {
 
                           <div className="flex items-center space-x-2">
                             {salon.distance === null ? (
-                              <>
+                              <div className="flex align-middle">
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
                                   fill="none"
@@ -811,12 +818,12 @@ function ListSalonVer2(props) {
                                     d="M12 2a9 9 0 00-9 9c0 6 9 11 9 11s9-5 9-11a9 9 0 00-9-9zm0 13a3 3 0 100-6 3 3 0 000 6z"
                                   />
                                 </svg>
-                                <p className="text-gray-500 font-medium">
-                                  Hãy dùng vị trí của bạn
+                                <p className="text-gray-500 font-medium ml-2">
+                                  ...
                                 </p>
-                              </>
+                              </div>
                             ) : (
-                              <>
+                              <div className="flex align-middle">
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
                                   fill="none"
@@ -834,7 +841,7 @@ function ListSalonVer2(props) {
                                 <p className="text-green-500 font-medium">
                                   {salon.distance.toFixed(1)} km
                                 </p>
-                              </>
+                              </div>
                             )}
                           </div>
                         </div>
@@ -866,7 +873,8 @@ function ListSalonVer2(props) {
                                   {service.serviceName}:{" "}
                                 </span>
                                 <span className={styles["service-description"]}>
-                                  {service.description} - {service.price} vnđ
+                                  {service.description} -{" "}
+                                  {formatMoneyVND(service.price)} vnđ
                                 </span>
                               </div>
                               <Button

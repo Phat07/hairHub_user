@@ -3,14 +3,13 @@
   justify-content: space-between;
   padding: 0 40px;
   margin-top: 95px;
-  /* height: 1250px; */
-  /* box-sizing: border-box; */
-  /* flex: 1; */
+  /* position: relative;
+  overflow: hidden; */
 }
 
 .left-side {
   flex: 6.5;
-  margin-right: 40px; /* Khoảng cách giữa 2 div */
+  margin-right: 40px; 
   display: flex;
   flex-direction: column;
 }
@@ -18,7 +17,7 @@
 .right-side {
   flex: 3.5;
   margin-top: 1rem;
-  position: -webkit-sticky; /* For Safari */
+  position: -webkit-sticky; 
   position: sticky;
   top: 7rem;
   width: calc(35% - 40px);
@@ -29,7 +28,6 @@
 }
 .select_1 {
   width: 15rem;
-  /* margin-right: "10px"; */
 }
 .select_2 {
   width: 15rem;
@@ -38,6 +36,10 @@
   display: flex;
   justify-content: space-around;
 }
+/* .list-salon-content{
+  position: relative;
+  overflow: hidden;
+} */
 
 @media (max-width: 768px) {
   .list-salon-container {
@@ -74,7 +76,7 @@
   }
   .right-side {
     width: 100%;
-    top: 26rem;
+    top: 20rem;
     margin: 1rem 0; /* Margin on top and bottom to space it from other content */
     position: absolute;
   }
@@ -146,7 +148,7 @@
 }
 
 .list-salon-result {
-  font-size: 2rem;
+  font-size: 1rem;
   font-weight: bolder;
 }
 

@@ -31,6 +31,8 @@ import {
   Spin,
   Typography,
 } from "antd";
+// import { ButtonMode } from "@/components/ui/button";
+import { CoolMode } from "@/components/magicui/cool-mode";
 import { Content } from "antd/es/layout/layout";
 import axios from "axios";
 import dayjs from "dayjs";
@@ -370,7 +372,7 @@ function SalonDetail(props) {
   const currentMonthDays = generateNextSevenDays();
 
   const handleBookClick = async (service) => {
-    if (userId === salonDetail?.salonOwner?.id && userId) {
+    if (userId === salonDetail?.salonOwner?.id || userId) {
       message.warning("Bạn là chủ cửa hàng không thể đặt lịch");
       return;
     }
@@ -1303,7 +1305,9 @@ function SalonDetail(props) {
   const filteredFeedback = filterRating
     ? listFeedback.filter((feedback) => feedback?.rating === filterRating)
     : listFeedback;
-
+  function formatMoneyVND(amount) {
+    return amount.toLocaleString("vi-VN");
+  }
   return (
     <div style={{ marginTop: "97px" }}>
       <Layout>
@@ -1375,15 +1379,24 @@ function SalonDetail(props) {
                   cursor: "pointer",
                 }}
               >
-                <Button>
-                  <a
-                    href={`https://www.google.com/maps/dir/?api=1&destination=${salonDetail.latitude},${salonDetail.longitude}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                <div className="relative justify-center">
+                  <CoolMode
+                    options={{
+                      particle:
+                        "https://pbs.twimg.com/profile_images/1782811051504885763/YR5-kWOI_400x400.jpg",
+                    }}
                   >
-                    Chỉ đường
-                  </a>
-                </Button>
+                    <Button>
+                      <a
+                        href={`https://www.google.com/maps/dir/?api=1&destination=${salonDetail.latitude},${salonDetail.longitude}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Chỉ đường
+                      </a>
+                    </Button>
+                  </CoolMode>
+                </div>
               </div>
 
               <div>
@@ -1466,9 +1479,9 @@ function SalonDetail(props) {
                                   {service?.serviceName}
                                 </span>
                               }
-                              description={`${
+                              description={`${formatMoneyVND(
                                 service?.price
-                              } vnđ • ${formatTime(service?.time)}`}
+                              )} vnđ • ${formatTime(service?.time)}`}
                             />
                           </List.Item>
                         </motion.div>
@@ -1583,7 +1596,7 @@ function SalonDetail(props) {
                                                 fontWeight: "normal",
                                               }}
                                             >
-                                              {formatCurrency(service.price)}
+                                              {formatMoneyVND(service.price)}
                                             </Text>
                                           </Text>
                                           <Text strong>
@@ -1592,7 +1605,7 @@ function SalonDetail(props) {
                                               style={{
                                                 display: "inline",
                                                 fontWeight: "normal",
-                                              }}
+                                              }}  
                                             >
                                               {formatTime(service.time)}
                                             </Text>
@@ -1648,18 +1661,25 @@ function SalonDetail(props) {
                                     },
                                   }}
                                 >
-                                  <Button
-                                    onClick={() => handleDateSelect(day)}
-                                    className={
-                                      selectedDate &&
-                                      selectedDate.toDateString() ===
-                                        day.toDateString()
-                                        ? style.selected
-                                        : ""
-                                    }
+                                  <CoolMode
+                                    options={{
+                                      particle:
+                                        "https://pbs.twimg.com/profile_images/1782811051504885763/YR5-kWOI_400x400.jpg",
+                                    }}
                                   >
-                                    {formatDate(day)}
-                                  </Button>
+                                    <Button
+                                      onClick={() => handleDateSelect(day)}
+                                      className={
+                                        selectedDate &&
+                                        selectedDate.toDateString() ===
+                                          day.toDateString()
+                                          ? style.selected
+                                          : ""
+                                      }
+                                    >
+                                      {formatDate(day)}
+                                    </Button>
+                                  </CoolMode>
                                 </motion.div>
                               ))}
                             </motion.div>
@@ -1867,7 +1887,10 @@ function SalonDetail(props) {
                                       }
                                       description={
                                         <div style={{ display: "inline-grid" }}>
-                                          <span>Tiền: {service.price} vnđ</span>
+                                          <span>
+                                            Tiền:{" "}
+                                            {formatMoneyVND(service.price)} vnđ
+                                          </span>
                                           <span>
                                             Thời gian dịch vụ:{" "}
                                             {formatTime(service.time)}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Row, Col, Table, Spin, message } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import "../css/PaymentCommissionPage.css";
 import { SalonPayment } from "../services/salonPayment";
@@ -40,6 +40,7 @@ function PaymentCommissionPage() {
   const idOwner = useSelector((state) => state.ACCOUNT.idOwner);
   const [loading, setLoading] = useState(false);
   const config = useSelector((state) => state.CONFIGREDUCER.getAllPackage);
+  const navigate= useNavigate()
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -72,10 +73,14 @@ function PaymentCommissionPage() {
         );
       });
   }, [idOwner]);
+console.log("config", config);
 
   const handleNextClick = () => {
+    const foundPackage = config.find(config => config.pakageName === "Phí hoa hồng hairhub");
+    console.log("found", foundPackage);
+    
     const data = {
-      configId: config[0]?.id,
+      configId: foundPackage?.id,
       salonOwnerID: idOwner,
       description: "Thanh toán gói dịch vụ",
     };
@@ -99,6 +104,7 @@ function PaymentCommissionPage() {
         }
       })
       .catch((err) => {
+        message.error("Vui lòng thử lại sau!!!!");
         console.error("Error:", err);
         setLoading(false);
       })
@@ -160,7 +166,7 @@ function PaymentCommissionPage() {
             <Button onClick={handleNextClick} type="primary">
               TIẾP THEO
             </Button>
-            <Button type="default" danger>
+            <Button onClick={()=>navigate(-1)} type="default" danger>
               HỦY HOÁ ĐƠN
             </Button>
           </Row>
