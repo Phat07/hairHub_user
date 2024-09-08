@@ -70,14 +70,23 @@ export const GetAppointmentSalonByStatus =
 //       });
 //   };
 // }
-export function actGetAppointmentBySalonId(salonId, page, size, status) {
+export function actGetAppointmentBySalonId(
+  salonId,
+  page,
+  size,
+  status,
+  isAscending,
+  date
+) {
   return async (dispatch) => {
     try {
       const response = await AppointmentService.GetAppointmentSalonByStatus(
         salonId,
         page,
         size,
-        status
+        status,
+        isAscending,
+        date
       );
       if (response.status === 200 || response.status === 201) {
         dispatch(

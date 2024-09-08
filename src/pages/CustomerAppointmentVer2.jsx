@@ -131,8 +131,8 @@ function CustomerAppointmentVer2(props) {
     const year = date.getFullYear();
     const hours = date.getHours().toString().padStart(2, "0");
     const minutes = date.getMinutes().toString().padStart(2, "0");
-    // return `${day}/${month}/${year} - ${hours}:${minutes}`;
-    return `${day}/${month}/${year}`;
+    return `${day}/${month}/${year} - ${hours}:${minutes}`;
+    // return `${day}/${month}/${year}`;
   };
 
   function formatVND(amount) {
@@ -497,16 +497,16 @@ function CustomerAppointmentVer2(props) {
                 <Text strong>Ngày tạo: </Text>
                 <Text>
                   {moment(selectedAppointmentDetail.createdDate).format(
-                    "DD/MM/YYYY"
+                    "DD/MM/YYYY - HH:mm"
                   )}
                 </Text>
               </p>
               <p>
                 <Text strong>Ngày hẹn: </Text>
                 <Text>
-                  {moment(selectedAppointmentDetail.startDate).format(
-                    "DD/MM/YYYY"
-                  )}
+                  {moment(
+                    selectedAppointmentDetail.appointmentDetails[0]?.startTime
+                  ).format("DD/MM/YYYY - HH:mm")}
                 </Text>
               </p>
               <p>
@@ -568,10 +568,19 @@ function CustomerAppointmentVer2(props) {
       render: (salonInformation) => salonInformation?.name,
     },
     {
+      title: "Ngày tạo",
+      dataIndex: "createdDate",
+      key: "createdDate",
+      render: (createdDate) => formatDate(createdDate),
+    },
+    {
       title: "Ngày hẹn",
       dataIndex: "startDate",
       key: "startDate",
-      render: (startDate) => formatDate(startDate),
+      render: (text, record) => {
+        const startTime = record.appointmentDetails[0]?.startTime;
+        return moment(startTime).format("DD/MM/YYYY - HH:mm");
+      },
     },
     {
       title: "Tổng giá",
@@ -579,14 +588,14 @@ function CustomerAppointmentVer2(props) {
       key: "totalPrice",
       render: (totalPrice) => `${formatVND(totalPrice)} VND`,
     },
-    {
-      title: "Trạng thái",
-      dataIndex: "status",
-      key: "status",
-      render: (status) => (
-        <Tag color={statusColors[status]}>{statusDisplayNames[status]}</Tag>
-      ),
-    },
+    // {
+    //   title: "Trạng thái",
+    //   dataIndex: "status",
+    //   key: "status",
+    //   render: (status) => (
+    //     <Tag color={statusColors[status]}>{statusDisplayNames[status]}</Tag>
+    //   ),
+    // },
     {
       title: "Chi tiết",
       key: "detail",

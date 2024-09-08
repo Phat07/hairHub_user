@@ -1,12 +1,14 @@
 import { API } from "./api";
 
 export const AppointmentService = {
-  GetAppointmentSalonByStatus(salonId, page, size, status) {
+  GetAppointmentSalonByStatus(salonId, page, size, status, isAscending, date) {
     return API.get(`/appointments/GetAppointmentSalonByStatus/${salonId}`, {
       params: {
         page,
         size,
         status,
+        isAscending,
+        date,
       },
     });
   },
@@ -62,7 +64,7 @@ export const AppointmentService = {
       reasonCancel: reasonCancel,
     });
   },
-  broadcastMessage(data){
-    return API.post('/signalRs/BroadcastMessage/broadcast',data)
-  }
+  broadcastMessage(data) {
+    return API.post("/signalRs/BroadcastMessage/broadcast", data);
+  },
 };
