@@ -155,8 +155,13 @@
   flex-basis: 60%;
   margin: 0 10px;
 }
+/* YourStyles.module.css */
+.rating-progress-bar .ant-progress-bg {
+  background-color: gold; /* Change this color as needed */
+}
 
-:global(:where(.css-dev-only-do-not-override-wb61s4).ant-progress .ant-progress-bg) {
+
+:global(:where(.css--wb61s4).ant-progress .ant-progress-outer .ant-progress-inner .ant-progress-bg) {
   background-color: gold;
 }
 :global(:where(.css-dev-only-do-not-override-wb61s4).ant-layout){

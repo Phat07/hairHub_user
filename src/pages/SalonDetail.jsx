@@ -2190,6 +2190,10 @@ function SalonDetail(props) {
                         }
                         status="active"
                         showInfo={false}
+                        strokeColor={{
+                          '0%': '#FFD700',   // Gradient or color variations
+                          '100%': '#FFD700',
+                        }}
                       />
                       <span className={style["review-count"]}>
                         {ratingDistribution[starValue]}
