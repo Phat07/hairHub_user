@@ -20,13 +20,13 @@ function Header(props) {
   const salonDetail = useSelector(
     (state) => state.SALONINFORMATION.getSalonByOwnerId
   );
-  
+
   const salonServicesList = useSelector(
     (state) => state.SALONEMPLOYEES.salonServicesList
   );
 
   const account = useSelector((state) => state.ACCOUNT.username);
-  
+
   useEffect(() => {
     if (idOwner) {
       try {
@@ -73,7 +73,6 @@ function Header(props) {
   const toggleMenu = () => {
     setMenuActive(!menuActive);
   };
-
 
   return (
     <div>
@@ -138,24 +137,24 @@ function Header(props) {
           {idOwner && (
             <nav className={style.navbar}>
               <ul className={style.navList}>
-                {/* <li className={style.navItem}>
-                  <Link to={"/"} className={style.navLink}>
-                    Trang chủ
+                <li className={style.navItem}>
+                  <Link className={style.navLink} to={handleEmptySalon()}>
+                    Quản lý Salon
                   </Link>
-                </li> */}
-                {/* <li className={style.navItem}>
-                  <Link to={"/list_salon_ver2"} className={style.navLink}>
-                    Hệ thống cửa hàng
-                  </Link>
-                </li> */}
+                </li>
                 <li className={style.navItem}>
                   <Link to={"/salon_appointment"} className={style.navLink}>
                     Cuộc hẹn
                   </Link>
                 </li>
                 <li className={style.navItem}>
-                  <Link className={style.navLink} to={handleEmptySalon()}>
-                    Quản lý Salon
+                  <Link to="/salon_report" className={style.navLink}>
+                    Danh sách báo cáo của bạn
+                  </Link>
+                </li>
+                <li className={style.navItem}>
+                  <Link to="/dashboardTransaction" className={style.navLink}>
+                    Thống kê doanh thu
                   </Link>
                 </li>
                 {menuActive && (
