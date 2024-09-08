@@ -138,16 +138,16 @@ function Header(props) {
           {idOwner && (
             <nav className={style.navbar}>
               <ul className={style.navList}>
-                <li className={style.navItem}>
+                {/* <li className={style.navItem}>
                   <Link to={"/"} className={style.navLink}>
                     Trang chủ
                   </Link>
-                </li>
-                <li className={style.navItem}>
+                </li> */}
+                {/* <li className={style.navItem}>
                   <Link to={"/list_salon_ver2"} className={style.navLink}>
                     Hệ thống cửa hàng
                   </Link>
-                </li>
+                </li> */}
                 <li className={style.navItem}>
                   <Link to={"/salon_appointment"} className={style.navLink}>
                     Cuộc hẹn

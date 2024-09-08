@@ -24,8 +24,15 @@ export function loginAccount(data, navigate) {
       .then((response) => {
         if (response.status === 200 || response.status === 201) {
           dispatch(LOGIN(response.data));
+          console.log("res12", response.data);
+          let owner = response?.data?.salonOwnerResponse;
+          // if(response.data)
+          if (owner) {
+            navigate("/list_shop");
+          } else {
+            navigate("/");
+          }
           message.success("Đăng nhập thành công");
-          navigate("/");
         } else if (response.status === 401) {
           // console.log('err',response);
           // message.error("Đăng nhập không thành công");
