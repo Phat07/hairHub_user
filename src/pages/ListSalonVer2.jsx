@@ -568,7 +568,7 @@ function ListSalonVer2(props) {
   }
   return (
     <div className={styles["list-salon-container"]}>
-       {/* <Meteors number={30} /> */}
+      {/* <Meteors number={30} /> */}
       <div className={styles["left-side"]}>
         <div className={styles["list-salon-header"]}>
           <div className={styles["list-salon-search"]}>
@@ -714,7 +714,7 @@ function ListSalonVer2(props) {
             <div className={styles["list-salon-center"]}>
               <div>
                 <p className={styles["list-salon-result"]}>
-                <SparklesText text={`Kết quả: (${total})`} />
+                  <SparklesText text={`Kết quả: (${total})`} />
                 </p>
               </div>
             </div>
@@ -745,7 +745,7 @@ function ListSalonVer2(props) {
               </Button> */}
                 </div>
               </div>
-              
+
               <div className={styles["list-salon-content"]}>
                 {salonList.length !== 0 ? (
                   salonList.map((salon) => (
@@ -767,22 +767,26 @@ function ListSalonVer2(props) {
                           alt={salon.name}
                           style={{ width: "100%" }}
                         />
-                        <div style={{ marginTop: "8px", fontSize: "1rem", textAlign:"center" }}>
+                        <div
+                          style={{
+                            marginTop: "8px",
+                            fontSize: "1rem",
+                            textAlign: "center",
+                          }}
+                        >
                           <motion.div
                             key={salon.operatingStatus} // Ensures re-render when status changes
                             initial={{
                               opacity: 0,
                               color:
-                                salon.operatingStatus ===
-                                "Không hoạt động vào hôm nay"
+                                salon.operatingStatus === "Đang hoạt động"
                                   ? "#EF4444"
                                   : "#10B981",
                             }}
                             animate={{
                               opacity: 1,
                               color:
-                                salon.operatingStatus ===
-                                "Không hoạt động vào hôm nay"
+                                salon.operatingStatus === "Đang hoạt động"
                                   ? "#EF4444"
                                   : "#10B981",
                             }}
@@ -791,10 +795,9 @@ function ListSalonVer2(props) {
                           >
                             <p
                               className={`text-lg font-semibold ${
-                                salon.operatingStatus ===
-                                "Không hoạt động vào hôm nay"
-                                  ? "text-red-500"
-                                  : "text-green-500"
+                                salon.operatingStatus === "Đang hoạt động"
+                                  ? "text-green-500"
+                                  : "text-red-500"
                               }`}
                             >
                               {salon.operatingStatus}
