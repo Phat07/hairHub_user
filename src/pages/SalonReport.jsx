@@ -153,13 +153,13 @@ function SalonReport(props) {
         columns={columns}
         rowKey="id"
         pagination={{
+          className: "paginationAppointment",
           current: currentPage,
           pageSize: pageSize,
           total: salonReport?.total || 0,
           position: ["bottomCenter"],
         }}
         onChange={handleTableChange}
-        style={{ backgroundColor: "#fafafa" }} // Match table header color
       />
       <Modal
         title={
