@@ -8,6 +8,7 @@ import {
 import { Button, Modal, Space, Table, Carousel, Descriptions } from "antd";
 import { actGetSalonInformationByOwnerIdAsync } from "../store/salonAppointments/action";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
+import styles from "../css/salonAppointment.module.css";
 import moment from "moment";
 
 function SalonReport(props) {
@@ -126,7 +127,7 @@ function SalonReport(props) {
     : [];
 
   return (
-    <div style={{ padding: "20px", marginTop: "7rem" }}>
+    <div className={styles.appointmentContainer}>
       <Space style={{ marginBottom: "20px" }}>
         <Button
           type={status === "PENDING" ? "primary" : "default"}
