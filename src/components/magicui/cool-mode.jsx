@@ -217,7 +217,7 @@ const applyParticleEffect = (element, options) => {
 
 //   return React.cloneElement(children, { ref });
 // };
-import { useRef, useEffect, useState } from "react";
+
 
 export const CoolMode = ({ children, options, maxParticles = 1 }) => {
   const ref = useRef(null);
