@@ -943,8 +943,7 @@ function ListShopBarber(props) {
           setisUpdateModalService(false);
           dispatch(actGetAllServicesBySalonId(salonDetail.id, 1, 4));
         })
-        .catch((err) => {
-        });
+        .catch((err) => {});
     } else {
       await formDataUpdate.append("ServiceName", serviceName);
       await formDataUpdate.append("Description", description);
@@ -963,8 +962,7 @@ function ListShopBarber(props) {
           setisUpdateModalService(false);
           dispatch(actGetAllServicesBySalonId(salonDetail.id, 1, 4));
         })
-        .catch((err) => {
-        });
+        .catch((err) => {});
     }
   };
   function roundUpToNearestIncrement(number, increment) {
@@ -1179,21 +1177,28 @@ function ListShopBarber(props) {
                     <Descriptions.Item
                       contentStyle={{
                         textAlign: "center",
-                        // justifyContent: "space-between",
-                        // alignContent: "center",
                       }}
                       span={2}
                       className={
-                        salonDetail.status !== "REJECTED" &&
-                        salonDetail.status !== "DISABLED" &&
-                        salonDetail.status !== "CREATING"
+                        salonDetail.status === "APPROVED"
                           ? "bg-green-300 border-dotted border-2 text-slate-100 font-bold"
-                          : "bg-red-300 border-dotted border-2 text-slate-100 font-bold"
+                          : salonDetail.status === "OVERDUE"
+                          ? "bg-yellow-300 border-dotted border-2 text-slate-100 font-bold"
+                          : salonDetail.status === "DISABLED"
+                          ? "bg-red-300 border-dotted border-2 text-slate-100 font-bold"
+                          : "bg-gray-300 border-dotted border-2 text-slate-100 font-bold"
                       }
                       label="Trạng thái"
                     >
-                      {salonDetail.status}
+                      {salonDetail.status === "APPROVED"
+                        ? "Hoạt động"
+                        : salonDetail.status === "OVERDUE"
+                        ? "Quá hạn thanh toán"
+                        : salonDetail.status === "DISABLED"
+                        ? "Bị cấm"
+                        : salonDetail.status}
                     </Descriptions.Item>
+
                     <Descriptions.Item label="Đánh giá">
                       <Rate disabled defaultValue={salonDetail?.rate} />
                     </Descriptions.Item>
@@ -1484,7 +1489,7 @@ function ListShopBarber(props) {
                 </Col>
               </Row>
               <Modal
-               wrapClassName="my-custom-modal"
+                wrapClassName="my-custom-modal"
                 width={500}
                 title={
                   <div className={stylesModal.customModalHeader}>
@@ -1516,12 +1521,12 @@ function ListShopBarber(props) {
                 />
               </Modal>
               <Modal
-               wrapClassName="my-custom-modal"
-               title={
-                <div className={stylesModal.customModalHeader}>
-                  Thêm voucher
-                </div>
-              }
+                wrapClassName="my-custom-modal"
+                title={
+                  <div className={stylesModal.customModalHeader}>
+                    Thêm voucher
+                  </div>
+                }
                 visible={isModalVisible}
                 onOk={handleOkVoucher}
                 onCancel={handleCancelVoucher}
@@ -1627,7 +1632,7 @@ function ListShopBarber(props) {
 
               <Modal
                 // title="Cập nhật Voucher"
-               wrapClassName="my-custom-modal"
+                wrapClassName="my-custom-modal"
                 title={
                   <div className={stylesModal.customModalHeader}>
                     Cập nhật voucher
@@ -1688,7 +1693,7 @@ function ListShopBarber(props) {
               </Modal>
 
               <Modal
-               wrapClassName="my-custom-modal"
+                wrapClassName="my-custom-modal"
                 width={1200}
                 // title="Tạo nhân viên mới"
                 title={
@@ -1710,7 +1715,7 @@ function ListShopBarber(props) {
                 />
               </Modal>
               <Modal
-               wrapClassName="my-custom-modal"
+                wrapClassName="my-custom-modal"
                 // title="Cập nhật dịch vụ"
                 title={
                   <div className={stylesModal.customModalHeader}>

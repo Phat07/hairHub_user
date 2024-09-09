@@ -510,6 +510,12 @@ function SalonAppointmentVer2(props) {
       render: (customer) => customer?.fullName,
     },
     {
+      title: "Ngày tạo",
+      dataIndex: "createdDate",
+      key: "createdDate",
+      render: (createdDate) => formatDate(createdDate),
+    },
+    {
       title: "Ngày hẹn",
       dataIndex: "startDate",
       key: "startDate",
