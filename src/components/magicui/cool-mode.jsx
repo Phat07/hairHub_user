@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from "react";
+import { throttle } from "lodash";
+import React, { useEffect, useRef, useState } from "react";
 
 const getContainer = () => {
   const id = "_coolMode_effect";
@@ -184,14 +185,56 @@ const applyParticleEffect = (element, options) => {
   };
 };
 
-export const CoolMode = ({ children, options }) => {
+// export const CoolMode = ({ children, options }) => {
+//   const ref = useRef(null);
+
+//   useEffect(() => {
+//     if (ref.current) {
+//       return applyParticleEffect(ref.current, options);
+//     }
+//   }, [options]);
+
+//   return React.cloneElement(children, { ref });
+// };
+
+// export const CoolMode = ({ children, options }) => {
+//   const ref = useRef(null);
+//   const [canApplyEffect, setCanApplyEffect] = useState(true);
+
+//   const applyParticleEffectWithDelay = (element, options) => {
+//     if (canApplyEffect) {
+//       applyParticleEffect(element, options);
+//       setCanApplyEffect(false);
+//       setTimeout(() => setCanApplyEffect(true), 500); // Reset after 500ms
+//     }
+//   };
+
+//   useEffect(() => {
+//     if (ref.current) {
+//       applyParticleEffectWithDelay(ref.current, options);
+//     }
+//   }, [options]);
+
+//   return React.cloneElement(children, { ref });
+// };
+
+
+export const CoolMode = ({ children, options, maxParticles = 1 }) => {
   const ref = useRef(null);
+  const [particleCount, setParticleCount] = useState(0);
+
+  const applyParticleEffectWithLimit = (element, options) => {
+    if (particleCount < maxParticles) {
+      applyParticleEffect(element, options);
+      setParticleCount((prevCount) => prevCount + 1);
+    }
+  };
 
   useEffect(() => {
-    if (ref.current) {
-      return applyParticleEffect(ref.current, options);
+    if (ref.current && particleCount < maxParticles) {
+      applyParticleEffectWithLimit(ref.current, options);
     }
-  }, [options]);
+  }, [options, particleCount, maxParticles]);
 
   return React.cloneElement(children, { ref });
 };

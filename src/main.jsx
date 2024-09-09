@@ -1,4 +1,4 @@
-import { ConfigProvider, Table } from "antd";
+import { App, ConfigProvider, Table } from "antd";
 import viVn from "antd/lib/locale/vi_VN";
 import React from "react";
 import ReactDOM from "react-dom/client";
@@ -320,7 +320,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>
       <ConfigProvider locale={viVn} theme={customTheme}>
-        <RouterProvider router={router}>{/* <App /> */}</RouterProvider>
+        <App>
+          <RouterProvider router={router}>{/* <App /> */}</RouterProvider>
+        </App>
       </ConfigProvider>
     </Provider>
   </React.StrictMode>
