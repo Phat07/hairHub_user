@@ -610,6 +610,7 @@ function SalonAppointmentVer2(props) {
         <DatePicker
           style={{ marginRight: "1rem" }}
           onChange={handleDateChange}
+          placeholder="Lọc theo thời gian"
         />
         <Input
           placeholder="Lọc theo tên"
