@@ -616,7 +616,7 @@ function SalonAppointmentVer2(props) {
           value={nameFilter}
           onChange={handleNameFilterChange}
           allowClear
-          style={{ width: 200, marginBottom: 20 }}
+          style={{ width: 200 }}
         />
       </div>
 
