@@ -109,7 +109,6 @@ export function actGetSalonInformationByOwnerIdAsync(ownerId) {
   return (dispatch) => {
     AppointmentService.GetSalonInformationByOwnerId(ownerId)
       .then((response) => {
-        console.log("dataProduct", response);
         if (response.status === 200 || response.status === 201) {
           dispatch(allSalonByOwnerId(response.data));
         } else {

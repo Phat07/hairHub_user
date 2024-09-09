@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from "react";
+import { throttle } from "lodash";
+import React, { useEffect, useRef, useState } from "react";
 
 const getContainer = () => {
   const id = "_coolMode_effect";
@@ -184,12 +185,33 @@ const applyParticleEffect = (element, options) => {
   };
 };
 
+// export const CoolMode = ({ children, options }) => {
+//   const ref = useRef(null);
+
+//   useEffect(() => {
+//     if (ref.current) {
+//       return applyParticleEffect(ref.current, options);
+//     }
+//   }, [options]);
+
+//   return React.cloneElement(children, { ref });
+// };
+
 export const CoolMode = ({ children, options }) => {
   const ref = useRef(null);
+  const [canApplyEffect, setCanApplyEffect] = useState(true);
+
+  const applyParticleEffectWithDelay = (element, options) => {
+    if (canApplyEffect) {
+      applyParticleEffect(element, options);
+      setCanApplyEffect(false);
+      setTimeout(() => setCanApplyEffect(true), 500); // Reset after 500ms
+    }
+  };
 
   useEffect(() => {
     if (ref.current) {
-      return applyParticleEffect(ref.current, options);
+      applyParticleEffectWithDelay(ref.current, options);
     }
   }, [options]);
 
