@@ -20,6 +20,7 @@ import {
   message,
   Divider,
   Select,
+  DatePicker,
 } from "antd";
 import moment from "moment";
 import { DownOutlined, UploadOutlined } from "@ant-design/icons";
@@ -51,8 +52,8 @@ function CustomerAppointmentVer2(props) {
   const [reportDescription, setReportDescription] = useState("");
   const [fileList, setFileList] = useState([]);
   const [reportImage, setReportImage] = useState(null);
+  const [dateFilter, setDateFilter] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [filteredAppointments, setFilteredAppointments] = useState([]);
   const pageSize = 5;
 
   const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
@@ -73,7 +74,9 @@ function CustomerAppointmentVer2(props) {
             idCustomer,
             currentPage,
             pageSize,
-            status
+            status,
+            false,
+            dateFilter
           )
         );
         setLoading(false);
@@ -81,25 +84,7 @@ function CustomerAppointmentVer2(props) {
     };
 
     fetchAppointments();
-  }, [idCustomer, status, currentPage]);
-
-  useEffect(() => {
-    setFilteredAppointments(customerAppointments);
-  }, [customerAppointments]);
-
-  const handleFilterChange = (value) => {
-    let sortedAppointments;
-    if (value === "newest") {
-      sortedAppointments = [...customerAppointments].sort(
-        (a, b) => new Date(b.createdDate) - new Date(a.createdDate)
-      );
-    } else if (value === "oldest") {
-      sortedAppointments = [...customerAppointments].sort(
-        (a, b) => new Date(a.createdDate) - new Date(b.createdDate)
-      );
-    }
-    setFilteredAppointments(sortedAppointments);
-  };
+  }, [idCustomer, status, currentPage, dateFilter]);
 
   const statusDisplayNames = {
     BOOKING: "Đang đặt",
@@ -122,6 +107,10 @@ function CustomerAppointmentVer2(props) {
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
+  };
+
+  const handleDateChange = (date, dateString) => {
+    setDateFilter(dateString);
   };
 
   const formatDate = (dateString) => {
@@ -688,22 +677,16 @@ function CustomerAppointmentVer2(props) {
         ))}
       </div>
 
-      <Select
-        defaultValue="newest"
-        className={styles.select}
-        onChange={handleFilterChange}
-        suffixIcon={
-          <DownOutlined style={{ color: "#bf9456", pointerEvents: "none" }} />
-        }
-      >
-        <Option value="newest">Mới nhất</Option>
-        <Option value="oldest">Cũ nhất</Option>
-      </Select>
+      <div className={styles.filterDate}>
+        <Text strong>Lọc theo ngày: </Text>
+        <DatePicker onChange={handleDateChange} />
+      </div>
+
 
       <Table
         className={styles.appointmentTable}
         columns={columns}
-        dataSource={filteredAppointments}
+        dataSource={customerAppointments}
         loading={loading}
         rowKey="id"
         pagination={false}

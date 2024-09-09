@@ -12,7 +12,14 @@ export const AppointmentService = {
       },
     });
   },
-  GetAppointmentCustomerByStatus(customerId, page, size, status) {
+  GetAppointmentCustomerByStatus(
+    customerId,
+    page,
+    size,
+    status,
+    isAscending,
+    date
+  ) {
     return API.get(
       `/appointments/GetAppointmentCustomerByStatus/${customerId}`,
       {
@@ -20,6 +27,8 @@ export const AppointmentService = {
           page,
           size,
           status,
+          isAscending,
+          date,
         },
       }
     );
