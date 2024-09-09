@@ -1,7 +1,15 @@
 import { API } from "./api";
 
 export const AppointmentService = {
-  GetAppointmentSalonByStatus(salonId, page, size, status, isAscending, date) {
+  GetAppointmentSalonByStatus(
+    salonId,
+    page,
+    size,
+    status,
+    isAscending,
+    date,
+    customerName
+  ) {
     return API.get(`/appointments/GetAppointmentSalonByStatus/${salonId}`, {
       params: {
         page,
@@ -9,6 +17,7 @@ export const AppointmentService = {
         status,
         isAscending,
         date,
+        customerName,
       },
     });
   },
