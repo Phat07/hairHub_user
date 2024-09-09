@@ -1666,6 +1666,7 @@ function SalonDetail(props) {
                                       particle:
                                         "https://pbs.twimg.com/profile_images/1782811051504885763/YR5-kWOI_400x400.jpg",
                                     }}
+                                    maxParticles={3}
                                   >
                                     <Button
                                       onClick={() => handleDateSelect(day)}

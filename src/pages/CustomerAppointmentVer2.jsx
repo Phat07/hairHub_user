@@ -20,6 +20,7 @@ import {
   message,
   Divider,
   Select,
+  DatePicker,
 } from "antd";
 import moment from "moment";
 import { DownOutlined, UploadOutlined } from "@ant-design/icons";
@@ -51,8 +52,8 @@ function CustomerAppointmentVer2(props) {
   const [reportDescription, setReportDescription] = useState("");
   const [fileList, setFileList] = useState([]);
   const [reportImage, setReportImage] = useState(null);
+  const [dateFilter, setDateFilter] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [filteredAppointments, setFilteredAppointments] = useState([]);
   const pageSize = 5;
 
   const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
@@ -73,7 +74,9 @@ function CustomerAppointmentVer2(props) {
             idCustomer,
             currentPage,
             pageSize,
-            status
+            status,
+            false,
+            dateFilter
           )
         );
         setLoading(false);
@@ -81,25 +84,7 @@ function CustomerAppointmentVer2(props) {
     };
 
     fetchAppointments();
-  }, [idCustomer, status, currentPage]);
-
-  useEffect(() => {
-    setFilteredAppointments(customerAppointments);
-  }, [customerAppointments]);
-
-  const handleFilterChange = (value) => {
-    let sortedAppointments;
-    if (value === "newest") {
-      sortedAppointments = [...customerAppointments].sort(
-        (a, b) => new Date(b.createdDate) - new Date(a.createdDate)
-      );
-    } else if (value === "oldest") {
-      sortedAppointments = [...customerAppointments].sort(
-        (a, b) => new Date(a.createdDate) - new Date(b.createdDate)
-      );
-    }
-    setFilteredAppointments(sortedAppointments);
-  };
+  }, [idCustomer, status, currentPage, dateFilter]);
 
   const statusDisplayNames = {
     BOOKING: "Đang đặt",
@@ -124,6 +109,10 @@ function CustomerAppointmentVer2(props) {
     setCurrentPage(page);
   };
 
+  const handleDateChange = (date, dateString) => {
+    setDateFilter(dateString);
+  };
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const day = date.getDate().toString().padStart(2, "0");
@@ -131,8 +120,8 @@ function CustomerAppointmentVer2(props) {
     const year = date.getFullYear();
     const hours = date.getHours().toString().padStart(2, "0");
     const minutes = date.getMinutes().toString().padStart(2, "0");
-    // return `${day}/${month}/${year} - ${hours}:${minutes}`;
-    return `${day}/${month}/${year}`;
+    return `${day}/${month}/${year} - ${hours}:${minutes}`;
+    // return `${day}/${month}/${year}`;
   };
 
   function formatVND(amount) {
@@ -497,16 +486,16 @@ function CustomerAppointmentVer2(props) {
                 <Text strong>Ngày tạo: </Text>
                 <Text>
                   {moment(selectedAppointmentDetail.createdDate).format(
-                    "DD/MM/YYYY"
+                    "DD/MM/YYYY - HH:mm"
                   )}
                 </Text>
               </p>
               <p>
                 <Text strong>Ngày hẹn: </Text>
                 <Text>
-                  {moment(selectedAppointmentDetail.startDate).format(
-                    "DD/MM/YYYY"
-                  )}
+                  {moment(
+                    selectedAppointmentDetail.appointmentDetails[0]?.startTime
+                  ).format("DD/MM/YYYY - HH:mm")}
                 </Text>
               </p>
               <p>
@@ -568,10 +557,19 @@ function CustomerAppointmentVer2(props) {
       render: (salonInformation) => salonInformation?.name,
     },
     {
+      title: "Ngày tạo",
+      dataIndex: "createdDate",
+      key: "createdDate",
+      render: (createdDate) => formatDate(createdDate),
+    },
+    {
       title: "Ngày hẹn",
       dataIndex: "startDate",
       key: "startDate",
-      render: (startDate) => formatDate(startDate),
+      render: (text, record) => {
+        const startTime = record.appointmentDetails[0]?.startTime;
+        return moment(startTime).format("DD/MM/YYYY - HH:mm");
+      },
     },
     {
       title: "Tổng giá",
@@ -579,14 +577,14 @@ function CustomerAppointmentVer2(props) {
       key: "totalPrice",
       render: (totalPrice) => `${formatVND(totalPrice)} VND`,
     },
-    {
-      title: "Trạng thái",
-      dataIndex: "status",
-      key: "status",
-      render: (status) => (
-        <Tag color={statusColors[status]}>{statusDisplayNames[status]}</Tag>
-      ),
-    },
+    // {
+    //   title: "Trạng thái",
+    //   dataIndex: "status",
+    //   key: "status",
+    //   render: (status) => (
+    //     <Tag color={statusColors[status]}>{statusDisplayNames[status]}</Tag>
+    //   ),
+    // },
     {
       title: "Chi tiết",
       key: "detail",
@@ -679,22 +677,16 @@ function CustomerAppointmentVer2(props) {
         ))}
       </div>
 
-      <Select
-        defaultValue="newest"
-        className={styles.select}
-        onChange={handleFilterChange}
-        suffixIcon={
-          <DownOutlined style={{ color: "#bf9456", pointerEvents: "none" }} />
-        }
-      >
-        <Option value="newest">Mới nhất</Option>
-        <Option value="oldest">Cũ nhất</Option>
-      </Select>
+      <div className={styles.filterDate}>
+        <Text strong>Lọc theo ngày: </Text>
+        <DatePicker onChange={handleDateChange} />
+      </div>
+
 
       <Table
         className={styles.appointmentTable}
         columns={columns}
-        dataSource={filteredAppointments}
+        dataSource={customerAppointments}
         loading={loading}
         rowKey="id"
         pagination={false}

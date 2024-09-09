@@ -60,14 +60,23 @@ export function actGetAllAppointmentByCustomerId(id, page, size) {
   };
 }
 
-export function actGetAppointmentByCustomerId(customerId, page, size, status) {
+export function actGetAppointmentByCustomerId(
+  customerId,
+  page,
+  size,
+  status,
+  isAscending,
+  date
+) {
   return async (dispatch) => {
     try {
       const response = await AppointmentService.GetAppointmentCustomerByStatus(
         customerId,
         page,
         size,
-        status
+        status,
+        isAscending,
+        date
       );
       if (response.status === 200 || response.status === 201) {
         dispatch(

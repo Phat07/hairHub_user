@@ -16,6 +16,11 @@
   margin-bottom: 20px;
 }
 
+.filterDate {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
 .appointmentTable {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
