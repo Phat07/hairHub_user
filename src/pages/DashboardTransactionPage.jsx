@@ -1,4 +1,4 @@
-import { Button, message, Table } from "antd";
+import { Button, DatePicker, message, Table } from "antd";
 import {
   CategoryScale,
   Chart as ChartJS,
@@ -16,6 +16,8 @@ import { Link } from "react-router-dom";
 import "../css/dashboardTransaction.css";
 import { actGetSalonInformationByOwnerIdAsync } from "../store/salonAppointments/action";
 import { actGetAppointmentTransaction } from "../store/salonTransaction/action";
+import moment from "moment";
+const { RangePicker } = DatePicker;
 
 ChartJS.register(
   CategoryScale,
@@ -48,7 +50,8 @@ function DashboardTransactionPage(props) {
     (state) => state.SALONTRANSACTION.getSalonTransaction
   );
 
-  const [filterDays, setFilterDays] = useState(7);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5;
 
@@ -56,19 +59,17 @@ function DashboardTransactionPage(props) {
     if (salonInformationByOwnerId || idOwner) {
       try {
         dispatch(
-          actGetAppointmentTransaction(salonInformationByOwnerId.id, filterDays)
+          actGetAppointmentTransaction(
+            salonInformationByOwnerId.id,
+            startDate,
+            endDate
+          )
         );
       } catch (err) {
         message.error("Không thể lấy dữ liệu!");
       }
     }
-  }, [salonInformationByOwnerId, filterDays]);
-
-  const handleFilterChange = (event) => {
-    const value = event.target.value;
-    setFilterDays(parseInt(value));
-    setCurrentPage(1); // Reset current page when changing filters
-  };
+  }, [salonInformationByOwnerId, startDate, endDate]);
 
   const filteredTransactions = useMemo(() => {
     if (!salonTransaction || !salonTransaction.appointmentTransactions) {
@@ -81,7 +82,7 @@ function DashboardTransactionPage(props) {
     (total, transaction) => total + transaction.totalPrice,
     0
   );
-  
+
   const unpaidCommission =
     salonTransaction && salonTransaction.currentComssion
       ? salonTransaction.currentComssion
@@ -160,8 +161,27 @@ function DashboardTransactionPage(props) {
       commissionRate: transaction.commissionRate,
     }));
 
+  const handleDateRangeChange = (dates) => {
+    if (dates) {
+      setStartDate(dates[0]);
+      setEndDate(dates[1]);
+    } else {
+      setStartDate(null);
+      setEndDate(null);
+    }
+  };
+
   return (
     <div className="dashboard-container">
+      <div
+        style={{
+          marginBottom: "2rem",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <RangePicker onChange={handleDateRangeChange} />
+      </div>
       <div
         style={{
           display: "flex",
@@ -223,16 +243,6 @@ function DashboardTransactionPage(props) {
           >
             Lịch sử cuộc hẹn
           </p>
-        </div>
-        <div style={{ textAlign: "right" }}>
-          <select
-            onChange={handleFilterChange}
-            defaultValue="7"
-            // style={{ width: "200px" }}
-          >
-            <option value="7">7 ngày gần đây</option>
-            <option value="30">30 ngày gần đây</option>
-          </select>
         </div>
       </div>
       <div>
