@@ -1664,7 +1664,7 @@ function SalonDetail(props) {
                                   <CoolMode
                                     options={{
                                       particle:
-                                        "https://pbs.twimg.com/profile_images/1782811051504885763/YR5-kWOI_400x400.jpg",
+                                        "https://res.cloudinary.com/dw4fjdcu7/image/upload/v1725877896/hairHubLogo_kq8daj.png",
                                     }}
                                     maxParticles={3}
                                   >
