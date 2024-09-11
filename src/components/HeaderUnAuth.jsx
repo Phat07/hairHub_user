@@ -10,7 +10,7 @@ import { SalonInformationServices } from "../services/salonInformationServices";
 import { isEmptyObject } from "./formatCheckValue/checkEmptyObject";
 import { useDispatch, useSelector } from "react-redux";
 import { actGetSalonInformationByOwnerId } from "../store/salonInformation/action";
-import hairHubLogo from "../assets/images/hairHubLogo.png";
+import hairHubLogo from "../assets/images/hairhubFinalLogo.png";
 
 import style from "../css/header.module.css";
 

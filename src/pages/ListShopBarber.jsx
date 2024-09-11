@@ -55,6 +55,7 @@ import { ServiceHairServices } from "../services/servicesHairServices";
 import { voucherServices } from "../services/voucherServices";
 import { actGetVoucherBySalonId } from "../store/manageVoucher/action";
 import {
+  actDeleteEmployee,
   actGetAllEmployees,
   actGetAllServicesBySalonId,
 } from "../store/salonEmployees/action";
@@ -441,20 +442,13 @@ function ListShopBarber(props) {
     }
   }, [ownerId]);
 
-  useEffect(() => {
-    if (salonDetail?.id) dispatch(actGetAllEmployees(salonDetail?.id, 1, 4));
-  }, [salonDetail?.id]);
-
   const handleDeleteEmployee = (employee) => {
-    axios
-      .put(
-        `http://14.225.218.91:8080/api/v1/salonemployees/DeleteSalonEmployee/${employee.id}`
-      )
-      .then(() => {
-        dispatch(actGetAllEmployees(salonDetail.id, 1, 4));
-        message.success("Employee was deleted!");
-      });
+    dispatch(actDeleteEmployee(employee.id, salonDetail?.id));
   };
+
+  // useEffect(() => {
+  //   if (salonDetail?.id) dispatch(actGetAllEmployees(salonDetail?.id, 1, 4));
+  // }, [salonDetail?.id]);
 
   const convertDayOfWeekToVietnamese = (dayOfWeek) => {
     const daysMapping = {
@@ -780,7 +774,6 @@ function ListShopBarber(props) {
             Chỉnh sửa
           </Button>
           <Popconfirm
-            title="Xóa dịch vụ"
             description="Bạn có chắc chắn muốn xóa dịch vụ này?"
             onConfirm={() => {}}
             okText="Đồng ý"

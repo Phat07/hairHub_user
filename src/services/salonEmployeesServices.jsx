@@ -28,4 +28,7 @@ export const SalonEmployeesServices = {
   getSalonEmployeeById(id) {
     return API.get(`/salonemployees/GetSalonEmployeeById/${id}`);
   },
+  deleteSalonEmployeeById(id) {
+    return API.put(`/salonemployees/DeleteSalonEmployee/${id}`);
+  },
 };
