@@ -1,33 +1,33 @@
-import { useNavigate, useParams } from "react-router-dom";
-import AccountForm from "./AccountForm";
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { UploadOutlined } from "@ant-design/icons";
 import {
-  Card,
-  Form,
-  Input,
-  InputNumber,
-  Select,
-  DatePicker,
-  Button,
   Avatar,
-  Space,
+  Button,
+  Card,
+  Checkbox,
+  DatePicker,
   Flex,
+  Form,
+  Image,
+  Input,
   message,
   Popconfirm,
+  Select,
+  Space,
   TimePicker,
-  Checkbox,
   Upload,
-  Image,
 } from "antd";
+import axios from "axios";
 import dayjs from "dayjs";
-import useAuthUser from "react-auth-kit/hooks/useAuthUser";
+import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import { SalonEmployeesServices } from "../services/salonEmployeesServices";
 import { ServiceHairServices } from "../services/servicesHairServices";
-import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
-import { useDispatch, useSelector } from "react-redux";
-import { actGetAllEmployees } from "../store/salonEmployees/action";
-
+import {
+  actGetAllEmployees,
+  actPutUpdateSalonEmployees,
+} from "../store/salonEmployees/action";
+import styles from "../css/accountPage.module.css";
 function AccountPage() {
   const [form] = Form.useForm();
   // const { id, employeeId } = useParams();
@@ -46,70 +46,26 @@ function AccountPage() {
   const [servicesList, setServicesList] = useState([]);
   const [schedules, setSchedules] = useState([]);
   const [fileList, setFileList] = useState([]);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [activeButtons, setActiveButtons] = useState({});
+  const [pendingConfirmations, setPendingConfirmations] = useState({});
 
   const salonDetail = useSelector(
     (state) => state.SALONINFORMATION.getSalonByOwnerId
   );
   const [selectedServices, setSelectedServices] = useState([]);
-  const EMPLOYEESDETAILS_URL =
-    "http://14.225.218.91:8080/api/v1/salonemployees/GetSalonEmployeeById/";
 
   const EMPLOYEESDETAILS_URL_UPDATE =
-    "http://14.225.218.91:8080/api/v1/salonemployees/UpdateSalonEmployee/";
-  const [isEdit, setIsEdit] = useState(true);
-  const ACCOUNT_URL =
-    "http://14.225.218.91:8080/api/v1/accounts/GetAccountById/";
-
-  // const auth = useAuthUser();
-  // const authUserId = auth?.uid;
+    "https://hairhub.gahonghac.net/api/v1/salonemployees/UpdateSalonEmployee/";
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  // const confirm = (e) => {
-  //   console;
-  //   message.success("Click on Yes");
-  //   onFinish(user);
-  // };
-  // const cancel = (e) => {
-  //   console.log(e);
-  //   message.error("Click on No");
-  // };
-
-  const getAccountDetail = async () => {
-    if (employeeId === (await accountEmployeeDetail.employeeId)) {
-      return EMPLOYEESDETAILS_URL;
-    } else {
-      return ACCOUNT_URL;
-    }
-  };
 
   const initialEditableStates = {}; // Đối tượng lưu trạng thái có thể chỉnh sửa cho từng ngày
   schedules?.forEach((day) => {
     initialEditableStates[day.id] = true; // Ban đầu tất cả các ngày đều có thể chỉnh sửa
   });
 
-  const [editableStates, setEditableStates] = useState(initialEditableStates); // State lưu trạng thái chỉnh sửa cho từng ngày
-
-  const handleCheckSchedule = () => {
-    // Logic kiểm tra lịch làm ở đây
-    // Ví dụ: Kiểm tra xem có lịch làm trong khoảng thời gian schedules không
-    schedules?.forEach((day) => {
-      const isWorking = checkWorkingSchedule(day.id); // Hàm kiểm tra lịch làm của nhân viên cho từng ngày
-
-      if (isWorking) {
-        setEditableStates((prevState) => ({
-          ...prevState,
-          [day.id]: false, // Nếu có lịch làm thì disable form schedule cho ngày đó
-        }));
-      } else {
-        setEditableStates((prevState) => ({
-          ...prevState,
-          [day.id]: true, // Nếu không có lịch làm thì cho phép chỉnh sửa form schedule cho ngày đó
-        }));
-      }
-    });
-  };
   const convertScheduleFormat = (scheduleData) => {
     const daysOfWeek = [
       "Monday",
@@ -187,11 +143,6 @@ function AccountPage() {
             dayOfBirth: birthDay,
             avatar: userData.avatar,
             serviceHairs: serviceHairs.map((service) => service.serviceName),
-            // serviceHairs:
-            //   serviceHairs === null ? "Did not have any service" : serviceHairs,
-            // schedules:
-            //   schedules === null ? "Did not have any service" : schedules,
-            // ...schedules.reduce((acc, cur) => ({ ...acc, ...cur }), {}),
           });
           setSelectedServices(serviceHairs);
         } else {
@@ -210,12 +161,12 @@ function AccountPage() {
       });
   }, [employeeId]);
 
-  const handleDayOffChange = (day) => {
-    setDayOff((prevDayOff) => ({
-      ...prevDayOff,
-      [day]: !prevDayOff[day],
-    }));
-  };
+  // const handleDayOffChange = (day) => {
+  //   setDayOff((prevDayOff) => ({
+  //     ...prevDayOff,
+  //     [day]: !prevDayOff[day],
+  //   }));
+  // };
 
   const onFinish = async (item) => {
     const gender = await form.getFieldValue("gender");
@@ -240,266 +191,513 @@ function AccountPage() {
   };
 
   const handleEdit = async () => {
+    const gender = await form.getFieldValue("gender");
+    const phone = await form.getFieldValue("phone");
     const imageFile = fileList.length > 0 ? fileList[0].originFileObj : null;
     const formData = new FormData();
     // formData.append("id", employeeId);
     await formData.append("SalonInformationId", salonDetail.id);
-    await formData.append("Gender", form.gender);
+    await formData.append("Gender", gender);
     await formData.append("Img", imageFile);
-    await formData.append("Phone", form.phone);
+    await formData.append("Phone", phone);
     await formData.append("IsActive", true);
 
-    await axios
-      .put(EMPLOYEESDETAILS_URL_UPDATE + `${employeeId}`, formData)
+    dispatch(actPutUpdateSalonEmployees(employeeId, formData))
       .then((res) => {
-        navigate(`/list_barber_employees/${salonDetail.id}`);
-        dispatch(actGetAllEmployees(salonDetail.id));
         message.success("Chỉnh sửa thông tin nhân viên thành công");
       })
-      .catch((err) => message.error(err));
+      .catch((err) => {
+        message.error(
+          "Chỉnh sửa nhân viên không thành công. Vui lòng thử lại!!!"
+        );
+      });
   };
 
   const handleUploadChange = ({ fileList }) => setFileList(fileList);
+  const dayOfWeekMap = {
+    Monday: "Thứ hai",
+    Tuesday: "Thứ ba",
+    Wednesday: "Thứ tư",
+    Thursday: "Thứ năm",
+    Friday: "Thứ sáu",
+    Saturday: "Thứ bảy",
+    Sunday: "Chủ nhật",
+  };
 
+  const convertDayOfWeek = (day) => {
+    return dayOfWeekMap[day] || day;
+  };
+  const initialValuesRef = useRef({});
+
+  // Store initial values in ref
+  useEffect(() => {
+    const initialValues = {};
+    schedules.forEach((day) => {
+      initialValues[day.DayOfWeek] = {
+        start: dayjs(day.StartTime, "HH:mm"),
+        end: dayjs(day.EndTime, "HH:mm"),
+      };
+    });
+    initialValuesRef.current = initialValues;
+    form.setFieldsValue(initialValues); // Set initial values in the form
+    validateAllFields(); // Validate fields on initial load
+  }, [schedules]);
+
+  // Validate all fields
+  const validateAllFields = async () => {
+    try {
+      for (const day of schedules) {
+        await validateFields(day.DayOfWeek);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // Validate fields based on current values
+  const validateFields = async (dayOfWeek) => {
+    const startValue = form.getFieldValue([dayOfWeek, "start"]);
+    const endValue = form.getFieldValue([dayOfWeek, "end"]);
+
+    if (startValue && endValue) {
+      if (startValue.isAfter(endValue)) {
+        form.setFields([
+          {
+            name: [dayOfWeek, "start"],
+            errors: ["Giờ bắt đầu phải nhỏ hơn giờ kết thúc"],
+          },
+        ]);
+      } else {
+        form.setFields([{ name: [dayOfWeek, "start"], errors: [] }]);
+      }
+
+      if (endValue.isBefore(startValue)) {
+        form.setFields([
+          {
+            name: [dayOfWeek, "end"],
+            errors: ["Giờ kết thúc phải lớn hơn giờ bắt đầu"],
+          },
+        ]);
+      } else {
+        form.setFields([{ name: [dayOfWeek, "end"], errors: [] }]);
+      }
+    }
+  };
+
+  // const handleStartChange = (value, dayOfWeek) => {
+  //   form.setFieldsValue({ [dayOfWeek]: { start: value } });
+  //   validateFields(dayOfWeek);
+  // };
+
+  // const handleEndChange = (value, dayOfWeek) => {
+  //   form.setFieldsValue({ [dayOfWeek]: { end: value } });
+  //   validateFields(dayOfWeek);
+  // };
+  const handleStartChange = (value, dayOfWeek) => {
+    form.setFieldsValue({ [dayOfWeek]: { start: value } });
+    validateFields(dayOfWeek);
+    checkIfButtonShouldBeEnabled(dayOfWeek);
+  };
+
+  const handleEndChange = (value, dayOfWeek) => {
+    form.setFieldsValue({ [dayOfWeek]: { end: value } });
+    validateFields(dayOfWeek);
+    checkIfButtonShouldBeEnabled(dayOfWeek);
+  };
+
+  // Handle changes in checkbox
+  const handleCheckboxChange = (dayOfWeek) => {
+    handleDayOffChange(dayOfWeek);
+    checkIfButtonShouldBeEnabled(dayOfWeek);
+  };
+
+  const handleDayOffChange = (day) => {
+    setDayOff((prevDayOff) => {
+      const updatedDayOff = {
+        ...prevDayOff,
+        [day]: !prevDayOff[day],
+      };
+      // Ensure the button state is updated whenever the checkbox state changes
+      checkIfButtonShouldBeEnabled(day);
+      return updatedDayOff;
+    });
+  };
+
+  // Check if the button for a specific day should be enabled
+  const checkIfButtonShouldBeEnabled = (dayOfWeek) => {
+    const initialStart = initialValuesRef.current[dayOfWeek]?.start;
+    const initialEnd = initialValuesRef.current[dayOfWeek]?.end;
+    const currentStart = form.getFieldValue([dayOfWeek, "start"]);
+    const currentEnd = form.getFieldValue([dayOfWeek, "end"]);
+    const checkboxChecked = dayOff[dayOfWeek];
+
+    // Enable the button if the checkbox is checked or if there are changes to start/end times
+    const isEnabled =
+      checkboxChecked ||
+      !checkboxChecked ||
+      (currentStart &&
+        currentEnd &&
+        (currentStart !== initialStart || currentEnd !== initialEnd));
+
+    setActiveButtons((prevState) => ({
+      ...prevState,
+      [dayOfWeek]: isEnabled,
+    }));
+  };
+  const handleConfirm = (dayOfWeek) => {
+    // Reset the state to enable the button again
+    setActiveButtons((prevState) => ({
+      ...prevState,
+      [dayOfWeek]: false,
+    }));
+    setPendingConfirmations((prevState) => ({
+      ...prevState,
+      [dayOfWeek]: false,
+    }));
+  };
+
+  const handleCancel = (dayOfWeek) => {
+    // Mark the button as disabled (or reset to initial state)
+    setPendingConfirmations((prevState) => ({
+      ...prevState,
+      [dayOfWeek]: false,
+    }));
+    setActiveButtons((prevState) => ({
+      ...prevState,
+      [dayOfWeek]: false,
+    }));
+    // loại dayOfWeek khi truyền vào setDayOff để trừ ngày này ra
+    setDayOff((prevState) => {
+      const updatedDayOff = { ...prevState };
+      delete updatedDayOff[dayOfWeek];
+      return updatedDayOff;
+    });
+
+    // Optionally reset form fields to their initial values
+    form.setFieldsValue({
+      [dayOfWeek]: {
+        start: initialValuesRef.current[dayOfWeek]?.start,
+        end: initialValuesRef.current[dayOfWeek]?.end,
+      },
+    });
+
+    // Revalidate fields to ensure errors are cleared
+    validateFields(dayOfWeek);
+  };
   return (
     <div>
-      <div
-        style={{
-          marginTop: "140px",
-          marginLeft: "250px",
-          marginRight: "250px",
-        }}
-      >
-        <>
-          <Flex justify="center">
-            <Card className="bg-slate-100">
-              <Space
-                align="center"
-                className="w-[80rem]"
-                size={2}
-                direction="vertical"
+      <div className={styles.containerAccount}>
+        <Flex justify="center">
+          <Card className="bg-slate-100 w-full md:w-[80%] lg:w-[60%] p-5">
+            <Space
+              align="center"
+              size={2}
+              direction="vertical"
+              className="w-full"
+            >
+              <Avatar
+                size={250}
+                shape="circle"
+                src={
+                  user?.img ||
+                  "https://www.shutterstock.com/image-vector/vector-flat-illustration-grayscale-avatar-600nw-2264922221.jpg"
+                }
+              />
+              {fileList.map((file) => (
+                <div
+                  key={file.uid}
+                  className="max-w-full md:max-w-[40rem] mt-8"
+                  style={{ maxHeight: "50rem" }}
+                >
+                  <Image
+                    width="100%"
+                    src={
+                      file.url ||
+                      (file.originFileObj
+                        ? URL.createObjectURL(file.originFileObj)
+                        : null)
+                    }
+                    alt={file.name}
+                  />
+                </div>
+              ))}
+              <Form
+                className="w-full md:w-[90%] lg:w-[50rem]"
+                id={employeeId}
+                form={form}
+                layout="vertical"
+                onFinish={onFinish}
+                autoComplete="off"
               >
-                <Avatar
-                  size={250}
-                  shape="circle"
-                  src={
-                    user?.img ||
-                    "https://www.shutterstock.com/image-vector/vector-flat-illustration-grayscale-avatar-600nw-2264922221.jpg"
-                  }
-                />
-                {fileList.map((file) => (
-                  <div
-                    key={file.uid}
-                    style={{
-                      maxHeight: "50rem",
-                      maxWidth: "50rem",
-                      marginTop: "2rem",
+                <Form.Item
+                  name="image"
+                  label="Tải hình ảnh lên"
+                  tooltip="Add only one Image!"
+                >
+                  <Upload
+                    multiple
+                    listType="picture"
+                    fileList={fileList}
+                    onChange={handleUploadChange}
+                    beforeUpload={() => false}
+                  >
+                    <Button icon={<UploadOutlined />}>Tải lên</Button>
+                  </Upload>
+                </Form.Item>
+                <Form.Item
+                  label="Tên đầy đủ:"
+                  name="fullName"
+                  rules={[
+                    { required: true, message: "Vui lòng không để trống!" },
+                  ]}
+                >
+                  <Input disabled={true} />
+                </Form.Item>
+                <Form.Item label="Giới tính:" name="gender">
+                  <Select>
+                    <Select.Option value="Male">Nam</Select.Option>
+                    <Select.Option value="Female">Nữ</Select.Option>
+                    <Select.Option value="Other">Khác</Select.Option>
+                  </Select>
+                </Form.Item>
+                <Form.Item
+                  label="Ngày sinh:"
+                  name="dayOfBirth"
+                  rules={[
+                    { required: true, message: "Vui lòng không để trống!" },
+                  ]}
+                >
+                  <DatePicker disabled={true} />
+                </Form.Item>
+                <Form.Item
+                  label="Số điện thoại:"
+                  name="phone"
+                  rules={[
+                    { required: true, message: "Vui lòng không để trống!" },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
+                <Form.Item>
+                  <Button
+                    onClick={handleEdit}
+                    style={{ backgroundColor: "#BF9456" }}
+                  >
+                    Chỉnh sửa nhưng không chỉnh sửa lịch làm
+                  </Button>
+                </Form.Item>
+                <Form.Item
+                  label="Dịch vụ:"
+                  name="serviceHairs"
+                  rules={[
+                    { required: true, message: "Vui lòng chọn dịch vụ!" },
+                  ]}
+                >
+                  <Select
+                    mode="multiple"
+                    disabled={true}
+                    placeholder="Chọn dịch vụ"
+                    value={selectedServices.map((s) => s.serviceName)}
+                    onChange={(values) => {
+                      const selected = servicesList.filter((service) =>
+                        values.includes(service.serviceName)
+                      );
+                      setSelectedServices(selected);
                     }}
                   >
-                    <Image
-                      width={400}
-                      // key={file.uid} //because div already have key, don't need here
-                      src={
-                        file.url ||
-                        (file.originFileObj
-                          ? URL.createObjectURL(file.originFileObj)
-                          : null)
-                      }
-                      alt={file.name}
-                    />
-                  </div>
-                ))}
-                <Form
-                  // disabled={isEdit}
-                  className="w-[50rem]"
-                  id={employeeId}
-                  form={form}
-                  // wrapperCol={{ span: 14, offset: 4 }}
-                  layout="vertical"
-                  onFinish={onFinish}
-                  autoComplete="off"
-                >
-                  <Form.Item
-                    name="image"
-                    label="Tải hình ảnh lên"
-                    // rules={[{ required: true }]}
-                    tooltip="Add only one Image!"
+                    {servicesList?.map((service) => (
+                      <Select.Option
+                        key={service.id}
+                        value={service.serviceName}
+                      >
+                        {service.serviceName}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+                <Form.Item>
+                  <Button
+                    // onClick={handleEdit}
+                    style={{ backgroundColor: "#BF9456" }}
                   >
-                    <Upload
-                      multiple
-                      listType="picture"
-                      fileList={fileList} //array added image
-                      onChange={handleUploadChange}
-                      beforeUpload={() => false}
+                    Chỉnh sửa dịch vụ
+                  </Button>
+                </Form.Item>
+                {/* {schedules?.map((day) => (
+                  <Space
+                    key={day.DayOfWeek}
+                    direction="vertical"
+                    style={{
+                      marginBottom: 10,
+                      marginLeft: 20,
+                      display: "flex",
+                    }}
+                  >
+                    <Checkbox
+                      onChange={() => handleDayOffChange(day.DayOfWeek)}
+                      checked={dayOff[day.DayOfWeek]}
+                      // disabled={isDisabled}
                     >
-                      <Button icon={<UploadOutlined />}>Tải lên</Button>
-                    </Upload>
-                  </Form.Item>
-                  <Form.Item
-                    label="Tên đầy đủ:"
-                    name="fullName"
-                    rules={[
-                      { required: true, message: "Vui lòng không để trống!" },
-                    ]}
-                  >
-                    <Input disabled={true} />
-                  </Form.Item>
-                  <Form.Item
-                    label="Giới tính:"
-                    name="gender"
-                    // rules={[
-                    //   { required: true, message: "Vui lòng không để trống!" },
-                    // ]}
-                  >
-                    <Select>
-                      <Select.Option value="Male">Nam</Select.Option>
-                      <Select.Option value="Female">Nữ</Select.Option>
-                      <Select.Option value="Other">Khác</Select.Option>
-                    </Select>
-                  </Form.Item>
-                  <Form.Item
-                    label="Ngày sinh:"
-                    name="dayOfBirth"
-                    rules={[
-                      { required: true, message: "Vui lòng không để trống!" },
-                    ]}
-                  >
-                    <DatePicker disabled={true} />
-                  </Form.Item>
-                  <Form.Item
-                    label="Số điện thoại:"
-                    name="phone"
-                    rules={[
-                      { required: true, message: "Vui lòng không để trống!" },
-                    ]}
-                  >
-                    <Input />
-                  </Form.Item>
-                  <Form.Item
-                    label="Dịch vụ:"
-                    name="serviceHairs"
-                    rules={[
-                      { required: true, message: "Vui lòng chọn dịch vụ!" },
-                    ]}
-                  >
-                    <Select
-                      mode="multiple"
-                      disabled={true}
-                      placeholder="Chọn dịch vụ"
-                      value={selectedServices.map((s) => s.serviceName)}
-                      onChange={(values) => {
-                        const selected = servicesList.filter((service) =>
-                          values.includes(service.serviceName)
-                        );
-                        setSelectedServices(selected);
+                      {convertDayOfWeek(day.DayOfWeek)} Nghỉ
+                    </Checkbox>
+
+                    <Space
+                      align="baseline"
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-around",
+                        width: "100%",
                       }}
                     >
-                      {servicesList?.map((service) => (
-                        <Select.Option
-                          key={service.id}
-                          value={service.serviceName}
-                        >
-                          {service.serviceName}
-                        </Select.Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                  {/* <Form.Item
-                    label="Lịch trình:"
-                    name="schedules"
-                    rules={[
-                      { required: true, message: "Vui lòng chọn lịch trình!" },
-                    ]}
-                  >
-                    <Select mode="multiple" placeholder="Select Service">
-                      {schedules?.map((schedule) => (
-                        <Select.Option key={schedule.id} value={schedule.id}>
-                          {schedule.dayOfWeek}
-                        </Select.Option>
-                      ))}
-                    </Select>
-                  </Form.Item> */}
-                  <Form.Item>
-                    <Button type="primary" onClick={handleCheckSchedule}>
-                      Kiểm tra lịch làm
-                    </Button>
-                  </Form.Item>
-                  {schedules?.map((day) => (
-                    <Space
-                      key={day.DayOfWeek}
-                      direction="vertical"
-                      style={{ marginBottom: 10, marginLeft: 20 }}
-                    >
-                      {/* Các trường schedule như đã có */}
-                      <Checkbox
-                        onChange={() => handleDayOffChange(day.DayOfWeek)}
-                        checked={dayOff[day.DayOfWeek]}
+                      <Form.Item
+                        name={[day.DayOfWeek, "start"]}
+                        label={`Bắt đầu (${convertDayOfWeek(day.DayOfWeek)})`}
+                        rules={[
+                          {
+                            validator: (_, value) => {
+                              // Validation will be handled by validateFields function
+                              return Promise.resolve();
+                            },
+                          },
+                        ]}
                       >
-                        {day.DayOfWeek} Day Off
-                      </Checkbox>
-                      <Space
-                        align="baseline"
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-around",
-                          width: "100%",
-                        }}
-                      >
-                        <Form.Item
-                          name={[day.DayOfWeek, "start"]}
-                          label={`Start Time (${day.DayOfWeek})`}
-                          // rules={[
-                          //   {
-                          //     required: !dayOff[day],
-                          //     message: `Please select start time for ${day.dayOfWeek}`,
-                          //   },
-                          // ]}
-                        >
-                          <TimePicker
-                            format="HH:mm"
-                            disabled={
-                              !editableStates[day.DayOfWeek] ||
-                              dayOff[day.DayOfWeek]
-                            }
-                          />
-                        </Form.Item>
-                        <Form.Item
-                          name={[day.DayOfWeek, "end"]}
-                          label={`End Time (${day.DayOfWeek})`}
-                          // rules={[
-                          //   {
-                          //     required: !dayOff[day.dayOfWeek],
-                          //     message: `Please select end time for ${day.dayOfWeek}`,
-                          //   },
-                          // ]}
-                        >
-                          <TimePicker
-                            format="HH:mm"
-                            disabled={
-                              !editableStates[day.DayOfWeek] ||
-                              dayOff[day.DayOfWeek]
-                            }
-                          />
-                        </Form.Item>
-                      </Space>
-                    </Space>
-                  ))}
-                  <Form.Item>
-                    <Button onClick={handleEdit} type="primary">
-                      Chỉnh sửa nhưng không chỉnh sửa lịch làm
-                    </Button>
-                  </Form.Item>
+                        <TimePicker
+                          format="HH:mm"
+                          minuteStep={15}
+                          defaultValue={dayjs(day.StartTime, "HH:mm")}
+                          disabled={dayOff[day.DayOfWeek]}
+                          onChange={(value) =>
+                            handleStartChange(value, day.DayOfWeek)
+                          }
+                        />
+                      </Form.Item>
 
-                  <Form.Item>
-                    <Button type="primary" htmlType="submit">
-                      Chỉnh sửa
-                    </Button>
-                  </Form.Item>
-                </Form>
-              </Space>
-            </Card>
-          </Flex>
-        </>
+                      <Form.Item
+                        name={[day.DayOfWeek, "end"]}
+                        label={`Kết thúc (${convertDayOfWeek(day.DayOfWeek)})`}
+                        rules={[
+                          {
+                            validator: (_, value) => {
+                              // Validation will be handled by validateFields function
+                              return Promise.resolve();
+                            },
+                          },
+                        ]}
+                      >
+                        <TimePicker
+                          format="HH:mm"
+                          minuteStep={15}
+                          defaultValue={dayjs(day.EndTime, "HH:mm")}
+                          disabled={dayOff[day.DayOfWeek]}
+                          onChange={(value) =>
+                            handleEndChange(value, day.DayOfWeek)
+                          }
+                        />
+                      </Form.Item>
+
+                      <Button
+                        style={{ backgroundColor: "#BF9456" }}
+                        htmlType="submit"
+                        // disabled={isDisabled}
+                      >
+                        Chỉnh sửa
+                      </Button>
+                    </Space>
+                  </Space>
+                ))} */}
+                {schedules?.map((day) => (
+                  <Space
+                    key={day.DayOfWeek}
+                    direction="vertical"
+                    style={{
+                      marginBottom: 10,
+                      marginLeft: 20,
+                      display: "flex",
+                    }}
+                  >
+                    <Checkbox
+                      onChange={() => handleCheckboxChange(day.DayOfWeek)}
+                      checked={dayOff[day.DayOfWeek]}
+                    >
+                      {convertDayOfWeek(day.DayOfWeek)} Nghỉ
+                    </Checkbox>
+
+                    <Space
+                      align="baseline"
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-around",
+                        width: "100%",
+                      }}
+                    >
+                      <Form.Item
+                        name={[day.DayOfWeek, "start"]}
+                        label={`Bắt đầu (${convertDayOfWeek(day.DayOfWeek)})`}
+                        rules={[
+                          {
+                            validator: (_, value) => {
+                              // Validation will be handled by validateFields function
+                              return Promise.resolve();
+                            },
+                          },
+                        ]}
+                      >
+                        <TimePicker
+                          format="HH:mm"
+                          minuteStep={15}
+                          defaultValue={dayjs(day.StartTime, "HH:mm")}
+                          disabled={dayOff[day.DayOfWeek]}
+                          onChange={(value) =>
+                            handleStartChange(value, day.DayOfWeek)
+                          }
+                        />
+                      </Form.Item>
+
+                      <Form.Item
+                        name={[day.DayOfWeek, "end"]}
+                        label={`Kết thúc (${convertDayOfWeek(day.DayOfWeek)})`}
+                        rules={[
+                          {
+                            validator: (_, value) => {
+                              // Validation will be handled by validateFields function
+                              return Promise.resolve();
+                            },
+                          },
+                        ]}
+                      >
+                        <TimePicker
+                          format="HH:mm"
+                          minuteStep={15}
+                          defaultValue={dayjs(day.EndTime, "HH:mm")}
+                          disabled={dayOff[day.DayOfWeek]}
+                          onChange={(value) =>
+                            handleEndChange(value, day.DayOfWeek)
+                          }
+                        />
+                      </Form.Item>
+
+                      <Popconfirm
+                        title="Bạn có chắc chắn muốn sửa đổi không?"
+                        onConfirm={() => handleConfirm(day.DayOfWeek)}
+                        onCancel={() => handleCancel(day.DayOfWeek)}
+                        okText="Có"
+                        cancelText="Hủy"
+                      >
+                        <Button
+                          style={{ backgroundColor: "#BF9456" }}
+                          htmlType="submit"
+                          disabled={!activeButtons[day.DayOfWeek]}
+                        >
+                          Chỉnh sửa
+                        </Button>
+                      </Popconfirm>
+                    </Space>
+                  </Space>
+                ))}
+              </Form>
+            </Space>
+          </Card>
+        </Flex>
       </div>
     </div>
   );

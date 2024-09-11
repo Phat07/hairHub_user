@@ -1,10 +1,12 @@
-import { GET_ALL_CONFIG, GET_ALL_CONFIG_OWNERID } from "./action";
+import { CONFIG_ID, GET_ALL_CONFIG, GET_ALL_CONFIG_OWNERID } from "./action";
 
 const initialState = {
   getAllPackage: [],
   totalPages: 0,
   getAllPaymentList: [],
   totalPagesList: 0,
+  configPaymentId: '',
+
 };
 
 const reducer = (state = initialState, action) => {
@@ -21,7 +23,11 @@ const reducer = (state = initialState, action) => {
         getAllPaymentList: action.payload.list,
         totalPagesList: action.payload.totalPages,
       };
-
+      case CONFIG_ID:
+        return {
+          ...state,
+          configPaymentId: action.payload,
+        };
     default:
       return state;
   }

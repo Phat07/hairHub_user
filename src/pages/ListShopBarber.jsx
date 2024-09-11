@@ -1111,7 +1111,8 @@ function ListShopBarber(props) {
                             {salonDetail.name}
                           </div>
                           <Button
-                            type="primary"
+                            // type="primary"
+                            style={{ backgroundColor: "#BF9456" }}
                             onClick={() => {
                               navigate(`/create_shop/${salonDetail?.id}`);
                             }}
@@ -1271,7 +1272,8 @@ function ListShopBarber(props) {
                       <div className={styles["table-fillter"]}>
                         <Button
                           className={styles["table-fillter-item"]}
-                          type="primary"
+                          // type="primary"
+                          style={{ backgroundColor: "#BF9456" }}
                           icon={<PlusOutlined />}
                           // onClick={() => setOpenEmployee(true)}
                           onClick={handleCheckAddEmployee}
@@ -1350,7 +1352,8 @@ function ListShopBarber(props) {
                       <div className={styles["table-fillter"]}>
                         <Button
                           className={styles["table-fillter-item"]}
-                          type="primary"
+                          // type="primary"
+                          style={{ backgroundColor: "#BF9456" }}
                           icon={<PlusOutlined />}
                           onClick={showAddServiceModal}
                         >
@@ -1430,7 +1433,8 @@ function ListShopBarber(props) {
                       <div className={styles["table-fillter"]}>
                         <Button
                           className={styles["table-fillter-item"]}
-                          type="primary"
+                          // type="primary"
+                          style={{ backgroundColor: "#BF9456" }}
                           icon={<PlusOutlined />}
                           onClick={showModalVoucher}
                         >

@@ -317,10 +317,14 @@ function ListSalonVer2(props) {
   }, [
     currentPage,
     servicesName,
-    salonName,
+    salonNameUrl,
+    // salonName,
     selectedProvince,
     selectedDistrict,
   ]);
+  const handSubmitSalonName = () => {
+    fetchSalonData();
+  };
   const handleServiceSelect = async (service) => {
     try {
       const params = new URLSearchParams(location.search);
@@ -629,6 +633,7 @@ function ListSalonVer2(props) {
                     onChange={handleSalonNameChange}
                     onKeyDown={handleKeyPress}
                     value={salonName}
+                    onSubmit={handSubmitSalonName}
                   />
                 </MotionDiv>
               </Col>

@@ -140,3 +140,23 @@ export function actPostCreateSalonEmployees(data, id) {
     }
   };
 }
+
+export function actPutUpdateSalonEmployees(id, data) {
+  return async (dispatch) => {
+    try {
+      const response = await SalonEmployeesServices.updateEmployeeById(
+        id,
+        data
+      );
+
+      if (response.status === 200 || response.status === 201) {
+        await dispatch(actGetAllEmployees(id, 1, 4));
+      }
+
+      return response;
+    } catch (error) {
+      console.error("Error while creating salon employee:", error);
+      throw error;
+    }
+  };
+}
