@@ -88,6 +88,7 @@ function ListShopBarber(props) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currencyValueUpdate, setCurrencyValueUpdate] = useState(null);
 
+
   // const auth = useAuthUser();
   // const ownerId = auth?.idOwner;
   const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
@@ -1105,7 +1106,6 @@ function ListShopBarber(props) {
                           </div>
                           <Button
                             // type="primary"
-                            style={{ backgroundColor: "#BF9456" }}
                             onClick={() => {
                               navigate(`/create_shop/${salonDetail?.id}`);
                             }}
@@ -1282,11 +1282,14 @@ function ListShopBarber(props) {
                       key="1"
                       className={styles["title-table-collapse"]}
                     >
-                      <div className={styles["table-fillter"]}>
+                      <div
+                        wrapClassName="my-custom-add"
+                        className={styles["table-fillter"]}
+                      >
                         <Button
                           className={styles["table-fillter-item"]}
                           // type="primary"
-                          style={{ backgroundColor: "#BF9456" }}
+                          // style={{ backgroundColor: "#BF9456" }}
                           icon={<PlusOutlined />}
                           // onClick={() => setOpenEmployee(true)}
                           onClick={handleCheckAddEmployee}
@@ -1366,7 +1369,6 @@ function ListShopBarber(props) {
                         <Button
                           className={styles["table-fillter-item"]}
                           // type="primary"
-                          style={{ backgroundColor: "#BF9456" }}
                           icon={<PlusOutlined />}
                           onClick={showAddServiceModal}
                         >
@@ -1447,7 +1449,6 @@ function ListShopBarber(props) {
                         <Button
                           className={styles["table-fillter-item"]}
                           // type="primary"
-                          style={{ backgroundColor: "#BF9456" }}
                           icon={<PlusOutlined />}
                           onClick={showModalVoucher}
                         >

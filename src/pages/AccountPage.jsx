@@ -25,6 +25,8 @@ import { SalonEmployeesServices } from "../services/salonEmployeesServices";
 import { ServiceHairServices } from "../services/servicesHairServices";
 import {
   actGetAllEmployees,
+  actGetSalonEmployeeById,
+  actPutSalonEmployeeById,
   actPutUpdateSalonEmployees,
 } from "../store/salonEmployees/action";
 import styles from "../css/accountPage.module.css";
@@ -53,6 +55,11 @@ function AccountPage() {
   const salonDetail = useSelector(
     (state) => state.SALONINFORMATION.getSalonByOwnerId
   );
+  const employeeIdOfSalon = useSelector(
+    (state) => state.SALONEMPLOYEES.employeeId
+  );
+  console.log("rmploy", employeeIdOfSalon);
+
   const [selectedServices, setSelectedServices] = useState([]);
 
   const EMPLOYEESDETAILS_URL_UPDATE =
@@ -99,67 +106,69 @@ function AccountPage() {
     return convertedSchedule;
   };
   useEffect(() => {
-    SalonEmployeesServices.getSalonEmployeeById(employeeId)
-      .then((res) => {
-        setAccountEmployeeDetail(res.data);
-        // setSchedules(res.data.schedules);
-        // const userAccount = res.data.id === id;
-        const userData = res.data;
-        setUser(res.data);
-        if (userData) {
-          const birthDay = dayjs(userData?.dayOfBirth);
-          const schedules = {};
-          for (const index in userData?.schedules) {
-            const daySchedule = userData?.schedules[index];
+    if (salonDetail) {
+      ServiceHairServices.getServiceHairBySalonNotPaging(salonDetail.id)
+        .then((res) => {
+          setServicesList(res.data);
+        })
+        .catch((err) => {
+          console.log(err, "errrors");
+        });
+    }
 
-            // Kiểm tra nếu đối tượng daySchedule tồn tại và chứa các thuộc tính cần thiết
-            if (daySchedule && daySchedule.startTime && daySchedule.endTime) {
-              // Sử dụng dayjs để định dạng startTime và endTime
-              schedules[daySchedule.dayOfWeek] = {
-                start: dayjs(daySchedule.startTime, "HH:mm:ss").format("HH:mm"),
-                end: dayjs(daySchedule.endTime, "HH:mm:ss").format("HH:mm"),
-              };
-            } else {
-              console.error("Invalid schedule data:", daySchedule);
-            }
-          }
+    dispatch(actGetSalonEmployeeById(employeeId));
+  }, [employeeId, salonDetail]);
+  useEffect(() => {
+    setAccountEmployeeDetail(employeeIdOfSalon);
+    // setSchedules(res.data.schedules);
+    // const userAccount = res.data.id === id;
+    const userData = employeeIdOfSalon;
 
-          const formattedSchedules = convertScheduleFormat(schedules);
-          console.log("formetSCh", formattedSchedules);
-          setSchedules(formattedSchedules);
-          const serviceHairs = userData.serviceHairs.map(
-            ({ id, serviceName }) => ({
-              id,
-              serviceName,
-            })
-          );
+    setUser(employeeIdOfSalon);
+    if (userData) {
+      const birthDay = dayjs(userData?.dayOfBirth);
+      const schedules = {};
+      for (const index in userData?.schedules) {
+        const daySchedule = userData?.schedules[index];
 
-          form.setFieldsValue({
-            fullName: userData.fullName,
-            email: userData.email,
-            gender: userData.gender,
-            phone: userData.phone,
-            address: userData.address,
-            dayOfBirth: birthDay,
-            avatar: userData.avatar,
-            serviceHairs: serviceHairs.map((service) => service.serviceName),
-          });
-          setSelectedServices(serviceHairs);
+        // Kiểm tra nếu đối tượng daySchedule tồn tại và chứa các thuộc tính cần thiết
+        if (daySchedule && daySchedule.startTime && daySchedule.endTime) {
+          // Sử dụng dayjs để định dạng startTime và endTime
+          schedules[daySchedule.dayOfWeek] = {
+            // start: dayjs(daySchedule.startTime, "HH:mm:ss").format("HH:mm"),
+            // end: dayjs(daySchedule.endTime, "HH:mm:ss").format("HH:mm"),
+            start: dayjs(daySchedule.startTime, "HH:mm").format("HH:mm"),
+            end: dayjs(daySchedule.endTime, "HH:mm").format("HH:mm"),
+          };
         } else {
+          console.error("Invalid schedule data:", daySchedule);
         }
-        // setSalonId(res.data.salonInformationId);
-      })
-      .catch((err) => {
-        console.log(err, "errors");
+      }
+
+      const formattedSchedules = convertScheduleFormat(schedules);
+      setSchedules(formattedSchedules);
+      const serviceHairs = userData?.serviceHairs?.map(
+        ({ id, serviceName }) => ({
+          id,
+          serviceName,
+        })
+      );
+
+      form.setFieldsValue({
+        fullName: userData.fullName,
+        email: userData.email,
+        gender: userData.gender,
+        phone: userData.phone,
+        address: userData.address,
+        dayOfBirth: birthDay,
+        avatar: userData.avatar,
+        serviceHairs: serviceHairs?.map((service) => service.serviceName),
       });
-    ServiceHairServices.getServiceHairBySalonNotPaging(salonDetail.id)
-      .then((res) => {
-        setServicesList(res.data);
-      })
-      .catch((err) => {
-        console.log(err, "errrors");
-      });
-  }, [employeeId]);
+      setSelectedServices(serviceHairs);
+    } else {
+    }
+    // setSalonId(res.data.salonInformationId);
+  }, [employeeIdOfSalon]);
 
   // const handleDayOffChange = (day) => {
   //   setDayOff((prevDayOff) => ({
@@ -169,25 +178,24 @@ function AccountPage() {
   // };
 
   const onFinish = async (item) => {
-    const gender = await form.getFieldValue("gender");
-    const phone = await form.getFieldValue("phone");
-    const imageFile = fileList.length > 0 ? fileList[0].originFileObj : null;
-    const formData = await new FormData();
-    // formData.append("id", employeeId);
-    await formData.append("SalonInformationId", salonDetail.id);
-    await formData.append("Gender", gender);
-    await formData.append("Img", imageFile);
-    await formData.append("Phone", phone);
-    await formData.append("IsActive", true);
-
-    await axios
-      .put(EMPLOYEESDETAILS_URL_UPDATE + `${employeeId}`, formData)
-      .then((res) => {
-        navigate(`/list_barber_employees/${salonDetail.id}`);
-        dispatch(actGetAllEmployees(salonDetail.id));
-        message.success("Chỉnh sửa thông tin nhân viên thành công");
-      })
-      .catch((err) => message.error(err));
+    // const gender = await form.getFieldValue("gender");
+    // const phone = await form.getFieldValue("phone");
+    // const imageFile = fileList.length > 0 ? fileList[0].originFileObj : null;
+    // const formData = await new FormData();
+    // // formData.append("id", employeeId);
+    // await formData.append("SalonInformationId", salonDetail.id);
+    // await formData.append("Gender", gender);
+    // await formData.append("Img", imageFile);
+    // await formData.append("Phone", phone);
+    // await formData.append("IsActive", true);
+    // await axios
+    //   .put(EMPLOYEESDETAILS_URL_UPDATE + `${employeeId}`, formData)
+    //   .then((res) => {
+    //     navigate(`/list_barber_employees/${salonDetail.id}`);
+    //     dispatch(actGetAllEmployees(salonDetail.id));
+    //     message.success("Chỉnh sửa thông tin nhân viên thành công");
+    //   })
+    //   .catch((err) => message.error(err));
   };
 
   const handleEdit = async () => {
@@ -284,15 +292,6 @@ function AccountPage() {
     }
   };
 
-  // const handleStartChange = (value, dayOfWeek) => {
-  //   form.setFieldsValue({ [dayOfWeek]: { start: value } });
-  //   validateFields(dayOfWeek);
-  // };
-
-  // const handleEndChange = (value, dayOfWeek) => {
-  //   form.setFieldsValue({ [dayOfWeek]: { end: value } });
-  //   validateFields(dayOfWeek);
-  // };
   const handleStartChange = (value, dayOfWeek) => {
     form.setFieldsValue({ [dayOfWeek]: { start: value } });
     validateFields(dayOfWeek);
@@ -311,14 +310,24 @@ function AccountPage() {
     checkIfButtonShouldBeEnabled(dayOfWeek);
   };
 
-  const handleDayOffChange = (day) => {
+  const handleDayOffChange = (dayOfWeek) => {
     setDayOff((prevDayOff) => {
       const updatedDayOff = {
         ...prevDayOff,
-        [day]: !prevDayOff[day],
+        [dayOfWeek]: !prevDayOff[dayOfWeek], // Đảo ngược trạng thái của ngày nghỉ
       };
-      // Ensure the button state is updated whenever the checkbox state changes
-      checkIfButtonShouldBeEnabled(day);
+
+      // Nếu ngày nghỉ được bật (checkbox được chọn), đặt thời gian về "00:00"
+      if (updatedDayOff[dayOfWeek]) {
+        const resetTime = dayjs("00:00", "HH:mm");
+        form.setFieldsValue({
+          [dayOfWeek]: { start: resetTime, end: resetTime },
+        });
+      }
+
+      // Kiểm tra nếu button cần được kích hoạt
+      checkIfButtonShouldBeEnabled(dayOfWeek);
+
       return updatedDayOff;
     });
   };
@@ -344,16 +353,56 @@ function AccountPage() {
       [dayOfWeek]: isEnabled,
     }));
   };
-  const handleConfirm = (dayOfWeek) => {
-    // Reset the state to enable the button again
-    setActiveButtons((prevState) => ({
-      ...prevState,
-      [dayOfWeek]: false,
-    }));
-    setPendingConfirmations((prevState) => ({
-      ...prevState,
-      [dayOfWeek]: false,
-    }));
+  function formatTime(time) {
+    const hours = time.hour.toString().padStart(2, "0");
+    const minutes = time.minute.toString().padStart(2, "0");
+    return `${hours}:${minutes}`;
+  }
+  const handleConfirm = async (dayOfWeek) => {
+    console.log("date", dayOfWeek);
+
+    const start = form.getFieldValue([dayOfWeek, "start"]);
+    const end = form.getFieldValue([dayOfWeek, "end"]);
+    console.log("start", start);
+    console.log("end", end);
+    if (start && end) {
+      const formattedStart = {
+        hour: start.hour(),
+        minute: start.minute(),
+      };
+
+      const formattedEnd = {
+        hour: end.hour(),
+        minute: end.minute(),
+      };
+      const startTimeString = await formatTime(formattedStart);
+      const endTimeString = await formatTime(formattedEnd);
+      console.log("startTime:", startTimeString); // "07:15"
+      console.log("endTime:", endTimeString); // "15:11"
+      const data = {
+        dayofWeeks: dayOfWeek,
+        startTime: startTimeString,
+        endTime: endTimeString,
+        isActive: true,
+      };
+      dispatch(actPutSalonEmployeeById(employeeId, data))
+        .then((res) => {
+          message.success(
+            `Cập nhật lịch làm ${dayOfWeek} thành công cho nhân viên ${employeeIdOfSalon?.fullName}`
+          );
+        })
+        .catch((err) => {
+          message.error(
+            `Cập nhật lịch làm ${dayOfWeek} thất bại cho nhân viên ${employeeIdOfSalon?.fullName}`
+          );
+        });
+
+      console.log("Formatted Data:", data);
+
+      // Thực hiện các hành động khác với dữ liệu đã format
+    } else {
+      console.log("Thời gian không hợp lệ.");
+    }
   };
 
   const handleCancel = (dayOfWeek) => {
@@ -497,7 +546,7 @@ function AccountPage() {
                     mode="multiple"
                     disabled={true}
                     placeholder="Chọn dịch vụ"
-                    value={selectedServices.map((s) => s.serviceName)}
+                    value={selectedServices?.map((s) => s.serviceName)}
                     onChange={(values) => {
                       const selected = servicesList.filter((service) =>
                         values.includes(service.serviceName)
@@ -523,88 +572,6 @@ function AccountPage() {
                     Chỉnh sửa dịch vụ
                   </Button>
                 </Form.Item>
-                {/* {schedules?.map((day) => (
-                  <Space
-                    key={day.DayOfWeek}
-                    direction="vertical"
-                    style={{
-                      marginBottom: 10,
-                      marginLeft: 20,
-                      display: "flex",
-                    }}
-                  >
-                    <Checkbox
-                      onChange={() => handleDayOffChange(day.DayOfWeek)}
-                      checked={dayOff[day.DayOfWeek]}
-                      // disabled={isDisabled}
-                    >
-                      {convertDayOfWeek(day.DayOfWeek)} Nghỉ
-                    </Checkbox>
-
-                    <Space
-                      align="baseline"
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-around",
-                        width: "100%",
-                      }}
-                    >
-                      <Form.Item
-                        name={[day.DayOfWeek, "start"]}
-                        label={`Bắt đầu (${convertDayOfWeek(day.DayOfWeek)})`}
-                        rules={[
-                          {
-                            validator: (_, value) => {
-                              // Validation will be handled by validateFields function
-                              return Promise.resolve();
-                            },
-                          },
-                        ]}
-                      >
-                        <TimePicker
-                          format="HH:mm"
-                          minuteStep={15}
-                          defaultValue={dayjs(day.StartTime, "HH:mm")}
-                          disabled={dayOff[day.DayOfWeek]}
-                          onChange={(value) =>
-                            handleStartChange(value, day.DayOfWeek)
-                          }
-                        />
-                      </Form.Item>
-
-                      <Form.Item
-                        name={[day.DayOfWeek, "end"]}
-                        label={`Kết thúc (${convertDayOfWeek(day.DayOfWeek)})`}
-                        rules={[
-                          {
-                            validator: (_, value) => {
-                              // Validation will be handled by validateFields function
-                              return Promise.resolve();
-                            },
-                          },
-                        ]}
-                      >
-                        <TimePicker
-                          format="HH:mm"
-                          minuteStep={15}
-                          defaultValue={dayjs(day.EndTime, "HH:mm")}
-                          disabled={dayOff[day.DayOfWeek]}
-                          onChange={(value) =>
-                            handleEndChange(value, day.DayOfWeek)
-                          }
-                        />
-                      </Form.Item>
-
-                      <Button
-                        style={{ backgroundColor: "#BF9456" }}
-                        htmlType="submit"
-                        // disabled={isDisabled}
-                      >
-                        Chỉnh sửa
-                      </Button>
-                    </Space>
-                  </Space>
-                ))} */}
                 {schedules?.map((day) => (
                   <Space
                     key={day.DayOfWeek}
