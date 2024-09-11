@@ -5,7 +5,7 @@ import { Avatar, Button, Dropdown, Menu, message } from "antd";
 import { IoMenu } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, Outlet, useNavigate, useParams } from "react-router-dom";
-import hairHubLogo from "../assets/images/hairHubLogo.png";
+import hairHubLogo from "../assets/images/hairhubFinalLogo.png";
 import style from "../css/header.module.css";
 import { actGetSalonInformationByOwnerIdByCheck } from "../store/salonInformation/action";
 

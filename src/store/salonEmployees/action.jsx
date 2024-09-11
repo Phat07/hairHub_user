@@ -107,6 +107,17 @@ export function actGetAllEmployees(
   };
 }
 
+export const actDeleteEmployee = (employeeId, salonId) => {
+  return (dispatch) => {
+    SalonEmployeesServices.deleteSalonEmployeeById(employeeId)
+      .then(() => {
+        message.success("Employee was deleted!");
+        dispatch(actGetAllEmployees(salonId, 1, 4));
+      })
+      .catch((error) => {});
+  };
+};
+
 // export function actPostCreateSalonEmployees(data, id) {
 //   return (dispatch) => {
 //     SalonEmployeesServices.createSalonEmployees(data)

@@ -45,6 +45,7 @@ function SalonAppointmentVer2(props) {
   const [itemReport, setItemReport] = useState({});
   const [loading, setLoading] = useState(false);
   const [dateFilter, setDateFilter] = useState(null);
+  const [nameFilter, setNameFilter] = useState(null);
   const pageSize = 4;
 
   const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
@@ -86,7 +87,8 @@ function SalonAppointmentVer2(props) {
             pageSize,
             status,
             false,
-            dateFilter
+            dateFilter,
+            nameFilter
           )
         );
         setLoading(false);
@@ -94,7 +96,7 @@ function SalonAppointmentVer2(props) {
     };
 
     fetchAppointments();
-  }, [salonInformationByOwnerId, status, currentPage, dateFilter]);
+  }, [salonInformationByOwnerId, status, currentPage, dateFilter, nameFilter]);
 
   const statusDisplayNames = {
     BOOKING: "Đang đặt",
@@ -114,6 +116,10 @@ function SalonAppointmentVer2(props) {
 
   const handleDateChange = (date, dateString) => {
     setDateFilter(dateString);
+  };
+
+  const handleNameFilterChange = (e) => {
+    setNameFilter(e.target.value);
   };
 
   const formatDate = (dateString) => {
@@ -601,8 +607,18 @@ function SalonAppointmentVer2(props) {
       </div>
 
       <div className={styles.filterDate}>
-        <Text strong>Lọc theo ngày: </Text>
-        <DatePicker onChange={handleDateChange} />
+        <DatePicker
+          style={{ marginRight: "1rem" }}
+          onChange={handleDateChange}
+          placeholder="Lọc theo thời gian"
+        />
+        <Input
+          placeholder="Lọc theo tên"
+          value={nameFilter}
+          onChange={handleNameFilterChange}
+          allowClear
+          style={{ width: 200 }}
+        />
       </div>
 
       <Table

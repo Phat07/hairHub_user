@@ -10,11 +10,12 @@ export const getAllSalonTransaction = (list) => {
   };
 };
 
-export function actGetAppointmentTransaction(salonId, numberOfDay) {
+export function actGetAppointmentTransaction(salonId, startDate, endDate) {
   return async (dispatch) => {
     const result = SalonTransaction.GetAppointmentTransaction(
       salonId,
-      numberOfDay
+      startDate,
+      endDate
     );
     await result
       .then((response) => {

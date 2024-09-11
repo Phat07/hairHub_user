@@ -76,7 +76,8 @@ export function actGetAppointmentBySalonId(
   size,
   status,
   isAscending,
-  date
+  date,
+  customerName
 ) {
   return async (dispatch) => {
     try {
@@ -86,7 +87,8 @@ export function actGetAppointmentBySalonId(
         size,
         status,
         isAscending,
-        date
+        date,
+        customerName
       );
       if (response.status === 200 || response.status === 201) {
         dispatch(

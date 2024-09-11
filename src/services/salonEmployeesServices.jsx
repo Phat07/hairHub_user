@@ -31,4 +31,7 @@ export const SalonEmployeesServices = {
   updateEmployeeById(id, data) {
     return API.put(`/salonemployees/UpdateSalonEmployee/${id}`, data);
   },
+  deleteSalonEmployeeById(id) {
+    return API.put(`/salonemployees/DeleteSalonEmployee/${id}`);
+  },
 };
