@@ -60,6 +60,7 @@ import {
   actGetAllServicesBySalonId,
 } from "../store/salonEmployees/action";
 import { actGetSalonInformationByOwnerId } from "../store/salonInformation/action";
+import classNames from "classnames";
 
 function ListShopBarber(props) {
   dayjs.locale("vi");
@@ -87,7 +88,6 @@ function ListShopBarber(props) {
   const [currencyValue, setCurrencyValue] = useState(100000);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currencyValueUpdate, setCurrencyValueUpdate] = useState(null);
-
 
   // const auth = useAuthUser();
   // const ownerId = auth?.idOwner;
@@ -1099,7 +1099,8 @@ function ListShopBarber(props) {
                         </div>
                         <div
                           style={{ padding: "1rem" }}
-                          className={styles["salon-title-cover"]}
+                          className={classNames("my-custom-add", styles["salon-title-cover"])}
+                          // className={styles["salon-title-cover"]}
                         >
                           <div className={styles["salon-title"]}>
                             {salonDetail.name}
@@ -1282,11 +1283,8 @@ function ListShopBarber(props) {
                       key="1"
                       className={styles["title-table-collapse"]}
                     >
-                      <div
-                        wrapClassName="my-custom-add"
-                        className={styles["table-fillter"]}
-                      >
-                        <Button
+                      <div className={classNames("my-custom-add", styles["table-fillter"])}>
+                        <Button                       
                           className={styles["table-fillter-item"]}
                           // type="primary"
                           // style={{ backgroundColor: "#BF9456" }}
@@ -1365,7 +1363,7 @@ function ListShopBarber(props) {
                       key="1"
                       className={styles["title-table-collapse"]}
                     >
-                      <div className={styles["table-fillter"]}>
+                      <div className={classNames("my-custom-add", styles["table-fillter"])}>
                         <Button
                           className={styles["table-fillter-item"]}
                           // type="primary"
@@ -1445,7 +1443,7 @@ function ListShopBarber(props) {
                       key="1"
                       className={styles["title-table-collapse"]}
                     >
-                      <div className={styles["table-fillter"]}>
+                      <div className={classNames("my-custom-add", styles["table-fillter"])}>
                         <Button
                           className={styles["table-fillter-item"]}
                           // type="primary"

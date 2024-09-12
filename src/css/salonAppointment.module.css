@@ -15,6 +15,17 @@
   justify-content: space-between;
   margin-bottom: 20px;
 }
+/* Ví dụ với CSS thông thường */
+:global(.custom-status .btn-primary) {
+  background-color: #BF9456; /* Màu nền chính cho nút */
+  color: #fff; /* Màu chữ cho nút */
+}
+
+.btn-default {
+  background-color: #f0f0f0; /* Màu nền mặc định cho nút */
+  color: #000; /* Màu chữ cho nút */
+}
+
 
 .filterDate {
   margin-top: 1rem;
