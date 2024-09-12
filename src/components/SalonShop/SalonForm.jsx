@@ -144,7 +144,6 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
     const formattedSchedules = {};
     const upperCaseName = name.toUpperCase();
 
-    console.log(schedules, "schedules");
     for (const day in schedules) {
       if (!dayOff[day]) {
         if (schedules[day]?.start && schedules[day]?.end) {

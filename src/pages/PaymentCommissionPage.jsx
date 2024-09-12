@@ -7,7 +7,7 @@ import { SalonPayment } from "../services/salonPayment";
 import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
 import { actGetSalonInformationByOwnerIdAsync } from "../store/salonAppointments/action";
-import { actGetAllConfig } from "../store/config/action";
+import { actGetAllConfig, getConfigId } from "../store/config/action";
 
 const columns = [
   {
@@ -40,11 +40,13 @@ function PaymentCommissionPage() {
   const idOwner = useSelector((state) => state.ACCOUNT.idOwner);
   const [loading, setLoading] = useState(false);
   const config = useSelector((state) => state.CONFIGREDUCER.getAllPackage);
+  const configPaymentId = useSelector((state) => state.CONFIGREDUCER.configPaymentId);
   const navigate= useNavigate()
 
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(actGetAllConfig(1, 10));
+    dispatch(getConfigId({ data: "1" }));
   }, []);
   const uid = useSelector((state) => state.ACCOUNT.uid);
   function formatVND(number) {
@@ -54,7 +56,6 @@ function PaymentCommissionPage() {
     // Call the initial API to get payment information
     SalonPayment.getInforPaymetOwnerId(idOwner)
       .then((response) => {
-        console.log("res", response.data);
         const paymentData = {
           key: "1",
           package: response?.data?.config?.pakageName,
@@ -77,10 +78,10 @@ console.log("config", config);
 
   const handleNextClick = () => {
     const foundPackage = config.find(config => config.pakageName === "Phí hoa hồng hairhub");
-    console.log("found", foundPackage);
     
     const data = {
-      configId: foundPackage?.id,
+      // configId: foundPackage?.id,
+      configId: configPaymentId,
       salonOwnerID: idOwner,
       description: "Thanh toán gói dịch vụ",
     };

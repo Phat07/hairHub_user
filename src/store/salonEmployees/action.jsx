@@ -2,11 +2,14 @@ import { message } from "antd";
 import { SalonInformationServices } from "../../services/salonInformationServices";
 import { SalonEmployeesServices } from "../../services/salonEmployeesServices";
 import { ServiceHairServices } from "../../services/servicesHairServices";
+import { SchedulesService } from "@/services/schedulesServices";
 
 export const CREATE_SALON_INFORMATION = "CREATE_SALON_INFORMATION";
 export const GET_ALL_EMPLOYEE = "GET_ALL_EMPLOYEE";
 export const GET_ALL_SERVICE = "GET_ALL_SERVICE";
 export const GET_ALL_SERVICE_NOT = "GET_ALL_SERVICE_NOT";
+export const GET_EMPLOYEE_ID = "GET_EMPLOYEE_ID";
+
 export const postCreateSalonEmployees = (list) => {
   return {
     type: CREATE_SALON_INFORMATION,
@@ -31,6 +34,35 @@ export const getAllServiceList = (list) => {
     payload: list,
   };
 };
+export const getSalonEmployeeByid = (list) => {
+  return {
+    type: GET_EMPLOYEE_ID,
+    payload: list,
+  };
+};
+export function actGetSalonEmployeeById(id) {
+  return (dispatch) => {
+    SalonEmployeesServices.getSalonEmployeeById(id)
+      .then((res) => {
+        console.log("test1",res.data);
+        
+        dispatch(getSalonEmployeeByid(res?.data));
+      })
+      .catch((err) => console.log(err, "errors"));
+  };
+}
+export function actPutSalonEmployeeById(id, data) {
+  return async (dispatch) => {
+    try {
+      const res = await SchedulesService.putSchedulesEmployee(id, data);
+      dispatch(actGetSalonEmployeeById(id));
+      return res;
+    } catch (err) {
+      console.log(err, "errors");
+      throw err; // Ném lỗi để xử lý ở bên ngoài nếu cần
+    }
+  };
+}
 
 export function actGetAllServicesBySalonId(
   id,
@@ -139,6 +171,26 @@ export function actPostCreateSalonEmployees(data, id) {
   return async (dispatch) => {
     try {
       const response = await SalonEmployeesServices.createSalonEmployees(data);
+
+      if (response.status === 200 || response.status === 201) {
+        await dispatch(actGetAllEmployees(id, 1, 4));
+      }
+
+      return response;
+    } catch (error) {
+      console.error("Error while creating salon employee:", error);
+      throw error;
+    }
+  };
+}
+
+export function actPutUpdateSalonEmployees(id, data) {
+  return async (dispatch) => {
+    try {
+      const response = await SalonEmployeesServices.updateEmployeeById(
+        id,
+        data
+      );
 
       if (response.status === 200 || response.status === 201) {
         await dispatch(actGetAllEmployees(id, 1, 4));

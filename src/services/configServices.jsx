@@ -17,4 +17,7 @@ export const ConfigService = {
       },
     });
   },
+  getConfig(data) {
+    return API.post("configs/GetConfigIdofCommissioRate", data);
+  },
 };

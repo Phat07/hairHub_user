@@ -98,7 +98,6 @@ const router = createBrowserRouter([
         path: "list_shop/*",
         element: (
           <RequireAuth fallbackPath="/login">
-            {/* <ListShopBarber /> */}
             <Routes>
               <Route path="/" element={<ListShopBarber />} />
               <Route

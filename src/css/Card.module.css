@@ -1,0 +1,79 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: bisque;
+  width: 16rem;
+  height: fit-content;
+  padding: 0 2rem 2rem 2rem;
+  border-radius: 10px;
+  transition: width 0.3s ease-in-out, height 0.3s ease-in-out;
+}
+
+/* Make image responsive */
+.card img {
+  margin-top: -20%;
+  width: 100%;
+  border-radius: 20px;
+  max-width: 100%;
+}
+
+.card h2 {
+  margin: 0;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.card p {
+  margin: 0;
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.card .btnn {
+  /* display: flex;
+  justify-content: space-between; */
+  align-items: center;
+  width: 100%;
+}
+
+/* Responsive for small mobile devices (max-width: 600px) */
+@media (max-width: 600px) {
+  .card {
+    width: 95%; /* Wider card */
+    height: auto; /* Shorter height by making it fit content */
+    padding: 1rem;
+  }
+  
+  .card img {
+    margin-top: -10%; /* Adjust top margin */
+  }
+
+  .card .btnn {
+    flex-direction: column; /* Stack buttons vertically */
+    gap: 10px; /* Add space between buttons */
+  }
+}
+
+/* Responsive for tablets (601px - 1024px) */
+@media (min-width: 601px) and (max-width: 1024px) {
+  .card {
+    width: 22rem; /* Wider card */
+    height: auto; /* Shorter height */
+    padding: 1.5rem;
+  }
+
+  .card .btnn {
+    flex-direction: row; /* Ensure buttons are aligned horizontally */
+  }
+}
+
+/* Responsive for large desktops (1025px and above) */
+@media (min-width: 1025px) {
+  .card {
+    width: 24rem; /* Wider card */
+    height: auto; /* Shorter height */
+  }
+}

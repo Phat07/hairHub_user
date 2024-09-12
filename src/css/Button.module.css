@@ -1,0 +1,22 @@
+@import url("../css/root.css");
+
+.btn {
+  margin-top: 1rem;
+  background-color: #bf9456;
+  color: #fff;
+  border: none;
+  font-family: var(--font-secondary);
+  outline: none;
+  font-size: 1rem;
+  border-radius: 10px;
+  padding: 11px 1rem;
+  width: 7.5rem;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #a17a4c; /* Darker shade on hover */
+  color: #fff; /* Keep the text color white */
+  transform: scale(1.05); /* Slightly scale up on hover */
+  cursor: pointer;
+}

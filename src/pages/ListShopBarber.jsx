@@ -88,6 +88,7 @@ function ListShopBarber(props) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currencyValueUpdate, setCurrencyValueUpdate] = useState(null);
 
+
   // const auth = useAuthUser();
   // const ownerId = auth?.idOwner;
   const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
@@ -1104,7 +1105,7 @@ function ListShopBarber(props) {
                             {salonDetail.name}
                           </div>
                           <Button
-                            type="primary"
+                            // type="primary"
                             onClick={() => {
                               navigate(`/create_shop/${salonDetail?.id}`);
                             }}
@@ -1281,10 +1282,14 @@ function ListShopBarber(props) {
                       key="1"
                       className={styles["title-table-collapse"]}
                     >
-                      <div className={styles["table-fillter"]}>
+                      <div
+                        wrapClassName="my-custom-add"
+                        className={styles["table-fillter"]}
+                      >
                         <Button
                           className={styles["table-fillter-item"]}
-                          type="primary"
+                          // type="primary"
+                          // style={{ backgroundColor: "#BF9456" }}
                           icon={<PlusOutlined />}
                           // onClick={() => setOpenEmployee(true)}
                           onClick={handleCheckAddEmployee}
@@ -1363,7 +1368,7 @@ function ListShopBarber(props) {
                       <div className={styles["table-fillter"]}>
                         <Button
                           className={styles["table-fillter-item"]}
-                          type="primary"
+                          // type="primary"
                           icon={<PlusOutlined />}
                           onClick={showAddServiceModal}
                         >
@@ -1443,7 +1448,7 @@ function ListShopBarber(props) {
                       <div className={styles["table-fillter"]}>
                         <Button
                           className={styles["table-fillter-item"]}
-                          type="primary"
+                          // type="primary"
                           icon={<PlusOutlined />}
                           onClick={showModalVoucher}
                         >

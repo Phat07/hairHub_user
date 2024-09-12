@@ -72,11 +72,11 @@
     margin-bottom: 300px;
   } */
   .custom_spin {
-    margin-top: 19rem;
+    margin-top: 30rem;
   }
   .right-side {
     width: 100%;
-    top: 20rem;
+    top: 27rem;
     margin: 1rem 0; /* Margin on top and bottom to space it from other content */
     position: absolute;
   }
@@ -90,6 +90,17 @@
   .tinhHuyen {
     display: flex;
     justify-content: start;
+  }
+}
+
+
+@media (max-width: 480px) {
+  .custom_spin {
+    margin-top: 20rem;
+  }
+  .right-side {
+    top: 25rem; /* Further reduce top for very small screens */
+    margin: 0.25rem 0;
   }
 }
 

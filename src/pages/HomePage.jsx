@@ -35,6 +35,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { EmptyComponent } from "../components/EmptySection/DisplayEmpty";
 import { actGetAllSalonInformation } from "../store/salonInformation/action";
 import { actGetStatusPayment } from "../store/salonPayment/action";
+import ImageCarouselComponent from "@/components/Artcards/ImageCarouselComponent";
+import ReactCarouselComponent from "@/components/react-carousel/ReactCarouselComponent";
+import CarrousselComponent from "@/components/Artcards/CarrousselComponent";
+
 const { Title, Text } = Typography;
 function HomePage(props) {
   const navigate = useNavigate();
@@ -86,7 +90,7 @@ function HomePage(props) {
   }, [orderCode, amount, configId, id]);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
-  
+
   useEffect(() => {
     dispatch(actGetAllSalonInformation());
   }, []);
@@ -201,7 +205,7 @@ function HomePage(props) {
                   onClick={scrollLeft1}
                 />
 
-                <motion.div className="scroll-content" ref={scrollContainerRef} >
+                <motion.div className="scroll-content" ref={scrollContainerRef}>
                   {recommendedSalons?.length > 0 ? (
                     recommendedSalons?.map((item, index) => (
                       <Card
@@ -292,7 +296,9 @@ function HomePage(props) {
                                   textAlign: "center",
                                 }}
                               >
-                                <div>{item.totalRating / item.totalReviewer}/5</div>
+                                <div>
+                                  {item.totalRating / item.totalReviewer}/5
+                                </div>
                                 <div>{item.totalReviewer} đánh giá</div>
                               </div>
                             ) : (
@@ -421,8 +427,9 @@ function HomePage(props) {
             <div className="customTitle mt-16" style={{ color: "#bf9456" }}>
               Dịch vụ nổi bật
             </div>
-            <div className="container-service-list">
-              <LeftCircleOutlined
+            <CarrousselComponent />
+            {/* <div className="container-service-list"> */}
+            {/* <LeftCircleOutlined
                 className="scroll-icon2 left-icon"
                 onClick={scrollLeft}
               />
@@ -677,8 +684,10 @@ function HomePage(props) {
               <RightCircleOutlined
                 className="scroll-icon2 right-icon"
                 onClick={scrollRight}
-              />
-            </div>
+              /> */}
+            {/* <ImageCarouselComponent /> */}
+
+            {/* </div> */}
           </div>
           {/* </section> */}
 

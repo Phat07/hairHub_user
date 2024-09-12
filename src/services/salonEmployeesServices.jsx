@@ -28,6 +28,9 @@ export const SalonEmployeesServices = {
   getSalonEmployeeById(id) {
     return API.get(`/salonemployees/GetSalonEmployeeById/${id}`);
   },
+  updateEmployeeById(id, data) {
+    return API.put(`/salonemployees/UpdateSalonEmployee/${id}`, data);
+  },
   deleteSalonEmployeeById(id) {
     return API.put(`/salonemployees/DeleteSalonEmployee/${id}`);
   },

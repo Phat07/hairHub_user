@@ -79,7 +79,7 @@ function Header(props) {
       <header className={style.headerContainer}>
         <div className={style.header}>
           <div className={style.logoContainer}>
-            <Link to={"/"}>
+            <Link to={idOwner ? "/list_shop" : "/"}>
               <img
                 className={style.logo}
                 src={hairHubLogo}
@@ -165,8 +165,16 @@ function Header(props) {
                       </Link>
                     </li>
                     <li className={style.navItemRepo}>
-                      <Link to={"/list_salon_ver2"} className={style.navLink}>
-                        Hệ thống cửa hàng
+                      <Link to="/salon_report" className={style.navLink}>
+                        Danh sách báo cáo
+                      </Link>
+                    </li>
+                    <li className={style.navItemRepo}>
+                      <Link
+                        to="/dashboardTransaction"
+                        className={style.navLink}
+                      >
+                        Thống kê doanh thu
                       </Link>
                     </li>
                     <li className={style.navItemRepo}>
