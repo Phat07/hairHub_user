@@ -1494,16 +1494,18 @@ function SalonDetail(props) {
               <div>
                 <Spin spinning={loading}>
                   <Modal
+                    wrapClassName="my-custom-modal"
                     title={
-                      <span
+                      <div
                         style={{
                           fontSize: "3rem",
                           fontWeight: "bold",
                           textAlign: "center",
+                          backgroundColor: "#ece8de",
                         }}
                       >
                         Đặt lịch cắt tóc
-                      </span>
+                      </div>
                     }
                     visible={
                       isBookingModalVisible && additionalServices?.length !== 0
@@ -2393,8 +2395,16 @@ function SalonDetail(props) {
                 </div>
 
                 <Modal
+                  wrapClassName="my-custom-modal"
                   title={
-                    <Title level={3} style={{ color: "#bf9456" }}>
+                    <Title
+                      level={3}
+                      style={{
+                        textAlign: "center",
+                        fontSize: "2rem",
+                        backgroundColor: "#ece8de",
+                      }}
+                    >
                       Xác nhận cuộc hẹn
                     </Title>
                   }
