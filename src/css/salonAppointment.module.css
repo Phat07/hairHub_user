@@ -125,3 +125,7 @@
     white-space: nowrap;
   }
 }
+
+:global(.my-custom-modal .ant-modal-content) {
+  background-color: #ece8de !important;
+}
