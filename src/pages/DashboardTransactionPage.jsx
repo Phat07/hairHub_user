@@ -8,9 +8,10 @@ import {
   PointElement,
   Title,
   Tooltip,
+  ArcElement,
 } from "chart.js";
 import React, { useEffect, useMemo, useState } from "react";
-import { Line } from "react-chartjs-2";
+import { Line, Pie } from "react-chartjs-2";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import "../css/dashboardTransaction.css";
@@ -26,7 +27,8 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  ArcElement
 );
 
 function DashboardTransactionPage(props) {
@@ -118,6 +120,34 @@ function DashboardTransactionPage(props) {
     ],
   };
 
+  const pieChartData = {
+    labels: ["Thành công", "Thất bại", "Hủy bởi khách"],
+    datasets: [
+      {
+        label: "Số lượng cuộc hẹn",
+        data: [
+          salonTransaction.successedAppointmentCount || 0,
+          salonTransaction.failedAppointmentCount || 0,
+          salonTransaction.canceledAppointmentCount || 0,
+        ],
+        backgroundColor: ["#4CAF50", "#FF6384", "#FFCE56"],
+        hoverBackgroundColor: ["#66BB6A", "#FF6384", "#FFCE56"],
+      },
+    ],
+  };
+  console.log(
+    "successedAppointmentCount",
+    salonTransaction.successedAppointmentCount
+  );
+  console.log(
+    "failedAppointmentCount",
+    salonTransaction.failedAppointmentCount
+  );
+  console.log(
+    "canceledAppointmentCount",
+    salonTransaction.canceledAppointmentCount
+  );
+
   const handleTableChange = (pagination, filters, sorter) => {
     setCurrentPage(pagination.current);
   };
@@ -171,6 +201,8 @@ function DashboardTransactionPage(props) {
     }
   };
 
+  const hasPieData = pieChartData.datasets[0].data.some((value) => value > 0);
+
   return (
     <div className="dashboard-container">
       <div
@@ -219,8 +251,38 @@ function DashboardTransactionPage(props) {
           </Link>
         </div>
       </div>
-      <div style={{ marginTop: "2rem" }}>
-        <Line data={chartData} />
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-around",
+          marginTop: "2rem",
+        }}
+      >
+        {/* Biểu đồ LineChart */}
+        <div style={{ flex: 2, marginRight: "1rem" }}>
+          <Line data={chartData} />
+        </div>
+
+        {/* Biểu đồ PieChart hoặc thông báo nếu không có dữ liệu */}
+        <div style={{ flex: 1, marginLeft: "1rem" }}>
+          {hasPieData ? (
+            <Pie data={pieChartData} />
+          ) : (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center", // Căn giữa theo chiều ngang
+                alignItems: "center", // Căn giữa theo chiều dọc
+                height: "100%", // Đảm bảo chiều cao toàn phần để nội dung ở giữa
+                padding: "2rem",
+                border: "1px solid #ccc",
+                borderRadius: "5px",
+              }}
+            >
+              <p>Không có dữ liệu để tạo biểu đồ tròn</p>
+            </div>
+          )}
+        </div>
       </div>
       <div
         style={{
