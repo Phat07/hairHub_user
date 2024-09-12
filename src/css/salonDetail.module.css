@@ -50,7 +50,7 @@
 }
 .css-dev-only-do-not-override-wb61s4.ant-layout {
   /* Các thuộc tính CSS bạn muốn áp dụng */
-  background-color: #F4F2EB;
+  background-color: #f4f2eb;
   /* Thêm các thuộc tính khác tùy theo nhu cầu */
 }
 .css-dev-only-do-not-override-wb61s4 .ant-row {
@@ -65,7 +65,6 @@
   .detail-salon-col-2 {
     margin-left: 0;
   }
- 
 }
 
 .rating-overlay {
@@ -160,14 +159,23 @@
   background-color: gold; /* Change this color as needed */
 }
 
-
-:global(:where(.css--wb61s4).ant-progress .ant-progress-outer .ant-progress-inner .ant-progress-bg) {
+:global(
+    :where(.css--wb61s4).ant-progress
+      .ant-progress-outer
+      .ant-progress-inner
+      .ant-progress-bg
+  ) {
   background-color: gold;
 }
-:global(:where(.css-dev-only-do-not-override-wb61s4).ant-layout){
-  background-color: #F4F2EB;
+:global(:where(.css-dev-only-do-not-override-wb61s4).ant-layout) {
+  background-color: #f4f2eb;
 }
-:global(:where(.css-dev-only-do-not-override-wb61s4).ant-collapse>.ant-collapse-item >.ant-collapse-header .ant-collapse-header-text){
+:global(
+    :where(.css-dev-only-do-not-override-wb61s4).ant-collapse
+      > .ant-collapse-item
+      > .ant-collapse-header
+      .ant-collapse-header-text
+  ) {
   text-align: center;
 }
 .review-count {
@@ -251,7 +259,6 @@
   transform: scale(0.95); /* Giảm kích thước khi nhấn */
 }
 
-
 .selected {
   background-color: #bf9456;
   color: white;
@@ -297,10 +304,10 @@
 }
 
 .listItem {
-  background-color: #E9E6D9; 
-  padding: 20px; 
-  margin-bottom: 20px; 
-  border-radius: 8px; 
+  background-color: #e9e6d9;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 8px;
 }
 
 .listItemMeta {
@@ -319,15 +326,15 @@
 }
 .feedback-images {
   display: flex;
-  gap: 10px; 
-  margin-top: 10px; 
+  gap: 10px;
+  margin-top: 10px;
 }
 
 .feedback-image {
-  width: 80px; 
-  height: 80px; 
-  object-fit: cover; 
-  border-radius: 4px; 
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
 }
 
 @media (max-width: 1600px) {
@@ -336,15 +343,15 @@
     margin-left: auto;
     margin-right: auto;
   } */
-  
+
   .detail-salon-col-1 {
     margin-right: 5%;
   }
-  
+
   .detail-salon-col-2 {
     margin-left: 5%;
   }
-  
+
   /* .container {
     padding: 0 60px;
   } */
@@ -358,7 +365,6 @@
   .detail-salon-col-2 {
     margin-left: 5%;
   }
- 
 }
 
 /* Small screens: 768px and below */
@@ -368,7 +374,6 @@
     margin-left: 0;
     margin-right: 0;
   }
-
 
   /* Adjust other elements for mobile screens */
   .rating-overlay {
@@ -411,4 +416,8 @@
     padding: 6px;
     font-size: 1.2rem;
   }
+}
+
+:global(.my-custom-modal .ant-modal-content) {
+  background-color: #ece8de !important;
 }

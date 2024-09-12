@@ -349,11 +349,11 @@ function CustomerAppointmentVer2(props) {
           >
             {selectedAppointmentDetail?.status !== "CANCEL_BY_CUSTOMER" && (
               <div style={{ padding: "10px", border: "1px solid #ccc" }}>
-                {/* <Text strong>Mã QR xác nhận để thành công:</Text> */}
-                {/* <Image
+                <Text strong>Mã QR xác nhận để thành công:</Text>
+                <Image
                   src={selectedAppointmentDetail?.qrCodeImg}
                   style={{ width: "100%", marginTop: "10px" }}
-                /> */}
+                />
               </div>
             )}
           </div>
@@ -682,7 +682,6 @@ function CustomerAppointmentVer2(props) {
         <DatePicker onChange={handleDateChange} />
       </div>
 
-
       <Table
         className={styles.appointmentTable}
         columns={columns}
@@ -702,7 +701,19 @@ function CustomerAppointmentVer2(props) {
       />
 
       <Modal
-        title="Chi tiết cuộc hẹn"
+        wrapClassName="my-custom-modal"
+        title={
+          <div
+            style={{
+              fontSize: "2rem",
+              fontWeight: "bold",
+              textAlign: "center",
+              backgroundColor: "#ece8de",
+            }}
+          >
+            Chi tiết cuộc hẹn
+          </div>
+        }
         visible={selectedAppointmentDetail}
         onCancel={handleModalClose}
         footer={null}

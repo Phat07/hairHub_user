@@ -639,7 +639,19 @@ function SalonAppointmentVer2(props) {
       />
 
       <Modal
-        title="Chi tiết cuộc hẹn"
+        wrapClassName="my-custom-modal"
+        title={
+          <div
+            style={{
+              fontSize: "2rem",
+              fontWeight: "bold",
+              textAlign: "center",
+              backgroundColor: "#ece8de",
+            }}
+          >
+            Chi tiết cuộc hẹn
+          </div>
+        }
         visible={isModalVisible}
         onCancel={handleCancel}
         footer={

@@ -814,7 +814,7 @@ const LoginPage = () => {
           logo={
             <div onClick={() => navigate("/")} className="w-[3rem]">
               <img
-                style={{ width: "100%", borderRadius: "50%" }}
+                style={{ width: "100%", borderRadius: "5px" }}
                 src={hairhubLogo}
                 alt="HairHub Logo"
               />

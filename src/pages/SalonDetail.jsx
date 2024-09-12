@@ -1494,16 +1494,18 @@ function SalonDetail(props) {
               <div>
                 <Spin spinning={loading}>
                   <Modal
+                    wrapClassName="my-custom-modal"
                     title={
-                      <span
+                      <div
                         style={{
                           fontSize: "3rem",
                           fontWeight: "bold",
                           textAlign: "center",
+                          backgroundColor: "#ece8de",
                         }}
                       >
                         Đặt lịch cắt tóc
-                      </span>
+                      </div>
                     }
                     visible={
                       isBookingModalVisible && additionalServices?.length !== 0
@@ -1605,7 +1607,7 @@ function SalonDetail(props) {
                                               style={{
                                                 display: "inline",
                                                 fontWeight: "normal",
-                                              }}  
+                                              }}
                                             >
                                               {formatTime(service.time)}
                                             </Text>
@@ -2192,8 +2194,8 @@ function SalonDetail(props) {
                         status="active"
                         showInfo={false}
                         strokeColor={{
-                          '0%': '#FFD700',   // Gradient or color variations
-                          '100%': '#FFD700',
+                          "0%": "#FFD700", // Gradient or color variations
+                          "100%": "#FFD700",
                         }}
                       />
                       <span className={style["review-count"]}>
@@ -2393,94 +2395,171 @@ function SalonDetail(props) {
                 </div>
 
                 <Modal
-                  title="Xác nhận cuộc hẹn"
+                  wrapClassName="my-custom-modal"
+                  title={
+                    <Title
+                      level={3}
+                      style={{
+                        textAlign: "center",
+                        fontSize: "2rem",
+                        backgroundColor: "#ece8de",
+                      }}
+                    >
+                      Xác nhận cuộc hẹn
+                    </Title>
+                  }
                   visible={isPriceModalVisible}
                   onOk={handleConfirmBooking}
                   onCancel={() => setIsPriceModalVisible(false)}
                   okText="Xác nhận"
                   cancelText="Hủy"
+                  okButtonProps={{
+                    style: {
+                      backgroundColor: "#bf9456",
+                      borderColor: "#bf9456",
+                    },
+                  }}
+                  cancelButtonProps={{
+                    style: {
+                      color: "#878787",
+                    },
+                  }}
+                  width={800} // Set modal width to be wider
+                  style={{ backgroundColor: "#f4f2eb" }} // Set modal background color
                 >
-                  {additionalServices?.map((e) => {
+                  {/* Section for Services */}
+                  {additionalServices?.map((service, index) => {
                     const startTime =
-                      e?.bookingDetailResponses?.serviceHair?.startTime;
+                      service?.bookingDetailResponses?.serviceHair?.startTime;
                     const endTime =
-                      e?.bookingDetailResponses?.serviceHair?.endTime;
-
+                      service?.bookingDetailResponses?.serviceHair?.endTime;
                     const formattedStartTime = dayjs(startTime).format("HH:mm");
                     const formattedEndTime = dayjs(endTime).format("HH:mm");
-
                     const totalTime = dayjs
                       .duration(dayjs(endTime).diff(dayjs(startTime)))
                       .asMinutes();
-                    const employee = e?.bookingDetailResponses?.employees.find(
-                      (emp) => emp.id === e?.bookingDetail?.salonEmployeeId
-                    );
+                    const employee =
+                      service?.bookingDetailResponses?.employees.find(
+                        (emp) =>
+                          emp.id === service?.bookingDetail?.salonEmployeeId
+                      );
+
                     return (
                       <Card
-                        key={e.id}
-                        actions={[
-                          <>
-                            <Text style={{ fontSize: "2rem" }} strong>
-                              Dịch vụ: {e?.serviceName}{" "}
-                            </Text>
-                            <br />
-                            {employee ? (
-                              <>
-                                <Avatar
-                                  src={employee.img}
-                                  style={{ marginRight: 8 }}
-                                />
-                                Nhân viên: {employee.fullName}
-                              </>
-                            ) : (
-                              <>
-                                <Avatar
-                                  icon={<RandomIcon />}
-                                  style={{
-                                    fontSize: "1.5rem",
-                                    color: "#878787",
-                                    backgroundColor: "white",
-                                  }}
-                                />
-                                Nhân viên: Ngẫu nhiên
-                              </>
-                            )}
-                            <br />
+                        key={service.id}
+                        style={{
+                          marginBottom: "20px",
+                          borderRadius: "8px",
+                          padding: "20px",
+                          backgroundColor: "#fff",
+                        }}
+                      >
+                        <Row gutter={16} align="middle">
+                          {/* Service Info */}
+                          <Col span={12}>
+                            <Title level={4}>{service?.serviceName}</Title>
                             <Text strong>
                               Thời gian: {formattedStartTime} -{" "}
                               {formattedEndTime}
                             </Text>
                             <br />
                             <Text strong>Tổng thời gian: {totalTime} phút</Text>
-                            <Image width={150} src={e?.img} />
-                          </>,
-                        ]}
-                      ></Card>
+                          </Col>
+
+                          {/* Employee Info */}
+                          <Col span={12} style={{ textAlign: "right" }}>
+                            {employee ? (
+                              <>
+                                <Avatar
+                                  src={employee.img}
+                                  size="large"
+                                  style={{ marginRight: 10 }}
+                                />
+                                <Text strong>
+                                  Nhân viên: {employee.fullName}
+                                </Text>
+                              </>
+                            ) : (
+                              <>
+                                <Avatar
+                                  icon={<RandomIcon />}
+                                  size="large"
+                                  style={{ marginRight: 10 }}
+                                />
+                                <Text strong>Nhân viên: Ngẫu nhiên</Text>
+                              </>
+                            )}
+                          </Col>
+                        </Row>
+
+                        {/* Service Image */}
+                        {service?.img && (
+                          <Row justify="center" style={{ marginTop: "10px" }}>
+                            {" "}
+                            {/* Center the image */}
+                            <Col>
+                              <Image
+                                src={service?.img}
+                                width={200}
+                                style={{ borderRadius: "8px" }}
+                              />
+                            </Col>
+                          </Row>
+                        )}
+                      </Card>
                     );
                   })}
 
-                  <Typography
-                    style={{ backgroundColor: "white", marginTop: "1rem" }}
+                  {/* Price Section */}
+                  <Divider />
+                  <Row
+                    gutter={16}
+                    justify="space-between"
+                    style={{ marginTop: "20px" }}
                   >
-                    <Text strong>
-                      Giá gốc: &nbsp;
-                      <Text style={{ display: "inline" }}>
+                    <Col span={8}>
+                      <Text strong style={{ fontSize: "1.2rem" }}>
+                        Giá gốc:
+                      </Text>
+                    </Col>
+                    <Col span={16} style={{ textAlign: "right" }}>
+                      <Text style={{ fontSize: "1.2rem" }}>
                         {formatCurrency(originalPrice)}
                       </Text>
-                    </Text>{" "}
-                    <Text strong>
-                      Giá đã giảm: &nbsp;
-                      <Text style={{ display: "inline" }}>
+                    </Col>
+                  </Row>
+                  <Row
+                    gutter={16}
+                    justify="space-between"
+                    style={{ marginTop: "10px" }}
+                  >
+                    <Col span={8}>
+                      <Text strong style={{ fontSize: "1.2rem" }}>
+                        Giá đã giảm:
+                      </Text>
+                    </Col>
+                    <Col span={16} style={{ textAlign: "right" }}>
+                      <Text style={{ fontSize: "1.2rem" }}>
                         {formatCurrency(discountedPrice)}
                       </Text>
-                    </Text>
-                    <Text strong>
-                      Giá tổng: &nbsp;
-                      <Text style={{ display: "inline" }}>
+                    </Col>
+                  </Row>
+                  <Row
+                    gutter={16}
+                    justify="space-between"
+                    style={{ marginTop: "10px" }}
+                  >
+                    <Col span={8}>
+                      <Text strong style={{ fontSize: "1.2rem" }}>
+                        Giá tổng:
+                      </Text>
+                    </Col>
+                    <Col span={16} style={{ textAlign: "right" }}>
+                      <Text strong style={{ fontSize: "1.2rem" }}>
                         {formatCurrency(totalPrice)}
                       </Text>
-                    </Text>
-                  </Typography>
+                    </Col>
+                  </Row>
                 </Modal>
               </div>
             </Col>
