@@ -357,7 +357,7 @@ const LoginPage = () => {
             }}
             cover={
               <img
-                style={{ width: "250px", height: "250px" }}
+                // style={{ width: "250px", height: "250px" }}
                 className="register-child-img"
                 alt="example"
                 src="https://amis.misa.vn/wp-content/uploads/2022/03/khach-hang.jpg"
@@ -379,7 +379,7 @@ const LoginPage = () => {
             cover={
               <img
                 className="register-child-img"
-                style={{ width: "250px", height: "250px" }}
+                // style={{ width: "250px", height: "250px" }}
                 alt="example"
                 src="https://res.cloudinary.com/dkjghxf2j/image/upload/v1719246287/Default/ewx9nzljcilf0sychzmb.jpg"
               />
