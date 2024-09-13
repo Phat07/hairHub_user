@@ -37,20 +37,27 @@ export function actGetAllReportCustomerId(id, page, size, status) {
 }
 export function actGetAllReportSalonId(id, page, size, status) {
   return async (dispatch) => {
-    const result = ReportService.GetReportBySalonId(id, page, size, status);
-    await result
-      .then((response) => {
-        console.log("salonReporttt", response);
-        if (response.status === 200 || response.status === 201) {
-          dispatch(getAllReportSalon(response.data));
-        } else {
-          message.error("No report salon!!!!");
-        }
-      })
-      .catch((error) => {
-        // Xử lý lỗi nếu có
-        // console.error("Error while fetching all config money:", error);
-      });
+    try {
+      const response = await ReportService.GetReportBySalonId(
+        id,
+        page,
+        size,
+        status
+      );
+
+      if (response.status === 200 || response.status === 201) {
+        // Dispatching the action with the data
+        dispatch(getAllReportSalon(response.data));
+        return response.data; // Returning the response data
+      } else {
+        message.error("No report salon!!!!");
+        return null; // Return null or an appropriate value when the response is not successful
+      }
+    } catch (error) {
+      console.error("Error fetching report:", error);
+      message.error("An error occurred while fetching the report!");
+      return null; // Return null or handle errors as needed
+    }
   };
 }
 
@@ -75,18 +82,18 @@ export function actCreateReportCustomer(data) {
   return async (dispatch) => {
     try {
       const response = await ReportService.createReport(data);
-      
+
       if (response.status === 200 || response.status === 201) {
         message.success("Xin hãy đợi báo cáo của bạn được duyệt");
         dispatch(getAllReportCustomer(response.data));
       } else {
         message.error("Báo cáo không thành công");
       }
-      
+
       return response; // Return the response or any other value you want
     } catch (error) {
       // console.error("Error while fetching all config money:", error);
-      // throw error; 
+      // throw error;
     }
   };
 }

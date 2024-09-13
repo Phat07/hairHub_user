@@ -10,6 +10,7 @@ import { actGetSalonInformationByOwnerIdAsync } from "../store/salonAppointments
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import styles from "../css/salonAppointment.module.css";
 import moment from "moment";
+import classNames from "classnames";
 
 function SalonReport(props) {
   const dispatch = useDispatch();
@@ -18,14 +19,11 @@ function SalonReport(props) {
   const [pageSize, setPageSize] = useState(10);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedReport, setSelectedReport] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   // const auth = useAuthUser();
-  const idCustomer = useSelector(
-    (state) => state.ACCOUNT.idCustomer
-  );
-  const idOwner = useSelector(
-    (state) => state.ACCOUNT.idOwner
-  );
+  const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
+  const idOwner = useSelector((state) => state.ACCOUNT.idOwner);
   const salonInformationByOwnerId = useSelector(
     (state) => state.SALONAPPOINTMENTS.salonInformationByOwnerId
   );
@@ -40,6 +38,7 @@ function SalonReport(props) {
 
   useEffect(() => {
     if (salonInformationByOwnerId?.id) {
+      setLoading(true);
       dispatch(
         actGetAllReportSalonId(
           currentPage,
@@ -47,7 +46,16 @@ function SalonReport(props) {
           salonInformationByOwnerId.id,
           status
         )
-      );
+      )
+        .then((res) => {
+          setLoading(false);
+        })
+        .catch((err) => {
+          setLoading(false);
+        })
+        .finally((err) => {
+          setLoading(false);
+        });
     }
   }, [dispatch, status, salonInformationByOwnerId, currentPage, pageSize]);
 
@@ -128,27 +136,40 @@ function SalonReport(props) {
 
   return (
     <div className={styles.appointmentContainer}>
-      <Space style={{ marginBottom: "20px" }}>
+      <Space className="custom-status" style={{ marginBottom: "20px" }}>
         <Button
-          type={status === "PENDING" ? "primary" : "default"}
+          // type={status === "PENDING" ? "primary" : "default"}
+          className={classNames({
+            "btn-primary": status === "PENDING", // Khi status là "PENDING", áp dụng lớp 'btn-primary'
+            "btn-default": status !== "PENDING", // Khi status không phải là "PENDING", áp dụng lớp 'btn-default'
+          })}
           onClick={() => handleStatusChange("PENDING")}
         >
           Đang chờ
         </Button>
         <Button
-          type={status === "APPROVED" ? "primary" : "default"}
+          // type={status === "APPROVED" ? "primary" : "default"}
+          className={classNames({
+            "btn-primary": status === "APPROVED", // Khi status là "PENDING", áp dụng lớp 'btn-primary'
+            "btn-default": status !== "APPROVED", // Khi status không phải là "PENDING", áp dụng lớp 'btn-default'
+          })}
           onClick={() => handleStatusChange("APPROVED")}
         >
           Đã duyệt
         </Button>
         <Button
-          type={status === "REJECTED" ? "primary" : "default"}
+          // type={status === "REJECTED" ? "primary" : "default"}
+          className={classNames({
+            "btn-primary": status === "REJECTED", // Khi status là "PENDING", áp dụng lớp 'btn-primary'
+            "btn-default": status !== "REJECTED", // Khi status không phải là "PENDING", áp dụng lớp 'btn-default'
+          })}
           onClick={() => handleStatusChange("REJECTED")}
         >
           Đã từ chối
         </Button>
       </Space>
       <Table
+        loading={loading}
         dataSource={reportsArray}
         columns={columns}
         rowKey="id"
@@ -194,7 +215,9 @@ function SalonReport(props) {
                 {selectedReport.reasonReport}
               </Descriptions.Item>
               <Descriptions.Item label="Ngày tạo báo cáo">
-                {moment(selectedReport.createDate).format("DD/MM/YYYY - hh:mm A")}
+                {moment(selectedReport.createDate).format(
+                  "DD/MM/YYYY - hh:mm A"
+                )}
               </Descriptions.Item>
               <Descriptions.Item label="Ngày hẹn">
                 {moment(selectedReport.appointment?.startDate).format(
@@ -206,8 +229,8 @@ function SalonReport(props) {
               </Descriptions.Item>
               <Descriptions.Item label="Tên nhân viên">
                 {
-                  selectedReport.appointment?.appointmentDetails[0]?.salonEmployee
-                    ?.fullName
+                  selectedReport.appointment?.appointmentDetails[0]
+                    ?.salonEmployee?.fullName
                 }
               </Descriptions.Item>
             </Descriptions>

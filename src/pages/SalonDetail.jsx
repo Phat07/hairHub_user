@@ -59,6 +59,7 @@ import {
 import { actGetVoucherBySalonIdNotPaging } from "../store/manageVoucher/action";
 import { actGetAllFeedbackBySalonId } from "../store/ratingCutomer/action";
 import { actGetAllSalonInformation } from "../store/salonInformation/action";
+import TitleCard from "@/components/TitleCard";
 const { Panel } = Collapse;
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -1322,6 +1323,7 @@ function SalonDetail(props) {
                     <div>Dựa trên {listFeedback.length} đánh giá</div>
                   </div> */}
                 <div>
+                  {/* <TitleCard img={salonDetail.img}/> */}
                   <Carousel autoplay>
                     <img
                       src={salonDetail.img}

@@ -11,8 +11,32 @@
 .login-form-page {
   /* display: block; */
 }
+.register-img {
+  width: 100%;
+  max-width: 300px; 
+  flex: 1;
+}
+
+.register-child-img {
+  width: 100%;
+  height: auto; 
+  object-fit: cover; 
+}
 
 @media (max-width: 768px) {
+  .register-img {
+    max-width: 200px; 
+  }
+}
+
+@media (max-width: 480px) {
+  .register-img {
+    max-width: 150px; 
+  }
+}
+
+
+/* @media (max-width: 768px) {
   .register-img {
     width: 15rem;
     height: 15rem;
@@ -21,4 +45,4 @@
   .register-child-img {
     height: 15rem;
   }
-}
+} */

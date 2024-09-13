@@ -37,15 +37,26 @@
   background-color: #ffffff !important;
   border-color: #4096ff !important;
 } */
-:global(.ant-btn){
+/* :global(.ant-btn){
   background-color: #BF9456;
 }
 :global(.ant-btn:hover) {
-  background-color: #66460b !important; /* Background color on hover */
-  color: #ffff !important; /* Text color on hover (optional) */
-  border-color: #ffff !important; /* Border color on hover (optional) */
-  transition: background-color 0.3s ease; /* Smooth transition */
+  background-color: #66460b !important; 
+  color: #ffff !important; 
+  border-color: #ffff !important; 
+  transition: background-color 0.3s ease; 
+} */
+:global(.my-custom-add .ant-btn) {
+  background-color: #BF9456 !important;
+  border-color: #BF9456 !important;
 }
+
+:global(.my-custom-add .ant-btn:hover) {
+  background-color: #A38245 !important;
+  border-color: #A38245 !important;
+  color: white !important;
+}
+
 .table-container {
   width: 100%;
   overflow-x: auto; /* Enable horizontal scrolling */
