@@ -137,6 +137,8 @@ function ListSalonVer2(props) {
   const salonNameUrl = searchParams.get("salonName");
   const locationSalonUrl = searchParams.get("location");
 
+  console.log("salonList", salonList);
+
   const [servicesName, setServicesName] = useState(servicesNameUrl || "");
   const [locationSalon, setLocationSalon] = useState(locationSalonUrl || "");
   const [salonName, setSalonName] = useState(salonNameUrl || "");
@@ -377,19 +379,20 @@ function ListSalonVer2(props) {
         );
       const salons = salonRes.data.items;
 
-      const servicePromises = await salons.map((salon) =>
-        ServiceHairServices.getServiceHairBySalonNotPaging(salon.id).then(
-          (serviceData) => ({
-            ...salon,
-            services: serviceData.data,
-          })
-        )
-      );
+      // const servicePromises = await salons.map((salon) =>
+      //   ServiceHairServices.getServiceHairBySalonNotPaging(salon.id).then(
+      //     (serviceData) => ({
+      //       ...salon,
+      //       services: serviceData.data,
+      //     })
+      //   )
+      // );
 
-      const salonsWithServices = await Promise.all(servicePromises);
+      // const salonsWithServices = await Promise.all(servicePromises);
 
-      setSalonList(salonsWithServices);
-      console.log("salonwwith", salonsWithServices);
+      setSalonList(salons);
+      // setSalonList(salonsWithServices);
+      // console.log("salonwwith", salonsWithServices);
 
       setTotalPages(salonRes.data.total);
       setTotal(salonRes.data.total);
@@ -419,18 +422,19 @@ function ListSalonVer2(props) {
         );
       const salons = salonRes.data.items;
 
-      const servicePromises = await salons.map((salon) =>
-        ServiceHairServices.getServiceHairBySalonNotPaging(salon.id).then(
-          (serviceData) => ({
-            ...salon,
-            services: serviceData.data,
-          })
-        )
-      );
+      // const servicePromises = await salons.map((salon) =>
+      //   ServiceHairServices.getServiceHairBySalonNotPaging(salon.id).then(
+      //     (serviceData) => ({
+      //       ...salon,
+      //       services: serviceData.data,
+      //     })
+      //   )
+      // );
 
-      const salonsWithServices = await Promise.all(servicePromises);
+      // const salonsWithServices = await Promise.all(servicePromises);
 
-      setSalonList(salonsWithServices);
+      // setSalonList(salonsWithServices);
+      setSalonList(salons);
       setTotalPages(salonRes.data.total);
       setTotal(salonRes.data.total);
       message.info(
@@ -866,7 +870,7 @@ function ListSalonVer2(props) {
                           <strong>Địa chỉ:</strong> {salon.address}
                         </p>
                         <ul>
-                          {salon.services.map((service, index) => (
+                          {salon.services.slice(0, 3).map((service, index) => (
                             <motion.li
                               key={index}
                               className={styles["service-list-item"]}
@@ -896,6 +900,19 @@ function ListSalonVer2(props) {
                             </motion.li>
                           ))}
                         </ul>
+
+                        {salon.services.length > 3 && (
+                          <div style={{ marginTop: "8px" }}>
+                            <Button
+                              onClick={() =>
+                                navigate(`/salon_detail/${salon?.id}`)
+                              }
+                              className={styles["view-more-button"]}
+                            >
+                              Xem thêm ...
+                            </Button>
+                          </div>
+                        )}
                       </div>
                     </motion.div>
                   ))
