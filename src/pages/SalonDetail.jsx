@@ -1323,7 +1323,7 @@ function SalonDetail(props) {
                     <div>Dựa trên {listFeedback.length} đánh giá</div>
                   </div> */}
                 <div>
-                  <TitleCard img={salonDetail.img}/>
+                  {/* <TitleCard img={salonDetail.img}/> */}
                   <Carousel autoplay>
                     <img
                       src={salonDetail.img}
