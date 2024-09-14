@@ -1816,7 +1816,7 @@ function SalonDetail(props) {
                                 ) : (
                                   <Title
                                     className={style["warning-title"]}
-                                    level={3}
+                                    level={4}
                                   >
                                     Salon không hoạt hộng hoặc không có nhân
                                     viên làm trong khoảng thời gian này!

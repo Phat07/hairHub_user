@@ -311,10 +311,10 @@
 }
 
 .warning-title {
-  color: #0059ff !important;
-  -webkit-box-shadow: 0px 0px 50px 15px #00b7ff;
-  -moz-box-shadow: 0px 0px 50px 15px #00b7ff;
-  box-shadow: 0px 0px 50px 15px #00b7ff;
+  color: #bf946c !important;
+  /* -webkit-box-shadow: 0px 0px 50px 15px #bf946c;
+  -moz-box-shadow: 0px 0px 50px 15px #bf946c;
+  box-shadow: 0px 0px 50px 15px #bf946c; */
   border-radius: 50px;
   margin: 0 auto;
 }
