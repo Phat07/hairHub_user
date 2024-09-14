@@ -166,17 +166,17 @@ function ListSalonVer2(props) {
 
   const [mapStyle, setMapStyle] = useState({
     height: "500px",
-    width: "850px",
+    width: "auto",
   });
 
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth <= 480) {
-        setMapStyle({ height: "250px", width: "350px" });
+        setMapStyle({ height: "250px", width: window.innerWidth - 40 });
       } else if (window.innerWidth <= 768) {
-        setMapStyle({ height: "300px", width: "425px" });
+        setMapStyle({ height: "300px", width: window.innerWidth - 40 });
       } else {
-        setMapStyle({ height: "300px", width: "500px" });
+        setMapStyle({ height: "300px", width: "auto" });
       }
     };
 
@@ -184,7 +184,7 @@ function ListSalonVer2(props) {
     handleResize(); // Initial call
 
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [window.innerWidth]);
   useEffect(() => {
     axios
       .get(
@@ -670,7 +670,7 @@ function ListSalonVer2(props) {
                     onKeyUp={handleKeyPress}
                   />
                 </Popover>
-                <div className={styles["list-salon-service"]}>
+                {/* <div className={styles["list-salon-service"]}>
                   <div
                     onClick={() => handleServiceSelect("Cắt tóc")}
                     className={styles["service-item"]}
@@ -713,7 +713,7 @@ function ListSalonVer2(props) {
                   >
                     Cạo râu
                   </div>
-                </div>
+                </div> */}
               </Col>
             </Row>
           </div>

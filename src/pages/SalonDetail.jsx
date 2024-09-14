@@ -1310,7 +1310,7 @@ function SalonDetail(props) {
     return amount.toLocaleString("vi-VN");
   }
   return (
-    <div style={{ marginTop: "97px" }}>
+    <div style={{ marginTop: "90px" }}>
       <Layout>
         <Content>
           <Row justify="center" gutter={0}>

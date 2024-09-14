@@ -152,7 +152,7 @@ function HomePage(props) {
   };
 
   return (
-    <div style={{ marginTop: "95px" }}>
+    <div style={{ marginTop: "80px" }}>
       <section
         className="section hero has-before has-bg-image"
         id="home"
@@ -424,7 +424,7 @@ function HomePage(props) {
             </div>
           </Flex>
           <div className="container">
-            <div className="customTitle mt-16" style={{ color: "#bf9456" }}>
+            <div className="customTitle mt-8" style={{ color: "#bf9456" }}>
               Dịch vụ nổi bật
             </div>
             <CarrousselComponent />

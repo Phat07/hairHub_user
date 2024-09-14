@@ -24,7 +24,8 @@
   height: 10%;
 }
 .showMap {
-  margin-top: 2rem;
+  margin: 2rem 0;
+  width: auto;
 }
 .select_1 {
   width: 15rem;
@@ -34,7 +35,7 @@
 }
 .tinhHuyen {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
 }
 /* .list-salon-content{
   position: relative;
@@ -72,11 +73,11 @@
     margin-bottom: 300px;
   } */
   .custom_spin {
-    margin-top: 30rem;
+    margin-top: 20rem;
   }
   .right-side {
-    width: 100%;
-    top: 27rem;
+    width: fit-content;
+    top: 10rem;
     margin: 1rem 0; /* Margin on top and bottom to space it from other content */
     position: absolute;
   }
@@ -89,7 +90,12 @@
   }
   .tinhHuyen {
     display: flex;
-    justify-content: start;
+    justify-content: space-between;
+  }
+  .showMap {
+    margin-bottom: 20rem;
+    max-width: fit-content;
+    width: fit-content;
   }
 }
 
@@ -99,7 +105,7 @@
     margin-top: 20rem;
   }
   .right-side {
-    top: 25rem; /* Further reduce top for very small screens */
+    top: 15rem; 
     margin: 0.25rem 0;
   }
 }
@@ -107,7 +113,7 @@
 .list-salon-header {
   /* background-color: #f5f5f5; */
   border-radius: 4px;
-  padding-left: 1rem;
+  /* padding-left: 1rem; */
   padding-right: 1rem;
 }
 
