@@ -60,6 +60,7 @@ import { actGetVoucherBySalonIdNotPaging } from "../store/manageVoucher/action";
 import { actGetAllFeedbackBySalonId } from "../store/ratingCutomer/action";
 import { actGetAllSalonInformation } from "../store/salonInformation/action";
 import TitleCard from "@/components/TitleCard";
+import { DragCards } from "@/components/DragCards";
 const { Panel } = Collapse;
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -214,6 +215,7 @@ function SalonDetail(props) {
   const [loading, setLoading] = useState(false);
   const [loadingTime, setLoadingTime] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [loadingEmployee, setLoadingEmployee] = useState(false);
 
   const [isPriceModalVisible, setIsPriceModalVisible] = useState(false);
   const [originalPrice, setOriginalPrice] = useState(0);
@@ -239,6 +241,7 @@ function SalonDetail(props) {
 
   useEffect(() => {
     if (id) {
+      setLoadingEmployee(true);
       dispatch(actGetAllFeedbackBySalonId(id, currentPage, pageSize));
       dispatch(actGetAllSalonInformation());
       const fetchEmployees = async () => {
@@ -250,10 +253,14 @@ function SalonDetail(props) {
           pageSizeEmployee
         )
           .then((response) => {
+            setLoadingEmployee(false);
             setEmployees(response.data.items);
             setTotal(response.data.total);
           })
-          .catch((err) => {});
+          .catch((err) => {})
+          .finally((err) => {
+            setLoadingEmployee(false);
+          });
 
         // setLoading(false);
       };
@@ -1241,6 +1248,7 @@ function SalonDetail(props) {
             dateAppointment: appointmentData?.startDate,
             salonId: salonDetail?.id,
             serviceId: serviceHairIds,
+            idOwnerRealtime: userId
           };
           // Listen for appointment creation events
           // await sendMessage(data.date,data.serviceHairIds);
@@ -1322,14 +1330,15 @@ function SalonDetail(props) {
                     </div>
                     <div>Dựa trên {listFeedback.length} đánh giá</div>
                   </div> */}
-                <div>
-                  {/* <TitleCard img={salonDetail.img}/> */}
-                  <Carousel autoplay>
-                    <img
+                <div className="relative w-full h-full">
+                  {/* <TitleCard img={salonDetail.img} /> */}
+                  <Carousel autoplay className="w-full h-full">
+                    {/* <img
                       src={salonDetail.img}
                       alt={salonDetail?.id}
                       className={style["carousel-image"]}
-                    />
+                    /> */}
+                    <TitleCard img={salonDetail.img} />
                   </Carousel>
                 </div>
               </div>
@@ -2335,8 +2344,8 @@ function SalonDetail(props) {
                   <Divider />
                 </div>
                 <div>
-                  <Title level={4}>Nhân viên</Title>
-                  <List
+                  {/* <Title level={4}>Nhân viên</Title> */}
+                  {/* <List
                     dataSource={employees}
                     renderItem={(employee) => (
                       <List.Item key={employee.id}>
@@ -2346,7 +2355,12 @@ function SalonDetail(props) {
                         />
                       </List.Item>
                     )}
-                  />
+                  /> */}
+                  <Spin spinning={loadingEmployee}>
+                    {" "}
+                    <DragCards data={employees} />
+                  </Spin>
+
                   <Pagination
                     style={{ textAlign: "center" }}
                     current={page}

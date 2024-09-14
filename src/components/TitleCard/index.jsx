@@ -7,7 +7,7 @@ import {
 } from "framer-motion";
 // import { FiMousePointer } from "react-icons/fi";
 
-const TitleCard = ({img}) => {
+const TitleCard = ({ img }) => {
   return (
     // <div className="grid w-full place-content-center bg-gradient-to-br from-indigo-500 to-violet-500 px-4 py-12 text-slate-900">
     //   <TiltCard />
@@ -21,7 +21,7 @@ const TitleCard = ({img}) => {
 const ROTATION_RANGE = 32.5;
 const HALF_ROTATION_RANGE = 32.5 / 2;
 
-const TiltCard = ({img}) => {
+const TiltCard = ({ img }) => {
   const ref = useRef(null);
 
   const x = useMotionValue(0);
@@ -56,43 +56,67 @@ const TiltCard = ({img}) => {
   };
 
   return (
-        <motion.div
-        ref={ref}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
+    <motion.div
+      ref={ref}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        // width: '95%',  
+        // height: '95%', 
+        transformStyle: "preserve-3d",
+        transform,
+      }}
+      className="relative w-full max-w-xs h-64 md:max-w-sm md:h-80 lg:max-w-4xl lg:h-96 rounded-xl bg-gradient-to-br from-[#E9E6D9] to-[#f2caab]"
+    >
+      <div
         style={{
-            transformStyle: "preserve-3d",
-            transform,
+          transform: "translateZ(75px)",
+          transformStyle: "preserve-3d",
         }}
-        className="relative h-96 w-90 rounded-xl bg-gradient-to-br from-indigo-300 to-violet-300"
-        >
-        <div
-            style={{
-            transform: "translateZ(75px)",
-            transformStyle: "preserve-3d",
-            }}
-            className="absolute inset-4 grid place-content-center rounded-xl bg-white shadow-lg"
-        >
-            {/* <p
-            style={{
-                transform: "translateZ(50px)",
-            }}
-            className="text-center text-2xl font-bold"
-            >
-            HOVER ME
-            </p> */}
-            <img
-            src={img} // Đường dẫn đến ảnh của bạn
-            alt="Hover me"
-            style={{
-                width: "95%",  // Adjusted width close to the parent div
-                height: "95%", // Adjusted height close to the parent div
-                objectFit: "cover", // Ensures the image covers the container while preserving aspect ratio
-                transform: "translateZ(50px)",
-              }}
-            />
-        </div>
-        </motion.div>
+        className="absolute inset-4 flex items-center justify-center rounded-xl bg-white shadow-lg"
+      >
+        <img
+        className="w-full h-auto object-contain"
+          src={img} // Đường dẫn đến ảnh của bạn
+          alt={img}
+          style={{
+            width: "95%", // Đặt width là 100% để chiếm toàn bộ chiều rộng của phần tử cha
+            height: "95%", // Đặt height là 100% để chiếm toàn bộ chiều cao của phần tử cha
+            objectFit: "cover",
+            transform: "translateZ(100px)",
+          }}
+        />
+      </div>
+    </motion.div>
+    // <motion.div
+    //   ref={ref}
+    //   onMouseMove={handleMouseMove}
+    //   onMouseLeave={handleMouseLeave}
+    //   style={{
+    //     transformStyle: "preserve-3d",
+    //     transform,
+    //   }}
+    //   className="relative w-full max-w-3xs h-64 md:max-w-sm md:h-80 lg:max-w-xl lg:h-96 rounded-xl bg-gradient-to-br from-indigo-300 to-violet-300"
+    // >
+    //   <div
+    //     style={{
+    //       transform: "translateZ(75px)",
+    //       transformStyle: "preserve-3d",
+    //     }}
+    //     className="absolute inset-4 flex items-center justify-center rounded-xl bg-white shadow-lg"
+    //   >
+    //     <img
+    //       src={img} // Đường dẫn đến ảnh của bạn
+    //       alt="Hover me"
+    //       className="object-cover"
+    //       style={{
+    //         width: "95%",
+    //         height: "95%",
+    //         transform: "translateZ(100px)",
+    //       }}
+    //     />
+    //   </div>
+    // </motion.div>
   );
 };
 
