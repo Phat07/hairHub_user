@@ -9,7 +9,7 @@
 
 .left-side {
   flex: 6.5;
-  margin-right: 40px; 
+  margin-right: 40px;
   display: flex;
   flex-direction: column;
 }
@@ -17,7 +17,7 @@
 .right-side {
   flex: 3.5;
   margin-top: 1rem;
-  position: -webkit-sticky; 
+  position: -webkit-sticky;
   position: sticky;
   top: 7rem;
   width: calc(35% - 40px);
@@ -92,7 +92,6 @@
     justify-content: start;
   }
 }
-
 
 @media (max-width: 480px) {
   .custom_spin {
@@ -360,4 +359,9 @@
 }
 .custom-pagination .ant-pagination-item-active a {
   color: #f3f2f1 !important;
+}
+
+.view-more-button:hover {
+  color: #bf9456 !important;
+  font-size: 1.3rem;
 }

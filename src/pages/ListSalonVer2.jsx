@@ -46,7 +46,7 @@ const defaultCenter = {
 const MotionButton = motion.button;
 const Button = ({ children, className, ...props }) => (
   <MotionButton
-    whileHover={{ scale: 0.9, backgroundColor: "#1890ff", color: "black" }}
+    whileHover={{ scale: 0.9, color: "black" }}
     whileTap={{ scale: 0.9 }}
     transition={{ duration: 0.3 }}
     className={`${styles[className] || ""} ${className}`}

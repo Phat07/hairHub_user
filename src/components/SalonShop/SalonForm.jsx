@@ -403,7 +403,7 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
                   }}
                 >
                   <Image
-                    width={"100%"}
+                    width={"20rem"}
                     // key={file.uid} //because div already have key, don't need here
                     src={
                       file.url ||
