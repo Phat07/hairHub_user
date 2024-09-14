@@ -58,6 +58,22 @@
   flex-flow: nowrap;
   justify-content: flex-start;
 }
+
+.link-address {
+  background-color: #a86c40;
+  color: white;
+  font-size: 1rem;
+  border: 1px solid #a86c40;
+  padding: 0.2rem;
+  border-radius: 5px;
+}
+
+.link-address:hover {
+  text-decoration: none;
+  background-color: #a86c40;
+  color: white;
+}
+
 @media (max-width: 768px) {
   .detail-salon-col-1 {
     margin-left: 0;
