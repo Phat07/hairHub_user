@@ -1374,7 +1374,7 @@ function SalonDetail(props) {
                   />
                 </Space>
               </div>
-              <div
+              {/* <div
                 style={{
                   display: "flex",
                   justifyContent: "flex-end",
@@ -1399,7 +1399,7 @@ function SalonDetail(props) {
                     </Button>
                   </CoolMode>
                 </div>
-              </div>
+              </div> */}
 
               <div>
                 <Collapse
@@ -1489,6 +1489,12 @@ function SalonDetail(props) {
                         </motion.div>
                       )}
                       style={{ backgroundColor: "transparent" }}
+                      pagination={{
+                        pageSize: 5,
+                        showSizeChanger: true,
+                        pageSizeOptions: ["5", "10", "20"],
+                        className: "paginationAppointment",
+                      }}
                     />
                   </Panel>
                 </Collapse>
@@ -1810,7 +1816,7 @@ function SalonDetail(props) {
                                 ) : (
                                   <Title
                                     className={style["warning-title"]}
-                                    level={3}
+                                    level={4}
                                   >
                                     Salon không hoạt hộng hoặc không có nhân
                                     viên làm trong khoảng thời gian này!
@@ -2325,7 +2331,16 @@ function SalonDetail(props) {
               >
                 <div>
                   <Title level={4}>Địa chỉ</Title>
-                  <Text>{salonDetail.address}</Text>
+                  <Text>{salonDetail.address} </Text>
+                  {/* <br /> */}
+                  <a
+                    href={`https://www.google.com/maps/dir/?api=1&destination=${salonDetail.latitude},${salonDetail.longitude}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={style["link-address"]}
+                  >
+                    Chỉ đường
+                  </a>
                   <Divider />
                 </div>
 
@@ -2353,6 +2368,7 @@ function SalonDetail(props) {
                     pageSize={pageSizeEmployee}
                     total={total}
                     onChange={handlePageChangeEmployees}
+                    className="paginationAppointment"
                   />
                   <Divider />
                 </div>
