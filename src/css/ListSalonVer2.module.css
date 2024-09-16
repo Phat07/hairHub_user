@@ -2,7 +2,7 @@
   display: flex;
   justify-content: space-between;
   padding: 0 40px;
-  margin-top: 95px;
+  /* margin-top: 95px; */
   /* position: relative;
   overflow: hidden; */
 }
@@ -24,22 +24,35 @@
   height: 10%;
 }
 .showMap {
-  margin-top: 2rem;
+  margin: 2rem 0;
+  width: auto;
 }
 .select_1 {
-  width: 15rem;
+  width: 100%;
 }
 .select_2 {
-  width: 15rem;
+  width: 100%;
 }
 .tinhHuyen {
-  display: flex;
-  justify-content: space-around;
+  /* display: flex;
+  justify-content: space-between; */
 }
 /* .list-salon-content{
   position: relative;
   overflow: hidden;
 } */
+.ant-input:hover {
+  border-color: #bc8d4a;
+  box-shadow: none;
+}
+.ant-input:focus-within {
+  border-color: #bc8d4a;
+  box-shadow: none;
+}
+
+.ant-input {
+  padding: 0.8rem;
+}
 :global(.my-custom-plus .ant-btn) {
   background-color: #bf9456 !important;
   border-color: #bf9456 !important;
@@ -80,24 +93,28 @@
     margin-bottom: 300px;
   } */
   .custom_spin {
-    margin-top: 30rem;
+    margin-top: 20rem;
   }
   .right-side {
-    width: 100%;
-    top: 27rem;
+    width: fit-content;
+    top: 20rem;
     margin: 1rem 0; /* Margin on top and bottom to space it from other content */
     position: absolute;
   }
   .select_1 {
-    width: 8rem;
-    margin-right: "10px";
+    width: 100%;
   }
   .select_2 {
-    width: 8rem;
+    width: 100%;
   }
   .tinhHuyen {
-    display: flex;
-    justify-content: start;
+    /* display: flex;
+    justify-content: space-between; */
+  }
+  .showMap {
+    margin-bottom: 20rem;
+    max-width: fit-content;
+    width: fit-content;
   }
 }
 
@@ -106,22 +123,22 @@
     margin-top: 20rem;
   }
   .right-side {
-    top: 25rem; /* Further reduce top for very small screens */
+    top: 20rem;
     margin: 0.25rem 0;
   }
 }
 
 .list-salon-header {
-  /* background-color: #f5f5f5; */
-  border-radius: 4px;
-  padding-left: 1rem;
-  padding-right: 1rem;
+  background-color: #454545;
+  /* border-radius: 4px; */
+  /* padding-left: 1rem; */
+  padding: 1rem;
 }
 
 .list-salon-search {
   /* margin-left: 20rem;
   margin-right: 20rem; */
-  padding-top: 1rem;
+  /* padding-top: 1rem; */
 }
 
 .popover-overlay .ant-menu-item {
@@ -140,12 +157,12 @@
   color: #000;
 }
 
-.list-salon-service {
+/* .list-salon-service {
   border-radius: 8px;
   margin-top: 20px;
   display: flex;
   flex-wrap: wrap;
-  justify-content: center; /* Centers items horizontally */
+  justify-content: center; 
 }
 
 .service-item {
@@ -159,6 +176,27 @@
 .service-item:hover {
   background-color: #e0e0e0;
   cursor: pointer;
+} */
+
+.list-salon-service {
+  display: flex;
+  overflow-x: auto; /* Kích hoạt cuộn ngang */
+  white-space: nowrap; /* Giữ các phần tử không bị xuống dòng */
+  padding: 10px;
+}
+
+.service-item {
+  flex: 0 0 auto; /* Giữ kích thước nút cố định */
+  margin-right: 15px;
+  padding: 10px 20px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.service-item:hover {
+  background-color: #d0d0d0; /* Hiệu ứng khi hover */
 }
 
 .list-salon-center {
@@ -294,6 +332,7 @@
 .list-salon-item {
   display: flex;
   margin-bottom: 20px;
+  margin: 0.5rem;
 }
 
 .list-salon-image img {
@@ -316,7 +355,7 @@
 .book-button {
   background-color: #bc8d4a;
   color: #000;
-  border: 1px solid #d9d9d9;
+  /* border: 1px solid #d9d9d9; */
   border-radius: 4px;
   padding: 6px 12px;
   cursor: pointer;
@@ -367,4 +406,9 @@
 }
 .custom-pagination .ant-pagination-item-active a {
   color: #f3f2f1 !important;
+}
+
+.view-more-button:hover {
+  color: #bf9456 !important;
+  font-size: 1.3rem;
 }

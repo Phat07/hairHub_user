@@ -177,7 +177,7 @@
   
   .location-card {
     overflow: hidden;
-    margin: 1rem;
+    margin: 0 1rem;
     /* background-color: #bf9456; */
     box-shadow: 15px 15px 15px rgba(0, 0, 0, 0.3);
     max-width: 60rem;

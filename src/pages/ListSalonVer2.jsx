@@ -7,6 +7,7 @@ import {
   SortAscendingOutlined,
 } from "@ant-design/icons";
 import {
+  // Button,
   Col,
   Input,
   Row,
@@ -22,7 +23,6 @@ import {
   message,
   Form,
 } from "antd";
-import { Button as CustomButton } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import styles from "../css/ListSalonVer2.module.css";
 import { SalonInformationServices } from "../services/salonInformationServices";
@@ -46,7 +46,7 @@ const defaultCenter = {
 const MotionButton = motion.button;
 const Button = ({ children, className, ...props }) => (
   <MotionButton
-    whileHover={{ scale: 0.9, backgroundColor: "#1890ff", color: "black" }}
+    whileHover={{ scale: 0.9, color: "black" }}
     whileTap={{ scale: 0.9 }}
     transition={{ duration: 0.3 }}
     className={`${styles[className] || ""} ${className}`}
@@ -166,17 +166,17 @@ function ListSalonVer2(props) {
 
   const [mapStyle, setMapStyle] = useState({
     height: "500px",
-    width: "850px",
+    width: "auto",
   });
 
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth <= 480) {
-        setMapStyle({ height: "250px", width: "350px" });
+        setMapStyle({ height: "250px", width: window.innerWidth - 40 });
       } else if (window.innerWidth <= 768) {
-        setMapStyle({ height: "300px", width: "425px" });
+        setMapStyle({ height: "300px", width: window.innerWidth - 40 });
       } else {
-        setMapStyle({ height: "300px", width: "500px" });
+        setMapStyle({ height: "300px", width: "auto" });
       }
     };
 
@@ -184,7 +184,7 @@ function ListSalonVer2(props) {
     handleResize(); // Initial call
 
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [window.innerWidth]);
   useEffect(() => {
     axios
       .get(
@@ -575,410 +575,457 @@ function ListSalonVer2(props) {
     return amount.toLocaleString("vi-VN");
   }
   return (
-    <div className={styles["list-salon-container"]}>
-      {/* <Meteors number={30} /> */}
-      <div className={styles["left-side"]}>
-        <div className={styles["list-salon-header"]}>
-          <div className={styles["list-salon-search"]}>
-            <div style={{ marginBottom: "10px" }}>
-              <Button
-                // icon={<EnvironmentOutlined />}
-                onClick={handleSearch}
-                className={"book-button"}
+    <div
+      style={{
+        marginTop: "95px",
+      }}
+    >
+      <div className={styles["list-salon-header"]}>
+        <div className={styles["list-salon-search"]}>
+          <div
+            style={{
+              marginBottom: "1rem",
+            }}
+          >
+            <Button
+              // icon={<EnvironmentOutlined />}
+              onClick={handleSearch}
+              className={"book-button"}
+            >
+              <EnvironmentOutlined
+                style={{ fontSize: "1rem", marginRight: "8px" }}
+              />
+              Nhấn vào đây để tìm salon gần bạn
+            </Button>
+            <Modal
+              title="Nhập vị trí hiện tại của bạn"
+              visible={modalVisible}
+              onCancel={handleModalClose}
+              footer={[
+                <Button key="close" onClick={handleModalClose}>
+                  Đóng
+                </Button>,
+              ]}
+            >
+              <LoadScript
+                googleMapsApiKey={`${
+                  import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
+                }&loading=async`}
+                libraries={libraries}
+                onLoad={() => setIsApiLoaded(true)}
               >
-                <EnvironmentOutlined
-                  style={{ fontSize: "24px", marginRight: "8px" }}
-                />
-                Nhấn vào đây để tìm salon gần bạn
-              </Button>
-              <Modal
-                title="Nhập vị trí hiện tại của bạn"
-                visible={modalVisible}
-                onCancel={handleModalClose}
-                footer={[
-                  <Button key="close" onClick={handleModalClose}>
-                    Đóng
-                  </Button>,
-                ]}
-              >
-                <LoadScript
-                  googleMapsApiKey={`${
-                    import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
-                  }&loading=async`}
-                  libraries={libraries}
-                  onLoad={() => setIsApiLoaded(true)}
-                >
-                  {isApiLoaded && (
-                    <StandaloneSearchBox
-                      onLoad={(ref) => (searchBoxRef.current = ref)}
-                      onPlacesChanged={handlePlacesChanged}
-                    >
-                      <Input
-                        value={locationInput}
-                        placeholder="Nhập vị trí hiện tại của bạn"
-                        onChange={(e) => setLocationInput(e.target.value)}
-                        onKeyDown={handleKeyPress}
-                      />
-                    </StandaloneSearchBox>
-                  )}
-                </LoadScript>
-              </Modal>
-            </div>
-            <Row gutter={[16, 16]}>
-              <Col span={8}>
-                <MotionDiv
-                  whileHover={{ scale: 1.02 }} // Tăng nhẹ kích thước khi hover
-                  whileTap={{ scale: 0.95 }} // Giảm nhẹ kích thước khi nhấn
-                  transition={{ duration: 0.3 }} // Thời gian chuyển đổi
-                >
-                  <Input
-                    placeholder="Tìm kiếm salon"
-                    prefix={<SearchOutlined />}
-                    onChange={handleSalonNameChange}
-                    onKeyDown={handleKeyPress}
-                    value={salonName}
-                    onSubmit={handSubmitSalonName}
-                  />
-                </MotionDiv>
-              </Col>
-              <Col
-                style={{
-                  backgroundColor: "#ECE8DE",
-                  paddingLeft: "0px",
-                  paddingRight: "0px",
-                }}
-                span={16}
-              >
-                <Popover
-                  content={popularServices}
-                  visible={searchVisible}
-                  onVisibleChange={setSearchVisible}
-                  trigger="click"
-                  placement="bottom"
-                  overlayClassName="popover-overlay"
-                >
-                  <Input
-                    placeholder="Tìm kiếm dịch vụ"
-                    prefix={<SearchOutlined />}
-                    suffix={
-                      servicesName && (
-                        <CloseCircleOutlined onClick={handleClick} />
-                      )
-                    }
-                    value={servicesName}
-                    onChange={handleServiceNameChange}
-                    onKeyUp={handleKeyPress}
-                  />
-                </Popover>
-                <div className={styles["list-salon-service"]}>
-                  <div
-                    onClick={() => handleServiceSelect("Cắt tóc")}
-                    className={styles["service-item"]}
+                {isApiLoaded && (
+                  <StandaloneSearchBox
+                    onLoad={(ref) => (searchBoxRef.current = ref)}
+                    onPlacesChanged={handlePlacesChanged}
                   >
-                    Cắt tóc
-                  </div>
-                  <div
-                    onClick={() => handleServiceSelect("Nhuộm tóc")}
-                    className={styles["service-item"]}
-                  >
-                    Nhuộm tóc
-                  </div>
-                  <div
-                    onClick={() => handleServiceSelect("Uốn tóc")}
-                    className={styles["service-item"]}
-                  >
-                    Uốn tóc
-                  </div>
-                  <div
-                    onClick={() => handleServiceSelect("Duỗi tóc")}
-                    className={styles["service-item"]}
-                  >
-                    Duỗi tóc
-                  </div>
-                  <div
-                    onClick={() => handleServiceSelect("Gội đầu")}
-                    className={styles["service-item"]}
-                  >
-                    Gội đầu
-                  </div>
-                  <div
-                    onClick={() => handleServiceSelect("Ráy tai")}
-                    className={styles["service-item"]}
-                  >
-                    Ráy tai
-                  </div>
-                  <div
-                    onClick={() => handleServiceSelect("Cạo râu")}
-                    className={styles["service-item"]}
-                  >
-                    Cạo râu
-                  </div>
-                </div>
-              </Col>
-            </Row>
+                    <Input
+                      value={locationInput}
+                      placeholder="Nhập vị trí hiện tại của bạn"
+                      onChange={(e) => setLocationInput(e.target.value)}
+                      onKeyDown={handleKeyPress}
+                    />
+                  </StandaloneSearchBox>
+                )}
+              </LoadScript>
+            </Modal>
           </div>
-        </div>
-        <div className={styles["custom_spin"]}>
-          <Spin spinning={loading}>
-            <div className={styles["list-salon-center"]}>
-              <div>
-                <p className={styles["list-salon-result"]}>
-                  <SparklesText text={`Kết quả: (${total})`} />
-                </p>
+          <Row gutter={[16, 16]}>
+            <Col span={12}>
+              <MotionDiv
+                whileHover={{ scale: 1.02 }} // Tăng nhẹ kích thước khi hover
+                whileTap={{ scale: 0.95 }} // Giảm nhẹ kích thước khi nhấn
+                transition={{ duration: 0.3 }} // Thời gian chuyển đổi
+              >
+                <Input
+                  className={styles["ant-input"]}
+                  allowClear
+                  placeholder="Tìm kiếm salon"
+                  prefix={<SearchOutlined />}
+                  onChange={handleSalonNameChange}
+                  onKeyDown={handleKeyPress}
+                  value={salonName}
+                  onSubmit={handSubmitSalonName}
+                />
+              </MotionDiv>
+            </Col>
+            <Col
+              // style={{
+              //   backgroundColor: "#ECE8DE",
+              //   paddingLeft: "0px",
+              //   paddingRight: "0px",
+              // }}
+              span={12}
+            >
+              {/* <Popover
+                content={popularServices}
+                visible={searchVisible}
+                onVisibleChange={setSearchVisible}
+                trigger="click"
+                placement="bottom"
+                overlayClassName="popover-overlay"
+              > */}
+              <MotionDiv
+                whileHover={{ scale: 1.02 }} // Tăng nhẹ kích thước khi hover
+                whileTap={{ scale: 0.95 }} // Giảm nhẹ kích thước khi nhấn
+                transition={{ duration: 0.3 }} // Thời gian chuyển đổi
+              >
+                <Input
+                  className={styles["ant-input"]}
+                  placeholder="Tìm kiếm dịch vụ"
+                  prefix={<SearchOutlined />}
+                  suffix={
+                    servicesName && (
+                      <CloseCircleOutlined onClick={handleClick} />
+                    )
+                  }
+                  value={servicesName}
+                  onChange={handleServiceNameChange}
+                  onKeyUp={handleKeyPress}
+                />
+              </MotionDiv>
+              {/* </Popover> */}
+            </Col>
+            {/* <div className={styles["list-salon-service"]}>
+              <div
+                onClick={() => handleServiceSelect("Cắt tóc")}
+                className={styles["service-item"]}
+              >
+                Cắt tóc
               </div>
+              <div
+                onClick={() => handleServiceSelect("Nhuộm tóc")}
+                className={styles["service-item"]}
+              >
+                Nhuộm tóc
+              </div>
+              <div
+                onClick={() => handleServiceSelect("Uốn tóc")}
+                className={styles["service-item"]}
+              >
+                Uốn tóc
+              </div>
+              <div
+                onClick={() => handleServiceSelect("Duỗi tóc")}
+                className={styles["service-item"]}
+              >
+                Duỗi tóc
+              </div>
+              <div
+                onClick={() => handleServiceSelect("Gội đầu")}
+                className={styles["service-item"]}
+              >
+                Gội đầu
+              </div>
+              <div
+                onClick={() => handleServiceSelect("Ráy tai")}
+                className={styles["service-item"]}
+              >
+                Ráy tai
+              </div>
+              <div
+                onClick={() => handleServiceSelect("Cạo râu")}
+                className={styles["service-item"]}
+              >
+                Cạo râu
+              </div>
+            </div> */}
+            <div className={styles["list-salon-service"]}>
+              {[
+                "Cắt tóc",
+                "Nhuộm tóc",
+                "Uốn tóc",
+                "Duỗi tóc",
+                "Gội đầu",
+                "Ráy tai",
+                "Cạo râu",
+              ].map((service) => (
+                <div
+                  key={service}
+                  onClick={() => handleServiceSelect(service)}
+                  className={styles["service-item"]}
+                >
+                  {service}
+                </div>
+              ))}
             </div>
-            <Divider />
-            <div className={styles["list-salon-end"]}>
-              <div className={styles["list-salon-actbtn"]}>
-                <div className={styles["list-salon-filmap"]}>
-                  <Popover
-                    content={filterOptions}
-                    visible={filterVisible}
-                    onVisibleChange={handleFilterClick}
-                    trigger="click"
-                    placement="bottom"
-                    overlayClassName="popover-overlay"
-                  >
-                    <Button
-                      className={styles["sort-button"]}
-                      icon={<SortAscendingOutlined />}
+          </Row>
+        </div>
+      </div>
+      <div className={styles["list-salon-container"]}>
+        {/* <Meteors number={30} /> */}
+        <div className={styles["left-side"]}>
+          <div className={styles["custom_spin"]}>
+            <Spin spinning={loading}>
+              <div className={styles["list-salon-center"]}>
+                <div>
+                  <p className={styles["list-salon-result"]}>
+                    <SparklesText text={`Kết quả: (${total})`} />
+                  </p>
+                </div>
+              </div>
+              <Divider />
+              <div className={styles["list-salon-end"]}>
+                <div className={styles["list-salon-actbtn"]}>
+                  <div className={styles["list-salon-filmap"]}>
+                    <Popover
+                      content={filterOptions}
+                      visible={filterVisible}
+                      onVisibleChange={handleFilterClick}
+                      trigger="click"
+                      placement="bottom"
+                      overlayClassName="popover-overlay"
                     >
-                      Sắp xếp
-                    </Button>
-                  </Popover>
-                  {/* <Button
+                      <Button
+                        className={styles["sort-button"]}
+                        icon={<SortAscendingOutlined />}
+                      >
+                        Sắp xếp
+                      </Button>
+                    </Popover>
+                    {/* <Button
                 className="view-map-button"
                 icon={<EnvironmentOutlined />}
               >
                 View Map
               </Button> */}
+                  </div>
                 </div>
-              </div>
 
-              <div className={styles["list-salon-content"]}>
-                {salonList.length !== 0 ? (
-                  salonList.map((salon) => (
-                    <motion.div
-                      className={styles["list-salon-item"]}
-                      key={salon.id}
-                      whileHover={{ scale: 1.05, border: "1px solid #bc8d4a" }} // Scale effect on hover
-                      transition={{ duration: 0.3 }} // Transition duration
-                      initial={{ opacity: 0 }} // Initial opacity for scroll effect
-                      animate={{ opacity: 1 }} // Final opacity for scroll effect
-                      exit={{ opacity: 0 }} // Fade out on exit
-                    >
-                      <div
-                        className={styles["list-salon-image"]}
-                        style={{ width: "30%" }}
+                <div className={styles["list-salon-content"]}>
+                  {salonList.length !== 0 ? (
+                    salonList.map((salon) => (
+                      <motion.div
+                        className={styles["list-salon-item"]}
+                        key={salon.id}
+                        whileHover={{
+                          scale: 1.05,
+                          border: "1px solid #bc8d4a",
+                          borderRadius: "0.5rem",
+                          padding: "0.5rem",
+                        }} // Scale effect on hover
+                        transition={{ duration: 0.3 }} // Transition duration
+                        initial={{ opacity: 0 }} // Initial opacity for scroll effect
+                        animate={{ opacity: 1 }} // Final opacity for scroll effect
+                        exit={{ opacity: 0 }} // Fade out on exit
                       >
-                        <img
-                          src={salon.img}
-                          alt={salon.name}
-                          style={{ width: "100%" }}
-                        />
                         <div
-                          style={{
-                            marginTop: "8px",
-                            fontSize: "1rem",
-                            textAlign: "center",
-                          }}
+                          className={styles["list-salon-image"]}
+                          style={{ width: "30%" }}
                         >
-                          <motion.div
-                            key={salon.operatingStatus} // Ensures re-render when status changes
-                            initial={{
-                              opacity: 0,
-                              color:
-                                salon.operatingStatus === "Đang hoạt động"
-                                  ? "#EF4444"
-                                  : "#10B981",
+                          <img
+                            src={salon.img}
+                            alt={salon.name}
+                            style={{ width: "100%" }}
+                          />
+                          <div
+                            style={{
+                              marginTop: "8px",
+                              fontSize: "1rem",
+                              textAlign: "center",
                             }}
-                            animate={{
-                              opacity: 1,
-                              color:
-                                salon.operatingStatus === "Đang hoạt động"
-                                  ? "#EF4444"
-                                  : "#10B981",
-                            }}
-                            transition={{ duration: 0.5 }} // Adjust the duration
-                            className="transform transition-transform duration-500"
                           >
-                            <p
-                              className={`text-lg font-semibold ${
-                                salon.operatingStatus === "Đang hoạt động"
-                                  ? "text-green-500"
-                                  : "text-red-500"
-                              }`}
+                            <motion.div
+                              key={salon.operatingStatus} // Ensures re-render when status changes
+                              initial={{
+                                opacity: 0,
+                                color:
+                                  salon.operatingStatus === "Đang hoạt động"
+                                    ? "#EF4444"
+                                    : "#10B981",
+                              }}
+                              animate={{
+                                opacity: 1,
+                                color:
+                                  salon.operatingStatus === "Đang hoạt động"
+                                    ? "#EF4444"
+                                    : "#10B981",
+                              }}
+                              transition={{ duration: 0.5 }} // Adjust the duration
+                              className="transform transition-transform duration-500"
                             >
-                              {salon.operatingStatus}
-                            </p>
-                          </motion.div>
+                              <p
+                                className={`text-lg font-semibold ${
+                                  salon.operatingStatus === "Đang hoạt động"
+                                    ? "text-green-500"
+                                    : "text-red-500"
+                                }`}
+                              >
+                                {salon.operatingStatus}
+                              </p>
+                            </motion.div>
 
-                          <div className="flex items-center space-x-2">
-                            {salon.distance === null ? (
-                              <div className="flex align-middle">
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke="currentColor"
-                                  className="w-6 h-6 text-gray-500"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M12 2a9 9 0 00-9 9c0 6 9 11 9 11s9-5 9-11a9 9 0 00-9-9zm0 13a3 3 0 100-6 3 3 0 000 6z"
-                                  />
-                                </svg>
-                                <p className="text-gray-500 font-medium ml-2">
-                                  ...
-                                </p>
-                              </div>
-                            ) : (
-                              <div className="flex align-middle">
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke="currentColor"
-                                  className="w-6 h-6 text-green-500"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M12 2a9 9 0 00-9 9c0 6 9 11 9 11s9-5 9-11a9 9 0 00-9-9zm0 13a3 3 0 100-6 3 3 0 000 6z"
-                                  />
-                                </svg>
-                                <p className="text-green-500 font-medium">
-                                  {salon.distance.toFixed(1)} km
-                                </p>
-                              </div>
-                            )}
+                            <div className="flex items-center space-x-2">
+                              {salon.distance === null ? (
+                                <div className="flex align-middle">
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    className="w-6 h-6 text-gray-500"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M12 2a9 9 0 00-9 9c0 6 9 11 9 11s9-5 9-11a9 9 0 00-9-9zm0 13a3 3 0 100-6 3 3 0 000 6z"
+                                    />
+                                  </svg>
+                                  <p className="text-gray-500 font-medium ml-2">
+                                    ...
+                                  </p>
+                                </div>
+                              ) : (
+                                <div className="flex align-middle">
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    className="w-6 h-6 text-green-500"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M12 2a9 9 0 00-9 9c0 6 9 11 9 11s9-5 9-11a9 9 0 00-9-9zm0 13a3 3 0 100-6 3 3 0 000 6z"
+                                    />
+                                  </svg>
+                                  <p className="text-green-500 font-medium">
+                                    {salon.distance.toFixed(1)} km
+                                  </p>
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <div
-                        className={styles["list-salon-info"]}
-                        style={{ width: "70%", paddingLeft: "16px" }}
-                      >
-                        <p style={{ fontSize: "1.5rem" }}>{salon.name}</p>
-                        <p style={{ fontSize: "1rem" }}>
-                          <strong>Mô tả:</strong> {salon.description}
-                        </p>
-                        <p style={{ fontSize: "1rem" }}>
-                          <strong>Địa chỉ:</strong> {salon.address}
-                        </p>
-                        <ul>
-                          {salon.services.slice(0, 3).map((service, index) => (
-                            <motion.li
-                              key={index}
-                              className={styles["service-list-item"]}
-                              whileHover={{ scale: 1.03 }} // Scale effect on hover
-                              transition={{ duration: 0.2 }} // Transition duration for hover
-                              initial={{ opacity: 0.8 }} // Initial opacity for scroll effect
-                              animate={{ opacity: 1 }} // Final opacity for scroll effect
-                              exit={{ opacity: 0.8 }} // Fade out on exit
-                            >
-                              <div className={styles["service-details"]}>
-                                <span className={styles["service-name"]}>
-                                  {service.serviceName}:{" "}
-                                </span>
-                                <span className={styles["service-description"]}>
-                                  {service.description} -{" "}
-                                  {formatMoneyVND(service.price)} vnđ
-                                </span>
-                              </div>
+                        <div
+                          className={styles["list-salon-info"]}
+                          style={{ width: "70%", paddingLeft: "16px" }}
+                        >
+                          <p style={{ fontSize: "1.5rem" }}>{salon.name}</p>
+                          <p style={{ fontSize: "1rem" }}>
+                            <strong>Mô tả:</strong> {salon.description}
+                          </p>
+                          <p style={{ fontSize: "1rem" }}>
+                            <strong>Địa chỉ:</strong> {salon.address}
+                          </p>
+                          <ul>
+                            {salon.services
+                              .slice(0, 3)
+                              .map((service, index) => (
+                                <motion.li
+                                  key={index}
+                                  className={styles["service-list-item"]}
+                                  whileHover={{ scale: 1.03 }} // Scale effect on hover
+                                  transition={{ duration: 0.2 }} // Transition duration for hover
+                                  initial={{ opacity: 0.8 }} // Initial opacity for scroll effect
+                                  animate={{ opacity: 1 }} // Final opacity for scroll effect
+                                  exit={{ opacity: 0.8 }} // Fade out on exit
+                                >
+                                  <div className={styles["service-details"]}>
+                                    <span className={styles["service-name"]}>
+                                      {service.serviceName}:{" "}
+                                    </span>
+                                    <span
+                                      className={styles["service-description"]}
+                                    >
+                                      {service.description} -{" "}
+                                      {formatMoneyVND(service.price)} vnđ
+                                    </span>
+                                  </div>
+                                  <Button
+                                    onClick={() =>
+                                      navigate(`/salon_detail/${salon?.id}`)
+                                    }
+                                    className={styles["book-button"]}
+                                  >
+                                    Đặt lịch
+                                  </Button>
+                                </motion.li>
+                              ))}
+                          </ul>
+
+                          {salon.services.length > 3 && (
+                            <div style={{ marginTop: "8px" }}>
                               <Button
                                 onClick={() =>
                                   navigate(`/salon_detail/${salon?.id}`)
                                 }
-                                className={styles["book-button"]}
+                                className={styles["view-more-button"]}
                               >
-                                Đặt lịch
+                                Xem thêm ...
                               </Button>
-                            </motion.li>
-                          ))}
-                        </ul>
-
-                        {salon.services.length > 3 && (
-                          <motion.div
-                            className="my-custom-plus"
-                            style={{ marginTop: "8px" }}
-                            whileHover={{ scale: 1.1 }} // Tăng kích thước khi hover
-                            whileTap={{ scale: 0.95 }} // Giảm kích thước khi nhấn
-                            transition={{ duration: 0.3 }} // Thời gian chuyển động
-                          >
-                            <CustomButton
-                              onClick={() =>
-                                navigate(`/salon_detail/${salon?.id}`)
-                              }
-                              className={styles["view-more-button"]}
-                            >
-                              Xem thêm ...
-                            </CustomButton>
-                          </motion.div>
-                        )}
-                      </div>
-                    </motion.div>
-                  ))
-                ) : (
-                  <>
-                    <Empty />
-                  </>
+                            </div>
+                          )}
+                        </div>
+                      </motion.div>
+                    ))
+                  ) : (
+                    <>
+                      <Empty />
+                    </>
+                  )}
+                </div>
+                {salonList.length !== 0 && (
+                  <Pagination
+                    // className={styles["custom-pagination"]}
+                    className="paginationAppointment"
+                    current={currentPage}
+                    pageSize={pageSize}
+                    total={totalPages}
+                    onChange={(page) => setCurrentPage(page)}
+                    style={{ textAlign: "center", marginTop: "20px" }}
+                  />
                 )}
               </div>
-              {salonList.length !== 0 && (
-                <Pagination
-                  // className={styles["custom-pagination"]}
-                  className="paginationAppointment"
-                  current={currentPage}
-                  pageSize={pageSize}
-                  total={totalPages}
-                  onChange={(page) => setCurrentPage(page)}
-                  style={{ textAlign: "center", marginTop: "20px" }}
-                />
-              )}
-            </div>
-          </Spin>
+            </Spin>
+          </div>
         </div>
-      </div>
-      <div className={styles["right-side"]}>
-        <div className={styles["tinhHuyen"]}>
-          <MotionDiv
-            whileHover={{ scale: 1.05 }} // Tăng nhẹ kích thước khi hover
-            whileTap={{ scale: 0.95 }} // Giảm nhẹ kích thước khi nhấn
-            transition={{ duration: 0.3 }} // Thời gian chuyển đổi
-            style={{ marginRight: "10px" }}
-          >
-            <Select
-              value={selectedProvince || undefined}
-              onChange={handleChange}
-              options={[{ value: null, label: "ĐẶT LẠI" }, ...provinces]}
-              placeholder="Tỉnh/Thành phố"
-              className={styles["select_1"]}
+        <div className={styles["right-side"]}>
+          <div className={styles["tinhHuyen"]}>
+            <Row gutter={[16, 16]}>
+              <Col span={12}>
+                <MotionDiv
+                  whileHover={{ scale: 1.05 }} // Tăng nhẹ kích thước khi hover
+                  whileTap={{ scale: 0.95 }} // Giảm nhẹ kích thước khi nhấn
+                  transition={{ duration: 0.3 }} // Thời gian chuyển đổi
+                  style={{ marginRight: "10px" }}
+                >
+                  <Select
+                    value={selectedProvince || undefined}
+                    onChange={handleChange}
+                    options={[{ value: null, label: "ĐẶT LẠI" }, ...provinces]}
+                    placeholder="Tỉnh/Thành phố"
+                    className={styles["select_1"]}
+                  />
+                </MotionDiv>
+              </Col>
+              <Col span={12}>
+                <MotionDiv
+                  whileHover={{ scale: 1.05 }} // Tăng nhẹ kích thước khi hover
+                  whileTap={{ scale: 0.95 }} // Giảm nhẹ kích thước khi nhấn
+                  transition={{ duration: 0.3 }} // Thời gian chuyển đổi
+                >
+                  <Select
+                    value={selectedDistrict || undefined}
+                    onChange={handleChangeDistrict}
+                    options={selectedProvince ? districts : <Empty />}
+                    placeholder="Quận/Huyện" // Set the placeholder text
+                    className={styles["select_2"]}
+                  />
+                </MotionDiv>
+              </Col>
+            </Row>
+          </div>
+          <div className={styles["showMap"]}>
+            <LoadScriptMap
+              salonList={salonList}
+              mapStyle={mapStyle}
+              currentLocation={currentLocation}
             />
-          </MotionDiv>
-          <MotionDiv
-            whileHover={{ scale: 1.05 }} // Tăng nhẹ kích thước khi hover
-            whileTap={{ scale: 0.95 }} // Giảm nhẹ kích thước khi nhấn
-            transition={{ duration: 0.3 }} // Thời gian chuyển đổi
-          >
-            <Select
-              value={selectedDistrict || undefined}
-              onChange={handleChangeDistrict}
-              options={selectedProvince ? districts : <Empty />}
-              placeholder="Quận/Huyện" // Set the placeholder text
-              className={styles["select_2"]}
-            />
-          </MotionDiv>
-        </div>
-        <div className={styles["showMap"]}>
-          <LoadScriptMap
-            salonList={salonList}
-            mapStyle={mapStyle}
-            currentLocation={currentLocation}
-          />
+          </div>
         </div>
       </div>
     </div>

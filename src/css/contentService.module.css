@@ -11,10 +11,10 @@
 /* For mobile devices (up to 600px wide) */
 @media (max-width: 600px) {
     .contentService {
-        margin-top: 70px;
+        margin-top: 50px;
         margin-bottom: 50px;
         flex-direction: column; /* Stack content vertically */
-        height: auto; /* Adjust height for smaller screens */
+        height: 30vh; /* Adjust height for smaller screens */
         padding: 10px; /* Reduce padding for small screens */
     }
 }
@@ -22,6 +22,7 @@
 /* For tablets and small desktops (601px to 1024px) */
 @media (min-width: 601px) and (max-width: 1024px) {
     .contentService {
+        margin-top: 10px;
         flex-direction: row; /* Align items horizontally */
         height: 100vh; /* Maintain full height */
         padding: 15px;
@@ -31,6 +32,7 @@
 /* For large desktops (1025px and above) */
 @media (min-width: 1025px) {
     .contentService {
+        margin-top: 10px;
         flex-direction: row; /* Align items horizontally */
         height: 100vh; /* Full screen height */
         padding: 20px; /* Maintain padding */

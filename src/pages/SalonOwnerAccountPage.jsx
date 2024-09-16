@@ -212,7 +212,6 @@ function SalonOwnerAccountPage() {
   };
   const [avatarUrl, setAvatarUrl] = useState(null);
 
-
   const handleAvatarChange = (info) => {
     const isLt5M = info.file.size / 1024 / 1024 < 5;
     if (!isLt5M) {
@@ -234,41 +233,72 @@ function SalonOwnerAccountPage() {
   };
   async function addFileFromUrlToFormData(url) {
     const formData = new FormData();
-  
+
     try {
       // Tải tệp từ URL
       const response = await fetch(url);
       const blob = await response.blob(); // Chuyển đổi dữ liệu tải về thành Blob
-  
+
       // Tạo đối tượng File từ Blob
-      const filename = url.split('/').pop(); // Lấy tên tệp từ URL
+      const filename = url.split("/").pop(); // Lấy tên tệp từ URL
       const file = new File([blob], filename, { type: blob.type });
-  
+
       // Thêm đối tượng File vào FormData
       formData.append("Img", file);
-  
+
       return formData;
     } catch (error) {
       console.error("Lỗi tải tệp từ URL:", error);
       throw error;
     }
   }
-  const handleSave =async  (values) => {
+
+  const formatSalonData = (salonData) => {
+    return {
+      fullName: salonData.fullName,
+      dayOfBirth: new Date(salonData.dayOfBirth).toISOString(), // Đảm bảo định dạng ngày tháng giống với values
+      gender: salonData.gender,
+      address: salonData.address,
+      phone: salonData.phone,
+      email: salonData.email,
+      password: maskPassword(salonData.password), // Chỉ giữ lại 2 ký tự cuối giống như values
+      avatar: salonData.img, // Chuyển 'img' thành 'avatar'
+    };
+  };
+  const sortObject = (obj) => {
+    return Object.keys(obj)
+      .sort()
+      .reduce((result, key) => {
+        result[key] = obj[key];
+        return result;
+      }, {});
+  };
+
+  const handleSave = async (values) => {
+    // Biến đổi salonData trước khi so sánh
+    const transformedSalonData = formatSalonData(salonData);
+    console.log(JSON.stringify(transformedSalonData));
+    console.log(JSON.stringify(values));
+
+    // So sánh biến đổi salonData với values
+    if (
+      JSON.stringify(sortObject(transformedSalonData)) ===
+      JSON.stringify(sortObject(values))
+    ) {
+      message.warning("Thông tin người dùng không thay đổi!!!");
+      return;
+    }
     const formData = new FormData();
     setIsLoading(true);
     formData.append("roleId", idCustomer);
     formData.append("Phone", values.phone ?? salonData.phone);
     formData.append("password", salonData.password);
     formData.append("FullName", values.fullName ?? salonData.fullName);
-    // formData.append(
-    //   "dayOfBirth",
-    //   values.dayOfBirth
-    //     ? values.dayOfBirth.format("YYYY-MM-DD")
-    //     : salonData.dayOfBirth
-    // );
     formData.append(
-      "DayOfBirth",
-      null
+      "dayOfBirth",
+      values.dayOfBirth
+        ? values.dayOfBirth.format("YYYY-MM-DD")
+        : salonData.dayOfBirth
     );
     formData.append("Gender", values.gender ?? salonData.gender);
     formData.append("Email", values.email ?? salonData.email);
@@ -314,8 +344,6 @@ function SalonOwnerAccountPage() {
         setIsLoading(false);
       });
   };
-
- 
 
   const showChangePasswordModal = () => {
     setIsModalVisible(true);

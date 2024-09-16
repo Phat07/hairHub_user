@@ -424,7 +424,7 @@ function HomePage(props) {
             </div>
           </Flex>
           <div className="container">
-            <div className="customTitle mt-16" style={{ color: "#bf9456" }}>
+            <div className="customTitle mt-8" style={{ color: "#bf9456" }}>
               Dịch vụ nổi bật
             </div>
             <CarrousselComponent />
