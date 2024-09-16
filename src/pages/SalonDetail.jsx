@@ -1248,7 +1248,7 @@ function SalonDetail(props) {
             dateAppointment: appointmentData?.startDate,
             salonId: salonDetail?.id,
             serviceId: serviceHairIds,
-            idOwnerRealtime: userId
+            idOwnerRealtime: userId,
           };
           // Listen for appointment creation events
           // await sendMessage(data.date,data.serviceHairIds);
@@ -1338,6 +1338,13 @@ function SalonDetail(props) {
                       alt={salonDetail?.id}
                       className={style["carousel-image"]}
                     /> */}
+                    {/* <Image
+                      // className="w-full h-full object-cover max-w-screen-lg max-h-[600px] min-h-[300px] sm:min-h-[400px]"
+                      src={salonDetail.img}
+                      alt={salonDetail?.id}
+                      className={style["carousel-image"]}
+                      preview={true} // Tắt chế độ preview nếu không cần
+                    /> */}
                     <TitleCard img={salonDetail.img} />
                   </Carousel>
                 </div>
@@ -1399,6 +1406,10 @@ function SalonDetail(props) {
                   >
                     <Button>
                       <a
+                        style={{
+                          textDecoration: "none", // Loại bỏ gạch chân
+                          display: "inline-block", // Đảm bảo liên kết bao quanh nội dung của Button
+                        }}
                         href={`https://www.google.com/maps/dir/?api=1&destination=${salonDetail.latitude},${salonDetail.longitude}`}
                         target="_blank"
                         rel="noopener noreferrer"

@@ -61,8 +61,8 @@ const TiltCard = ({ img }) => {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{
-        // width: '95%',  
-        // height: '95%', 
+        // width: '95%',
+        // height: '95%',
         transformStyle: "preserve-3d",
         transform,
       }}
@@ -76,14 +76,13 @@ const TiltCard = ({ img }) => {
         className="absolute inset-4 flex items-center justify-center rounded-xl bg-white shadow-lg"
       >
         <img
-        className="w-full h-auto object-contain"
-          src={img} // Đường dẫn đến ảnh của bạn
+          className="w-[95%] h-[95%] object-cover" // Chiếm 95% của phần tử cha và dùng object-cover
+          src={img}
           alt={img}
           style={{
-            width: "95%", // Đặt width là 100% để chiếm toàn bộ chiều rộng của phần tử cha
-            height: "95%", // Đặt height là 100% để chiếm toàn bộ chiều cao của phần tử cha
-            objectFit: "cover",
-            transform: "translateZ(100px)",
+            maxWidth: "100%", // Đảm bảo không vượt quá phần tử cha
+            maxHeight: "100%", // Đảm bảo không vượt quá phần tử cha
+            objectFit: "cover", // Bao phủ khung chứa mà vẫn giữ tỷ lệ gốc
           }}
         />
       </div>
@@ -93,10 +92,12 @@ const TiltCard = ({ img }) => {
     //   onMouseMove={handleMouseMove}
     //   onMouseLeave={handleMouseLeave}
     //   style={{
+    //     // width: '95%',
+    //     // height: '95%',
     //     transformStyle: "preserve-3d",
     //     transform,
     //   }}
-    //   className="relative w-full max-w-3xs h-64 md:max-w-sm md:h-80 lg:max-w-xl lg:h-96 rounded-xl bg-gradient-to-br from-indigo-300 to-violet-300"
+    //   className="relative w-full max-w-xs h-64 md:max-w-sm md:h-80 lg:max-w-4xl lg:h-96 rounded-xl bg-gradient-to-br from-[#E9E6D9] to-[#f2caab] sm:w-[400px] sm:h-[450px] md:w-[500px] lg:w-[700px] xl:w-[900px] 2xl:w-[1100px]"
     // >
     //   <div
     //     style={{
@@ -106,12 +107,13 @@ const TiltCard = ({ img }) => {
     //     className="absolute inset-4 flex items-center justify-center rounded-xl bg-white shadow-lg"
     //   >
     //     <img
-    //       src={img} // Đường dẫn đến ảnh của bạn
-    //       alt="Hover me"
-    //       className="object-cover"
+    //       className="w-full h-auto object-contain"
+    //       src={img}
+    //       alt={img}
     //       style={{
     //         width: "95%",
     //         height: "95%",
+    //         objectFit: "cover",
     //         transform: "translateZ(100px)",
     //       }}
     //     />

@@ -4,6 +4,7 @@ import {
   GET_ALL_SERVICE,
   GET_ALL_SERVICE_NOT,
   GET_EMPLOYEE_ID,
+  GET_EMPLOYEE_SERVICE_ID,
 } from "./action";
 
 const initialState = {
@@ -13,7 +14,8 @@ const initialState = {
   salonServicesList: {},
   listEmployee: [],
   listService: [],
-  employeeId: ''
+  employeeId: "",
+  employeeServiceList: []
 };
 
 const reducer = (state = initialState, action) => {
@@ -41,12 +43,17 @@ const reducer = (state = initialState, action) => {
         ...state,
         salonServicesList: action.payload,
       };
-      case GET_EMPLOYEE_ID:
+    case GET_EMPLOYEE_ID:
       return {
         ...state,
         employeeId: action.payload,
       };
-      
+    case GET_EMPLOYEE_SERVICE_ID:
+      return {
+        ...state,
+        employeeServiceList: action.payload,
+      };
+
     default:
       return state;
   }

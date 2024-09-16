@@ -7,7 +7,6 @@ import {
   SortAscendingOutlined,
 } from "@ant-design/icons";
 import {
-  // Button,
   Col,
   Input,
   Row,
@@ -23,6 +22,7 @@ import {
   message,
   Form,
 } from "antd";
+import { Button as CustomButton } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import styles from "../css/ListSalonVer2.module.css";
 import { SalonInformationServices } from "../services/salonInformationServices";
@@ -136,6 +136,8 @@ function ListSalonVer2(props) {
   const servicesNameUrl = searchParams.get("servicesName");
   const salonNameUrl = searchParams.get("salonName");
   const locationSalonUrl = searchParams.get("location");
+
+  console.log("salonList", salonList);
 
   const [servicesName, setServicesName] = useState(servicesNameUrl || "");
   const [locationSalon, setLocationSalon] = useState(locationSalonUrl || "");
@@ -377,19 +379,20 @@ function ListSalonVer2(props) {
         );
       const salons = salonRes.data.items;
 
-      const servicePromises = await salons.map((salon) =>
-        ServiceHairServices.getServiceHairBySalonNotPaging(salon.id).then(
-          (serviceData) => ({
-            ...salon,
-            services: serviceData.data,
-          })
-        )
-      );
+      // const servicePromises = await salons.map((salon) =>
+      //   ServiceHairServices.getServiceHairBySalonNotPaging(salon.id).then(
+      //     (serviceData) => ({
+      //       ...salon,
+      //       services: serviceData.data,
+      //     })
+      //   )
+      // );
 
-      const salonsWithServices = await Promise.all(servicePromises);
+      // const salonsWithServices = await Promise.all(servicePromises);
 
-      setSalonList(salonsWithServices);
-      console.log("salonwwith", salonsWithServices);
+      setSalonList(salons);
+      // setSalonList(salonsWithServices);
+      // console.log("salonwwith", salonsWithServices);
 
       setTotalPages(salonRes.data.total);
       setTotal(salonRes.data.total);
@@ -419,18 +422,19 @@ function ListSalonVer2(props) {
         );
       const salons = salonRes.data.items;
 
-      const servicePromises = await salons.map((salon) =>
-        ServiceHairServices.getServiceHairBySalonNotPaging(salon.id).then(
-          (serviceData) => ({
-            ...salon,
-            services: serviceData.data,
-          })
-        )
-      );
+      // const servicePromises = await salons.map((salon) =>
+      //   ServiceHairServices.getServiceHairBySalonNotPaging(salon.id).then(
+      //     (serviceData) => ({
+      //       ...salon,
+      //       services: serviceData.data,
+      //     })
+      //   )
+      // );
 
-      const salonsWithServices = await Promise.all(servicePromises);
+      // const salonsWithServices = await Promise.all(servicePromises);
 
-      setSalonList(salonsWithServices);
+      // setSalonList(salonsWithServices);
+      setSalonList(salons);
       setTotalPages(salonRes.data.total);
       setTotal(salonRes.data.total);
       message.info(
@@ -866,7 +870,7 @@ function ListSalonVer2(props) {
                           <strong>Địa chỉ:</strong> {salon.address}
                         </p>
                         <ul>
-                          {salon.services.map((service, index) => (
+                          {salon.services.slice(0, 3).map((service, index) => (
                             <motion.li
                               key={index}
                               className={styles["service-list-item"]}
@@ -896,6 +900,25 @@ function ListSalonVer2(props) {
                             </motion.li>
                           ))}
                         </ul>
+
+                        {salon.services.length > 3 && (
+                          <motion.div
+                            className="my-custom-plus"
+                            style={{ marginTop: "8px" }}
+                            whileHover={{ scale: 1.1 }} // Tăng kích thước khi hover
+                            whileTap={{ scale: 0.95 }} // Giảm kích thước khi nhấn
+                            transition={{ duration: 0.3 }} // Thời gian chuyển động
+                          >
+                            <CustomButton
+                              onClick={() =>
+                                navigate(`/salon_detail/${salon?.id}`)
+                              }
+                              className={styles["view-more-button"]}
+                            >
+                              Xem thêm ...
+                            </CustomButton>
+                          </motion.div>
+                        )}
                       </div>
                     </motion.div>
                   ))

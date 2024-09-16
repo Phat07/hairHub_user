@@ -9,7 +9,7 @@
 
 .left-side {
   flex: 6.5;
-  margin-right: 40px; 
+  margin-right: 40px;
   display: flex;
   flex-direction: column;
 }
@@ -17,7 +17,7 @@
 .right-side {
   flex: 3.5;
   margin-top: 1rem;
-  position: -webkit-sticky; 
+  position: -webkit-sticky;
   position: sticky;
   top: 7rem;
   width: calc(35% - 40px);
@@ -40,7 +40,15 @@
   position: relative;
   overflow: hidden;
 } */
-
+:global(.my-custom-plus .ant-btn) {
+  background-color: #bf9456 !important;
+  border-color: #bf9456 !important;
+}
+:global(.my-custom-plus .ant-btn:hover) {
+  background-color: #a38245 !important;
+  border-color: #a38245 !important;
+  color: white !important;
+}
 @media (max-width: 768px) {
   .list-salon-container {
     flex-direction: column;
@@ -92,7 +100,6 @@
     justify-content: start;
   }
 }
-
 
 @media (max-width: 480px) {
   .custom_spin {

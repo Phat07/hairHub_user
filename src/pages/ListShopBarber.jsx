@@ -1036,9 +1036,6 @@ function ListShopBarber(props) {
             );
           })
           .catch((err) => console.log(err, "errors"));
-
-        // Call API or perform update operation
-        // console.log("Updated Voucher Data:", updatedVoucher);
         setIsUpdateModalVisible(false); // Close modal after update
         form.resetFields(); // Reset form fields
       })
@@ -1099,7 +1096,10 @@ function ListShopBarber(props) {
                         </div>
                         <div
                           style={{ padding: "1rem" }}
-                          className={classNames("my-custom-add", styles["salon-title-cover"])}
+                          className={classNames(
+                            "my-custom-add",
+                            styles["salon-title-cover"]
+                          )}
                           // className={styles["salon-title-cover"]}
                         >
                           <div className={styles["salon-title"]}>
@@ -1114,46 +1114,6 @@ function ListShopBarber(props) {
                             Chỉnh sửa thông tin
                           </Button>
                         </div>
-
-                        {/* <Flex
-                          gap={"middle"}
-                          align="base-line"
-                          className="dropdown-btns"
-                        >
-                          <Button
-                            type="primary"
-                            onClick={() => checkEmployeeListExist()}
-                          >
-                            Danh sách nhân viên
-                          </Button>
-                          <Button
-                            type="primary"
-                            onClick={() =>
-                              navigate(`/list_service/${salonDetail.id}`)
-                            }
-                          >
-                            Danh sách dịch vụ
-                          </Button>
-                          <Button
-                            type="primary"
-                            onClick={() =>
-                              navigate(`/list_voucher/${salonDetail.id}`)
-                            }
-                          >
-                            Danh sách các voucher
-                          </Button>
-                        </Flex> */}
-                        {/* <Dropdown
-                          overlay={menu}
-                          trigger={["click"]}
-                          visible={dropdownVisible}
-                          onVisibleChange={(flag) => setDropdownVisible(flag)}
-                        >
-                          <MenuOutlined
-                            className="dropdown-icon"
-                            style={{ fontSize: "24px" }}
-                          />
-                        </Dropdown> */}
                       </div>
                     }
                     bordered
@@ -1283,8 +1243,13 @@ function ListShopBarber(props) {
                       key="1"
                       className={styles["title-table-collapse"]}
                     >
-                      <div className={classNames("my-custom-add", styles["table-fillter"])}>
-                        <Button                       
+                      <div
+                        className={classNames(
+                          "my-custom-add",
+                          styles["table-fillter"]
+                        )}
+                      >
+                        <Button
                           className={styles["table-fillter-item"]}
                           // type="primary"
                           // style={{ backgroundColor: "#BF9456" }}
@@ -1363,7 +1328,12 @@ function ListShopBarber(props) {
                       key="1"
                       className={styles["title-table-collapse"]}
                     >
-                      <div className={classNames("my-custom-add", styles["table-fillter"])}>
+                      <div
+                        className={classNames(
+                          "my-custom-add",
+                          styles["table-fillter"]
+                        )}
+                      >
                         <Button
                           className={styles["table-fillter-item"]}
                           // type="primary"
@@ -1443,7 +1413,12 @@ function ListShopBarber(props) {
                       key="1"
                       className={styles["title-table-collapse"]}
                     >
-                      <div className={classNames("my-custom-add", styles["table-fillter"])}>
+                      <div
+                        className={classNames(
+                          "my-custom-add",
+                          styles["table-fillter"]
+                        )}
+                      >
                         <Button
                           className={styles["table-fillter-item"]}
                           // type="primary"
