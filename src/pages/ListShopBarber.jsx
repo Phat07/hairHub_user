@@ -1055,7 +1055,9 @@ function ListShopBarber(props) {
             <Card
               title="Thông tin Salon"
               className={styles["responsive-card"]}
-              style={{ width: "100%", height: "100%", margin: "20px auto" }}
+              bodyStyle={{ padding: "10px" }}
+
+              // style={{ width: "100%", height: "100%", padding: "10px" }}
             >
               <Row
                 gutter={16}
@@ -1099,7 +1101,10 @@ function ListShopBarber(props) {
                         </div>
                         <div
                           style={{ padding: "1rem" }}
-                          className={classNames("my-custom-add", styles["salon-title-cover"])}
+                          className={classNames(
+                            "my-custom-add",
+                            styles["salon-title-cover"]
+                          )}
                           // className={styles["salon-title-cover"]}
                         >
                           <div className={styles["salon-title"]}>
@@ -1283,8 +1288,13 @@ function ListShopBarber(props) {
                       key="1"
                       className={styles["title-table-collapse"]}
                     >
-                      <div className={classNames("my-custom-add", styles["table-fillter"])}>
-                        <Button                       
+                      <div
+                        className={classNames(
+                          "my-custom-add",
+                          styles["table-fillter"]
+                        )}
+                      >
+                        <Button
                           className={styles["table-fillter-item"]}
                           // type="primary"
                           // style={{ backgroundColor: "#BF9456" }}
@@ -1363,7 +1373,12 @@ function ListShopBarber(props) {
                       key="1"
                       className={styles["title-table-collapse"]}
                     >
-                      <div className={classNames("my-custom-add", styles["table-fillter"])}>
+                      <div
+                        className={classNames(
+                          "my-custom-add",
+                          styles["table-fillter"]
+                        )}
+                      >
                         <Button
                           className={styles["table-fillter-item"]}
                           // type="primary"
@@ -1443,7 +1458,12 @@ function ListShopBarber(props) {
                       key="1"
                       className={styles["title-table-collapse"]}
                     >
-                      <div className={classNames("my-custom-add", styles["table-fillter"])}>
+                      <div
+                        className={classNames(
+                          "my-custom-add",
+                          styles["table-fillter"]
+                        )}
+                      >
                         <Button
                           className={styles["table-fillter-item"]}
                           // type="primary"

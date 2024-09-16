@@ -19,6 +19,9 @@ import ChatBox from "./components/ChatBox";
 import Footer2 from "./components/Footer2";
 import { AccountServices } from "./services/accountServices";
 import { fetchUserByTokenApi } from "./store/account/action";
+import FooterMobile from "./components/FooterMobile";
+import FooterMobileAuth from "./components/FooterMobileAuth";
+import FooterMobileUnAuth from "./components/FooterMobileUnAuth";
 function App() {
   useDocumentTitle();
   const navigate = useNavigate();
@@ -110,6 +113,11 @@ function App() {
         {/* <Footer /> */}
       </div>
       <Footer2 />
+      {localStorage.getItem("refreshToken") ? (
+        <FooterMobileAuth />
+      ) : (
+        <FooterMobileUnAuth />
+      )}
     </>
   );
 }

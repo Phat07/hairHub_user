@@ -577,7 +577,7 @@ function ListSalonVer2(props) {
   return (
     <div
       style={{
-        marginTop: "95px",
+        marginTop: "80px",
       }}
     >
       <div className={styles["list-salon-header"]}>
