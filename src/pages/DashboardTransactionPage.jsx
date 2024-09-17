@@ -251,39 +251,24 @@ function DashboardTransactionPage(props) {
           </Link>
         </div>
       </div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-around",
-          marginTop: "2rem",
-        }}
-      >
-        {/* Biểu đồ LineChart */}
-        <div style={{ flex: 2, marginRight: "1rem" }}>
+      <div className="transaction-chart-container">
+        {/* Biểu đồ LineChart cho trang Transaction */}
+        <div className="transaction-line-chart">
           <Line data={chartData} />
         </div>
 
-        {/* Biểu đồ PieChart hoặc thông báo nếu không có dữ liệu */}
-        <div style={{ flex: 1, marginLeft: "1rem" }}>
+        {/* Biểu đồ PieChart hoặc thông báo nếu không có dữ liệu cho trang Transaction */}
+        <div className="transaction-pie-chart">
           {hasPieData ? (
             <Pie data={pieChartData} />
           ) : (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center", // Căn giữa theo chiều ngang
-                alignItems: "center", // Căn giữa theo chiều dọc
-                height: "100%", // Đảm bảo chiều cao toàn phần để nội dung ở giữa
-                padding: "2rem",
-                border: "1px solid #ccc",
-                borderRadius: "5px",
-              }}
-            >
+            <div className="transaction-no-pie-data">
               <p>Không có dữ liệu để tạo biểu đồ tròn</p>
             </div>
           )}
         </div>
       </div>
+
       <div
         style={{
           display: "flex",
