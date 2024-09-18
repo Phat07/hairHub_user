@@ -152,7 +152,7 @@ function HomePage(props) {
   };
 
   return (
-    <div style={{ marginTop: "95px" }}>
+    <div style={{ marginTop: "80px" }}>
       <section
         className="section hero has-before has-bg-image"
         id="home"

@@ -116,6 +116,20 @@
     max-width: fit-content;
     width: fit-content;
   }
+  .book-button {
+    background-color: #bc8d4a;
+    color: #000;
+    /* border: 1px solid #d9d9d9; */
+    border-radius: 4px;
+    /* padding: 6px 12px; */
+    cursor: pointer;
+  }
+  .book-button:hover {
+    background-color: #e6b97b !important;
+    color: rgb(15, 14, 14) !important;
+    border: none;
+
+  }
 }
 
 @media (max-width: 480px) {

@@ -26,7 +26,7 @@ function Header(props) {
   );
 
   const account = useSelector((state) => state.ACCOUNT.username);
-
+  const avatar = useSelector((state) => state.ACCOUNT.avatar);
   useEffect(() => {
     if (idOwner) {
       try {
@@ -204,7 +204,11 @@ function Header(props) {
           {account ? (
             <Dropdown overlay={accountMenu} trigger={["click"]}>
               <a onClick={(e) => e.preventDefault()}>
-                <Avatar className={style.avatarLink} icon={<UserOutlined />} />
+                {/* <Avatar className={style.avatarLink} icon={<UserOutlined />} /> */}
+                <Avatar
+                  className={style.avatarLink}
+                  src={avatar || <UserOutlined />}
+                />
               </a>
             </Dropdown>
           ) : (

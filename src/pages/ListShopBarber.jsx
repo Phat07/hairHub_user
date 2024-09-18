@@ -447,9 +447,6 @@ function ListShopBarber(props) {
     dispatch(actDeleteEmployee(employee.id, salonDetail?.id));
   };
 
-  // useEffect(() => {
-  //   if (salonDetail?.id) dispatch(actGetAllEmployees(salonDetail?.id, 1, 4));
-  // }, [salonDetail?.id]);
 
   const convertDayOfWeekToVietnamese = (dayOfWeek) => {
     const daysMapping = {
@@ -539,6 +536,7 @@ function ListShopBarber(props) {
         <Space size="middle">
           <Link to={`account_details/${record.id}`}>
             <Button
+              disabled={record.isActive === false}
               className="editButtonStyle"
               onClick={() => {}}
               icon={<EditOutlined />}
@@ -553,6 +551,7 @@ function ListShopBarber(props) {
             cancelText="Không"
           >
             <Button
+              disabled={record.isActive === false}
               className="deleteButtonStyle"
               icon={<DeleteOutlined />}
               danger
@@ -1052,7 +1051,9 @@ function ListShopBarber(props) {
             <Card
               title="Thông tin Salon"
               className={styles["responsive-card"]}
-              style={{ width: "100%", height: "100%", margin: "20px auto" }}
+              bodyStyle={{ padding: "10px" }}
+
+              // style={{ width: "100%", height: "100%", padding: "10px" }}
             >
               <Row
                 gutter={16}
@@ -1066,17 +1067,6 @@ function ListShopBarber(props) {
                   <Descriptions
                     title={
                       <div className={styles["salon-title-container"]}>
-                        {/* <Flex className="bg-blue-600 p-3 w-max border border-red-300 rounded-md cursor-pointer salon-title">
-                          <Typography.Title
-                            style={{ color: "rgb(241 245 249)" }}
-                            level={3}
-                            onClick={() => {
-                              navigate(`/create_shop/${salonDetail?.id}`);
-                            }}
-                          >
-                            {salonDetail.name}
-                          </Typography.Title>
-                        </Flex> */}
                         <div>
                           <img
                             src={salonDetail.img}

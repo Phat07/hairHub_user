@@ -81,8 +81,8 @@
 }
 
 .avatarLink {
-  height: 4rem;
-  width: 4rem;
+  height: 3rem;
+  width: 3rem;
   background-color: #bf9456;
 }
 
@@ -114,13 +114,13 @@
     display: none;
   }
 
-  .navItemRepo {
+  /* .navItemRepo {
     display: block;
   }
 
   .menuToggle {
     display: block;
-  }
+  } */
 
   .loginLink {
     display: none;

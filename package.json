@@ -61,6 +61,7 @@
     "redux": "^4.2.1",
     "redux-thunk": "^2.4.2",
     "rsuite": "^5.64.2",
+    "styled-components": "^6.1.13",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
     "three": "^0.162.0",

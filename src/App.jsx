@@ -19,8 +19,10 @@ import ChatBox from "./components/ChatBox";
 import Footer2 from "./components/Footer2";
 import { AccountServices } from "./services/accountServices";
 import { fetchUserByTokenApi } from "./store/account/action";
+import FooterMobile from "./components/FooterMobile";
+import FooterMobileAuth from "./components/FooterMobileAuth";
+import FooterMobileUnAuth from "./components/FooterMobileUnAuth";
 import audioVer1 from "../public/audio/warm-tech-logo-21474.mp3";
-
 function App() {
   useDocumentTitle();
   const navigate = useNavigate();
@@ -82,7 +84,6 @@ function App() {
   useEffect(() => {
     authenticateUser();
   }, []);
-  console.log("salon", salonDetail?.id);
   useEffect(() => {
     let connection;
     const setupSignalR = async () => {
@@ -92,22 +93,25 @@ function App() {
           .withUrl("https://hairhub.gahonghac.net/book-appointment-hub")
           .withAutomaticReconnect()
           .build();
-  
+
         // Bắt đầu kết nối
         await connection.start();
-  
+
         // Lắng nghe sự kiện "ReceiveMessage"
         connection.on(
           "ReceiveMessage",
-          async (message, dateAppointment, datenow, salonId, serviceId, idOwnerRealtime) => {
-            console.log("idOwner:", idOwner, "serviceId:", idOwnerRealtime);
+          async (
+            message,
+            dateAppointment,
+            datenow,
+            salonId,
+            serviceId,
+            ownerId
+          ) => {
 
-            console.log("Nhận sự kiện:", idOwnerRealtime);
-  
             // Kiểm tra điều kiện idOwner === serviceId
-            if (token && idOwner && idOwner === idOwnerRealtime) {
-              console.log("Đúng điều kiện, phát âm thanh");
-  
+            if (token && idOwner && idOwner === ownerId) {
+
               // Chỉ phát âm thanh khi điều kiện đúng
               const audio = new Audio(audioVer1); // Đảm bảo audioVer1 là đường dẫn hợp lệ
               audio.play().catch((error) => {
@@ -115,7 +119,7 @@ function App() {
               });
             } else {
               // Nếu không đúng điều kiện, in ra lỗi và không phát âm thanh
-              console.error("Không trùng khớp idOwner với serviceId");
+              console.error("Không trùng khớp idOwner với ownerId");
             }
           }
         );
@@ -123,16 +127,15 @@ function App() {
         console.error("Lỗi khi thiết lập SignalR:", error);
       }
     };
-  
+
     setupSignalR();
-  
+
     // Dọn dẹp kết nối khi component bị hủy
     return () => {
       connection.stop().then(() => console.log("Đã ngắt kết nối SignalR."));
     };
   }, [idOwner]);
-  
-  
+
   useEffect(() => {
     if (idOwner) {
       dispatch(actGetSalonInformationByOwnerId(idOwner));
@@ -157,12 +160,13 @@ function App() {
     <>
       <div className="super-container">
         {localStorage.getItem("refreshToken") ? <Header /> : <HeaderUnAuth />}
-        {/* {localStorage.getItem("refreshToken") ? <HeaderUnAuth /> :<></>} */}
-        {/* <ChatBox /> */}
-        {/* <ChatComponent /> */}
-        {/* <Footer /> */}
       </div>
       <Footer2 />
+      {localStorage.getItem("refreshToken") ? (
+        <FooterMobileAuth />
+      ) : (
+        <FooterMobileUnAuth />
+      )}
     </>
   );
 }

@@ -5,6 +5,7 @@ const initialState = {
   idOwner: "",
   token: "",
   username: "",
+  avatar: "",
   uid: "",
   idOwner: "",
   idCustomer: "",
@@ -16,7 +17,7 @@ const reducer = (state = initialState, action) => {
     case LOGIN_ACCOUNT:
       localStorage.setItem("refreshToken", action.payload.refreshToken);
       localStorage.setItem("accessToken", action.payload.accessToken);
-      
+
       return {
         ...state,
         token: action.payload.accessToken,
@@ -36,6 +37,9 @@ const reducer = (state = initialState, action) => {
         username:
           action.payload?.salonOwnerResponse?.fullName ||
           action.payload?.customerResponse?.fullName,
+        avatar:
+          action.payload?.salonOwnerResponse?.img ||
+          action.payload?.customerResponse?.img,
         uid: action.payload.accountId,
         idOwner: action.payload?.salonOwnerResponse?.id,
         idCustomer: action.payload?.customerResponse?.id,

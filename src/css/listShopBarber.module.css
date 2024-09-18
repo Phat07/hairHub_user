@@ -1,12 +1,19 @@
 .container_list {
-  margin-top: 140px;
-  margin-left: 60px;
-  margin-right: 60px;
+  margin-top: 6rem;
+margin-inline: 2rem;
 }
 .salon-title-container {
   display: flex;
   align-items: center;
   justify-content: flex-start;
+}
+.responsive-card {
+  width: 100%;
+  padding: 0;
+}
+.responsive-card .ant-card-body {
+  width: 100%;
+  padding: 0;
 }
 .salon-title {
   font-size: 1.5rem;
@@ -115,6 +122,7 @@
   }
   .responsive-card {
     width: 100%;
+    padding: 0;
   }
   .responsive-descriptions {
     width: 100%;

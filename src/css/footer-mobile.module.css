@@ -1,0 +1,53 @@
+.footerMobile {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #bf9456;
+    box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);
+    z-index: 99;
+    display: none; /* Mặc định ẩn */
+    max-height: 3rem;
+  }
+  
+  .footerNav {
+    display: flex;
+    justify-content: space-around;
+    padding: 5px 0;
+  }
+  
+  .footerList {
+    list-style: none;
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+  }
+  
+  .footerItem {
+    text-align: center;
+    flex: 1;
+  }
+  
+  .footerItem a {
+    display: block;
+    color: #333;
+    text-decoration: none;
+  }
+  
+  .footerItem a span {
+    display: block;
+    margin-top: 5px;
+    font-size: 10px;
+  }
+
+  .footerItem a svg {
+    font-size: 1.2rem; /* Tăng kích thước của icon */
+  }
+  
+  
+  /* Chỉ hiển thị trên các thiết bị có chiều rộng tối đa là 768px */
+  @media screen and (max-width: 768px) {
+    .footerMobile {
+      display: block; /* Chỉ hiển thị trên điện thoại hoặc tablet */
+    }
+  }
+  

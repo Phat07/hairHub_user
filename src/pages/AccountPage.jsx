@@ -33,6 +33,8 @@ import {
   actPutUpdateSalonEmployees,
 } from "../store/salonEmployees/action";
 import styles from "../css/accountPage.module.css";
+import classNames from "classnames";
+
 function AccountPage() {
   const [form] = Form.useForm();
   // const { id, employeeId } = useParams();
@@ -131,7 +133,6 @@ function AccountPage() {
     dispatch(actGetSalonEmployeeById(employeeId));
   }, [employeeId, salonDetail]);
   const serviceHairsList = employeeIdOfSalon?.serviceHairs;
-  console.log("emplser", serviceHairsList);
 
   useEffect(() => {
     setAccountEmployeeDetail(employeeIdOfSalon);
@@ -449,34 +450,12 @@ function AccountPage() {
 
   const handleConfirmService = () => {
     setLoading(true);
-    // Dịch vụ mới được thêm vào (có trong selectedServices nhưng không có trong serviceHairsList)
-    // Các dịch vụ mới được thêm vào (so sánh bằng item.id)
-    let dataNew = selectedServices
-      .filter(
-        (selected) =>
-          !serviceHairsList.some((service) => service.id === selected.id)
-      )
-      .map((service) => service.id); // Lấy danh sách id
 
-    // Các dịch vụ bị xóa (so sánh bằng item.id)
-    let dataRemove = serviceHairsList
-      .filter(
-        (service) =>
-          !selectedServices.some((selected) => selected.id === service.id)
-      )
-      .map((service) => service.id);
-
-    // Nếu không có dịch vụ nào bị thêm hoặc xóa, gán null
-    dataNew = dataNew.length > 0 ? dataNew : null;
-    dataRemove = dataRemove.length > 0 ? dataRemove : null;
-    const payload = {
-      addServiceID: dataNew,
-      removeServiceID: dataRemove,
+    let data = {
+      listServiceID: selectedServices.map((e) => e?.id),
     };
 
-    dispatch(
-      actPutSalonEmployeeServiceById(employeeId, salonDetail?.id, payload)
-    )
+    dispatch(actPutSalonEmployeeServiceById(employeeId, salonDetail?.id, data))
       .then((res) => {
         setLoading(false);
         message.success(
@@ -594,7 +573,8 @@ function AccountPage() {
                   <Form.Item>
                     <Button
                       onClick={handleEdit}
-                      style={{ backgroundColor: "#BF9456" }}
+                      className={styles.customButton}
+                      // className="bg-[#BF9456] text-black border border-transparent hover:text-white hover:border-black px-4 py-2 rounded"
                     >
                       Chỉnh sửa nhưng không chỉnh sửa lịch làm
                     </Button>
@@ -637,11 +617,8 @@ function AccountPage() {
                       cancelText="Hủy"
                     >
                       <Button
-                        // onClick={handleEdit}
-                        style={{
-                          backgroundColor: "#BF9456",
-                          marginTop: "1rem",
-                        }}
+                        style={{ marginTop: "1rem" }}
+                        className={styles.customButton}
                       >
                         Chỉnh sửa dịch vụ
                       </Button>

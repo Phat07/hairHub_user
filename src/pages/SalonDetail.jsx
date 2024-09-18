@@ -61,6 +61,8 @@ import { actGetAllFeedbackBySalonId } from "../store/ratingCutomer/action";
 import { actGetAllSalonInformation } from "../store/salonInformation/action";
 import TitleCard from "@/components/TitleCard";
 import { DragCards } from "@/components/DragCards";
+import { HoverImageLinks } from "@/components/HoverImageLinks";
+import AnimatedList from "@/components/AnimatedList";
 const { Panel } = Collapse;
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -454,20 +456,6 @@ function SalonDetail(props) {
 
   //Set selected voucher
   const handleSelectedVoucher = (voucher) => {
-    // setVoucherSelected((prevVouchers) => {
-    //   // Check if the voucher already exists
-    //   const exists = prevVouchers.find((e) => e?.id === voucher?.id);
-
-    //   // If it doesn't exist, add it to the array
-    //   if (!exists) {
-    //     return [...prevVouchers, voucher];
-    //   } else {
-    //     message.warning("Mã khuyến mãi này đã được sử đụng");
-    //   }
-
-    //   // If it exists, return the original array
-    //   return prevVouchers;
-    // });
     setVoucherSelected((prevVouchers) => {
       // Kiểm tra nếu voucher đã tồn tại trong danh sách
       const exists = prevVouchers.find((e) => e?.id === voucher?.id);
@@ -787,9 +775,6 @@ function SalonDetail(props) {
           message.warning(error?.response?.data?.message);
           setLoading(true);
           setHasError(true);
-          // Xử lý lỗi nếu có
-          // console.error("Error booking appointment:", error);
-          // Hiển thị thông báo lỗi cho người dùng nếu cần
         })
         .finally((err) => {
           setLoading(false);
@@ -1148,7 +1133,7 @@ function SalonDetail(props) {
   //   //   stopConnection();
   //   // };
   // }, []);
-
+  
   useEffect(() => {
     let connection;
     const setupSignalR = async () => {
@@ -1248,7 +1233,7 @@ function SalonDetail(props) {
             dateAppointment: appointmentData?.startDate,
             salonId: salonDetail?.id,
             serviceId: serviceHairIds,
-            idOwnerRealtime: userId,
+            ownerId: salonDetail?.ownerId,
           };
           // Listen for appointment creation events
           // await sendMessage(data.date,data.serviceHairIds);
@@ -2371,20 +2356,23 @@ function SalonDetail(props) {
                 </div>
                 <div>
                   {/* <Title level={4}>Nhân viên</Title> */}
-                  {/* <List
-                    dataSource={employees}
-                    renderItem={(employee) => (
-                      <List.Item key={employee.id}>
-                        <List.Item.Meta
-                          avatar={<Avatar src={employee?.img} />}
-                          title={<Text>{employee?.fullName}</Text>}
-                        />
-                      </List.Item>
-                    )}
-                  /> */}
                   <Spin spinning={loadingEmployee}>
-                    {" "}
-                    <DragCards data={employees} />
+                    <AnimatedList items={employees}/>
+                    {/* <List
+                      dataSource={employees}
+                      renderItem={(employee) => (
+                        <List.Item key={employee.id}>
+                          <List.Item.Meta
+                            avatar={<Avatar src={employee?.img} />}
+                            title={<Text>{employee?.fullName}</Text>}
+                          />
+                        </List.Item>
+                      )}
+                    /> */}
+                    {/* <DragCards data={employees} /> */}
+                    {/* <HoverImageLinks
+                      employees={employees}
+                    /> */}
                   </Spin>
 
                   <Pagination
