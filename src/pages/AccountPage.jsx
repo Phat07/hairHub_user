@@ -13,6 +13,7 @@ import {
   Popconfirm,
   Select,
   Space,
+  Spin,
   TimePicker,
   Upload,
 } from "antd";
@@ -26,10 +27,14 @@ import { ServiceHairServices } from "../services/servicesHairServices";
 import {
   actGetAllEmployees,
   actGetSalonEmployeeById,
+  actGetSalonEmployeeServiceById,
   actPutSalonEmployeeById,
+  actPutSalonEmployeeServiceById,
   actPutUpdateSalonEmployees,
 } from "../store/salonEmployees/action";
 import styles from "../css/accountPage.module.css";
+import classNames from "classnames";
+
 function AccountPage() {
   const [form] = Form.useForm();
   // const { id, employeeId } = useParams();
@@ -51,6 +56,7 @@ function AccountPage() {
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [activeButtons, setActiveButtons] = useState({});
   const [pendingConfirmations, setPendingConfirmations] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const salonDetail = useSelector(
     (state) => state.SALONINFORMATION.getSalonByOwnerId
@@ -58,8 +64,15 @@ function AccountPage() {
   const employeeIdOfSalon = useSelector(
     (state) => state.SALONEMPLOYEES.employeeId
   );
-  console.log("rmploy", employeeIdOfSalon);
 
+  const employeeServiceIdOfSalon = useSelector(
+    (state) => state.SALONEMPLOYEES.employeeServiceList
+  );
+  useEffect(() => {
+    if (employeeServiceIdOfSalon) {
+      setServicesList(employeeServiceIdOfSalon);
+    }
+  }, [employeeServiceIdOfSalon]);
   const [selectedServices, setSelectedServices] = useState([]);
 
   const EMPLOYEESDETAILS_URL_UPDATE =
@@ -107,17 +120,24 @@ function AccountPage() {
   };
   useEffect(() => {
     if (salonDetail) {
-      ServiceHairServices.getServiceHairBySalonNotPaging(salonDetail.id)
-        .then((res) => {
-          setServicesList(res.data);
-        })
-        .catch((err) => {
-          console.log(err, "errrors");
-        });
+      // ServiceHairServices.getServiceHairBySalonNotPaging(salonDetail.id)
+      //   .then((res) => {
+      //     setServicesList(res.data);
+      //   })
+      //   .catch((err) => {
+      //     console.log(err, "errrors");
+      //   });
+      dispatch(actGetSalonEmployeeServiceById(salonDetail?.id));
     }
 
     dispatch(actGetSalonEmployeeById(employeeId));
+    // dispatch(actGetSalonEmployeeServiceById(employeeId))
   }, [employeeId, salonDetail]);
+  const serviceHairsList = employeeIdOfSalon?.serviceHairs;
+  console.log("s",employeeIdOfSalon);
+  console.log("ttt",employeeServiceIdOfSalon);
+  
+  
   useEffect(() => {
     setAccountEmployeeDetail(employeeIdOfSalon);
     // setSchedules(res.data.schedules);
@@ -164,18 +184,14 @@ function AccountPage() {
         avatar: userData.avatar,
         serviceHairs: serviceHairs?.map((service) => service.serviceName),
       });
+      console.log("test",serviceHairs );
+      
       setSelectedServices(serviceHairs);
     } else {
     }
     // setSalonId(res.data.salonInformationId);
   }, [employeeIdOfSalon]);
 
-  // const handleDayOffChange = (day) => {
-  //   setDayOff((prevDayOff) => ({
-  //     ...prevDayOff,
-  //     [day]: !prevDayOff[day],
-  //   }));
-  // };
 
   const onFinish = async (item) => {
     // const gender = await form.getFieldValue("gender");
@@ -359,12 +375,9 @@ function AccountPage() {
     return `${hours}:${minutes}`;
   }
   const handleConfirm = async (dayOfWeek) => {
-    console.log("date", dayOfWeek);
-
+    setLoading(true);
     const start = form.getFieldValue([dayOfWeek, "start"]);
     const end = form.getFieldValue([dayOfWeek, "end"]);
-    console.log("start", start);
-    console.log("end", end);
     if (start && end) {
       const formattedStart = {
         hour: start.hour(),
@@ -377,8 +390,6 @@ function AccountPage() {
       };
       const startTimeString = await formatTime(formattedStart);
       const endTimeString = await formatTime(formattedEnd);
-      console.log("startTime:", startTimeString); // "07:15"
-      console.log("endTime:", endTimeString); // "15:11"
       const data = {
         dayofWeeks: dayOfWeek,
         startTime: startTimeString,
@@ -387,17 +398,20 @@ function AccountPage() {
       };
       dispatch(actPutSalonEmployeeById(employeeId, data))
         .then((res) => {
+          setLoading(false);
           message.success(
             `Cập nhật lịch làm ${dayOfWeek} thành công cho nhân viên ${employeeIdOfSalon?.fullName}`
           );
+          setActiveButtons({});
         })
         .catch((err) => {
           message.error(
             `Cập nhật lịch làm ${dayOfWeek} thất bại cho nhân viên ${employeeIdOfSalon?.fullName}`
           );
+        })
+        .finally((err) => {
+          setLoading(false);
         });
-
-      console.log("Formatted Data:", data);
 
       // Thực hiện các hành động khác với dữ liệu đã format
     } else {
@@ -433,239 +447,285 @@ function AccountPage() {
     // Revalidate fields to ensure errors are cleared
     validateFields(dayOfWeek);
   };
+
+  const handleConfirmService = () => {
+    // setLoading(true);
+
+    let data = {
+      listServiceID: selectedServices.map((e) => e?.id),
+    };
+    console.log("hh",selectedServices);
+    
+    console.log("test",employeeIdOfSalon?.serviceHairs);
+    
+    console.log("data",data);
+    
+    dispatch(actPutSalonEmployeeServiceById(employeeId, data))
+      .then((res) => {
+        setLoading(false);
+        message.success(
+          `Đã cập nhật nhân viên ${employeeIdOfSalon?.fullName} thành công`
+        );
+      })
+      .catch((err) => {
+        message.error(err?.response?.data)
+        // message.error(
+        //   `Đã cập nhật nhân viên ${employeeIdOfSalon?.fullName} thất bại`
+        // );
+      })
+      .finally((err) => {
+        setLoading(false);
+      });
+  };
+  const handleCancelService = () => {
+    setSelectedServices(serviceHairsList);
+  };
+
   return (
     <div>
-      <div className={styles.containerAccount}>
-        <Flex justify="center">
-          <Card className="bg-slate-100 w-full md:w-[80%] lg:w-[60%] p-5">
-            <Space
-              align="center"
-              size={2}
-              direction="vertical"
-              className="w-full"
-            >
-              <Avatar
-                size={250}
-                shape="circle"
-                src={
-                  user?.img ||
-                  "https://www.shutterstock.com/image-vector/vector-flat-illustration-grayscale-avatar-600nw-2264922221.jpg"
-                }
-              />
-              {fileList.map((file) => (
-                <div
-                  key={file.uid}
-                  className="max-w-full md:max-w-[40rem] mt-8"
-                  style={{ maxHeight: "50rem" }}
-                >
-                  <Image
-                    width="100%"
-                    src={
-                      file.url ||
-                      (file.originFileObj
-                        ? URL.createObjectURL(file.originFileObj)
-                        : null)
-                    }
-                    alt={file.name}
-                  />
-                </div>
-              ))}
-              <Form
-                className="w-full md:w-[90%] lg:w-[50rem]"
-                id={employeeId}
-                form={form}
-                layout="vertical"
-                onFinish={onFinish}
-                autoComplete="off"
+      <Spin spinning={loading}>
+        <div className={styles.containerAccount}>
+          <Flex justify="center">
+            <Card className="bg-slate-100 w-full md:w-[80%] lg:w-[60%] p-5">
+              <Space
+                align="center"
+                size={2}
+                direction="vertical"
+                className="w-full"
               >
-                <Form.Item
-                  name="image"
-                  label="Tải hình ảnh lên"
-                  tooltip="Add only one Image!"
-                >
-                  <Upload
-                    multiple
-                    listType="picture"
-                    fileList={fileList}
-                    onChange={handleUploadChange}
-                    beforeUpload={() => false}
+                <Avatar
+                  size={250}
+                  shape="circle"
+                  src={
+                    user?.img ||
+                    "https://www.shutterstock.com/image-vector/vector-flat-illustration-grayscale-avatar-600nw-2264922221.jpg"
+                  }
+                />
+                {fileList.map((file) => (
+                  <div
+                    key={file.uid}
+                    className="max-w-full md:max-w-[40rem] mt-8"
+                    style={{ maxHeight: "50rem" }}
                   >
-                    <Button icon={<UploadOutlined />}>Tải lên</Button>
-                  </Upload>
-                </Form.Item>
-                <Form.Item
-                  label="Tên đầy đủ:"
-                  name="fullName"
-                  rules={[
-                    { required: true, message: "Vui lòng không để trống!" },
-                  ]}
+                    <Image
+                      width="100%"
+                      src={
+                        file.url ||
+                        (file.originFileObj
+                          ? URL.createObjectURL(file.originFileObj)
+                          : null)
+                      }
+                      alt={file.name}
+                    />
+                  </div>
+                ))}
+                <Form
+                  className="w-full md:w-[90%] lg:w-[50rem]"
+                  id={employeeId}
+                  form={form}
+                  layout="vertical"
+                  onFinish={onFinish}
+                  autoComplete="off"
                 >
-                  <Input disabled={true} />
-                </Form.Item>
-                <Form.Item label="Giới tính:" name="gender">
-                  <Select>
-                    <Select.Option value="Male">Nam</Select.Option>
-                    <Select.Option value="Female">Nữ</Select.Option>
-                    <Select.Option value="Other">Khác</Select.Option>
-                  </Select>
-                </Form.Item>
-                <Form.Item
-                  label="Ngày sinh:"
-                  name="dayOfBirth"
-                  rules={[
-                    { required: true, message: "Vui lòng không để trống!" },
-                  ]}
-                >
-                  <DatePicker disabled={true} />
-                </Form.Item>
-                <Form.Item
-                  label="Số điện thoại:"
-                  name="phone"
-                  rules={[
-                    { required: true, message: "Vui lòng không để trống!" },
-                  ]}
-                >
-                  <Input />
-                </Form.Item>
-                <Form.Item>
-                  <Button
-                    onClick={handleEdit}
-                    style={{ backgroundColor: "#BF9456" }}
+                  <Form.Item
+                    name="image"
+                    label="Tải hình ảnh lên"
+                    tooltip="Add only one Image!"
                   >
-                    Chỉnh sửa nhưng không chỉnh sửa lịch làm
-                  </Button>
-                </Form.Item>
-                <Form.Item
-                  label="Dịch vụ:"
-                  name="serviceHairs"
-                  rules={[
-                    { required: true, message: "Vui lòng chọn dịch vụ!" },
-                  ]}
-                >
-                  <Select
-                    mode="multiple"
-                    disabled={true}
-                    placeholder="Chọn dịch vụ"
-                    value={selectedServices?.map((s) => s.serviceName)}
-                    onChange={(values) => {
-                      const selected = servicesList.filter((service) =>
-                        values.includes(service.serviceName)
-                      );
-                      setSelectedServices(selected);
-                    }}
-                  >
-                    {servicesList?.map((service) => (
-                      <Select.Option
-                        key={service.id}
-                        value={service.serviceName}
-                      >
-                        {service.serviceName}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-                <Form.Item>
-                  <Button
-                    // onClick={handleEdit}
-                    style={{ backgroundColor: "#BF9456" }}
-                  >
-                    Chỉnh sửa dịch vụ
-                  </Button>
-                </Form.Item>
-                {schedules?.map((day) => (
-                  <Space
-                    key={day.DayOfWeek}
-                    direction="vertical"
-                    style={{
-                      marginBottom: 10,
-                      marginLeft: 20,
-                      display: "flex",
-                    }}
-                  >
-                    <Checkbox
-                      onChange={() => handleCheckboxChange(day.DayOfWeek)}
-                      checked={dayOff[day.DayOfWeek]}
+                    <Upload
+                      multiple
+                      listType="picture"
+                      fileList={fileList}
+                      onChange={handleUploadChange}
+                      beforeUpload={() => false}
                     >
-                      {convertDayOfWeek(day.DayOfWeek)} Nghỉ
-                    </Checkbox>
-
-                    <Space
-                      align="baseline"
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-around",
-                        width: "100%",
+                      <Button icon={<UploadOutlined />}>Tải lên</Button>
+                    </Upload>
+                  </Form.Item>
+                  <Form.Item
+                    label="Tên đầy đủ:"
+                    name="fullName"
+                    rules={[
+                      { required: true, message: "Vui lòng không để trống!" },
+                    ]}
+                  >
+                    <Input disabled={true} />
+                  </Form.Item>
+                  <Form.Item label="Giới tính:" name="gender">
+                    <Select>
+                      <Select.Option value="Male">Nam</Select.Option>
+                      <Select.Option value="Female">Nữ</Select.Option>
+                      <Select.Option value="Other">Khác</Select.Option>
+                    </Select>
+                  </Form.Item>
+                  <Form.Item
+                    label="Ngày sinh:"
+                    name="dayOfBirth"
+                    rules={[
+                      { required: true, message: "Vui lòng không để trống!" },
+                    ]}
+                  >
+                    <DatePicker disabled={true} />
+                  </Form.Item>
+                  <Form.Item
+                    label="Số điện thoại:"
+                    name="phone"
+                    rules={[
+                      { required: true, message: "Vui lòng không để trống!" },
+                    ]}
+                  >
+                    <Input />
+                  </Form.Item>
+                  <Form.Item>
+                    <Button
+                      onClick={handleEdit}
+                      className={styles.customButton}
+                      // className="bg-[#BF9456] text-black border border-transparent hover:text-white hover:border-black px-4 py-2 rounded"
+                    >
+                      Chỉnh sửa nhưng không chỉnh sửa lịch làm
+                    </Button>
+                  </Form.Item>
+                  <Form.Item
+                    label="Dịch vụ:"
+                    name="serviceHairs"
+                    rules={[
+                      { required: true, message: "Vui lòng chọn dịch vụ!" },
+                    ]}
+                  >
+                    <Select
+                      mode="multiple"
+                      // disabled={true}
+                      placeholder="Chọn dịch vụ"
+                      value={selectedServices?.map((s) => s.serviceName)}
+                      onChange={(values) => {
+                        const selected = servicesList.filter((service) =>
+                          values.includes(service.serviceName)
+                        );
+                        setSelectedServices(selected);
                       }}
                     >
-                      <Form.Item
-                        name={[day.DayOfWeek, "start"]}
-                        label={`Bắt đầu (${convertDayOfWeek(day.DayOfWeek)})`}
-                        rules={[
-                          {
-                            validator: (_, value) => {
-                              // Validation will be handled by validateFields function
-                              return Promise.resolve();
-                            },
-                          },
-                        ]}
-                      >
-                        <TimePicker
-                          format="HH:mm"
-                          minuteStep={15}
-                          defaultValue={dayjs(day.StartTime, "HH:mm")}
-                          disabled={dayOff[day.DayOfWeek]}
-                          onChange={(value) =>
-                            handleStartChange(value, day.DayOfWeek)
-                          }
-                        />
-                      </Form.Item>
-
-                      <Form.Item
-                        name={[day.DayOfWeek, "end"]}
-                        label={`Kết thúc (${convertDayOfWeek(day.DayOfWeek)})`}
-                        rules={[
-                          {
-                            validator: (_, value) => {
-                              // Validation will be handled by validateFields function
-                              return Promise.resolve();
-                            },
-                          },
-                        ]}
-                      >
-                        <TimePicker
-                          format="HH:mm"
-                          minuteStep={15}
-                          defaultValue={dayjs(day.EndTime, "HH:mm")}
-                          disabled={dayOff[day.DayOfWeek]}
-                          onChange={(value) =>
-                            handleEndChange(value, day.DayOfWeek)
-                          }
-                        />
-                      </Form.Item>
-
-                      <Popconfirm
-                        title="Bạn có chắc chắn muốn sửa đổi không?"
-                        onConfirm={() => handleConfirm(day.DayOfWeek)}
-                        onCancel={() => handleCancel(day.DayOfWeek)}
-                        okText="Có"
-                        cancelText="Hủy"
-                      >
-                        <Button
-                          style={{ backgroundColor: "#BF9456" }}
-                          htmlType="submit"
-                          disabled={!activeButtons[day.DayOfWeek]}
+                      {servicesList?.map((service) => (
+                        <Select.Option
+                          key={service.id}
+                          value={service.serviceName}
                         >
-                          Chỉnh sửa
-                        </Button>
-                      </Popconfirm>
+                          {service.serviceName}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                    <Popconfirm
+                      title={`Bạn có chắc chắn muốn thay đổi dịch vụ cho nhân viên ${employeeIdOfSalon?.fullName} không?`}
+                      onConfirm={handleConfirmService}
+                      onCancel={handleCancelService}
+                      okText="Có"
+                      cancelText="Hủy"
+                    >
+                      <Button
+                        style={{ marginTop: "1rem" }}
+                        className={styles.customButton}
+                      >
+                        Chỉnh sửa dịch vụ
+                      </Button>
+                    </Popconfirm>
+                  </Form.Item>
+                  <Form.Item></Form.Item>
+                  {schedules?.map((day) => (
+                    <Space
+                      key={day.DayOfWeek}
+                      direction="vertical"
+                      style={{
+                        marginBottom: 10,
+                        marginLeft: 20,
+                        display: "flex",
+                      }}
+                    >
+                      <Checkbox
+                        onChange={() => handleCheckboxChange(day.DayOfWeek)}
+                        checked={dayOff[day.DayOfWeek]}
+                      >
+                        {convertDayOfWeek(day.DayOfWeek)} Nghỉ
+                      </Checkbox>
+
+                      <Space
+                        align="baseline"
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-around",
+                          width: "100%",
+                        }}
+                      >
+                        <Form.Item
+                          name={[day.DayOfWeek, "start"]}
+                          label={`Bắt đầu (${convertDayOfWeek(day.DayOfWeek)})`}
+                          rules={[
+                            {
+                              validator: (_, value) => {
+                                // Validation will be handled by validateFields function
+                                return Promise.resolve();
+                              },
+                            },
+                          ]}
+                        >
+                          <TimePicker
+                            format="HH:mm"
+                            minuteStep={15}
+                            defaultValue={dayjs(day.StartTime, "HH:mm")}
+                            disabled={dayOff[day.DayOfWeek]}
+                            onChange={(value) =>
+                              handleStartChange(value, day.DayOfWeek)
+                            }
+                          />
+                        </Form.Item>
+
+                        <Form.Item
+                          name={[day.DayOfWeek, "end"]}
+                          label={`Kết thúc (${convertDayOfWeek(
+                            day.DayOfWeek
+                          )})`}
+                          rules={[
+                            {
+                              validator: (_, value) => {
+                                // Validation will be handled by validateFields function
+                                return Promise.resolve();
+                              },
+                            },
+                          ]}
+                        >
+                          <TimePicker
+                            format="HH:mm"
+                            minuteStep={15}
+                            defaultValue={dayjs(day.EndTime, "HH:mm")}
+                            disabled={dayOff[day.DayOfWeek]}
+                            onChange={(value) =>
+                              handleEndChange(value, day.DayOfWeek)
+                            }
+                          />
+                        </Form.Item>
+
+                        <Popconfirm
+                          title="Bạn có chắc chắn muốn sửa đổi không?"
+                          onConfirm={() => handleConfirm(day.DayOfWeek)}
+                          onCancel={() => handleCancel(day.DayOfWeek)}
+                          okText="Có"
+                          cancelText="Hủy"
+                        >
+                          <Button
+                            style={{ backgroundColor: "#BF9456" }}
+                            htmlType="submit"
+                            disabled={!activeButtons[day.DayOfWeek]}
+                          >
+                            Chỉnh sửa
+                          </Button>
+                        </Popconfirm>
+                      </Space>
                     </Space>
-                  </Space>
-                ))}
-              </Form>
-            </Space>
-          </Card>
-        </Flex>
-      </div>
+                  ))}
+                </Form>
+              </Space>
+            </Card>
+          </Flex>
+        </div>
+      </Spin>
     </div>
   );
 }

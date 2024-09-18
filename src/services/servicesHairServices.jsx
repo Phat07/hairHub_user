@@ -1,5 +1,5 @@
 import { API } from "./api";
-const token= localStorage.getItem("accessToken");
+const token = localStorage.getItem("accessToken");
 
 export const ServiceHairServices = {
   getAllServiceHair(page, size) {
@@ -30,12 +30,16 @@ export const ServiceHairServices = {
   },
   getServiceHairBySalonNotPaging(salonId) {
     return API.get(
-      `/servicehairs/GetServiceHairBySalonInformationId/${salonId}`,{
+      `/servicehairs/GetServiceHairBySalonInformationId/${salonId}`,
+      {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       }
     );
+  },
+  putServiceForEmployee(id, data) {
+    return API.put(`/servicehairs/UpdateServicehairofEmployee/${id}`, data);
   },
   getServiceHairById(id) {
     return API.get(`/servicehairs/GetServiceHair/${id}`);

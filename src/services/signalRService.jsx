@@ -25,7 +25,6 @@ const connection = new signalR.HubConnectionBuilder()
   //   }
   // };
   export const startConnection = async () => {
-    console.log('Current connection state:', connection.state);
   
     if (connection.state === signalR.HubConnectionState.Disconnected) {
       try {
@@ -44,12 +43,12 @@ const connection = new signalR.HubConnectionBuilder()
         await connection.start();
   
         if (connection.state === signalR.HubConnectionState.Connected) {
-          console.log('Connected to SignalR Hub');
+          // console.log('Connected to SignalR Hub');
         } else {
-          console.error('Connection state after start:', connection.state);
+          // console.error('Connection state after start:', connection.state);
         }
       } catch (err) {
-        console.error('Connection error:', err);
+        // console.error('Connection error:', err);
         throw err; // Ném lỗi để catch trong useEffect
       }
     } else {

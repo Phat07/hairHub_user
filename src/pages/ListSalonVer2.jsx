@@ -574,6 +574,8 @@ function ListSalonVer2(props) {
   function formatMoneyVND(amount) {
     return amount.toLocaleString("vi-VN");
   }
+  console.log("i", salonList);
+
   return (
     <div
       style={{
@@ -658,7 +660,10 @@ function ListSalonVer2(props) {
                   prefix={<SearchOutlined />}
                   suffix={
                     servicesName && (
-                      <CloseCircleOutlined onClick={handleClick} />
+                      <CloseCircleOutlined
+                        style={{ fontSize: "20px" }}
+                        onClick={handleClick}
+                      />
                     )
                   }
                   value={servicesName}
@@ -796,6 +801,172 @@ function ListSalonVer2(props) {
                 <div className={styles["list-salon-content"]}>
                   {salonList.length !== 0 ? (
                     salonList.map((salon) => (
+                      // <motion.div
+                      //   className={styles["list-salon-item"]}
+                      //   key={salon.id}
+                      //   whileHover={{
+                      //     scale: 1.05,
+                      //     border: "1px solid #bc8d4a",
+                      //     borderRadius: "0.5rem",
+                      //     padding: "0.5rem",
+                      //   }} // Scale effect on hover
+                      //   transition={{ duration: 0.3 }} // Transition duration
+                      //   initial={{ opacity: 0 }} // Initial opacity for scroll effect
+                      //   animate={{ opacity: 1 }} // Final opacity for scroll effect
+                      //   exit={{ opacity: 0 }} // Fade out on exit
+                      // >
+                      //   <div
+                      //     className={styles["list-salon-image"]}
+                      //     style={{ width: "30%" }}
+                      //   >
+                      //     <img
+                      //       src={salon.img}
+                      //       alt={salon.name}
+                      //       style={{ width: "100%" }}
+                      //     />
+                      //     <div
+                      //       style={{
+                      //         marginTop: "8px",
+                      //         fontSize: "1rem",
+                      //         textAlign: "center",
+                      //       }}
+                      //     >
+                      //       <motion.div
+                      //         key={salon.operatingStatus} // Ensures re-render when status changes
+                      //         initial={{
+                      //           opacity: 0,
+                      //           color:
+                      //             salon.operatingStatus === "Đang hoạt động"
+                      //               ? "#EF4444"
+                      //               : "#10B981",
+                      //         }}
+                      //         animate={{
+                      //           opacity: 1,
+                      //           color:
+                      //             salon.operatingStatus === "Đang hoạt động"
+                      //               ? "#EF4444"
+                      //               : "#10B981",
+                      //         }}
+                      //         transition={{ duration: 0.5 }} // Adjust the duration
+                      //         className="transform transition-transform duration-500"
+                      //       >
+                      //         <p
+                      //           className={`text-lg font-semibold ${
+                      //             salon.operatingStatus === "Đang hoạt động"
+                      //               ? "text-green-500"
+                      //               : "text-red-500"
+                      //           }`}
+                      //         >
+                      //           {salon.operatingStatus}
+                      //         </p>
+                      //       </motion.div>
+
+                      //       <div className="flex items-center space-x-2">
+                      //         {salon.distance === null ? (
+                      //           <div className="flex align-middle">
+                      //             <svg
+                      //               xmlns="http://www.w3.org/2000/svg"
+                      //               fill="none"
+                      //               viewBox="0 0 24 24"
+                      //               stroke="currentColor"
+                      //               className="w-6 h-6 text-gray-500"
+                      //             >
+                      //               <path
+                      //                 strokeLinecap="round"
+                      //                 strokeLinejoin="round"
+                      //                 strokeWidth={2}
+                      //                 d="M12 2a9 9 0 00-9 9c0 6 9 11 9 11s9-5 9-11a9 9 0 00-9-9zm0 13a3 3 0 100-6 3 3 0 000 6z"
+                      //               />
+                      //             </svg>
+                      //             <p className="text-gray-500 font-medium ml-2">
+                      //               ...
+                      //             </p>
+                      //           </div>
+                      //         ) : (
+                      //           <div className="flex align-middle">
+                      //             <svg
+                      //               xmlns="http://www.w3.org/2000/svg"
+                      //               fill="none"
+                      //               viewBox="0 0 24 24"
+                      //               stroke="currentColor"
+                      //               className="w-6 h-6 text-green-500"
+                      //             >
+                      //               <path
+                      //                 strokeLinecap="round"
+                      //                 strokeLinejoin="round"
+                      //                 strokeWidth={2}
+                      //                 d="M12 2a9 9 0 00-9 9c0 6 9 11 9 11s9-5 9-11a9 9 0 00-9-9zm0 13a3 3 0 100-6 3 3 0 000 6z"
+                      //               />
+                      //             </svg>
+                      //             <p className="text-green-500 font-medium">
+                      //               {salon.distance.toFixed(1)} km
+                      //             </p>
+                      //           </div>
+                      //         )}
+                      //       </div>
+                      //     </div>
+                      //   </div>
+                      //   <div
+                      //     className={styles["list-salon-info"]}
+                      //     style={{ width: "70%", paddingLeft: "16px" }}
+                      //   >
+                      //     <p style={{ fontSize: "1.5rem" }}>{salon.name}</p>
+                      //     <p style={{ fontSize: "1rem" }}>
+                      //       <strong>Mô tả:</strong> {salon.description}
+                      //     </p>
+                      //     <p style={{ fontSize: "1rem" }}>
+                      //       <strong>Địa chỉ:</strong> {salon.address}
+                      //     </p>
+                      //     <ul>
+                      //       {salon.services
+                      //         .slice(0, 3)
+                      //         .map((service, index) => (
+                      //           <motion.li
+                      //             key={index}
+                      //             className={styles["service-list-item"]}
+                      //             whileHover={{ scale: 1.03 }} // Scale effect on hover
+                      //             transition={{ duration: 0.2 }} // Transition duration for hover
+                      //             initial={{ opacity: 0.8 }} // Initial opacity for scroll effect
+                      //             animate={{ opacity: 1 }} // Final opacity for scroll effect
+                      //             exit={{ opacity: 0.8 }} // Fade out on exit
+                      //           >
+                      //             <div className={styles["service-details"]}>
+                      //               <span className={styles["service-name"]}>
+                      //                 {service.serviceName}:{" "}
+                      //               </span>
+                      //               <span
+                      //                 className={styles["service-description"]}
+                      //               >
+                      //                 {service.description} -{" "}
+                      //                 {formatMoneyVND(service.price)} vnđ
+                      //               </span>
+                      //             </div>
+                      //             <Button
+                      //               onClick={() =>
+                      //                 navigate(`/salon_detail/${salon?.id}`)
+                      //               }
+                      //               className={styles["book-button"]}
+                      //             >
+                      //               Đặt lịch
+                      //             </Button>
+                      //           </motion.li>
+                      //         ))}
+                      //     </ul>
+
+                      //     {salon.services.length > 3 && (
+                      //       <div style={{ marginTop: "8px" }}>
+                      //         <Button
+                      //           onClick={() =>
+                      //             navigate(`/salon_detail/${salon?.id}`)
+                      //           }
+                      //           className={styles["view-more-button"]}
+                      //         >
+                      //           Xem thêm ...
+                      //         </Button>
+                      //       </div>
+                      //     )}
+                      //   </div>
+                      // </motion.div>
                       <motion.div
                         className={styles["list-salon-item"]}
                         key={salon.id}
@@ -809,7 +980,37 @@ function ListSalonVer2(props) {
                         initial={{ opacity: 0 }} // Initial opacity for scroll effect
                         animate={{ opacity: 1 }} // Final opacity for scroll effect
                         exit={{ opacity: 0 }} // Fade out on exit
+                        style={{ position: "relative"}} // Make the parent relative for absolute child positioning
                       >
+                        {/* Animated Star rating and review count */}
+                        <motion.div
+                          style={{
+                            position: "absolute",
+                            top: "8px",
+                            right: "8px",
+                            display: "flex",
+                            alignItems: "center",
+                            backgroundColor: "rgba(255, 255, 255, 0.8)", // Optional background
+                            padding: "4px 8px",
+                            borderRadius: "0.5rem",
+                          }}
+                          initial={{ opacity: 0, scale: 0.8 }} // Start small and faded out
+                          animate={{ opacity: 1, scale: 1 }} // Fade in and scale to normal size
+                          transition={{ duration: 0.5 }} // Adjust the duration
+                        >
+                          <span
+                            style={{ marginRight: "4px", color: "#FBBF24" }}
+                          >
+                            {" "}
+                            {/* Star color */}★ {salon.rate.toFixed(1)}
+                          </span>
+                          <span style={{ color: "#6B7280" }}>
+                            {/* Gray color for the review count */}(
+                            {salon.totalReviewer} đánh giá)
+                          </span>
+                        </motion.div>
+
+                        {/* Rest of the content */}
                         <div
                           className={styles["list-salon-image"]}
                           style={{ width: "30%" }}
@@ -826,6 +1027,7 @@ function ListSalonVer2(props) {
                               textAlign: "center",
                             }}
                           >
+                            <p style={{ fontSize: "1.5rem" }}>{salon.name}</p>
                             <motion.div
                               key={salon.operatingStatus} // Ensures re-render when status changes
                               initial={{
@@ -855,7 +1057,6 @@ function ListSalonVer2(props) {
                                 {salon.operatingStatus}
                               </p>
                             </motion.div>
-
                             <div className="flex items-center space-x-2">
                               {salon.distance === null ? (
                                 <div className="flex align-middle">
@@ -901,11 +1102,11 @@ function ListSalonVer2(props) {
                             </div>
                           </div>
                         </div>
+                        {/* Salon details */}
                         <div
                           className={styles["list-salon-info"]}
-                          style={{ width: "70%", paddingLeft: "16px" }}
+                          style={{ width: "70%", paddingLeft: "16px", marginTop:"2.5rem" }}
                         >
-                          <p style={{ fontSize: "1.5rem" }}>{salon.name}</p>
                           <p style={{ fontSize: "1rem" }}>
                             <strong>Mô tả:</strong> {salon.description}
                           </p>
@@ -919,11 +1120,11 @@ function ListSalonVer2(props) {
                                 <motion.li
                                   key={index}
                                   className={styles["service-list-item"]}
-                                  whileHover={{ scale: 1.03 }} // Scale effect on hover
-                                  transition={{ duration: 0.2 }} // Transition duration for hover
-                                  initial={{ opacity: 0.8 }} // Initial opacity for scroll effect
-                                  animate={{ opacity: 1 }} // Final opacity for scroll effect
-                                  exit={{ opacity: 0.8 }} // Fade out on exit
+                                  whileHover={{ scale: 1.03 }}
+                                  transition={{ duration: 0.2 }}
+                                  initial={{ opacity: 0.8 }}
+                                  animate={{ opacity: 1 }}
+                                  exit={{ opacity: 0.8 }}
                                 >
                                   <div className={styles["service-details"]}>
                                     <span className={styles["service-name"]}>

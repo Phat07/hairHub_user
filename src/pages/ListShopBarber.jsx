@@ -447,9 +447,6 @@ function ListShopBarber(props) {
     dispatch(actDeleteEmployee(employee.id, salonDetail?.id));
   };
 
-  // useEffect(() => {
-  //   if (salonDetail?.id) dispatch(actGetAllEmployees(salonDetail?.id, 1, 4));
-  // }, [salonDetail?.id]);
 
   const convertDayOfWeekToVietnamese = (dayOfWeek) => {
     const daysMapping = {
@@ -539,6 +536,7 @@ function ListShopBarber(props) {
         <Space size="middle">
           <Link to={`account_details/${record.id}`}>
             <Button
+              disabled={record.isActive === false}
               className="editButtonStyle"
               onClick={() => {}}
               icon={<EditOutlined />}
@@ -553,6 +551,7 @@ function ListShopBarber(props) {
             cancelText="Không"
           >
             <Button
+              disabled={record.isActive === false}
               className="deleteButtonStyle"
               icon={<DeleteOutlined />}
               danger
@@ -1036,9 +1035,6 @@ function ListShopBarber(props) {
             );
           })
           .catch((err) => console.log(err, "errors"));
-
-        // Call API or perform update operation
-        // console.log("Updated Voucher Data:", updatedVoucher);
         setIsUpdateModalVisible(false); // Close modal after update
         form.resetFields(); // Reset form fields
       })
@@ -1071,17 +1067,6 @@ function ListShopBarber(props) {
                   <Descriptions
                     title={
                       <div className={styles["salon-title-container"]}>
-                        {/* <Flex className="bg-blue-600 p-3 w-max border border-red-300 rounded-md cursor-pointer salon-title">
-                          <Typography.Title
-                            style={{ color: "rgb(241 245 249)" }}
-                            level={3}
-                            onClick={() => {
-                              navigate(`/create_shop/${salonDetail?.id}`);
-                            }}
-                          >
-                            {salonDetail.name}
-                          </Typography.Title>
-                        </Flex> */}
                         <div>
                           <img
                             src={salonDetail.img}
@@ -1119,46 +1104,6 @@ function ListShopBarber(props) {
                             Chỉnh sửa thông tin
                           </Button>
                         </div>
-
-                        {/* <Flex
-                          gap={"middle"}
-                          align="base-line"
-                          className="dropdown-btns"
-                        >
-                          <Button
-                            type="primary"
-                            onClick={() => checkEmployeeListExist()}
-                          >
-                            Danh sách nhân viên
-                          </Button>
-                          <Button
-                            type="primary"
-                            onClick={() =>
-                              navigate(`/list_service/${salonDetail.id}`)
-                            }
-                          >
-                            Danh sách dịch vụ
-                          </Button>
-                          <Button
-                            type="primary"
-                            onClick={() =>
-                              navigate(`/list_voucher/${salonDetail.id}`)
-                            }
-                          >
-                            Danh sách các voucher
-                          </Button>
-                        </Flex> */}
-                        {/* <Dropdown
-                          overlay={menu}
-                          trigger={["click"]}
-                          visible={dropdownVisible}
-                          onVisibleChange={(flag) => setDropdownVisible(flag)}
-                        >
-                          <MenuOutlined
-                            className="dropdown-icon"
-                            style={{ fontSize: "24px" }}
-                          />
-                        </Dropdown> */}
                       </div>
                     }
                     bordered

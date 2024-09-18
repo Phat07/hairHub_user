@@ -9,6 +9,7 @@ export const GET_ALL_EMPLOYEE = "GET_ALL_EMPLOYEE";
 export const GET_ALL_SERVICE = "GET_ALL_SERVICE";
 export const GET_ALL_SERVICE_NOT = "GET_ALL_SERVICE_NOT";
 export const GET_EMPLOYEE_ID = "GET_EMPLOYEE_ID";
+export const GET_SALON_SERVICE_ID = "GET_SALON_SERVICE_ID";
 
 export const postCreateSalonEmployees = (list) => {
   return {
@@ -40,17 +41,43 @@ export const getSalonEmployeeByid = (list) => {
     payload: list,
   };
 };
+export const getSalonEmployeeServiceByid = (list) => {
+  return {
+    type: GET_SALON_SERVICE_ID,
+    payload: list,
+  };
+};
 export function actGetSalonEmployeeById(id) {
   return (dispatch) => {
     SalonEmployeesServices.getSalonEmployeeById(id)
       .then((res) => {
-        console.log("test1",res.data);
-        
         dispatch(getSalonEmployeeByid(res?.data));
       })
       .catch((err) => console.log(err, "errors"));
   };
 }
+export function actGetSalonEmployeeServiceById(id) {
+  return (dispatch) => {
+    ServiceHairServices.getServiceHairBySalonNotPaging(id)
+      .then((res) => {
+        dispatch(getSalonEmployeeServiceByid(res?.data));
+      })
+      .catch((err) => console.log(err, "errors"));
+  };
+}
+export function actPutSalonEmployeeServiceById(id, data) {
+  return async (dispatch) => {
+    try {
+      const res = await ServiceHairServices.putServiceForEmployee(id, data);
+      dispatch(actGetSalonEmployeeById(id));
+      return res; // Trả về kết quả sau khi cập nhật dịch vụ
+    } catch (error) {
+      console.error("Error updating service for employee:", error);
+      throw error; // Re-throw the error for further handling if needed
+    }
+  };
+}
+
 export function actPutSalonEmployeeById(id, data) {
   return async (dispatch) => {
     try {

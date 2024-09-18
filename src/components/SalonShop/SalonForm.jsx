@@ -385,7 +385,7 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
                 <Typography.Title
                   level={4}
                   style={{ backgroundColor: "#bf9456" }}
-                  className=" p-3 mt-3 border border2 rounded-md text-slate-500 hover:text-blue-500 transition ease-in-out hover:-translate-y-1 hover:scale-105 duration-300"
+                  className=" p-3 mt-3 border border2 rounded-md text-slate-500 hover:text-white transition ease-in-out hover:-translate-y-1 hover:scale-105 duration-300"
                 >
                   {salonDetail ? "CHỈNH SỬA TIỆM CỦA BẠN" : "TẠO TIỆM CỦA BẠN"}
                 </Typography.Title>

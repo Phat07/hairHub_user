@@ -12,7 +12,7 @@ import {
   actGetAllSalonSuggestionInformation,
   actGetSalonInformationByOwnerId,
 } from "./store/salonInformation/action";
-
+import * as signalR from "@microsoft/signalr";
 import { message } from "antd";
 import useDocumentTitle from "../src/components/useDocumentTitle";
 import ChatBox from "./components/ChatBox";
@@ -22,16 +22,18 @@ import { fetchUserByTokenApi } from "./store/account/action";
 import FooterMobile from "./components/FooterMobile";
 import FooterMobileAuth from "./components/FooterMobileAuth";
 import FooterMobileUnAuth from "./components/FooterMobileUnAuth";
+import audioVer1 from "../public/audio/warm-tech-logo-21474.mp3";
 function App() {
   useDocumentTitle();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const token = localStorage.getItem("accessToken");
 
   const salonDetail = useSelector(
     (state) => state.SALONINFORMATION.getSalonByOwnerId
   );
-  const token = useSelector((state) => state.ACCOUNT.token);
-  const ownerId = useSelector((state) => state.ACCOUNT.ownerId);
+  // const token = useSelector((state) => state.ACCOUNT.token);
+  const idOwner = useSelector((state) => state.ACCOUNT.idOwner);
 
   const isTokenExpired = (token) => {
     try {
@@ -82,13 +84,64 @@ function App() {
   useEffect(() => {
     authenticateUser();
   }, []);
+  useEffect(() => {
+    let connection;
+    const setupSignalR = async () => {
+      try {
+        // Tạo kết nối SignalR
+        connection = new signalR.HubConnectionBuilder()
+          .withUrl("https://hairhub.gahonghac.net/book-appointment-hub")
+          .withAutomaticReconnect()
+          .build();
+
+        // Bắt đầu kết nối
+        await connection.start();
+
+        // Lắng nghe sự kiện "ReceiveMessage"
+        connection.on(
+          "ReceiveMessage",
+          async (
+            message,
+            dateAppointment,
+            datenow,
+            salonId,
+            serviceId,
+            ownerId
+          ) => {
+
+            // Kiểm tra điều kiện idOwner === serviceId
+            if (token && idOwner && idOwner === ownerId) {
+
+              // Chỉ phát âm thanh khi điều kiện đúng
+              const audio = new Audio(audioVer1); // Đảm bảo audioVer1 là đường dẫn hợp lệ
+              audio.play().catch((error) => {
+                console.error("Lỗi phát âm thanh:", error);
+              });
+            } else {
+              // Nếu không đúng điều kiện, in ra lỗi và không phát âm thanh
+              console.error("Không trùng khớp idOwner với ownerId");
+            }
+          }
+        );
+      } catch (error) {
+        console.error("Lỗi khi thiết lập SignalR:", error);
+      }
+    };
+
+    setupSignalR();
+
+    // Dọn dẹp kết nối khi component bị hủy
+    return () => {
+      connection.stop().then(() => console.log("Đã ngắt kết nối SignalR."));
+    };
+  }, [idOwner]);
 
   useEffect(() => {
-    if (ownerId) {
-      dispatch(actGetSalonInformationByOwnerId(ownerId));
-      dispatch(actGetAllPaymentList(ownerId, 1, 10));
+    if (idOwner) {
+      dispatch(actGetSalonInformationByOwnerId(idOwner));
+      dispatch(actGetAllPaymentList(idOwner, 1, 10));
     }
-  }, [dispatch, ownerId]);
+  }, [dispatch, idOwner]);
 
   useEffect(() => {
     dispatch(actGetAllSalonInformation());
@@ -107,10 +160,6 @@ function App() {
     <>
       <div className="super-container">
         {localStorage.getItem("refreshToken") ? <Header /> : <HeaderUnAuth />}
-        {/* {localStorage.getItem("refreshToken") ? <HeaderUnAuth /> :<></>} */}
-        {/* <ChatBox /> */}
-        {/* <ChatComponent /> */}
-        {/* <Footer /> */}
       </div>
       <Footer2 />
       {localStorage.getItem("refreshToken") ? (
