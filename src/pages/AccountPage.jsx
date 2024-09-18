@@ -131,9 +131,13 @@ function AccountPage() {
     }
 
     dispatch(actGetSalonEmployeeById(employeeId));
+    // dispatch(actGetSalonEmployeeServiceById(employeeId))
   }, [employeeId, salonDetail]);
   const serviceHairsList = employeeIdOfSalon?.serviceHairs;
-
+  console.log("s",employeeIdOfSalon);
+  console.log("ttt",employeeServiceIdOfSalon);
+  
+  
   useEffect(() => {
     setAccountEmployeeDetail(employeeIdOfSalon);
     // setSchedules(res.data.schedules);
@@ -180,18 +184,14 @@ function AccountPage() {
         avatar: userData.avatar,
         serviceHairs: serviceHairs?.map((service) => service.serviceName),
       });
+      console.log("test",serviceHairs );
+      
       setSelectedServices(serviceHairs);
     } else {
     }
     // setSalonId(res.data.salonInformationId);
   }, [employeeIdOfSalon]);
 
-  // const handleDayOffChange = (day) => {
-  //   setDayOff((prevDayOff) => ({
-  //     ...prevDayOff,
-  //     [day]: !prevDayOff[day],
-  //   }));
-  // };
 
   const onFinish = async (item) => {
     // const gender = await form.getFieldValue("gender");
@@ -449,13 +449,18 @@ function AccountPage() {
   };
 
   const handleConfirmService = () => {
-    setLoading(true);
+    // setLoading(true);
 
     let data = {
       listServiceID: selectedServices.map((e) => e?.id),
     };
-
-    dispatch(actPutSalonEmployeeServiceById(employeeId, salonDetail?.id, data))
+    console.log("hh",selectedServices);
+    
+    console.log("test",employeeIdOfSalon?.serviceHairs);
+    
+    console.log("data",data);
+    
+    dispatch(actPutSalonEmployeeServiceById(employeeId, data))
       .then((res) => {
         setLoading(false);
         message.success(
@@ -463,9 +468,10 @@ function AccountPage() {
         );
       })
       .catch((err) => {
-        message.error(
-          `Đã cập nhật nhân viên ${employeeIdOfSalon?.fullName} thất bại`
-        );
+        message.error(err?.response?.data)
+        // message.error(
+        //   `Đã cập nhật nhân viên ${employeeIdOfSalon?.fullName} thất bại`
+        // );
       })
       .finally((err) => {
         setLoading(false);
@@ -595,8 +601,6 @@ function AccountPage() {
                         const selected = servicesList.filter((service) =>
                           values.includes(service.serviceName)
                         );
-                        console.log("23", selected);
-
                         setSelectedServices(selected);
                       }}
                     >
