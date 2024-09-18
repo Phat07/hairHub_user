@@ -4,7 +4,7 @@ import {
   GET_ALL_SERVICE,
   GET_ALL_SERVICE_NOT,
   GET_EMPLOYEE_ID,
-  GET_EMPLOYEE_SERVICE_ID,
+  GET_SALON_SERVICE_ID,
 } from "./action";
 
 const initialState = {
@@ -48,7 +48,7 @@ const reducer = (state = initialState, action) => {
         ...state,
         employeeId: action.payload,
       };
-    case GET_EMPLOYEE_SERVICE_ID:
+    case GET_SALON_SERVICE_ID:
       return {
         ...state,
         employeeServiceList: action.payload,
