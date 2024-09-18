@@ -631,24 +631,6 @@ function ListSalonVer2(props) {
             </Modal>
           </div>
           <Row gutter={[16, 16]}>
-            <Col span={12}>
-              <MotionDiv
-                whileHover={{ scale: 1.02 }} // Tăng nhẹ kích thước khi hover
-                whileTap={{ scale: 0.95 }} // Giảm nhẹ kích thước khi nhấn
-                transition={{ duration: 0.3 }} // Thời gian chuyển đổi
-              >
-                <Input
-                  className={styles["ant-input"]}
-                  allowClear
-                  placeholder="Tìm kiếm salon"
-                  prefix={<SearchOutlined />}
-                  onChange={handleSalonNameChange}
-                  onKeyDown={handleKeyPress}
-                  value={salonName}
-                  onSubmit={handSubmitSalonName}
-                />
-              </MotionDiv>
-            </Col>
             <Col
               // style={{
               //   backgroundColor: "#ECE8DE",
@@ -686,6 +668,25 @@ function ListSalonVer2(props) {
               </MotionDiv>
               {/* </Popover> */}
             </Col>
+            <Col span={12}>
+              <MotionDiv
+                whileHover={{ scale: 1.02 }} // Tăng nhẹ kích thước khi hover
+                whileTap={{ scale: 0.95 }} // Giảm nhẹ kích thước khi nhấn
+                transition={{ duration: 0.3 }} // Thời gian chuyển đổi
+              >
+                <Input
+                  className={styles["ant-input"]}
+                  allowClear
+                  placeholder="Tìm kiếm salon"
+                  prefix={<SearchOutlined />}
+                  onChange={handleSalonNameChange}
+                  onKeyDown={handleKeyPress}
+                  value={salonName}
+                  onSubmit={handSubmitSalonName}
+                />
+              </MotionDiv>
+            </Col>
+
             {/* <div className={styles["list-salon-service"]}>
               <div
                 onClick={() => handleServiceSelect("Cắt tóc")}
