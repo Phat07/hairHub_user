@@ -47,12 +47,7 @@ export const SalonInformationServices = {
   },
   getSalonInformationByOwnerId(ownerId) {
     return API.get(
-      `/saloninformations/GetSalonInformationByOwnerId/${ownerId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+      `/saloninformations/GetSalonInformationByOwnerId/${ownerId}`
     );
   },
   getGetAvailableTime(data) {
@@ -68,5 +63,11 @@ export const SalonInformationServices = {
         Authorization: `Bearer ${token}`,
       },
     });
+  },
+  putSalonById(id, data) {
+    return API.put(`/saloninformations/UpdateSalonInformation/${id}`, data);
+  },
+  putSalonScheduleById(id, data) {
+    return API.put(`/schedules/UpdateScheduleofSalon/ ${id}`, data);
   },
 };

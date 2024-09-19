@@ -1,33 +1,34 @@
-import React, { useEffect, useRef, useState } from "react";
-import {
-  Form,
-  Input,
-  Button,
-  TimePicker,
-  Row,
-  Col,
-  Upload,
-  Checkbox,
-  message,
-  Card,
-  Flex,
-  Image,
-  Typography,
-  Spin,
-} from "antd";
-import "../../css/Salonform.css";
 import { UploadOutlined } from "@ant-design/icons";
-import moment from "moment";
 import { LoadScript, StandaloneSearchBox } from "@react-google-maps/api";
+import {
+  Button,
+  Card,
+  Checkbox,
+  Col,
+  Flex,
+  Form,
+  Image,
+  Input,
+  message,
+  Popconfirm,
+  Row,
+  Spin,
+  TimePicker,
+  Typography,
+  Upload,
+} from "antd";
 import axios from "axios";
+import dayjs from "dayjs";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import "../../css/Salonform.css";
 import {
   actGetSalonInformationByOwnerId,
   actPostCreateSalonInformation,
+  actPutSalonInformationByOwnerId,
+  actPutSalonScheduleByOwnerId,
 } from "../../store/salonInformation/action";
-import useAuthUser from "react-auth-kit/hooks/useAuthUser";
-import { useNavigate, useParams } from "react-router-dom";
-import dayjs from "dayjs";
 import Loader from "../Loader";
 import { fullNamePattern } from "../Regex/Patterns";
 
@@ -55,6 +56,7 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const formatTime = "HH:mm";
+  const [activeButtons, setActiveButtons] = useState({});
 
   const [coordinates, setCoordinates] = useState({
     Longitude: "",
@@ -84,7 +86,11 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
   }, [isApiLoaded]);
 
   useEffect(() => {
+    console.log("2");
+
     if (id && salonDetail.img) {
+      console.log("1");
+
       setFileList([
         { uid: "-1", name: "image.png", status: "done", url: salonDetail.img },
       ]);
@@ -172,8 +178,7 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
       !description ||
       Object.keys(formattedSchedules).length === 0
     ) {
-      console.error("Required fields are missing.");
-      message.error("Required fields are missing.");
+      message.error("Vui lòng điền thông tin!");
       return;
     }
     const convertedSchedules = convertScheduleFormat(formattedSchedules);
@@ -264,6 +269,101 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
       console.error("No places found");
     }
   };
+  const handleFieldChange = (dayValue) => {
+    setActiveButtons({ ...activeButtons, [dayValue]: true });
+  };
+  const getLabelByDay = (dayValue) => {
+    const day = daysOfWeek.find((d) => d.value === dayValue);
+    return day ? day.label : null; // Return the label if found, otherwise null
+  };
+  function formatTimeCustom(time) {
+    const hours = time.hour.toString().padStart(2, "0");
+    const minutes = time.minute.toString().padStart(2, "0");
+    return `${hours}:${minutes}`;
+  }
+  const handleConfirm = async (day) => {
+    setLoading(true)
+    let start = form.getFieldValue([day, "start"]);
+    let end = form.getFieldValue([day, "end"]);
+    let formattedStart = "";
+    let formattedEnd = "";
+
+    if (start && end) {
+      if (dayOff[day]) {
+        // If it's a day off, set start and end times to 00:00
+        formattedStart = { hour: 0, minute: 0 };
+        formattedEnd = { hour: 0, minute: 0 };
+      } else {
+        formattedStart = {
+          hour: start.hour(),
+          minute: start.minute(),
+        };
+
+        formattedEnd = {
+          hour: end.hour(),
+          minute: end.minute(),
+        };
+      }
+      const capitalizedDay = (await day.charAt(0).toUpperCase()) + day.slice(1);
+      const startTimeString = await formatTimeCustom(formattedStart);
+      const endTimeString = await formatTimeCustom(formattedEnd);
+      const data = {
+        dayofWeeks: capitalizedDay,
+        startTime: startTimeString,
+        endTime: endTimeString,
+        isActive: true,
+      };
+      const dayLabel = await getLabelByDay(day);
+      dispatch(actPutSalonScheduleByOwnerId(salonDetail?.id, data,salonDetail?.salonOwner?.id))
+        .then((res) => {
+          setLoading(false);
+          message.success(
+            `Cập nhật lịch làm ${dayLabel} thành công cho nhân viên ${salonDetail?.name}`
+          );
+          setDayOff({ ...dayOff, [day]: false });
+          setActiveButtons({});
+        })
+        .catch((err) => {
+          setDayOff({ ...dayOff, [day]: false });
+          message.error(
+            `Cập nhật lịch làm ${dayLabel} thất bại cho nhân viên ${salonDetail?.name}`
+          );
+        })
+        .finally((err) => {
+          setLoading(false);
+        });
+
+      // Thực hiện các hành động khác với dữ liệu đã format
+    } else {
+      console.log("Thời gian không hợp lệ.");
+    }
+  };
+  // handleCancel function: Reset the changes and disable the button
+  const handleCancel = (dayValue) => {
+    // Logic to handle cancel action (e.g., reset the form fields for that day)
+    console.log(`Cancelled changes for ${dayValue}`);
+
+    // Optionally, reset the time fields to their initial values or any other necessary action
+
+    // Disable the button since no changes are confirmed
+    setActiveButtons({ ...activeButtons, [dayValue]: false });
+    setDayOff({ ...dayOff, [dayValue]: false });
+    const initialSchedule = salonDetail?.schedules?.find(
+      (item) => item.dayOfWeek.toLowerCase() === dayValue.toLowerCase()
+    );
+    form.setFieldsValue({
+      [dayValue]: {
+        start: initialSchedule
+          ? dayjs(initialSchedule.startTime, "HH:mm")
+          : dayjs("07:00", formatTime), // Reset start time
+        end: initialSchedule
+          ? dayjs(initialSchedule.endTime, "HH:mm")
+          : dayjs("17:00", formatTime), // Reset end time
+      },
+    });
+  };
+  console.log("salon",salonDetail);
+  
   const renderTimePickers = () => {
     const initialTimeValue = dayjs("07:00", formatTime);
 
@@ -275,6 +375,25 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
             name={[day.value, "start"]}
             label={`${day.label} bắt đầu`}
             dependencies={[[day.value, "end"]]}
+            // rules={[
+            //   {
+            //     required: !dayOff[day.value],
+            //     message: "Phải có thời gian bắt đầu trừ khi đó là ngày nghỉ!",
+            //   },
+            //   ({ getFieldValue }) => ({
+            //     validator(_, value) {
+            //       const endTime = getFieldValue([day.value, "end"]);
+            //       if (!value || !endTime || value.isBefore(endTime)) {
+            //         return Promise.resolve();
+            //       }
+            //       return Promise.reject(
+            //         new Error(
+            //           "Thời gian bắt đầu phải trước thời gian kết thúc!"
+            //         )
+            //       );
+            //     },
+            //   }),
+            // ]}
             rules={[
               {
                 required: !dayOff[day.value],
@@ -283,7 +402,20 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
               ({ getFieldValue }) => ({
                 validator(_, value) {
                   const endTime = getFieldValue([day.value, "end"]);
-                  if (!value || !endTime || value.isBefore(endTime)) {
+
+                  // Sử dụng dayjs để kiểm tra
+                  if (
+                    (value &&
+                      endTime &&
+                      dayjs(value).isSame(dayjs("00:00", "HH:mm"), "minute") &&
+                      dayjs(endTime).isSame(
+                        dayjs("00:00", "HH:mm"),
+                        "minute"
+                      )) ||
+                    !value ||
+                    !endTime ||
+                    dayjs(value).isBefore(dayjs(endTime))
+                  ) {
                     return Promise.resolve();
                   }
                   return Promise.reject(
@@ -299,6 +431,7 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
               minuteStep={15}
               format={formatTime}
               disabled={dayOff[day.value]}
+              onChange={() => handleFieldChange(day.value)} // Track changes
             />
           </Form.Item>
         </Col>
@@ -308,6 +441,24 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
             name={[day.value, "end"]}
             label={`${day.label} kết thúc`}
             dependencies={[[day.value, "start"]]}
+            // rules={[
+            //   {
+            //     required: !dayOff[day.value],
+            //     message:
+            //       "Cần phải có thời gian kết thúc trừ khi đó là ngày nghỉ!",
+            //   },
+            //   ({ getFieldValue }) => ({
+            //     validator(_, value) {
+            //       const startTime = getFieldValue([day.value, "start"]);
+            //       if (!value || !startTime || value.isAfter(startTime)) {
+            //         return Promise.resolve();
+            //       }
+            //       return Promise.reject(
+            //         new Error("Thời gian kết thúc phải sau thời gian bắt đầu!")
+            //       );
+            //     },
+            //   }),
+            // ]}
             rules={[
               {
                 required: !dayOff[day.value],
@@ -317,7 +468,20 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
               ({ getFieldValue }) => ({
                 validator(_, value) {
                   const startTime = getFieldValue([day.value, "start"]);
-                  if (!value || !startTime || value.isAfter(startTime)) {
+
+                  // Sử dụng dayjs để kiểm tra
+                  if (
+                    (startTime &&
+                      value &&
+                      dayjs(startTime).isSame(
+                        dayjs("00:00", "HH:mm"),
+                        "minute"
+                      ) &&
+                      dayjs(value).isSame(dayjs("00:00", "HH:mm"), "minute")) ||
+                    !value ||
+                    !startTime ||
+                    dayjs(value).isAfter(dayjs(startTime))
+                  ) {
                     return Promise.resolve();
                   }
                   return Promise.reject(
@@ -331,18 +495,37 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
               minuteStep={15}
               format={formatTime}
               disabled={dayOff[day.value]}
+              onChange={() => handleFieldChange(day.value)} // Track changes
             />
           </Form.Item>
         </Col>
         <Col span={8}>
           <Checkbox
-            onChange={(e) =>
-              setDayOff({ ...dayOff, [day.value]: e.target.checked })
-            }
+            onChange={(e) => {
+              setDayOff({ ...dayOff, [day.value]: e.target.checked });
+              handleFieldChange(day.value); // Track changes
+            }}
             checked={dayOff[day.value]}
           >
             Ngày nghỉ
           </Checkbox>
+          {id && (
+            <Popconfirm
+              title="Bạn có chắc chắn muốn sửa đổi không?"
+              onConfirm={() => handleConfirm(day.value)}
+              onCancel={() => handleCancel(day.value)}
+              okText="Có"
+              cancelText="Hủy"
+            >
+              <Button
+                style={{ backgroundColor: "#BF9456" }}
+                htmlType="submit"
+                disabled={!activeButtons[day.value]}
+              >
+                Chỉnh sửa
+              </Button>
+            </Popconfirm>
+          )}
         </Col>
       </Row>
     ));
@@ -361,7 +544,66 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
       return false;
     },
   };
+  const handleChangeSalon = async () => {
+    setLoading(true);
+    // const { name, location, description, ...schedules } = values;
+    const name = await form.getFieldValue("name");
+    const location = await form.getFieldValue("location");
+    const description = await form.getFieldValue("description");
 
+    const upperCaseName = name.toUpperCase();
+    const imageFile = fileList.length > 0 ? fileList[0].originFileObj : null;
+    if (
+      // !imageFile ||
+      !name ||
+      !location ||
+      !description
+    ) {
+      setLoading(false);
+      message.error("Vui lòng điền thông tin!");
+      return;
+    }
+    const formData = new FormData();
+    // formData.append("OwnerId", ownerId);
+    formData.append("Name", upperCaseName);
+    formData.append("Address", location);
+    formData.append("Description", description);
+    formData.append("Image", imageFile);
+    formData.append("Longitude", coordinates?.Longitude);
+    formData.append("Latitude", coordinates?.Latitude);
+
+    dispatch(actPutSalonInformationByOwnerId(salonDetail?.id, formData,salonDetail?.salonOwner?.id))
+      .then((res) => {
+        setLoading(false);
+        message.success(`Đã cập nhật salon ${salonDetail?.name} thành công`);
+      })
+      .catch((err) => {
+        message.error(`Đã cập nhật salon ${salonDetail?.name} thất bại`);
+      })
+      .finally((err) => {
+        setLoading(false);
+      });
+  };
+  const handleCancelChangeSalon = () => {
+    setFileList([
+      { uid: "-1", name: "image.png", status: "done", url: salonDetail.img },
+    ]);
+    form.setFieldsValue({
+      name: salonDetail.name,
+      location: salonDetail.address,
+      description: salonDetail.description,
+      // ...daysOfWeek.reduce((acc, day) => {
+      //   const schedule = salonDetail?.schedules?.find(
+      //     (item) => item.dayOfWeek.toLowerCase() === day.value.toLowerCase()
+      //   );
+      //   acc[day.value] = {
+      //     start: schedule ? dayjs(schedule.startTime, "HH:mm") : null,
+      //     end: schedule ? dayjs(schedule.endTime, "HH:mm") : null,
+      //   };
+      //   return acc;
+      // }, {}),
+    });
+  };
   return (
     <div className="container_list" style={{ marginBottom: "2rem" }}>
       <LoadScript
@@ -466,16 +708,42 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
                 >
                   <Input.TextArea placeholder="Điền mô tả" />
                 </Form.Item>
-                {renderTimePickers()}
                 <Form.Item>
-                  <Button
-                    style={{ width: "100%", backgroundColor: "#bf9456" }}
-                    type="primary"
-                    htmlType="submit"
+                  <Popconfirm
+                    title={
+                      id
+                        ? "Bạn có chắc muốn chỉnh sửa thông tin salon?"
+                        : "Bạn có chắc muốn tạo salon?"
+                    }
+                    onConfirm={handleChangeSalon} // This will be triggered when the user clicks "Yes"
+                    onCancel={handleCancelChangeSalon}
+                    okText="Có"
+                    cancelText="Hủy"
                   >
-                    {id ? "Chỉnh Salon" : "Tạo Salon"}
-                  </Button>
+                    <Button
+                      style={{ width: "100%", backgroundColor: "#bf9456" }}
+                      type="primary"
+                      // Removed the direct onClick as it's now handled in Popconfirm
+                    >
+                      {id ? "Chỉnh sửa thông tin salon" : "Tạo Salon"}
+                    </Button>
+                  </Popconfirm>
                 </Form.Item>
+
+                {renderTimePickers()}
+                {!id ? (
+                  <Form.Item>
+                    <Button
+                      style={{ width: "100%", backgroundColor: "#bf9456" }}
+                      type="primary"
+                      htmlType="submit"
+                    >
+                      Tạo salon/ baber shop
+                    </Button>
+                  </Form.Item>
+                ) : (
+                  <></>
+                )}
               </Form>
             </Spin>
           </Card>

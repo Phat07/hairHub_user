@@ -120,13 +120,6 @@ function AccountPage() {
   };
   useEffect(() => {
     if (salonDetail) {
-      // ServiceHairServices.getServiceHairBySalonNotPaging(salonDetail.id)
-      //   .then((res) => {
-      //     setServicesList(res.data);
-      //   })
-      //   .catch((err) => {
-      //     console.log(err, "errrors");
-      //   });
       dispatch(actGetSalonEmployeeServiceById(salonDetail?.id));
     }
 
@@ -134,10 +127,6 @@ function AccountPage() {
     // dispatch(actGetSalonEmployeeServiceById(employeeId))
   }, [employeeId, salonDetail]);
   const serviceHairsList = employeeIdOfSalon?.serviceHairs;
-  console.log("s",employeeIdOfSalon);
-  console.log("ttt",employeeServiceIdOfSalon);
-  
-  
   useEffect(() => {
     setAccountEmployeeDetail(employeeIdOfSalon);
     // setSchedules(res.data.schedules);
