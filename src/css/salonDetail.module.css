@@ -62,10 +62,22 @@
 .link-address {
   background-color: #a86c40;
   color: white;
+  font-weight: normal;
   font-size: 1rem;
   border: 1px solid #a86c40;
   padding: 0.2rem;
   border-radius: 5px;
+  margin-inline: 1rem;
+  text-align: center;
+}
+
+.info_title{
+  border-width: 0;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  color: #BF9456 !important;
 }
 
 .link-address:hover {
@@ -73,6 +85,17 @@
   background-color: #a86c40;
   color: white;
 }
+
+.text-address {
+  width: 100%;
+  font-size: 1rem;
+  font-weight: bold;
+  text-align: start;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+} 
 
 @media (max-width: 768px) {
   .detail-salon-col-1 {
@@ -320,26 +343,16 @@
 }
 
 .listItem {
-  background-color: #e9e6d9;
+  /* background-color: #e9e6d9; */
   padding: 20px;
   margin-bottom: 20px;
-  border-radius: 8px;
 }
 
 .listItemMeta {
-  /* display: flex;
-  flex-direction: column; */
-}
-
-.listItemMeta > div:first-child {
-  /* margin-bottom: 10px;  */
-}
-
-.listItemMeta > div:last-child {
   display: flex;
-  justify-content: space-around;
-  align-items: center;
+  justify-content: space-between;
 }
+
 .feedback-images {
   display: flex;
   gap: 10px;
@@ -352,7 +365,53 @@
   object-fit: cover;
   border-radius: 4px;
 }
-
+.infoContainer{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+.infoContainer p{
+  margin-bottom: 0;
+  margin-bottom: 0;
+  margin-left: 1rem;
+  font-size: 1rem;
+  color: #888;
+}
+.infoUser{
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+}
+.ratingFeedback{
+font-size: large;
+}
+.commentFeedback{
+  font-size: 1rem;
+}
+.review-fillter{
+  display: flex;
+  overflow-x: auto; /* Kích hoạt cuộn ngang */
+  white-space: nowrap; /* Giữ các phần tử không bị xuống dòng */
+  padding: 10px;
+  align-items: center;
+  justify-content: center;
+}
+.fillter-item{
+  flex: 0 0 auto; /* Giữ kích thước nút cố định */
+  margin-right: 15px;
+  padding: 10px 20px;
+  border-color: #bf946c;
+  border-width: 0.1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.fillter-item-active{
+  background-color: #bf946c; /* Màu nền khi được chọn */
+  color: white; /* Màu chữ khi được chọn */
+}
 @media (max-width: 1600px) {
   /* .detail-salon-col-1,
   .detail-salon-col-2 {
@@ -380,6 +439,9 @@
   }
   .detail-salon-col-2 {
     margin-left: 5%;
+  }
+  .listItem {
+    margin-inline: 1rem;
   }
 }
 
@@ -431,6 +493,11 @@
   .arrow-button {
     padding: 6px;
     font-size: 1.2rem;
+  }
+
+  .review-fillter{
+    align-items: flex-start;
+    justify-content: flex-start;
   }
 }
 

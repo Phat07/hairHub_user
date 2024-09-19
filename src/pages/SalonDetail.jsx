@@ -112,15 +112,15 @@ function renderStars(stars) {
         key={`partial-${filledStars}`}
         style={{
           position: "relative",
-          display: "inline-block",
-          width: "24px", // kích thước sao
-          height: "24px",
+          display: "block",
+          width: "2.1rem", // kích thước sao
+          height: "2.1rem",
         }}
       >
-        <StarOutlined
+        <StarFilled
           style={{
             position: "absolute",
-            color: "#1E1D1D", // màu sao trống
+            color: "#888", // màu sao trống
             zIndex: 1, // lớp dưới cùng
             left: 0,
             top: 0,
@@ -144,7 +144,7 @@ function renderStars(stars) {
   const remainingStars = 5 - filledStars - (fraction > 0 ? 1 : 0);
   for (let i = 0; i < remainingStars; i++) {
     starIcons.push(
-      <StarOutlined key={filledStars + i + 1} style={{ color: "#1E1D1D" }} />
+      <StarFilled key={filledStars + i + 1} style={{ color: "#d4d2d2" }} />
     );
   }
 
@@ -1133,7 +1133,7 @@ function SalonDetail(props) {
   //   //   stopConnection();
   //   // };
   // }, []);
-  
+
   useEffect(() => {
     let connection;
     const setupSignalR = async () => {
@@ -1303,7 +1303,7 @@ function SalonDetail(props) {
     return amount.toLocaleString("vi-VN");
   }
   return (
-    <div style={{ marginTop: "90px" }}>
+    <div style={{ marginTop: "75px" }}>
       <Layout>
         <Content>
           <Row justify="center" gutter={0}>
@@ -1338,15 +1338,16 @@ function SalonDetail(props) {
                 className="text-center"
                 style={{
                   display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-around",
-                  marginTop: "30px",
+                  flexDirection: "column",
+                  alignItems: "start",
+                  justifyContent: "start",
+                  marginBlock: "10px",
+                  marginLeft: "1rem",
                 }}
               >
                 <motion.h2
                   style={{
-                    fontSize: "3rem",
+                    fontSize: "1.5rem",
                     fontWeight: "bold",
                   }}
                   initial={{ opacity: 0, scale: 0.9 }}
@@ -1364,7 +1365,39 @@ function SalonDetail(props) {
                 >
                   {salonDetail?.name}
                 </motion.h2>
-                <Space>
+                <span
+                  // style={{
+                  //   fontSize: "1rem",
+                  //   fontWeight: "bold",
+                  //   textAlign: "start",
+                  //   display: "flex",
+                  //   justifyContent: "space-between",
+                  //   alignItems: "center",
+                  // }}
+                  className={style["text-address"]}
+                >
+                  <div>
+                    Địa chỉ:{" "}
+                    <span
+                      style={{
+                        display: "inline-block",
+                        color: "#BF9456",
+                      }}
+                    >
+                      {salonDetail.address}
+                    </span>
+                  </div>
+
+                  <a
+                    href={`https://www.google.com/maps/dir/?api=1&destination=${salonDetail.latitude},${salonDetail.longitude}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={style["link-address"]}
+                  >
+                    Chỉ đường
+                  </a>
+                </span>
+                {/* <Space>
                   <Button
                     type="text"
                     icon={<ShareAltOutlined style={{ fontSize: "2rem" }} />}
@@ -1373,38 +1406,8 @@ function SalonDetail(props) {
                     type="text"
                     icon={<HeartOutlined style={{ fontSize: "2rem" }} />}
                   />
-                </Space>
+                </Space> */}
               </div>
-              {/* <div
-                style={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  cursor: "pointer",
-                }}
-              >
-                <div className="relative justify-center">
-                  <CoolMode
-                    options={{
-                      particle:
-                        "https://pbs.twimg.com/profile_images/1782811051504885763/YR5-kWOI_400x400.jpg",
-                    }}
-                  >
-                    <Button>
-                      <a
-                        style={{
-                          textDecoration: "none", // Loại bỏ gạch chân
-                          display: "inline-block", // Đảm bảo liên kết bao quanh nội dung của Button
-                        }}
-                        href={`https://www.google.com/maps/dir/?api=1&destination=${salonDetail.latitude},${salonDetail.longitude}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Chỉ đường
-                      </a>
-                    </Button>
-                  </CoolMode>
-                </div>
-              </div> */}
 
               <div>
                 <Collapse
@@ -1420,7 +1423,7 @@ function SalonDetail(props) {
                     header={
                       <span
                         style={{
-                          fontSize: "1.8rem",
+                          fontSize: "1.4rem",
                           fontWeight: "bold",
                           textAlign: "center",
                         }}
@@ -1464,6 +1467,7 @@ function SalonDetail(props) {
                             <List.Item.Meta
                               avatar={
                                 <Avatar
+                                  shape="square"
                                   size={{
                                     xs: 24,
                                     sm: 32,
@@ -1478,7 +1482,7 @@ function SalonDetail(props) {
                               title={
                                 <span
                                   style={{
-                                    fontSize: "1.3rem",
+                                    fontSize: "1.1rem",
                                     cursor: "pointer",
                                   }}
                                   onClick={() => setIsBookingModalVisible(true)}
@@ -2153,7 +2157,7 @@ function SalonDetail(props) {
                 <h2
                   style={{
                     display: "flex",
-                    fontSize: "1.8rem",
+                    fontSize: "1.4rem",
                     fontWeight: "bold",
                     marginBottom: "1rem",
                     marginTop: "1rem",
@@ -2219,54 +2223,89 @@ function SalonDetail(props) {
                 </div>
               </div>
               <div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-around",
-                    marginBottom: "20px",
-                  }}
-                >
+                <div className={style["review-fillter"]}>
+                  <div
+                    onClick={() => handleFilterChange(null)}
+                    className={`${style["fillter-item"]} ${
+                      filterRating === null ? style["fillter-item-active"] : ""
+                    }`}
+                  >
+                    Tất cả
+                  </div>
                   {[5, 4, 3, 2, 1].map((rating) => (
-                    <Button
+                    <div
                       key={rating}
                       onClick={() => handleFilterChange(rating)}
+                      className={`${style["fillter-item"]} ${
+                        filterRating === rating
+                          ? style["fillter-item-active"]
+                          : ""
+                      }`}
                     >
                       {rating} sao
-                    </Button>
+                    </div>
                   ))}
-                  <Button onClick={() => handleFilterChange(null)}>
-                    Tất cả
-                  </Button>
                 </div>
+
                 <List
                   itemLayout="horizontal"
+                  locale={{
+                    emptyText: filterRating
+                      ? `Không có đánh giá ${filterRating} sao nào`
+                      : "Không có đánh giá nào",
+                  }}
                   dataSource={filteredFeedback}
                   renderItem={(feedback) => (
                     <List.Item className={style.listItem}>
                       <List.Item.Meta
                         title={
                           <div>
-                            <p>{feedback?.customer.fullName}</p>
-                            <div>{renderStars(feedback?.rating)}</div>
-                            <p>
-                              {new Date(
-                                feedback?.createDate
-                              ).toLocaleDateString("vi-VI", {
-                                year: "numeric",
-                                month: "long",
-                                day: "numeric",
-                              })}{" "}
-                              | Dịch vụ:{" "}
-                              {feedback?.appointment?.appointmentDetails?.map(
-                                (e, index, array) => (
-                                  <span key={index}>
-                                    {e?.serviceName}
-                                    {index < array.length - 1 ? " - " : ""}
-                                  </span>
-                                )
-                              )}
+                            <div className={style.infoContainer}>
+                              <div className={style.infoUser}>
+                                <Avatar
+                                  src={feedback?.customer?.img}
+                                  shape="square"
+                                  size={"large"}
+                                />
+                                <div>
+                                  <p>{feedback?.customer.fullName}</p>
+                                  <p style={{ marginTop: "0" }}>
+                                    {new Date(
+                                      feedback?.createDate
+                                    ).toLocaleDateString("vi-VI", {
+                                      year: "numeric",
+                                      month: "long",
+                                      day: "numeric",
+                                    })}{" "}
+                                    | Dịch vụ sử dụng:{" "}
+                                    {feedback?.appointment?.appointmentDetails?.map(
+                                      (e, index, array) => (
+                                        <span key={index}>
+                                          {e?.serviceName}
+                                          {index < array.length - 1 ? ", " : ""}
+                                        </span>
+                                      )
+                                    )}
+                                  </p>
+                                </div>
+                              </div>
+                              {/* <p style={{ marginTop: "0" }}>
+                                {new Date(
+                                  feedback?.createDate
+                                ).toLocaleDateString("vi-VI", {
+                                  year: "numeric",
+                                  month: "long",
+                                  day: "numeric",
+                                })}{" "}
+
+                              </p> */}
+                            </div>
+                            <div className={style.ratingFeedback}>
+                              {renderStars(feedback?.rating)}
+                            </div>
+                            <p className={style.commentFeedback}>
+                              {feedback.comment}
                             </p>
-                            <p>{feedback.comment}</p>
                             <div className={style["feedback-images"]}>
                               {feedback.fileFeedbacks?.map((e, index) => (
                                 <img
@@ -2317,6 +2356,7 @@ function SalonDetail(props) {
                     total={totalPagesFeedback}
                     pageSize={pageSize}
                     onChange={(page) => setCurrentPage(page)}
+                    className="paginationAppointment"
                   />
                 </div>
               </div>
@@ -2326,17 +2366,25 @@ function SalonDetail(props) {
                 style={{
                   padding: "10px",
                   background: "#E9E6D9",
-                  borderLeft: "3px solid black",
-                  borderRight: "3px solid black",
-                  borderBottom: "3px solid black",
-                  borderBottomLeftRadius: "8px",
-                  borderBottomRightRadius: "8px",
+                  // borderLeft: "3px solid black",
+                  // borderRight: "3px solid black",
+                  // borderBottom: "3px solid black",
+                  // borderBottomLeftRadius: "8px",
+                  // borderBottomRightRadius: "8px",
                 }}
                 className={style["detail-salon-col-2"]}
               >
-                <div>
-                  <Title level={4}>Địa chỉ</Title>
-                  <Text>{salonDetail.address} </Text>
+                <Title level={2} className={style["info_title"]}>
+                  Chi tiết cửa hàng
+                </Title>
+                <div className={style["text-address"]}>
+                  <div>
+                    <Title level={5}>Địa chỉ</Title>
+                    <Text style={{ fontWeight: "normal" }}>
+                      {salonDetail.address}{" "}
+                    </Text>
+                  </div>
+
                   {/* <br /> */}
                   <a
                     href={`https://www.google.com/maps/dir/?api=1&destination=${salonDetail.latitude},${salonDetail.longitude}`}
@@ -2346,18 +2394,17 @@ function SalonDetail(props) {
                   >
                     Chỉ đường
                   </a>
-                  <Divider />
                 </div>
-
+                <Divider />
                 <div>
-                  <Title level={4}>Thông tin</Title>
+                  <Title level={5}>Thông tin</Title>
                   <Text>{salonDetail.description}</Text>
                   <Divider />
                 </div>
                 <div>
                   {/* <Title level={4}>Nhân viên</Title> */}
                   <Spin spinning={loadingEmployee}>
-                    <AnimatedList items={employees}/>
+                    <AnimatedList items={employees} />
                     {/* <List
                       dataSource={employees}
                       renderItem={(employee) => (

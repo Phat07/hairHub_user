@@ -86,11 +86,7 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
   }, [isApiLoaded]);
 
   useEffect(() => {
-    console.log("2");
-
     if (id && salonDetail.img) {
-      console.log("1");
-
       setFileList([
         { uid: "-1", name: "image.png", status: "done", url: salonDetail.img },
       ]);
@@ -362,8 +358,6 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
       },
     });
   };
-  console.log("salon",salonDetail);
-  
   const renderTimePickers = () => {
     const initialTimeValue = dayjs("07:00", formatTime);
 
