@@ -3,8 +3,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    padding: 5px; /* Add some padding to avoid edges */
+    height: 60vh;
+    padding: 5px; 
     text-align: center;
 }
 
@@ -24,7 +24,7 @@
     .contentService {
         margin-top: 10px;
         flex-direction: row; /* Align items horizontally */
-        height: 100vh; /* Maintain full height */
+        height: 60vh;
         padding: 15px;
     }
 }
@@ -34,7 +34,7 @@
     .contentService {
         margin-top: 10px;
         flex-direction: row; /* Align items horizontally */
-        height: 100vh; /* Full screen height */
+        height: 60vh;
         padding: 20px; /* Maintain padding */
     }
 }
