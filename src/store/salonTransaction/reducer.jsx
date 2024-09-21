@@ -1,7 +1,8 @@
-import { GET_ALL_SALON_TRANSACTION } from "./action";
+import { GET_ALL_REVIEW_REVENUE, GET_ALL_SALON_TRANSACTION } from "./action";
 
 const initialState = {
   getSalonTransaction: [],
+  getReviewRevenue: [],
 };
 
 const reducer = (state = initialState, action) => {
@@ -10,6 +11,11 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         getSalonTransaction: action.payload,
+      };
+    case GET_ALL_REVIEW_REVENUE:
+      return {
+        ...state,
+        getReviewRevenue: action.payload,
       };
 
     default:

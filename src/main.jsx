@@ -22,6 +22,7 @@ import CustomerAppointmentVer2 from "./pages/CustomerAppointmentVer2.jsx";
 import CustomerFeedback from "./pages/CustomerFeedback.jsx";
 import CustomerReport from "./pages/CustomerReport.jsx";
 import DashboardTransactionPage from "./pages/DashboardTransactionPage.jsx";
+import ReviewEmployee from "./pages/ReviewEmployee.jsx";
 import ErrorPage from "./pages/ErrorPage.jsx";
 import FailPayment from "./pages/FailPayment.jsx";
 import FavoriteList from "./pages/FavoriteList.jsx";
@@ -285,6 +286,14 @@ const router = createBrowserRouter([
         element: (
           <RequireAuth fallbackPath="/login">
             <SalonEmployee />
+          </RequireAuth>
+        ),
+      },
+      {
+        path: "reviewEmployee",
+        element: (
+          <RequireAuth fallbackPath="/login">
+            <ReviewEmployee />
           </RequireAuth>
         ),
       },

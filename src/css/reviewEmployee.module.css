@@ -1,0 +1,216 @@
+.review-employee-container {
+  margin-top: 8rem;
+  margin-right: 10rem;
+  margin-left: 10rem;
+}
+
+.choose-date-time {
+  display: flex;
+  justify-content: center;
+}
+
+.main-title-zero {
+  margin-top: 5rem;
+  text-align: center;
+  font-size: 3.5rem;
+  font-weight: bold;
+  color: red;
+}
+
+.main-title-first {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0;
+  margin-top: 2rem;
+}
+
+.total-review-container {
+  margin-top: 0.5rem;
+  background-color: #ece8de;
+  border-radius: 10px;
+  padding: 1rem;
+  display: flex;
+}
+
+.chart-section {
+  width: 33%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.main-title-second {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0;
+}
+
+.main-title-third {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-top: 0;
+  margin-bottom: 0.8rem;
+  color: #0eb000;
+}
+
+.table-section {
+  width: 75%;
+  padding-left: 2rem;
+}
+
+.each-review-container {
+  margin-top: 0.5rem;
+  background-color: #ece8de;
+  border-radius: 10px;
+  padding: 1rem;
+  display: flex;
+}
+
+.employee-info {
+  width: 25%;
+  padding: 1rem;
+  box-sizing: border-box;
+  border: 1px solid #bf9456;
+}
+
+.employee-image {
+  width: 100%;
+  height: 15rem;
+  border-radius: 10px;
+}
+
+.employee-fields {
+  margin-bottom: 0;
+}
+
+.employee-chart {
+  width: 67%;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+/* Đặt kiểu CSS cho màn hình di động */
+@media (max-width: 767px) {
+  .review-employee-container {
+    margin-top: 7rem;
+    margin-right: 1rem;
+    margin-left: 1rem;
+  }
+
+  .choose-date-time {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+
+  .main-title-zero {
+    margin-top: 2rem;
+    font-size: 2rem;
+  }
+
+  .main-title-first {
+    font-size: 1.2rem;
+    margin-top: 1rem;
+  }
+
+  .css-mobile {
+    margin-bottom: 3rem;
+  }
+
+  .total-review-container {
+    margin-top: 1rem;
+    flex-direction: column;
+    padding: 0.5rem;
+  }
+
+  .chart-section {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .main-title-second {
+    font-size: 1.2rem;
+  }
+
+  .main-title-third {
+    font-size: 1.5rem;
+  }
+
+  .table-section {
+    width: 100%;
+    padding-left: 0;
+  }
+
+  .each-review-container {
+    flex-direction: column;
+    padding: 0.5rem;
+  }
+
+  .employee-info {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .employee-chart {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+}
+
+/* Đặt kiểu CSS cho màn hình máy tính bảng */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .review-employee-container {
+    margin-top: 7rem;
+    margin-right: 5rem;
+    margin-left: 5rem;
+  }
+
+  .choose-date-time {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+  }
+
+  .main-title-zero {
+    margin-top: 4rem;
+    font-size: 2.5rem;
+  }
+
+  .main-title-first {
+    font-size: 1.4rem;
+    margin-top: 1.5rem;
+  }
+
+  .total-review-container {
+    margin-top: 1rem;
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .chart-section {
+    width: 100%;
+    margin-bottom: 1.5rem;
+  }
+
+  .main-title-second {
+    font-size: 1.4rem;
+  }
+
+  .main-title-third {
+    font-size: 1.8rem;
+  }
+
+  .table-section {
+    width: 100%;
+    padding-left: 0;
+  }
+
+  .employee-info {
+    font-size: 0.9rem;
+  }
+
+  .employee-chart {
+    font-size: 0.9rem;
+  }
+}

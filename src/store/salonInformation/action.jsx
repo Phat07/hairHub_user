@@ -48,6 +48,40 @@ export function actGetSalonInformationByOwnerId(id) {
       });
   };
 }
+export function actPutSalonInformationByOwnerId(id, data, ownerId) {
+  return async (dispatch) => {
+    try {
+      const response = await SalonInformationServices.putSalonById(id, data);
+
+      if (response.status === 200 || response.status === 201) {
+        dispatch(actGetSalonInformationByOwnerId(ownerId));
+        return response; // Trả về kết quả nếu thành công
+      } else {
+        message.error("Không thể cập nhật salon!!!");
+        return null; // Trả về null nếu không thành công
+      }
+    } catch (error) {
+      console.error("Error updating salon information:", error);
+      message.error("Đã xảy ra lỗi khi cập nhật thông tin salon");
+      return null; // Trả về null khi có lỗi
+    }
+  };
+}
+export function actPutSalonScheduleByOwnerId(id, data, ownerId) {
+  return async (dispatch) => {
+    const response = await SalonInformationServices.putSalonScheduleById(
+      id,
+      data
+    );
+
+    if (response.status === 200 || response.status === 201) {
+      dispatch(actGetSalonInformationByOwnerId(ownerId));
+      return response; // Trả về kết quả nếu thành công
+    } else {
+      return null; // Trả về null nếu không thành công
+    }
+  };
+}
 
 export function actGetSalonInformationByOwnerIdByCheck(id, navigate) {
   return async (dispatch) => {
@@ -55,13 +89,13 @@ export function actGetSalonInformationByOwnerIdByCheck(id, navigate) {
     await result
       .then((response) => {
         // if (response.status === 200 || response.status === 201) {
-          dispatch(getSalonInformationByOwnerId(response.data));
+        dispatch(getSalonInformationByOwnerId(response.data));
         // } else {
         //   message.error("Không tìm thấy salon của bạn!!!");
         // }
       })
       .catch((error) => {
-        navigate('/create_shop')
+        navigate("/create_shop");
         // Xử lý lỗi nếu có
         console.error("error", error);
       });
@@ -89,7 +123,9 @@ export function actGetAllSalonInformation() {
 export function actPostCreateSalonInformation(data) {
   return async (dispatch) => {
     try {
-      const response = await SalonInformationServices.createSalonInformation(data);
+      const response = await SalonInformationServices.createSalonInformation(
+        data
+      );
       if (response.status === 200 || response.status === 201) {
         dispatch(postCreateSalonInformation(response.data));
       } else {
