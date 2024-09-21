@@ -1,0 +1,73 @@
+.dashboardContainer {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    margin-inline: 20px;
+    margin-bottom: 10px;
+  }
+
+  .dashboardContainer h1 {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #bf9456;
+    border-width: 0;
+  }
+  
+  /* .date-picker-custome {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .date-picker-custome .ant-picker {
+    padding: 10px;
+    background-color: #ece8de;
+  }
+  .date-picker-custome .ant-btn {
+    padding: 10px;
+    background: #bf9456;
+    box-shadow: none;
+    height: auto;
+  } */
+  
+  .chartContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #ece8de;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .chartContainer h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #bf9456;
+    border-width: 0;
+  }
+  .chartContainer span {
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: bold;
+    border-width: 0;
+  }
+  
+  .responsiveCharts {
+    margin-top: 20px;
+  }
+  
+  @media (max-width: 768px) {
+    .chartContainer {
+      margin-bottom: 20px;
+    }
+    .dashboardContainer {
+      margin-inline: 5px;
+    }
+  }
+  
+  

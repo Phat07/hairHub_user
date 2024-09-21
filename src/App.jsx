@@ -108,10 +108,8 @@ function App() {
             serviceId,
             ownerId
           ) => {
-
             // Kiểm tra điều kiện idOwner === serviceId
             if (token && idOwner && idOwner === ownerId) {
-
               // Chỉ phát âm thanh khi điều kiện đúng
               const audio = new Audio(audioVer1); // Đảm bảo audioVer1 là đường dẫn hợp lệ
               audio.play().catch((error) => {

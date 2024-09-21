@@ -56,7 +56,7 @@
 }
 
 .table-section {
-  width: 67%;
+  width: 75%;
   padding-left: 2rem;
 }
 
@@ -69,10 +69,20 @@
 }
 
 .employee-info {
-  width: 33%;
+  width: 25%;
   padding: 1rem;
   box-sizing: border-box;
   border: 1px solid #bf9456;
+}
+
+.employee-image {
+  width: 100%;
+  height: 15rem;
+  border-radius: 10px;
+}
+
+.employee-fields {
+  margin-bottom: 0;
 }
 
 .employee-chart {
