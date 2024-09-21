@@ -284,12 +284,15 @@ function ListShopBarber(props) {
 
   const handleSearchEmployee = () => {
     setSearchEmployeeKey(searchEmployee);
+    setCurrentPageEmployee(1);
   };
   const handleSearchService = () => {
     setSearchServiceKey(searchService);
+    setCurrentPageService(1);
   };
   const handleSearchVoucher = () => {
     setSearchVoucherKey(searchVoucher);
+    setCurrentPageVoucher(1);
   };
 
   useEffect(() => {
@@ -447,7 +450,6 @@ function ListShopBarber(props) {
     dispatch(actDeleteEmployee(employee.id, salonDetail?.id));
   };
 
-
   const convertDayOfWeekToVietnamese = (dayOfWeek) => {
     const daysMapping = {
       Monday: "Thứ Hai",
@@ -505,12 +507,12 @@ function ListShopBarber(props) {
       key: "gender",
       align: "center",
     },
-    {
-      title: "Số điện thoại",
-      dataIndex: "phone",
-      key: "phone",
-      align: "center",
-    },
+    // {
+    //   title: "Số điện thoại",
+    //   dataIndex: "phone",
+    //   key: "phone",
+    //   align: "center",
+    // },
     {
       title: "Trạng thái",
       dataIndex: "isActive",

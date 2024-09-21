@@ -19,6 +19,16 @@
 .workDemo {
   font-size: 2rem;
 }
+:global(.custom-Button) {
+  background-color: #BF9456 !important;
+  border-color: #BF9456 !important;
+}
+
+:global(.custom-Button:hover) {
+  background-color: #A38245 !important;
+  border-color: #A38245 !important;
+  color: white !important;
+}
 @media (max-width: 768px) {
   .rowContainer {
     flex-direction: column;

@@ -235,9 +235,9 @@ const LoginPage = () => {
           .catch((err) => {
             message.error("Thất bại trong việc đăng ký!");
           })
-          .finally(() => {
-            setLoading(false);
-          });
+          // .finally(() => {
+          //   setLoading(false);
+          // });
       } catch (error) {
         setLoading(false);
         message.error(error);
@@ -357,7 +357,6 @@ const LoginPage = () => {
             }}
             cover={
               <img
-                // style={{ width: "250px", height: "250px" }}
                 className="register-child-img"
                 alt="example"
                 src="https://amis.misa.vn/wp-content/uploads/2022/03/khach-hang.jpg"

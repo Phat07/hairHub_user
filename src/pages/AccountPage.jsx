@@ -10,6 +10,7 @@ import {
   Image,
   Input,
   message,
+  Modal,
   Popconfirm,
   Select,
   Space,
@@ -34,7 +35,20 @@ import {
 } from "../store/salonEmployees/action";
 import styles from "../css/accountPage.module.css";
 import classNames from "classnames";
-
+import OTPInput from "react-otp-input";
+import ResendCode from "@/components/Resend/resendCode";
+import { emailPattern } from "@/components/Regex/Patterns";
+const renderInput = (props) => (
+  <input
+    {...props}
+    onKeyPress={(e) => {
+      if (!/[0-9]/.test(e.key)) {
+        message?.warning("Vui lòng không nhập chữ");
+        e.preventDefault();
+      }
+    }}
+  />
+);
 function AccountPage() {
   const [form] = Form.useForm();
   // const { id, employeeId } = useParams();
@@ -57,6 +71,12 @@ function AccountPage() {
   const [activeButtons, setActiveButtons] = useState({});
   const [pendingConfirmations, setPendingConfirmations] = useState({});
   const [loading, setLoading] = useState(false);
+  const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [isEmail, setIsEmail] = useState("");
+  const [show, setShow] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [emailVerified, setEmailVerified] = useState(false);
 
   const salonDetail = useSelector(
     (state) => state.SALONINFORMATION.getSalonByOwnerId
@@ -173,14 +193,11 @@ function AccountPage() {
         avatar: userData.avatar,
         serviceHairs: serviceHairs?.map((service) => service.serviceName),
       });
-      console.log("test",serviceHairs );
-      
       setSelectedServices(serviceHairs);
     } else {
     }
     // setSalonId(res.data.salonInformationId);
   }, [employeeIdOfSalon]);
-
 
   const onFinish = async (item) => {
     // const gender = await form.getFieldValue("gender");
@@ -443,12 +460,7 @@ function AccountPage() {
     let data = {
       listServiceID: selectedServices.map((e) => e?.id),
     };
-    console.log("hh",selectedServices);
-    
-    console.log("test",employeeIdOfSalon?.serviceHairs);
-    
-    console.log("data",data);
-    
+
     dispatch(actPutSalonEmployeeServiceById(employeeId, data))
       .then((res) => {
         setLoading(false);
@@ -457,7 +469,7 @@ function AccountPage() {
         );
       })
       .catch((err) => {
-        message.error(err?.response?.data)
+        message.error(err?.response?.data);
         // message.error(
         //   `Đã cập nhật nhân viên ${employeeIdOfSalon?.fullName} thất bại`
         // );
@@ -470,6 +482,114 @@ function AccountPage() {
     setSelectedServices(serviceHairsList);
   };
 
+  const handleEmailChange = (e) => {
+    const value = e.target.value;
+    setIsEmail(value);
+
+    // Validate email
+    if (value && !emailPattern.test(value)) {
+      setErrorMessage("Email không hợp lệ!");
+    } else {
+      setErrorMessage("");
+    }
+  };
+  const sendOtp = async () => {
+    setLoading(true);
+    const email = isEmail;
+    if (email) {
+      try {
+        await axios
+          .post("https://hairhub.gahonghac.net/api/v1/otps/SendOTPToEmail", {
+            email,
+          })
+          .then((res) => {
+            // setLoading(false);
+            message.success("Xác thực Email thành công! Vui lòng điền otp!");
+            // call api gửi otp
+            setIsOtpModalOpen(true);
+          })
+          .catch((err) => {
+            message.error("Gửi otp thất bại! Vui lòng thử lại!");
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      } catch (error) {
+        message.error("Gửi otp thất bại! Vui lòng chọn gửi lại!");
+      }
+    }
+  };
+  const verifyOtp = async () => {
+    const email = isEmail;
+    if (!otp) {
+      message.error("Vui lòng nhập otp!");
+      return;
+    }
+    if (email) {
+      try {
+        setLoading(true); // Start loading
+        const response = await axios.post(
+          "https://hairhub.gahonghac.net/api/v1/otps/checkOtp",
+          {
+            otpRequest: otp,
+            email: email,
+          }
+        );
+        setOtp("");
+        setEmailVerified(true);
+        setIsOtpModalOpen(false);
+        // message.success("Otp xác thực thành công!");
+        let data = {
+          email: email,
+          employeeId: employeeId,
+        };
+
+        // Only called if the previous request was successful
+        await SalonEmployeesServices.activateEmployee(data).then((res) => {
+          message.success("Chúc mừng đã kích hoạt tài khoản thành công!");
+          setShow(!show);
+        });
+      } catch (error) {
+        // Error block
+        message.error(error?.response?.data?.message);
+        setOtp("");
+        return; // Exit on error, preventing further execution
+      } finally {
+        // Stop loading in both success and error cases
+        setLoading(false);
+      }
+    }
+  };
+
+  const showOtpModal = async () => {
+    setLoading(true);
+    const email = isEmail;
+    if (!email || !emailPattern.test(email)) {
+      setLoading(false);
+      message.error("Email chưa đúng hoặc chưa điền!");
+    } else {
+      const response = await axios
+        .post("https://hairhub.gahonghac.net/api/v1/otps/CheckExistEmail", {
+          email,
+        })
+        .then((res) => {
+          if (res.data == "Email đã tồn tại trên hệ thống!") {
+            setLoading(false);
+            message.error("Email này đã được đăng ký trước đó!");
+          } else {
+            console.log("45");
+            // setLoading(false);
+            sendOtp();
+          }
+        })
+        .catch((err) => {
+          message.error("Thất bại trong việc đăng ký!");
+        });
+      // .finally(() => {
+      //   setLoading(false);
+      // });
+    }
+  };
   return (
     <div>
       <Spin spinning={loading}>
@@ -490,6 +610,37 @@ function AccountPage() {
                     "https://www.shutterstock.com/image-vector/vector-flat-illustration-grayscale-avatar-600nw-2264922221.jpg"
                   }
                 />
+                {show && (
+                  <div style={{ textAlign: "center" }}>
+                    <Input
+                      placeholder="Vui lòng nhập email"
+                      value={isEmail}
+                      readOnly={emailVerified}
+                      onChange={handleEmailChange}
+                      style={{ marginTop: "1rem", marginBottom: "1rem" }}
+                    />
+                    {errorMessage && (
+                      <div style={{ color: "red", marginBottom: "1rem" }}>
+                        {errorMessage}
+                      </div>
+                    )}
+
+                    <Button
+                      className={styles.customButton}
+                      style={{ marginBottom: "1rem" }}
+                      onClick={showOtpModal}
+                    >
+                      Gửi Otp
+                    </Button>
+                  </div>
+                )}
+
+                <Button
+                  onClick={() => setShow(!show)}
+                  className={styles.customButton}
+                >
+                  {show ? "Hủy" : "Kích hoạt tài khoản"}
+                </Button>
                 {fileList.map((file) => (
                   <div
                     key={file.uid}
@@ -712,6 +863,43 @@ function AccountPage() {
                 </Form>
               </Space>
             </Card>
+            <Modal
+              title="Enter OTP"
+              visible={isOtpModalOpen}
+              onOk={() => verifyOtp(otp)}
+              onCancel={() => setIsOtpModalOpen(false)}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  marginBottom: "1rem",
+                }}
+              >
+                <OTPInput
+                  value={otp}
+                  onChange={setOtp}
+                  numInputs={6}
+                  renderInput={renderInput}
+                  separator={<span>-</span>}
+                  isInputNum
+                  inputStyle={{
+                    borderRadius: "50%",
+                    border: "2px solid #1119",
+                    width: "4rem",
+                    height: "4rem",
+                    margin: "0 0.5rem",
+                    fontSize: "2rem",
+                    color: "black",
+                    textAlign: "center",
+                  }}
+                />
+              </div>
+              <ResendCode isOtpModalOpen={isOtpModalOpen} form={form} />
+              {/* <Button type="link" onClick={handleResendCode} disabled={timer > 0}>
+            Gửi lại OTP {timer > 0 && `(${formatTime(timer)})`}
+          </Button> */}
+            </Modal>
           </Flex>
         </div>
       </Spin>

@@ -9,6 +9,7 @@ import {
   Image,
   Input,
   message,
+  Modal,
   Row,
   Select,
   Space,
@@ -25,9 +26,23 @@ import styles from "../../css/employeeForm.module.css";
 import { ServiceHairServices } from "../../services/servicesHairServices";
 import { actPostCreateSalonEmployees } from "../../store/salonEmployees/action";
 import { emailPattern, fullNamePattern, phonePattern } from "../Regex/Patterns";
+import OTPInput from "react-otp-input";
+import ResendCode from "../Resend/resendCode";
+import axios from "axios";
 
 const { Option } = Select;
 
+const renderInput = (props) => (
+  <input
+    {...props}
+    onKeyPress={(e) => {
+      if (!/[0-9]/.test(e.key)) {
+        message?.warning("Vui lòng không nhập chữ");
+        e.preventDefault();
+      }
+    }}
+  />
+);
 const AddEmployeeForm = ({
   onAddEmployees,
   isOpen,
@@ -47,7 +62,8 @@ const AddEmployeeForm = ({
     Saturday: false,
     Sunday: false,
   });
-  
+  const [emailVerified, setEmailVerified] = useState(false);
+
   const daysOfWeek = [
     "Monday",
     "Tuesday",
@@ -62,30 +78,35 @@ const AddEmployeeForm = ({
   const { id } = useParams();
   const formatTime = "HH:mm";
   const [loading, setLoading] = useState(false);
+  const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
+  const [otp, setOtp] = useState("");
+
   const salonDetail = useSelector(
     (state) => state.SALONINFORMATION.getSalonByOwnerId
   );
   const [disabledDays, setDisabledDays] = useState([]);
   useEffect(() => {
-    // Fetch services and update state
-    // Example: setServices(response.data);
-
     // Determine which days should be disabled
-    const newDisabledDays = daysOfWeek.filter(day => {
+    const newDisabledDays = daysOfWeek.filter((day) => {
       const salonDay = salonInformation?.schedules?.find(
         (schedule) => schedule.dayOfWeek === day
       );
-      const salonStartTime = salonDay ? dayjs(salonDay.startTime, "HH:mm") : null;
+      const salonStartTime = salonDay
+        ? dayjs(salonDay.startTime, "HH:mm")
+        : null;
       const salonEndTime = salonDay ? dayjs(salonDay.endTime, "HH:mm") : null;
-      return salonStartTime?.format("HH:mm") === "00:00" && salonEndTime?.format("HH:mm") === "00:00";
+      return (
+        salonStartTime?.format("HH:mm") === "00:00" &&
+        salonEndTime?.format("HH:mm") === "00:00"
+      );
     });
     setDisabledDays(newDisabledDays);
   }, [salonInformation]);
 
   const handleDayOffChange = (day) => {
-    setDayOff(prev => ({
+    setDayOff((prev) => ({
       ...prev,
-      [day]: !prev[day]
+      [day]: !prev[day],
     }));
   };
 
@@ -162,7 +183,7 @@ const AddEmployeeForm = ({
       !values.fullName ||
       // !values.address ||
       !values.gender ||
-      !values.phone ||
+      // !values.phone ||
       !values.email ||
       !values.serviceHairId ||
       Object.keys(formattedSchedules).length === 0
@@ -175,7 +196,7 @@ const AddEmployeeForm = ({
     formData.append("Saloninformationid", salonDetail?.id);
     formData.append("SalonEmployees[0].FullName", values.fullName);
     formData.append("SalonEmployees[0].Gender", values.gender);
-    formData.append("SalonEmployees[0].Phone", values.phone);
+    // formData.append("SalonEmployees[0].Phone", values.phone);
     formData.append("SalonEmployees[0].IsActive", true);
     formData.append("SalonEmployees[0].ImgEmployee", imageFile);
 
@@ -303,7 +324,89 @@ const AddEmployeeForm = ({
       return Promise.resolve();
     },
   });
+  const sendOtp = async () => {
+    setLoading(true);
+    const email = form.getFieldValue("email");
+    if (email) {
+      try {
+        await axios
+          .post("https://hairhub.gahonghac.net/api/v1/otps/SendOTPToEmail", {
+            email,
+          })
+          .then((res) => {
+            console.log(22);
 
+            // setLoading(false);
+            message.success("Xác thực Email thành công! Vui lòng điền otp!");
+            // call api gửi otp
+            setIsOtpModalOpen(true);
+          })
+          .catch((err) => {
+            message.error("Gửi otp thất bại! Vui lòng thử lại!");
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      } catch (error) {
+        message.error("Gửi otp thất bại! Vui lòng chọn gửi lại!");
+      }
+    }
+  };
+  const verifyOtp = () => {
+    const email = form.getFieldValue("email");
+
+    if (email) {
+      axios
+        .post("https://hairhub.gahonghac.net/api/v1/otps/checkOtp", {
+          otpRequest: otp,
+          email: email,
+        })
+        .then(() => {
+          setLoading(true);
+          setOtp("");
+          setEmailVerified(true);
+          setIsOtpModalOpen(false);
+          message.success("Otp xác thực thành công!");
+        })
+        .catch((error) => {
+          message.error(error?.response?.data?.message);
+          setOtp("");
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  };
+
+  const showOtpModal = async () => {
+    setLoading(true);
+    const email = form.getFieldValue("email");
+    if (!email || !emailPattern.test(email)) {
+      setLoading(false);
+      message.error("Email chưa đúng hoặc chưa điền!");
+    } else {
+      console.log("333");
+      const response = await axios
+        .post("https://hairhub.gahonghac.net/api/v1/otps/CheckExistEmail", {
+          email,
+        })
+        .then((res) => {
+          if (res.data == "Email đã tồn tại trên hệ thống!") {
+            setLoading(false);
+            message.error("Email này đã được đăng ký trước đó!");
+          } else {
+            // setLoading(false);
+            sendOtp();
+          }
+        })
+        .catch((err) => {
+          message.error("Thất bại trong việc đăng ký!");
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  };
 
   return (
     <Spin spinning={loading}>
@@ -315,6 +418,29 @@ const AddEmployeeForm = ({
         >
           <Col span={11} className={styles.colWithBorder}>
             <div className={styles.workDemo}>Thông tin cá nhân</div>
+            {/* <Form.Item
+              name="email"
+              label="Email"
+              rules={[
+                { required: true, message: "Vui lòng nhập email!" },
+                {
+                  pattern: emailPattern,
+                  message: "Vui lòng nhập email theo @example.com!",
+                },
+              ]}
+            >
+              <Input placeholder="Email" readOnly={emailVerified} />
+            </Form.Item>
+            {!emailVerified && (
+              <Button
+                className={styles["custom-Button"]}
+                loading={loading}
+                onClick={showOtpModal}
+                style={{ marginBottom: "1rem" }}
+              >
+                Gửi OTP
+              </Button>
+            )} */}
             <Form.Item
               name="fullName"
               label="Tên đầy đủ"
@@ -331,19 +457,20 @@ const AddEmployeeForm = ({
             >
               <Input placeholder="Họ và tên" />
             </Form.Item>
-            <Form.Item
+            {/* <Form.Item
               name="dateOfBirth"
               label="Ngày sinh"
               rules={[{ required: true, message: "Vui lòng nhập ngày sinh!" }]}
             >
               <DatePicker
+                disabled={!emailVerified}
                 format={"YYYY-MM-DD"}
                 disabledDate={(current) =>
                   current && current.isAfter(new Date())
                 }
                 placeholder="Ngày sinh"
               />
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item
               name="gender"
               label="Giới tính"
@@ -355,20 +482,7 @@ const AddEmployeeForm = ({
                 <Option value="Other">Khác</Option>
               </Select>
             </Form.Item>
-            <Form.Item
-              name="email"
-              label="Email"
-              rules={[
-                { required: true, message: "Vui lòng nhập email!" },
-                {
-                  pattern: emailPattern,
-                  message: "Vui lòng nhập email theo @example.com!",
-                },
-              ]}
-            >
-              <Input placeholder="Email" />
-            </Form.Item>
-            <Form.Item
+            {/* <Form.Item
               name="phone"
               label="Số điện thoại"
               rules={[
@@ -381,7 +495,7 @@ const AddEmployeeForm = ({
               ]}
             >
               <Input placeholder="Số điện thoại" />
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item
               name="serviceHairId"
               label="Dịch vụ"
@@ -403,6 +517,7 @@ const AddEmployeeForm = ({
             </Form.Item>
             <Form.Item name="imgEmployee" label="Ảnh">
               <Upload
+                // disabled={!emailVerified}
                 multiple
                 listType="picture"
                 beforeUpload={() => false}
@@ -576,6 +691,43 @@ const AddEmployeeForm = ({
           </div>
         </Form.Item>
       </Form>
+      <Modal
+        title="Enter OTP"
+        visible={isOtpModalOpen}
+        onOk={() => verifyOtp(otp)}
+        onCancel={() => setIsOtpModalOpen(false)}
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginBottom: "1rem",
+          }}
+        >
+          <OTPInput
+            value={otp}
+            onChange={setOtp}
+            numInputs={6}
+            renderInput={renderInput}
+            separator={<span>-</span>}
+            isInputNum
+            inputStyle={{
+              borderRadius: "50%",
+              border: "2px solid #1119",
+              width: "4rem",
+              height: "4rem",
+              margin: "0 0.5rem",
+              fontSize: "2rem",
+              color: "black",
+              textAlign: "center",
+            }}
+          />
+        </div>
+        <ResendCode isOtpModalOpen={isOtpModalOpen} form={form} />
+        {/* <Button type="link" onClick={handleResendCode} disabled={timer > 0}>
+            Gửi lại OTP {timer > 0 && `(${formatTime(timer)})`}
+          </Button> */}
+      </Modal>
     </Spin>
   );
 };

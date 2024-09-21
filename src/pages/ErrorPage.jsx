@@ -3,9 +3,14 @@ import { useRouteError, useNavigate } from "react-router-dom";
 function ErrorPage() {
   const error = useRouteError();
   const navigate = useNavigate();
+  const role = localStorage.getItem("role");
 
   const handleGoHome = () => {
-    navigate("/");
+    if (role === "SalonOwner") {
+      navigate("/list_shop"); // Điều hướng đến list_shop nếu role là SalonOwner
+    } else {
+      navigate("/"); // Điều hướng đến trang chủ cho các role khác
+    }
   };
 
   return (

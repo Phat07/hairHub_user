@@ -34,4 +34,7 @@ export const SalonEmployeesServices = {
   deleteSalonEmployeeById(id) {
     return API.put(`/salonemployees/DeleteSalonEmployee/${id}`);
   },
+  activateEmployee(data) {
+    return API.post("/salonemployees/CreateAccountEmployee", data);
+  },
 };
