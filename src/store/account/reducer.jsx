@@ -20,7 +20,7 @@ const reducer = (state = initialState, action) => {
       localStorage.setItem("refreshToken", action.payload.refreshToken);
       localStorage.setItem("accessToken", action.payload.accessToken);
       localStorage.setItem("role", action.payload.roleName);
-// "Customer", "SalonOwner"
+// "Customer", "SalonOwner", "SalonEmployee"
       return {
         ...state,
         token: action.payload.accessToken,
@@ -30,6 +30,7 @@ const reducer = (state = initialState, action) => {
         uid: action.payload.accountId,
         idOwner: action.payload?.salonOwnerResponse?.id,
         idCustomer: action.payload?.customerResponse?.id,
+        idEmployee: action.payload?.salonEmployeeResponse?.id,
         refreshToken: action.payload.refreshToken,
       };
 

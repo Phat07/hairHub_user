@@ -610,7 +610,7 @@ function AccountPage() {
                     "https://www.shutterstock.com/image-vector/vector-flat-illustration-grayscale-avatar-600nw-2264922221.jpg"
                   }
                 />
-                {show && (
+                {/* {show && (
                   <div style={{ textAlign: "center" }}>
                     <Input
                       placeholder="Vui lòng nhập email"
@@ -633,14 +633,14 @@ function AccountPage() {
                       Gửi Otp
                     </Button>
                   </div>
-                )}
+                )} */}
 
-                <Button
+                {/* <Button
                   onClick={() => setShow(!show)}
                   className={styles.customButton}
                 >
                   {show ? "Hủy" : "Kích hoạt tài khoản"}
-                </Button>
+                </Button> */}
                 {fileList.map((file) => (
                   <div
                     key={file.uid}
@@ -896,9 +896,6 @@ function AccountPage() {
                 />
               </div>
               <ResendCode isOtpModalOpen={isOtpModalOpen} form={form} />
-              {/* <Button type="link" onClick={handleResendCode} disabled={timer > 0}>
-            Gửi lại OTP {timer > 0 && `(${formatTime(timer)})`}
-          </Button> */}
             </Modal>
           </Flex>
         </div>

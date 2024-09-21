@@ -184,7 +184,7 @@ const AddEmployeeForm = ({
       // !values.address ||
       !values.gender ||
       // !values.phone ||
-      !values.email ||
+      // !values.email ||
       !values.serviceHairId ||
       Object.keys(formattedSchedules).length === 0
     ) {

@@ -68,7 +68,7 @@ const router = createBrowserRouter([
       {
         path: "create_shop",
         element: (
-          <RequireAuth requiredRole="SalonOwner" fallbackPath="/login">
+          <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
             <SalonForm />
           </RequireAuth>
         ),
@@ -76,7 +76,7 @@ const router = createBrowserRouter([
       {
         path: "create_shop/:id",
         element: (
-          <RequireAuth fallbackPath="/login">
+          <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
             <SalonForm />
           </RequireAuth>
         ),

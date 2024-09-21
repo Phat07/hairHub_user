@@ -1387,7 +1387,6 @@ function SalonDetail(props) {
                       {salonDetail.address}
                     </span>
                   </div>
-
                   <a
                     href={`https://www.google.com/maps/dir/?api=1&destination=${salonDetail.latitude},${salonDetail.longitude}`}
                     target="_blank"

@@ -61,7 +61,20 @@ import {
 } from "../store/salonEmployees/action";
 import { actGetSalonInformationByOwnerId } from "../store/salonInformation/action";
 import classNames from "classnames";
-
+import { emailPattern } from "@/components/Regex/Patterns";
+import OTPInput from "react-otp-input";
+import ResendCode from "@/components/Resend/resendCode";
+const renderInput = (props) => (
+  <input
+    {...props}
+    onKeyPress={(e) => {
+      if (!/[0-9]/.test(e.key)) {
+        message?.warning("Vui lòng không nhập chữ");
+        e.preventDefault();
+      }
+    }}
+  />
+);
 function ListShopBarber(props) {
   dayjs.locale("vi");
   const [form] = Form.useForm();
@@ -88,6 +101,12 @@ function ListShopBarber(props) {
   const [currencyValue, setCurrencyValue] = useState(100000);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currencyValueUpdate, setCurrencyValueUpdate] = useState(null);
+  const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [isEmail, setIsEmail] = useState("");
+  const [show, setShow] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [emailVerified, setEmailVerified] = useState(false);
 
   // const auth = useAuthUser();
   // const ownerId = auth?.idOwner;
@@ -104,6 +123,8 @@ function ListShopBarber(props) {
   const [imageFile, setImageFile] = useState({});
   const [imageUrl, setImageUrl] = useState(null);
   const [updateService, setServiceUpdate] = useState({});
+
+  const [activeEmployeeId, setActiveEmployeeId] = useState(null);
 
   const [currencyValueVoucherUpdate, setCurrencyValueVoucherUpdate] =
     useState(null);
@@ -487,6 +508,151 @@ function ListShopBarber(props) {
     );
   };
 
+  // const columnsEmployee = [
+  //   {
+  //     title: "Hình ảnh",
+  //     dataIndex: "img",
+  //     key: "img",
+  //     align: "center",
+  //     render: (text) => <Avatar shape="square" size={"large"} src={text} />,
+  //   },
+  //   {
+  //     title: "Họ và tên",
+  //     dataIndex: "fullName",
+  //     key: "fullName",
+  //     align: "center",
+  //   },
+  //   {
+  //     title: "Giới tính",
+  //     dataIndex: "gender",
+  //     key: "gender",
+  //     align: "center",
+  //   },
+  //   // {
+  //   //   title: "Số điện thoại",
+  //   //   dataIndex: "phone",
+  //   //   key: "phone",
+  //   //   align: "center",
+  //   // },
+  //   {
+  //     title: "Trạng thái",
+  //     dataIndex: "isActive",
+  //     key: "isActive",
+  //     align: "center",
+  //     render: (isActive) =>
+  //       isActive ? (
+  //         <Tag icon={<CheckCircleOutlined />} color="green">
+  //           Hoạt động
+  //         </Tag>
+  //       ) : (
+  //         <Tag icon={<CloseCircleOutlined />} color="red">
+  //           Không hoạt động
+  //         </Tag>
+  //       ),
+  //   },
+  //   {
+  //     title: "Hành động",
+  //     key: "action",
+  //     align: "center",
+  //     width: "10rem",
+  //     render: (_, record) => (
+  //       <Space size="middle">
+  //         <Link to={`account_details/${record.id}`}>
+  //           <Button
+  //             disabled={record.isActive === false}
+  //             className="editButtonStyle"
+  //             onClick={() => {}}
+  //             icon={<EditOutlined />}
+  //           >
+  //             Chỉnh sửa
+  //           </Button>
+  //         </Link>
+  //         <Popconfirm
+  //           title="Bạn có chắc chắn muốn xóa nhân viên này không?"
+  //           onConfirm={() => handleDeleteEmployee(record)}
+  //           okText="Có"
+  //           cancelText="Không"
+  //         >
+  //           <Button
+  //             disabled={record.isActive === false}
+  //             className="deleteButtonStyle"
+  //             icon={<DeleteOutlined />}
+  //             danger
+  //           >
+  //             Xóa
+  //           </Button>
+  //         </Popconfirm>
+  //         {show && (
+  //           <div style={{ textAlign: "center" }}>
+  //             <Input
+  //               placeholder="Vui lòng nhập email"
+  //               value={isEmail}
+  //               readOnly={emailVerified || loading}
+  //               onChange={handleEmailChange}
+  //               style={{ marginTop: "1rem", marginBottom: "1rem", width:"10rem" }}
+  //             />
+  //             {errorMessage && (
+  //               <div style={{ color: "red", marginBottom: "1rem" }}>
+  //                 {errorMessage}
+  //               </div>
+  //             )}
+
+  //             <Button
+  //               className={styles.customButton}
+  //               style={{ marginBottom: "1rem" }}
+  //               onClick={showOtpModal}
+  //               loading={loading}
+  //             >
+  //               Gửi Otp
+  //             </Button>
+  //           </div>
+  //         )}
+
+  //         <Button
+  //           disabled={record.isActive === false}
+  //           onClick={() => setShow(!show)}
+  //           className={styles.customButton}
+  //         >
+  //           {show ? "Hủy" : "Kích hoạt tài khoản"}
+  //         </Button>
+  //         <Modal
+  //           title="Enter OTP"
+  //           visible={isOtpModalOpen}
+  //           onOk={() => verifyOtp(record?.id)}
+  //           onCancel={() => setIsOtpModalOpen(false)}
+  //         >
+  //           <div
+  //             style={{
+  //               display: "flex",
+  //               justifyContent: "center",
+  //               marginBottom: "1rem",
+  //             }}
+  //           >
+  //             <OTPInput
+  //               value={otp}
+  //               onChange={setOtp}
+  //               numInputs={6}
+  //               renderInput={renderInput}
+  //               separator={<span>-</span>}
+  //               isInputNum
+  //               inputStyle={{
+  //                 borderRadius: "50%",
+  //                 border: "2px solid #1119",
+  //                 width: "4rem",
+  //                 height: "4rem",
+  //                 margin: "0 0.5rem",
+  //                 fontSize: "2rem",
+  //                 color: "black",
+  //                 textAlign: "center",
+  //               }}
+  //             />
+  //           </div>
+  //           <ResendCode isOtpModalOpen={isOtpModalOpen} form={form} />
+  //         </Modal>
+  //       </Space>
+  //     ),
+  //   },
+  // ];
   const columnsEmployee = [
     {
       title: "Hình ảnh",
@@ -507,12 +673,6 @@ function ListShopBarber(props) {
       key: "gender",
       align: "center",
     },
-    // {
-    //   title: "Số điện thoại",
-    //   dataIndex: "phone",
-    //   key: "phone",
-    //   align: "center",
-    // },
     {
       title: "Trạng thái",
       dataIndex: "isActive",
@@ -561,11 +721,87 @@ function ListShopBarber(props) {
               Xóa
             </Button>
           </Popconfirm>
+
+          {activeEmployeeId === record.id && (
+            <div style={{ textAlign: "center" }}>
+              <Input
+                placeholder="Vui lòng nhập email"
+                value={isEmail}
+                readOnly={emailVerified || loading}
+                onChange={handleEmailChange}
+                style={{
+                  marginTop: "1rem",
+                  marginBottom: "1rem",
+                  width: "10rem",
+                }}
+              />
+              {errorMessage && (
+                <div style={{ color: "red", marginBottom: "1rem" }}>
+                  {errorMessage}
+                </div>
+              )}
+
+              <Button
+                className={styles.customButton}
+                style={{ marginBottom: "1rem" }}
+                onClick={showOtpModal}
+                loading={loading}
+              >
+                Gửi Otp
+              </Button>
+            </div>
+          )}
+
+          <Button
+            disabled={record.isActive === false || record.accountId !== null}
+            onClick={() =>
+              setActiveEmployeeId(
+                activeEmployeeId === record.id ? null : record.id
+              )
+            }
+            className="activeButtonStyle"
+          >
+            {activeEmployeeId === record.id ? "Hủy" : "Kích hoạt tài khoản"}
+          </Button>
+
+          <Modal
+            title="Enter OTP"
+            visible={isOtpModalOpen}
+            onOk={() => verifyOtp(record?.id)}
+            onCancel={() => setIsOtpModalOpen(false)}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                marginBottom: "1rem",
+              }}
+            >
+              <OTPInput
+                value={otp}
+                onChange={setOtp}
+                numInputs={6}
+                renderInput={renderInput}
+                separator={<span>-</span>}
+                isInputNum
+                inputStyle={{
+                  borderRadius: "50%",
+                  border: "2px solid #1119",
+                  width: "4rem",
+                  height: "4rem",
+                  margin: "0 0.5rem",
+                  fontSize: "2rem",
+                  color: "black",
+                  textAlign: "center",
+                }}
+              />
+            </div>
+            <ResendCode isOtpModalOpen={isOtpModalOpen} form={form} />
+          </Modal>
         </Space>
       ),
     },
   ];
-
   // Hàm định dạng phần trăm giảm giá
   const formatDiscount = (value) => {
     const result = value * 100;
@@ -1044,7 +1280,114 @@ function ListShopBarber(props) {
         console.error("Validation Failed:", error);
       });
   };
+  const handleEmailChange = (e) => {
+    const value = e.target.value;
+    setIsEmail(value);
 
+    // Validate email
+    if (value && !emailPattern.test(value)) {
+      setErrorMessage("Email không hợp lệ!");
+    } else {
+      setErrorMessage("");
+    }
+  };
+  const sendOtp = async () => {
+    setLoading(true);
+    const email = isEmail;
+    if (email) {
+      try {
+        await axios
+          .post("https://hairhub.gahonghac.net/api/v1/otps/SendOTPToEmail", {
+            email,
+          })
+          .then((res) => {
+            // setLoading(false);
+            message.success("Xác thực Email thành công! Vui lòng điền otp!");
+            // call api gửi otp
+            setIsOtpModalOpen(true);
+          })
+          .catch((err) => {
+            message.error("Gửi otp thất bại! Vui lòng thử lại!");
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      } catch (error) {
+        message.error("Gửi otp thất bại! Vui lòng chọn gửi lại!");
+      }
+    }
+  };
+  const verifyOtp = async (id) => {
+    const email = isEmail;
+    if (!otp) {
+      message.error("Vui lòng nhập otp!");
+      return;
+    }
+    if (email) {
+      try {
+        setLoading(true); // Start loading
+        const response = await axios.post(
+          "https://hairhub.gahonghac.net/api/v1/otps/checkOtp",
+          {
+            otpRequest: otp,
+            email: email,
+          }
+        );
+        setOtp("");
+        setEmailVerified(true);
+        setIsOtpModalOpen(false);
+        // message.success("Otp xác thực thành công!");
+        let data = {
+          email: email,
+          employeeId: id,
+        };
+
+        // Only called if the previous request was successful
+        await SalonEmployeesServices.activateEmployee(data).then((res) => {
+          message.success("Chúc mừng đã kích hoạt tài khoản thành công!");
+          setShow(!show);
+        });
+      } catch (error) {
+        // Error block
+        message.error(error?.response?.data?.message);
+        setOtp("");
+        return; // Exit on error, preventing further execution
+      } finally {
+        // Stop loading in both success and error cases
+        setLoading(false);
+      }
+    }
+  };
+
+  const showOtpModal = async () => {
+    setLoading(true);
+    const email = isEmail;
+    if (!email || !emailPattern.test(email)) {
+      setLoading(false);
+      message.error("Email chưa đúng hoặc chưa điền!");
+    } else {
+      const response = await axios
+        .post("https://hairhub.gahonghac.net/api/v1/otps/CheckExistEmail", {
+          email,
+        })
+        .then((res) => {
+          if (res.data == "Email đã tồn tại trên hệ thống!") {
+            setLoading(false);
+            message.error("Email này đã được đăng ký trước đó!");
+          } else {
+            console.log("45");
+            // setLoading(false);
+            sendOtp();
+          }
+        })
+        .catch((err) => {
+          message.error("Thất bại trong việc đăng ký!");
+        });
+      // .finally(() => {
+      //   setLoading(false);
+      // });
+    }
+  };
   return (
     <div>
       <div className={styles["container_list"]}>

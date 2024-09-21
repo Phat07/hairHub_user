@@ -227,44 +227,118 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
     setDayOff({});
   };
 
+  // const handlePlacesChanged = async () => {
+  //   const places = searchBoxRef.current.getPlaces();
+  //   console.log("places", places);
+
+  //   if (places.length > 0) {
+  //     const place = places[0];
+  //     if (place && place.formatted_address) {
+  //       form.setFieldsValue({ location: place.formatted_address });
+  //       try {
+  //         const response = await axios.get(
+  //           "https://maps.googleapis.com/maps/api/geocode/json",
+  //           {
+  //             params: {
+  //               address: place.formatted_address,
+  //               key: import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY, // Replace with your API key
+  //             },
+  //           }
+  //         );
+
+  //         const { results } = response.data;
+  //         if (results && results.length > 0) {
+  //           const { location } = results[0].geometry;
+  //           console.log("re", results);
+  //           console.log("lo", location);
+
+  //           setCoordinates({
+  //             Longitude: location.lng,
+  //             Latitude: location.lat,
+  //           });
+  //         } else {
+  //           message.error("No coordinates found for the given address.");
+  //         }
+  //       } catch (error) {
+  //         console.error("Error fetching coordinates:", error);
+  //         message.error("Failed to fetch coordinates.");
+  //       }
+  //     } else {
+  //       console.error("Invalid place or formatted address");
+  //     }
+  //   } else {
+  //     console.error("No places found");
+  //   }
+  // };
   const handlePlacesChanged = async () => {
     const places = searchBoxRef.current.getPlaces();
+    console.log("places", places);
+
     if (places.length > 0) {
       const place = places[0];
-      if (place && place.formatted_address) {
-        form.setFieldsValue({ location: place.formatted_address });
-        try {
-          const response = await axios.get(
-            "https://maps.googleapis.com/maps/api/geocode/json",
-            {
-              params: {
-                address: place.formatted_address,
-                key: import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY, // Replace with your API key
-              },
-            }
-          );
 
-          const { results } = response.data;
-          if (results && results.length > 0) {
-            const { location } = results[0].geometry;
-            setCoordinates({
-              Longitude: location.lng,
-              Latitude: location.lat,
-            });
-          } else {
-            message.error("No coordinates found for the given address.");
-          }
-        } catch (error) {
-          console.error("Error fetching coordinates:", error);
-          message.error("Failed to fetch coordinates.");
-        }
+      // Check for types in the place
+      const types = place.types || [];
+      const hasValidType =
+        types.includes("hair_care") || types.includes("health") || types.includes("street_address");
+
+      if (hasValidType) {
+        message.info("Địa điểm của bạn đã có trên map.");
       } else {
-        console.error("Invalid place or formatted address");
+        message.warning("Tiệm của bạn chưa có trên map.");
+      }
+
+      // Construct location from name and formatted_address
+      let location = place.formatted_address; // Default to formatted_address
+      if (place.name) {
+        location = `${place.name}, ${location}`; // Prepend name if it exists
+      }
+
+      // Set the combined location
+      form.setFieldsValue({ location });
+
+      console.log("Combined Location:", location);
+
+      try {
+        // API call logic remains the same
+        const response = await axios.get(
+          "https://maps.googleapis.com/maps/api/geocode/json",
+          {
+            params: {
+              address: encodeURIComponent(location),
+              key: import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY,
+            },
+          }
+        );
+
+        const { results } = response.data;
+        console.log("re", results);
+
+        if (results && results.length > 0) {
+          const { location: coords } = results[0].geometry;
+          console.log("lo", coords);
+
+          setCoordinates({
+            Longitude: coords.lng,
+            Latitude: coords.lat,
+          });
+
+          console.log("Tọa độ:", {
+            Longitude: coords.lng,
+            Latitude: coords.lat,
+          });
+        } else {
+          message.error("No coordinates found for the given address.");
+        }
+      } catch (error) {
+        console.error("Error fetching coordinates:", error);
+        message.error("Failed to fetch coordinates.");
       }
     } else {
       console.error("No places found");
     }
   };
+
   const handleFieldChange = (dayValue) => {
     setActiveButtons({ ...activeButtons, [dayValue]: true });
   };
@@ -278,7 +352,7 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
     return `${hours}:${minutes}`;
   }
   const handleConfirm = async (day) => {
-    setLoading(true)
+    setLoading(true);
     let start = form.getFieldValue([day, "start"]);
     let end = form.getFieldValue([day, "end"]);
     let formattedStart = "";
@@ -310,7 +384,13 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
         isActive: true,
       };
       const dayLabel = await getLabelByDay(day);
-      dispatch(actPutSalonScheduleByOwnerId(salonDetail?.id, data,salonDetail?.salonOwner?.id))
+      dispatch(
+        actPutSalonScheduleByOwnerId(
+          salonDetail?.id,
+          data,
+          salonDetail?.salonOwner?.id
+        )
+      )
         .then((res) => {
           setLoading(false);
           message.success(
@@ -336,11 +416,6 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
   };
   // handleCancel function: Reset the changes and disable the button
   const handleCancel = (dayValue) => {
-    // Logic to handle cancel action (e.g., reset the form fields for that day)
-    console.log(`Cancelled changes for ${dayValue}`);
-
-    // Optionally, reset the time fields to their initial values or any other necessary action
-
     // Disable the button since no changes are confirmed
     setActiveButtons({ ...activeButtons, [dayValue]: false });
     setDayOff({ ...dayOff, [dayValue]: false });
@@ -566,7 +641,13 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
     formData.append("Longitude", coordinates?.Longitude);
     formData.append("Latitude", coordinates?.Latitude);
 
-    dispatch(actPutSalonInformationByOwnerId(salonDetail?.id, formData,salonDetail?.salonOwner?.id))
+    dispatch(
+      actPutSalonInformationByOwnerId(
+        salonDetail?.id,
+        formData,
+        salonDetail?.salonOwner?.id
+      )
+    )
       .then((res) => {
         setLoading(false);
         message.success(`Đã cập nhật salon ${salonDetail?.name} thành công`);
@@ -617,7 +698,6 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
             style={{ backgroundColor: "#ece8de" }}
             title={
               <Flex justify="space-between" align="center">
-                {/* -translate-y-1: căng thêm trên dưới vì trục y, scale-105: phóng to content thêm 5 vì 100 là cơ bản, dưới 100 thì thu nhỏ  */}
                 <Typography.Title
                   level={4}
                   style={{ backgroundColor: "#bf9456" }}

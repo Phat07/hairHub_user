@@ -8,7 +8,15 @@
   background-color: #3498db !important; /* Nền màu xanh dương khi hover */
   color: white !important; /* Màu chữ trắng khi hover */
 }
-
+.activeButtonStyle{
+  color: #12a626 !important; /* Màu chữ */
+  border: 1px solid #66ee7f !important; /* Viền */
+  background-color: transparent !important; /* Nền trong suốt */
+}
+.activeButtonStyle:hover {
+  background-color: #09d041 !important; /* Nền màu xanh dương khi hover */
+  color: white !important; /* Màu chữ trắng khi hover */
+}
 .deleteButtonStyle {
   color: #e74c3c !important; /* Màu chữ */
   border: 1px solid #e74c3c !important; /* Viền */
