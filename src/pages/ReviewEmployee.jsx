@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   CategoryScale,
   Chart as ChartJS,
@@ -15,6 +15,9 @@ import { DatePicker, message, Pagination, Table } from "antd";
 import styles from "../css/reviewEmployee.module.css";
 import { Bar, Pie } from "react-chartjs-2";
 import moment from "moment";
+import { useDispatch, useSelector } from "react-redux";
+import { actGetSalonInformationByOwnerIdAsync } from "@/store/salonAppointments/action";
+import { actGetReviewRevenue } from "@/store/salonTransaction/action";
 const { RangePicker } = DatePicker;
 
 ChartJS.register(
@@ -30,74 +33,73 @@ ChartJS.register(
 );
 
 function ReviewEmployee(props) {
-  const [selectedDates, setSelectedDates] = useState(null);
-  const [formattedStartDate, setFormattedStartDate] = useState("");
-  const [formattedEndDate, setFormattedEndDate] = useState("");
+  const dispatch = useDispatch();
+  const idOwner = useSelector((state) => state.ACCOUNT.idOwner);
+
+  const defaultStartDate = moment().subtract(1, "days");
+  const defaultEndDate = moment();
+  const [selectedDates, setSelectedDates] = useState([
+    defaultStartDate,
+    defaultEndDate,
+  ]);
+  const [formattedStartDate, setFormattedStartDate] = useState(
+    defaultStartDate.format("DD/MM/YYYY")
+  );
+  const [formattedEndDate, setFormattedEndDate] = useState(
+    defaultEndDate.format("DD/MM/YYYY")
+  );
+  const [startDate, setStartDate] = useState(
+    defaultStartDate.format("YYYY/MM/DD")
+  );
+  const [endDate, setEndDate] = useState(defaultEndDate.format("YYYY/MM/DD"));
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5;
 
-  const reviewData = {
-    totalRevenue: "250000000",
-    employees: [
-      {
-        fullName: "Trần Xuân Tiến",
-        phone: "0706600157",
-        gender: "nam",
-        Email: "tientranxuan263!tgmail.com",
-        DateOfBirth: "2002-03-26",
-        totalSuccessedAppointment: "50",
-        totalFailedAppointment: "5",
-        totalCanceledAppointment: "10",
-        totalRevuenueEmployee: "10000000",
-      },
-      {
-        fullName: "Trần Xuân Tiến",
-        phone: "0706600157",
-        gender: "nam",
-        Email: "tientranxuan263!tgmail.com",
-        DateOfBirth: "2002-03-26",
-        totalSuccessedAppointment: "50",
-        totalFailedAppointment: "5",
-        totalCanceledAppointment: "10",
-        totalRevuenueEmployee: "10000000",
-      },
-      {
-        fullName: "Trần Xuân Tiến",
-        phone: "0706600157",
-        gender: "nam",
-        Email: "tientranxuan263!tgmail.com",
-        DateOfBirth: "2002-03-26",
-        totalSuccessedAppointment: "50",
-        totalFailedAppointment: "5",
-        totalCanceledAppointment: "10",
-        totalRevuenueEmployee: "10000000",
-      },
-      {
-        fullName: "Trần Xuân Tiến",
-        phone: "0706600157",
-        gender: "nam",
-        Email: "tientranxuan263!tgmail.com",
-        DateOfBirth: "2002-03-26",
-        totalSuccessedAppointment: "50",
-        totalFailedAppointment: "5",
-        totalCanceledAppointment: "10",
-        totalRevuenueEmployee: "10000000",
-      },
-    ],
-  };
+  const salonInformationByOwnerId = useSelector(
+    (state) => state.SALONAPPOINTMENTS.salonInformationByOwnerId
+  );
 
-  const totalSuccess = reviewData.employees.reduce(
-    (total, employee) => total + employee.totalSuccessedAppointment,
-    0
+  useEffect(() => {
+    if (idOwner) {
+      dispatch(actGetSalonInformationByOwnerIdAsync(idOwner));
+    }
+  }, [idOwner]);
+
+  const reviewRevenue = useSelector(
+    (state) => state.SALONTRANSACTION.getReviewRevenue
   );
-  const totalFailed = reviewData.employees.reduce(
-    (total, employee) => total + employee.totalFailedAppointment,
-    0
-  );
-  const totalCanceled = reviewData.employees.reduce(
-    (total, employee) => total + employee.totalCanceledAppointment,
-    0
-  );
+
+  useEffect(() => {
+    if (salonInformationByOwnerId) {
+      try {
+        dispatch(
+          actGetReviewRevenue(salonInformationByOwnerId.id, startDate, endDate)
+        );
+      } catch (err) {
+        message.error("Không thể lấy dữ liệu!");
+      }
+    }
+  }, [salonInformationByOwnerId, startDate, endDate]);
+
+  if (!reviewRevenue) return null;
+
+  const totalSuccess =
+    reviewRevenue?.employees?.reduce(
+      (total, employee) => total + employee.totalSuccessedAppointment,
+      0
+    ) || 0;
+
+  const totalFailed =
+    reviewRevenue?.employees?.reduce(
+      (total, employee) => total + employee.totalFailedAppointment,
+      0
+    ) || 0;
+
+  const totalCanceled =
+    reviewRevenue?.employees?.reduce(
+      (total, employee) => total + employee.totalCanceledAppointment,
+      0
+    ) || 0;
 
   const pieData = {
     labels: ["Thành công", "Thất bại", "Hủy bởi khách"],
@@ -158,8 +160,6 @@ function ReviewEmployee(props) {
   ];
 
   const onDateChange = (dates, dateStrings) => {
-    console.log("Selected dates:", dates);
-
     if (dates && dates.length === 2) {
       const [startDate, endDate] = dates;
 
@@ -173,12 +173,16 @@ function ReviewEmployee(props) {
       } else {
         setFormattedStartDate(startDate.format("DD/MM/YYYY"));
         setFormattedEndDate(endDate.format("DD/MM/YYYY"));
+        setStartDate(startDate.format("YYYY/MM/DD"));
+        setEndDate(endDate.format("YYYY/MM/DD"));
         setSelectedDates(dates);
       }
     } else {
       setSelectedDates(null);
       setFormattedStartDate("");
       setFormattedEndDate("");
+      setStartDate("startDate");
+      setEndDate("endDate");
     }
   };
 
@@ -186,27 +190,21 @@ function ReviewEmployee(props) {
     setCurrentPage(page);
   };
 
-  const currentEmployees = reviewData.employees.slice(
-    (currentPage - 1) * pageSize,
-    currentPage * pageSize
-  );
+  const currentEmployees =
+    reviewRevenue?.employees?.slice(
+      (currentPage - 1) * pageSize,
+      currentPage * pageSize
+    ) || [];
 
   return (
     <div className={styles["review-employee-container"]}>
       <div className={styles["choose-date-time"]}>
-        <RangePicker onChange={onDateChange} />
+        <RangePicker onChange={onDateChange} value={selectedDates} />
       </div>
 
-      {!selectedDates ? (
-        <p className={styles["main-title-zero"]}>
-          Vui lòng chọn khoảng thời gian muốn xem
-        </p>
-      ) : (
-        <p className={styles["main-title-first"]}>
-          Doanh thu salon từ ngày {formattedStartDate} đến ngày{" "}
-          {formattedEndDate}
-        </p>
-      )}
+      <p className={styles["main-title-first"]}>
+        Doanh thu salon từ ngày {formattedStartDate} đến ngày {formattedEndDate}
+      </p>
 
       {selectedDates && (
         <div className={styles["css-mobile"]}>
@@ -217,72 +215,65 @@ function ReviewEmployee(props) {
             <div className={styles["table-section"]}>
               <p className={styles["main-title-second"]}>Tổng doanh thu</p>
               <p className={styles["main-title-third"]}>
-                {reviewData.totalRevenue}
+                {reviewRevenue.totalRevenue}
               </p>
               <Table
-                dataSource={reviewData.employees}
+                dataSource={reviewRevenue.employees}
                 columns={columns}
                 pagination={{
                   pageSize: 5,
                   className: "paginationAppointment",
                   position: ["bottomCenter"],
                 }}
-                rowKey="phone"
+                rowKey="id"
               />
             </div>
           </div>
           <p className={styles["main-title-first"]}>Thành tích nhân viên</p>
           {currentEmployees.map((employee) => (
-            <div
-              className={styles["each-review-container"]}
-              key={employee.phone}
-            >
+            <div className={styles["each-review-container"]} key={employee.id}>
               <div className={styles["employee-info"]}>
-                <p>
+                <img
+                  src={employee.img}
+                  alt={`${employee.fullName}'s avatar`}
+                  className={styles["employee-image"]}
+                />
+                <p className={styles["employee-fields"]}>
                   <strong>Tên:</strong> {employee.fullName}
                 </p>
-                <p>
+                <p className={styles["employee-fields"]}>
                   <strong>Điện thoại:</strong> {employee.phone}
                 </p>
-                <p>
-                  <strong>Email:</strong> {employee.Email}
+                <p className={styles["employee-fields"]}>
+                  <strong>Email:</strong> {employee.email || "Chưa cập nhật"}
                 </p>
-                <p>
-                  <strong>Ngày sinh:</strong> {employee.DateOfBirth}
-                </p>
-                <p>
+                <p className={styles["employee-fields"]}>
                   <strong>Thành công:</strong>{" "}
                   {employee.totalSuccessedAppointment}
                 </p>
-                <p>
+                <p className={styles["employee-fields"]}>
                   <strong>Thất bại:</strong> {employee.totalFailedAppointment}
                 </p>
-                <p>
+                <p className={styles["employee-fields"]}>
                   <strong>Hủy bởi khách:</strong>{" "}
                   {employee.totalCanceledAppointment}
                 </p>
-                <p>
+                <p className={styles["employee-fields"]}>
                   <strong>Doanh thu:</strong> {employee.totalRevuenueEmployee}
+                  vnđ
                 </p>
               </div>
               <div className={styles["employee-chart"]}>
-                <Bar
-                  data={barData(employee)}
-                  options={{
-                    responsive: true,
-                    plugins: { legend: { display: false } },
-                  }}
-                />
+                <Bar data={barData(employee)} />
               </div>
             </div>
           ))}
           <Pagination
-            className="paginationAppointment"
             current={currentPage}
-            pageSize={pageSize}
-            total={reviewData.employees.length}
             onChange={handlePageChange}
-            style={{ textAlign: "center", marginTop: "1rem" }}
+            total={reviewRevenue?.employees?.length || 0}
+            pageSize={pageSize}
+            className="paginationAppointment"
           />
         </div>
       )}

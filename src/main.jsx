@@ -265,9 +265,9 @@ const router = createBrowserRouter([
       {
         path: "reviewEmployee",
         element: (
-          // <RequireAuth fallbackPath="/login">
-          <ReviewEmployee />
-          // </RequireAuth>
+          <RequireAuth fallbackPath="/login">
+            <ReviewEmployee />
+          </RequireAuth>
         ),
       },
       {

@@ -9,4 +9,12 @@ export const SalonTransaction = {
       },
     });
   },
+  GetReviewRevenue(salonId, startTime, endTime) {
+    return API.get(`/saloninformations/ReviewRevenue/${salonId}`, {
+      params: {
+        startTime,
+        endTime,
+      },
+    });
+  },
 };
