@@ -1,0 +1,54 @@
+.customeSchedule {
+  height: 500px;
+}
+
+@media (max-width: 768px) {
+  .customeSchedule {
+    height: 600px;
+  }
+}
+
+.customeSchedule .rbc-event {
+    background-color: #ece8de !important; /* Sử dụng !important để ưu tiên */
+    color: rgb(0, 0, 0) !important; /* Sử dụng !important nếu cần */
+    border-width: 0;
+  }
+
+  .customeSchedule .rbc-selected {
+    background-color: #bf9456 !important; /* Sử dụng !important để ưu tiên */
+    color: white !important; /* Sử dụng !important nếu cần */
+    height: 100%;
+  }
+  .customeSchedule .rbc-today {
+    background-color: #f4f2eb; /* Màu nền cho ngày hôm nay */
+    color: #bf9456; /* Màu chữ cho ngày hôm nay */
+  }
+  .customeSchedule .rbc-selected {
+    border-color: #bf9456;
+  }
+  .customeSchedule .rbc-selected:focus,
+  .customeSchedule .rbc-selected:active {
+    border: none;  /* Bỏ border */
+    outline: none; /* Bỏ outline */
+  }
+  .customeSchedule .rbc-day-slot:focus,
+  .customeSchedule .rbc-day-slot:active {
+    border: none;  /* Bỏ border */
+    outline: none; /* Bỏ outline */
+  }
+  .customeSchedule .rbc-agenda-date-cell {
+    background-color: #f4f2eb; /* Màu nền */
+    color: #bf9456; /* Màu chữ */
+    font-weight: bold;
+    /* border: 1px solid #333; */
+  }
+  .customeSchedule .rbc-agenda-content {
+    border: 1px solid #bf9456;
+  }
+  /* .customeSchedule .rbc-agenda-table {
+    border: 1px solid #bf9456;
+  } */
+  .customeSchedule .rbc-agenda-event-cell:hover {
+    background-color: #bf9456; /* Màu khi hover vào sự kiện */
+    cursor: pointer;
+  }

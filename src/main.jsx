@@ -49,6 +49,9 @@ import SystemBarberPage from "./pages/SystemBarberPage.jsx";
 import RequireAuth from "./PrivateRoute.js";
 import store from "./store";
 import Footer2 from "./components/Footer2.jsx";
+import EmployeeSchedule from "./pages/EmployeeSchedule.jsx";
+import EmployeeStatistics from "./pages/EmployeeStatistics.jsx";
+import SalonEmployee from "./pages/SalonEmployee.jsx";
 
 const router = createBrowserRouter([
   {
@@ -258,6 +261,30 @@ const router = createBrowserRouter([
         element: (
           <RequireAuth fallbackPath="/login">
             <DashboardTransactionPage />
+          </RequireAuth>
+        ),
+      },
+      // {
+      //   path: "EmployeeSchedule",
+      //   element: (
+      //     <RequireAuth fallbackPath="/login">
+      //       <EmployeeSchedule />
+      //     </RequireAuth>
+      //   ),
+      // },
+      {
+        path: "EmployeeStatistics",
+        element: (
+          <RequireAuth fallbackPath="/login">
+            <EmployeeStatistics />
+          </RequireAuth>
+        ),
+      },
+      {
+        path: "SalonEmployee",
+        element: (
+          <RequireAuth fallbackPath="/login">
+            <SalonEmployee />
           </RequireAuth>
         ),
       },

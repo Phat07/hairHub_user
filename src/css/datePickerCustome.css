@@ -1,0 +1,17 @@
+.datePickerCustome {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .datePickerCustome .ant-picker {
+    padding: 10px;
+    background-color: #ece8de;
+  }
+  .datePickerCustome .ant-btn {
+    padding: 10px;
+    background: #bf9456;
+    box-shadow: none;
+    height: auto;
+  }
