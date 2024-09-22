@@ -7,8 +7,7 @@ const initialState = {
   username: "",
   avatar: "",
   uid: "",
-  idOwner: "",
-  idCustomer: "",
+  idEmployee: "",
   refreshToken: "",
 };
 
