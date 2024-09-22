@@ -283,9 +283,15 @@ function SalonEmployee(props) {
         {!isEmptyObject(salonDetailEmployee) ? (
           <>
             <Card
-              title="Thông tin Salon"
+              // title="Thông tin Salon"
+              title={
+                <span style={{ fontSize: "1.3rem", color: "#bf9456" }}>
+                  Thông tin Salon
+                </span>
+              }
               className={styles["responsive-card"]}
-              bodyStyle={{ padding: "10px" }}
+              style={{ padding: 0, marginBlock: "10px" }}
+              bodyStyle={{ padding: 0 }}
 
               // style={{ width: "100%", height: "100%", padding: "10px" }}
             >
@@ -312,6 +318,7 @@ function SalonEmployee(props) {
                               maxHeight: "15rem",
                               objectFit: "cover",
                               borderRadius: "1rem",
+                              marginInline: "1rem",
                             }}
                           />
                         </div>
@@ -389,7 +396,20 @@ function SalonEmployee(props) {
               </Row>
               <Row gutter={16} style={{ marginTop: "20px" }}>
                 <Col span={24}>
-                  <Descriptions title="Thời gian đóng / mở cửa" bordered>
+                  <Descriptions
+                    title={
+                      <span
+                        style={{
+                          fontSize: "1.3rem",
+                          color: "#bf9456",
+                          marginLeft: "1rem",
+                        }}
+                      >
+                        Thời gian đóng / mở cửa
+                      </span>
+                    }
+                    bordered
+                  >
                     {salonDetailEmployee?.schedules &&
                       sortSchedules(salonDetailEmployee?.schedules).map(
                         (schedule, index) => (
@@ -429,7 +449,20 @@ function SalonEmployee(props) {
               </Row>
               <Row gutter={16} style={{ marginTop: "20px" }}>
                 <Col span={24}>
-                  <Descriptions title="Lịch làm việc cá nhân" bordered>
+                  <Descriptions
+                    title={
+                      <span
+                        style={{
+                          fontSize: "1.3rem",
+                          color: "#bf9456",
+                          marginLeft: "1rem",
+                        }}
+                      >
+                        Lịch làm việc cá nhân
+                      </span>
+                    }
+                    bordered
+                  >
                     {listScheduleEmployee &&
                       sortSchedules(listScheduleEmployee).map(
                         (schedule, index) => (
@@ -467,7 +500,7 @@ function SalonEmployee(props) {
                   </Descriptions>
                 </Col>
               </Row>
-              <Row gutter={16} style={{ marginTop: "20px" }}>
+              <Row gutter={16} style={{ marginBlock: "30px" }}>
                 <Col span={24}>
                   <Collapse
                     defaultActiveKey={["1"]}
@@ -512,7 +545,7 @@ function SalonEmployee(props) {
                         <Input
                           placeholder="Tìm kiếm theo tên dịch vụ"
                           className={styles["table-fillter-item"]}
-                          style={{ maxWidth: "20rem" }}
+                          style={{ maxWidth: "25rem" }}
                           suffix={
                             <SearchOutlined
                               style={{ cursor: "pointer" }}

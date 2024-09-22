@@ -39,7 +39,10 @@ const { RangePicker } = DatePicker;
 
 const EmployeeStatistics = () => {
   const dispatch = useDispatch();
-  const [tempDates, setTempDates] = useState([]);
+  const [tempDates, setTempDates] = useState([
+    dayjs().subtract(7, "day"), // Ngày bắt đầu
+    dayjs(), // Ngày kết thúc
+  ]);
   const [selectedStartDates, setSelectedStartDates] = useState(
     dayjs().subtract(7, "day").format("YYYY-MM-DD")
   ); // 7 ngày trước
@@ -231,7 +234,11 @@ const EmployeeStatistics = () => {
         className="datePickerCustome"
         // className={styles["date-picker-custome"]}
       >
-        <RangePicker onChange={handleDateChange} />
+        <RangePicker
+          onChange={handleDateChange}
+          defaultValue={tempDates}
+          dropdownClassName="custom-dropdown-range-picker"
+        />
         <Button type="primary" onClick={handleFilter}>
           Lọc
         </Button>
