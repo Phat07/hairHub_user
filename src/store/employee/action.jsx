@@ -146,13 +146,28 @@ export function actGetScheduleByEmployeeId(id) {
   };
 }
 
-export function actGetServiceHairByEmployeeId(id, page, size) {
+export function actGetServiceHairByEmployeeId(
+  id,
+  page,
+  size,
+  search,
+  filter,
+  orderby
+) {
   return async (dispatch) => {
-    const result = employeeService.GetServiceHairByEmployeeId(id, page, size);
+    const result = employeeService.GetServiceHairByEmployeeId(
+      id,
+      page,
+      size,
+      search,
+      filter,
+      orderby
+    );
     await result
       .then((response) => {
         if (response.status === 200 || response.status === 201) {
           dispatch(getServiceHairByEmployeeId(response.data));
+          return response;
         } else {
           message.error("Lỗi lấy dữ liệu!!!!");
         }
@@ -163,3 +178,16 @@ export function actGetServiceHairByEmployeeId(id, page, size) {
       });
   };
 }
+
+// export function actPutSalonEmployeeById(id, data) {
+//   return async (dispatch) => {
+//     try {
+//       const res = await SchedulesService.putSchedulesEmployee(id, data);
+//       dispatch(actGetSalonEmployeeById(id));
+//       return res;
+//     } catch (err) {
+//       console.log(err, "errors");
+//       throw err; // Ném lỗi để xử lý ở bên ngoài nếu cần
+//     }
+//   };
+// }
