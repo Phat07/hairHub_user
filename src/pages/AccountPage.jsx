@@ -698,7 +698,7 @@ function AccountPage() {
                       <Select.Option value="Other">Khác</Select.Option>
                     </Select>
                   </Form.Item>
-                  <Form.Item
+                  {/* <Form.Item
                     label="Ngày sinh:"
                     name="dayOfBirth"
                     rules={[
@@ -706,8 +706,8 @@ function AccountPage() {
                     ]}
                   >
                     <DatePicker disabled={true} />
-                  </Form.Item>
-                  <Form.Item
+                  </Form.Item> */}
+                  {/* <Form.Item
                     label="Số điện thoại:"
                     name="phone"
                     rules={[
@@ -715,7 +715,17 @@ function AccountPage() {
                     ]}
                   >
                     <Input />
+                  </Form.Item> */}
+                  <Form.Item
+                    label="Email:"
+                    name="email"
+                    rules={[
+                      { required: true, message: "Vui lòng không để trống!" },
+                    ]}
+                  >
+                    <Input readOnly />
                   </Form.Item>
+
                   <Form.Item>
                     <Button
                       onClick={handleEdit}

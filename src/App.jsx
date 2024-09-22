@@ -28,7 +28,6 @@ function App() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const token = localStorage.getItem("accessToken");
-
   const salonDetail = useSelector(
     (state) => state.SALONINFORMATION.getSalonByOwnerId
   );
@@ -52,6 +51,8 @@ function App() {
         if (res.data?.accessToken) {
           localStorage.setItem("accessToken", res.data.accessToken);
           localStorage.setItem("refreshToken", res.data.refreshToken);
+          localStorage.setItem("role", res.data?.roleName);
+
           return res.data.accessToken;
         } else {
           message.warning("Đăng nhập lại!!, quá phiên đăng nhập");
