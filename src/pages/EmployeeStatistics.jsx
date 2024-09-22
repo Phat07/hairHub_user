@@ -15,6 +15,12 @@ import {
   Legend,
   ArcElement,
 } from "chart.js";
+import {
+  actGetNumberAppointmentByStatus,
+  actGetRevenueandNumberofAppointment,
+  actGetRateAppointmentByStatus,
+} from "../store/employee/action";
+import { useSelector } from "react-redux";
 
 // Đăng ký chart.js
 ChartJS.register(
@@ -32,7 +38,15 @@ const { RangePicker } = DatePicker;
 
 const EmployeeStatistics = () => {
   const [dates, setDates] = useState([]);
-
+  const numberAppointment = useSelector(
+    (state) => state.EMPLOYEE.getNumberAppointmentByStatus
+  );
+  const rateAppointment = useSelector(
+    (state) => state.EMPLOYEE.getRateAppointmentByStatus
+  );
+  const revenueandNumber = useSelector(
+    (state) => state.EMPLOYEE.getRevenueandNumberofAppointment
+  );
   // Dữ liệu giả lập cho các chart
   const moneyData = {
     labels: [

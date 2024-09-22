@@ -50,6 +50,11 @@ import { isEmptyObject } from "../components/formatCheckValue/checkEmptyObject";
 import styles from "../css/listShopBarber.module.css";
 import { actGetAllServicesBySalonId } from "../store/salonEmployees/action";
 import { actGetSalonInformationByOwnerId } from "../store/salonInformation/action";
+import {
+  actGetSalonByEmployeeId,
+  actGetScheduleByEmployeeId,
+  actGetServiceHairByEmployeeId,
+} from "../store/employee/action";
 import classNames from "classnames";
 
 function SalonEmployee(props) {
@@ -81,6 +86,17 @@ function SalonEmployee(props) {
   const totalPagesService = useSelector(
     (state) => state.SALONEMPLOYEES.totalPagesServices
   );
+
+  const salonDetailEmployee = useSelector(
+    (state) => state.EMPLOYEE.getSalonByEmployeeId
+  );
+  const listServiceEmployee = useSelector(
+    (state) => state.EMPLOYEE.getServiceHairByEmployeeId
+  );
+  const listScheduleEmployee = useSelector(
+    (state) => state.EMPLOYEE.getScheduleByEmployeeId
+  );
+
   //logic fillter
   const [searchService, setSearchService] = useState("");
   const [searchServiceKey, setSearchServiceKey] = useState("");
