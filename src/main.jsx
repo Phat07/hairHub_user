@@ -255,7 +255,7 @@ const router = createBrowserRouter([
       {
         path: "listPayment",
         element: (
-          <RequireAuth fallbackPath="/login">
+          <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
             <PackageSuccessPage />
           </RequireAuth>
         ),
