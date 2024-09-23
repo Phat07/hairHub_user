@@ -19,6 +19,7 @@ import {
   actGetNumberAppointmentByStatus,
   actGetRevenueandNumberofAppointment,
   actGetRateAppointmentByStatus,
+  actGetRevenueofAppointmentDaybyDay,
 } from "../store/employee/action";
 import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
@@ -59,6 +60,9 @@ const EmployeeStatistics = () => {
   const revenueandNumber = useSelector(
     (state) => state.EMPLOYEE.getRevenueandNumberofAppointment
   );
+  const revenueandNumberDay = useSelector(
+    (state) => state.EMPLOYEE.getRevenueofAppointmentDaybyDay
+  );
 
   useEffect(() => {
     if ((idEmployee, selectedStartDates, selectedEndDates)) {
@@ -83,50 +87,22 @@ const EmployeeStatistics = () => {
           selectedEndDates
         )
       );
+      dispatch(
+        actGetRevenueofAppointmentDaybyDay(
+          idEmployee,
+          selectedStartDates,
+          selectedEndDates
+        )
+      );
     }
   }, [idEmployee, selectedStartDates, selectedEndDates]);
-  // Dữ liệu giả lập cho các chart
+
   const moneyData = {
-    labels: [
-      "01/09",
-      "02/09",
-      "03/09",
-      "04/09",
-      "05/09",
-      "06/09",
-      "07/09",
-      "08/09",
-      "09/09",
-      "10/09",
-      "11/09",
-      "12/09",
-      "13/09",
-      "14/09",
-      "15/09",
-      "16/09",
-      "17/09",
-      "18/09",
-      "19/09",
-      "20/09",
-      "21/09",
-      "22/09",
-      "23/09",
-      "24/09",
-      "25/09",
-      "26/09",
-      "27/09",
-      "28/09",
-      "29/09",
-      "30/09",
-    ],
+    labels: revenueandNumberDay.map((item) => dayjs(item.date).format("DD/MM")), // Chuyển đổi date thành định dạng "DD/MM"
     datasets: [
       {
         label: "Số tiền kiếm được",
-        data: [
-          500, 600, 1700, 800, 900, 1000, 1100, 100, 1300, 400, 1100, 1600,
-          1200, 1300, 900, 2800, 2200, 200, 2300, 2100, 200, 2600, 2900, 2900,
-          900, 3500, 3100, 2200, 3300, 1400, 2500,
-        ],
+        data: revenueandNumberDay.map((item) => item.revenue), // Lấy giá trị revenue
         borderColor: "rgba(75, 192, 192, 1)",
         backgroundColor: "rgba(75, 192, 192, 0.2)",
         fill: true,

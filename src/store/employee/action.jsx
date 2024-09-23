@@ -4,6 +4,7 @@ import { employeeService } from "../../services/employeeService";
 export const GET_RATE_APPOINTMENT = "GET_RATE_APPOINTMENT";
 export const GET_NUMBER_APPOINTMENT = "GET_NUMBER_APPOINTMENT";
 export const GET_REVENUE_APPOINTMENT = "GET_REVENUE_APPOINTMENT";
+export const GET_REVENUE_APPOINTMENT_DAY = "GET_REVENUE_APPOINTMENT_DAY";
 export const GET_SALON_EMPLOYEE = "GET_SALON_EMPLOYEE";
 export const GET_SCHEDULE_EMPLOYEE = "GET_SCHEDULE_EMPLOYEE";
 export const GET_SERVICE_EMPLOYEE = "GET_SERVICE_EMPLOYEE";
@@ -22,6 +23,12 @@ export const getRateAppointmentByStatus = (list) => {
 export const getRevenueandNumberofAppointment = (list) => {
   return {
     type: GET_REVENUE_APPOINTMENT,
+    payload: list,
+  };
+};
+export const getRevenueofAppointmentDaybyDay = (list) => {
+  return {
+    type: GET_REVENUE_APPOINTMENT_DAY,
     payload: list,
   };
 };
@@ -99,6 +106,28 @@ export function actGetRevenueandNumberofAppointment(id, startdate, enddate) {
       .then((response) => {
         if (response.status === 200 || response.status === 201) {
           dispatch(getRevenueandNumberofAppointment(response.data));
+        } else {
+          message.error("Lỗi lấy dữ liệu!!!!");
+        }
+      })
+      .catch((error) => {
+        // Xử lý lỗi nếu có
+        // console.error("Error while fetching all config money:", error);
+      });
+  };
+}
+
+export function actGetRevenueofAppointmentDaybyDay(id, startdate, enddate) {
+  return async (dispatch) => {
+    const result = employeeService.RevenueofAppointmentDaybyDay(
+      id,
+      startdate,
+      enddate
+    );
+    await result
+      .then((response) => {
+        if (response.status === 200 || response.status === 201) {
+          dispatch(getRevenueofAppointmentDaybyDay(response.data));
         } else {
           message.error("Lỗi lấy dữ liệu!!!!");
         }
