@@ -25,9 +25,12 @@ export function loginAccount(data, navigate) {
         if (response.status === 200 || response.status === 201) {
           dispatch(LOGIN(response.data));
           let owner = response?.data?.salonOwnerResponse;
+          let employee = response?.data?.salonEmployeeResponse;
           // if(response.data)
           if (owner) {
             navigate("/list_shop");
+          } else if (employee) {
+            navigate("/SalonEmployee");
           } else {
             navigate("/");
           }

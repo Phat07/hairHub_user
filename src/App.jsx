@@ -47,12 +47,10 @@ function App() {
     try {
       const refreshToken = localStorage.getItem("refreshToken");
       if (refreshToken) {
-        const res = await AccountServices.refreshToken(refreshToken);
+        const res = await AccountServices.refreshToken(refreshToken);        
         if (res.data?.accessToken) {
           localStorage.setItem("accessToken", res.data.accessToken);
           localStorage.setItem("refreshToken", res.data.refreshToken);
-          localStorage.setItem("role", res.data?.roleName);
-
           return res.data.accessToken;
         } else {
           message.warning("Đăng nhập lại!!, quá phiên đăng nhập");

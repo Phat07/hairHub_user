@@ -33,6 +33,7 @@ import {
   Row,
   Skeleton,
   Space,
+  Spin,
   Table,
   Tag,
   TimePicker,
@@ -48,8 +49,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { isEmptyObject } from "../components/formatCheckValue/checkEmptyObject";
 import styles from "../css/listShopBarber.module.css";
-import { actGetAllServicesBySalonId } from "../store/salonEmployees/action";
-import { actGetSalonInformationByOwnerId } from "../store/salonInformation/action";
+import {
+  actGetSalonByEmployeeId,
+  actGetScheduleByEmployeeId,
+  actGetServiceHairByEmployeeId,
+} from "../store/employee/action";
 import classNames from "classnames";
 
 function SalonEmployee(props) {
@@ -60,27 +64,23 @@ function SalonEmployee(props) {
   const [initLoading, setInitLoading] = useState(true);
   const [currentPageService, setCurrentPageService] = useState(1);
   const [pageSizeService, setPageSizeService] = useState(4);
-
+  const [loading, setLoading] = useState(false);
   // const auth = useAuthUser();
   // const ownerId = auth?.idOwner;
-  const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
-  const ownerId = useSelector((state) => state.ACCOUNT.idOwner);
+  const idEmployee = useSelector((state) => state.ACCOUNT.idEmployee);
+
   const dispatch = useDispatch();
 
-  const navigate = useNavigate();
+  const salonDetailEmployee = useSelector(
+    (state) => state.EMPLOYEE.getSalonByEmployeeId
+  );
+  const listServiceEmployee = useSelector(
+    (state) => state.EMPLOYEE.getServiceHairByEmployeeId
+  );
+  const listScheduleEmployee = useSelector(
+    (state) => state.EMPLOYEE.getScheduleByEmployeeId
+  );
 
-  const timeFormat = "HH:mm";
-  const [serviceTime, setServiceTime] = useState(dayjs("00:00", timeFormat));
-
-  const salonDetail = useSelector(
-    (state) => state.SALONINFORMATION.getSalonByOwnerId
-  );
-  const listTotalService = useSelector(
-    (state) => state.SALONEMPLOYEES.listService
-  );
-  const totalPagesService = useSelector(
-    (state) => state.SALONEMPLOYEES.totalPagesServices
-  );
   //logic fillter
   const [searchService, setSearchService] = useState("");
   const [searchServiceKey, setSearchServiceKey] = useState("");
@@ -90,11 +90,13 @@ function SalonEmployee(props) {
   const [filterLabelService, setFilterLabelService] = useState("Lọc");
 
   const handleMenuClickServiceSort = (e) => {
+    setCurrentPageService(1);
     setSortService(e.key);
     setSortLabelService(e.key === "" ? "Tất cả" : `Sắp xếp theo ${e.key}`);
   };
 
   const handleMenuClickServiceFillter = (e) => {
+    setCurrentPageService(1);
     setFillterService(e.key);
     setFilterLabelService(
       e.key === ""
@@ -127,34 +129,47 @@ function SalonEmployee(props) {
   );
 
   const handleSearchService = () => {
+    setCurrentPageService(1);
     setSearchServiceKey(searchService);
   };
 
   useEffect(() => {
-    dispatch(actGetSalonInformationByOwnerId(ownerId));
-  }, []);
+    if (idEmployee) {
+      dispatch(actGetSalonByEmployeeId(idEmployee));
+    }
+  }, [idEmployee]);
+  useEffect(() => {
+    if (idEmployee) {
+      dispatch(actGetScheduleByEmployeeId(idEmployee));
+    }
+  }, [idEmployee]);
 
   useEffect(() => {
-    if (
-      salonDetail &&
-      salonDetail.id &&
-      currentPageService &&
-      pageSizeService
-    ) {
+    if (idEmployee && currentPageService && pageSizeService) {
+      setLoading(true);
       dispatch(
-        actGetAllServicesBySalonId(
-          salonDetail.id,
+        actGetServiceHairByEmployeeId(
+          idEmployee,
           currentPageService,
           pageSizeService,
           searchServiceKey,
           FillterService,
           SortService
         )
-      );
+      )
+        .then((res) => {
+          setLoading(false);
+        })
+        .catch((res) => {
+          setLoading(false);
+        })
+        .finally((res) => {
+          setLoading(false);
+        });
       // setIsLoading(false);
     }
   }, [
-    salonDetail,
+    idEmployee,
     currentPageService,
     pageSizeService,
     searchServiceKey,
@@ -162,25 +177,9 @@ function SalonEmployee(props) {
     SortService,
   ]);
 
-  useEffect(() => {
-    dispatch(actGetAllServicesBySalonId(salonDetail.id, 1, 4));
-  }, []);
-
-  useEffect(() => {
-    if (isEmptyObject(salonDetail)) {
-      setTimeout(() => {
-        // message.info("Bạn cần phải tạo salon đầu tiên!");
-        if (isEmptyObject(salonDetail)) {
-          // navigate("/create_shop");
-        } else {
-          return;
-        }
-      }, 3000);
-    } else if (ownerId) {
-      dispatch(actGetSalonInformationByOwnerId(ownerId));
-      setInitLoading(false);
-    }
-  }, [ownerId]);
+  // useEffect(() => {
+  //   dispatch(actGetAllServicesBySalonId(salonDetail.id, 1, 4));
+  // }, []);
 
   const convertDayOfWeekToVietnamese = (dayOfWeek) => {
     const daysMapping = {
@@ -281,12 +280,18 @@ function SalonEmployee(props) {
   return (
     <div>
       <div className={styles["container_list"]}>
-        {!isEmptyObject(salonDetail) ? (
+        {!isEmptyObject(salonDetailEmployee) ? (
           <>
             <Card
-              title="Thông tin Salon"
+              // title="Thông tin Salon"
+              title={
+                <span style={{ fontSize: "1.3rem", color: "#bf9456" }}>
+                  Thông tin Salon
+                </span>
+              }
               className={styles["responsive-card"]}
-              bodyStyle={{ padding: "10px" }}
+              style={{ padding: 0, marginBlock: "10px" }}
+              bodyStyle={{ padding: 0 }}
 
               // style={{ width: "100%", height: "100%", padding: "10px" }}
             >
@@ -304,7 +309,7 @@ function SalonEmployee(props) {
                       <div className={styles["salon-title-container"]}>
                         <div>
                           <img
-                            src={salonDetail.img}
+                            src={salonDetailEmployee.img}
                             alt="img"
                             style={{
                               width: "100%",
@@ -313,6 +318,7 @@ function SalonEmployee(props) {
                               maxHeight: "15rem",
                               objectFit: "cover",
                               borderRadius: "1rem",
+                              marginInline: "1rem",
                             }}
                           />
                         </div>
@@ -322,13 +328,13 @@ function SalonEmployee(props) {
                     className={styles["responsive-descriptions"]}
                   >
                     <Descriptions.Item span={1} label="Địa chỉ">
-                      {salonDetail.address}
+                      {salonDetailEmployee.address}
                     </Descriptions.Item>
                     <Descriptions.Item span={2} label="Chủ Salon">
-                      {salonDetail?.salonOwner?.fullName}
+                      {salonDetailEmployee?.salonOwner?.fullName}
                     </Descriptions.Item>
                     <Descriptions.Item span={1} label="Mô tả">
-                      {salonDetail.description}
+                      {salonDetailEmployee.description}
                     </Descriptions.Item>
 
                     <Descriptions.Item
@@ -337,62 +343,75 @@ function SalonEmployee(props) {
                       }}
                       span={2}
                       className={
-                        salonDetail.status === "APPROVED"
+                        salonDetailEmployee.status === "APPROVED"
                           ? "bg-green-300 border-dotted border-2 text-white font-bold"
-                          : salonDetail.status === "REJECTED"
+                          : salonDetailEmployee.status === "REJECTED"
                           ? "bg-red-400 border-dotted border-2 text-white font-bold"
-                          : salonDetail.status === "PENDING"
+                          : salonDetailEmployee.status === "PENDING"
                           ? "bg-yellow-400 border-dotted border-2 text-white font-bold"
-                          : salonDetail.status === "EDITED"
+                          : salonDetailEmployee.status === "EDITED"
                           ? "bg-blue-300 border-dotted border-2 text-white font-bold"
-                          : salonDetail.status === "SUSPENDED"
+                          : salonDetailEmployee.status === "SUSPENDED"
                           ? "bg-orange-400 border-dotted border-2 text-white font-bold"
-                          : salonDetail.status === "CREATING"
+                          : salonDetailEmployee.status === "CREATING"
                           ? "bg-purple-300 border-dotted border-2 text-white font-bold"
-                          : salonDetail.status === "OVERDUE"
+                          : salonDetailEmployee.status === "OVERDUE"
                           ? "bg-yellow-600 border-dotted border-2 text-white font-bold"
-                          : salonDetail.status === "DISABLED"
+                          : salonDetailEmployee.status === "DISABLED"
                           ? "bg-gray-400 border-dotted border-2 text-white font-bold"
                           : "bg-gray-300 border-dotted border-2 text-white font-bold"
                       }
                       label="Trạng thái"
                     >
-                      {salonDetail.status === "APPROVED"
+                      {salonDetailEmployee.status === "APPROVED"
                         ? "Hoạt động"
-                        : salonDetail.status === "REJECTED"
+                        : salonDetailEmployee.status === "REJECTED"
                         ? "Bị từ chối"
-                        : salonDetail.status === "PENDING"
+                        : salonDetailEmployee.status === "PENDING"
                         ? "Chờ duyệt"
-                        : salonDetail.status === "EDITED"
+                        : salonDetailEmployee.status === "EDITED"
                         ? "Đang chỉnh sửa"
-                        : salonDetail.status === "SUSPENDED"
+                        : salonDetailEmployee.status === "SUSPENDED"
                         ? "Bị đình chỉ"
-                        : salonDetail.status === "CREATING"
+                        : salonDetailEmployee.status === "CREATING"
                         ? "Đang tạo"
-                        : salonDetail.status === "OVERDUE"
+                        : salonDetailEmployee.status === "OVERDUE"
                         ? "Quá hạn thanh toán"
-                        : salonDetail.status === "DISABLED"
+                        : salonDetailEmployee.status === "DISABLED"
                         ? "Bị cấm"
-                        : salonDetail.status}
+                        : salonDetailEmployee.status}
                     </Descriptions.Item>
 
                     <Descriptions.Item label="Đánh giá">
-                      <Rate disabled defaultValue={salonDetail?.rate} />
+                      <Rate disabled defaultValue={salonDetailEmployee?.rate} />
                     </Descriptions.Item>
                     <Descriptions.Item label="Tổng đánh giá">
-                      {salonDetail?.totalRating}
+                      {salonDetailEmployee?.totalRating}
                     </Descriptions.Item>
                     <Descriptions.Item label="Số đánh giá">
-                      {salonDetail?.totalReviewer}
+                      {salonDetailEmployee?.totalReviewer}
                     </Descriptions.Item>
                   </Descriptions>
                 </Col>
               </Row>
               <Row gutter={16} style={{ marginTop: "20px" }}>
                 <Col span={24}>
-                  <Descriptions title="Thời gian đóng / mở cửa" bordered>
-                    {salonDetail?.schedules &&
-                      sortSchedules(salonDetail?.schedules).map(
+                  <Descriptions
+                    title={
+                      <span
+                        style={{
+                          fontSize: "1.3rem",
+                          color: "#bf9456",
+                          marginLeft: "1rem",
+                        }}
+                      >
+                        Thời gian đóng / mở cửa
+                      </span>
+                    }
+                    bordered
+                  >
+                    {salonDetailEmployee?.schedules &&
+                      sortSchedules(salonDetailEmployee?.schedules).map(
                         (schedule, index) => (
                           <Descriptions.Item
                             key={index}
@@ -430,9 +449,22 @@ function SalonEmployee(props) {
               </Row>
               <Row gutter={16} style={{ marginTop: "20px" }}>
                 <Col span={24}>
-                  <Descriptions title="Lịch làm việc cá nhân" bordered>
-                    {salonDetail?.schedules &&
-                      sortSchedules(salonDetail?.schedules).map(
+                  <Descriptions
+                    title={
+                      <span
+                        style={{
+                          fontSize: "1.3rem",
+                          color: "#bf9456",
+                          marginLeft: "1rem",
+                        }}
+                      >
+                        Lịch làm việc cá nhân
+                      </span>
+                    }
+                    bordered
+                  >
+                    {listScheduleEmployee &&
+                      sortSchedules(listScheduleEmployee).map(
                         (schedule, index) => (
                           <Descriptions.Item
                             key={index}
@@ -468,7 +500,7 @@ function SalonEmployee(props) {
                   </Descriptions>
                 </Col>
               </Row>
-              <Row gutter={16} style={{ marginTop: "20px" }}>
+              <Row gutter={16} style={{ marginBlock: "30px" }}>
                 <Col span={24}>
                   <Collapse
                     defaultActiveKey={["1"]}
@@ -513,7 +545,7 @@ function SalonEmployee(props) {
                         <Input
                           placeholder="Tìm kiếm theo tên dịch vụ"
                           className={styles["table-fillter-item"]}
-                          style={{ maxWidth: "20rem" }}
+                          style={{ maxWidth: "25rem" }}
                           suffix={
                             <SearchOutlined
                               style={{ cursor: "pointer" }}
@@ -525,19 +557,23 @@ function SalonEmployee(props) {
                           onPressEnter={handleSearchService} // Trigger search on Enter key press
                         />
                       </div>
+                      {/* {listServiceEmployee.items.length > 0 && ( */}
                       <div className={styles["table-container"]}>
-                        <Table
-                          dataSource={listTotalService}
-                          columns={columnsService}
-                          pagination={false}
-                          rowKey="phone"
-                        />
+                        <Spin spinning={loading}>
+                          <Table
+                            dataSource={listServiceEmployee.items}
+                            columns={columnsService}
+                            pagination={false}
+                            rowKey="phone"
+                          />
+                        </Spin>
                       </div>
+                      {/* )} */}
 
                       <Pagination
                         current={currentPageService}
                         pageSize={pageSizeService}
-                        total={totalPagesService}
+                        total={listServiceEmployee.totalPages}
                         onChange={onPageChangeService}
                         style={{ marginTop: "20px", textAlign: "center" }}
                       />

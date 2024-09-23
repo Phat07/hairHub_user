@@ -16,6 +16,7 @@ function Header(props) {
   const userName = useSelector((state) => state.ACCOUNT.userName);
   const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
   const idOwner = useSelector((state) => state.ACCOUNT.idOwner);
+  const idEmployee = useSelector((state) => state.ACCOUNT.idEmployee);
   const uid = useSelector((state) => state.ACCOUNT.uid);
   const salonDetail = useSelector(
     (state) => state.SALONINFORMATION.getSalonByOwnerId
@@ -40,6 +41,7 @@ function Header(props) {
   const handleSignOut = () => {
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("role");
     message.success("Đăng xuất thành công");
     navigate("/");
   };
@@ -79,7 +81,9 @@ function Header(props) {
       <header className={style.headerContainer}>
         <div className={style.header}>
           <div className={style.logoContainer}>
-            <Link to={idOwner ? "/list_shop" : "/"}>
+            <Link
+              to={idOwner ? "/list_shop" : idEmployee ? "/SalonEmployee" : "/"}
+            >
               <img
                 className={style.logo}
                 src={hairHubLogo}
@@ -125,6 +129,40 @@ function Header(props) {
                         className={style.navLink}
                       >
                         Cuộc hẹn
+                      </Link>
+                    </li>
+                  </>
+                )}
+              </ul>
+            </nav>
+          )}
+
+          {idEmployee && (
+            <nav className={style.navbar}>
+              <ul className={style.navList}>
+                <li className={style.navItem}>
+                  <Link to={"/SalonEmployee"} className={style.navLink}>
+                    Thông tin cửa hàng
+                  </Link>
+                </li>
+                <li className={style.navItem}>
+                  <Link to={"/EmployeeStatistics"} className={style.navLink}>
+                    Thống kê cá nhân
+                  </Link>
+                </li>
+                {menuActive && (
+                  <>
+                    <li className={style.navItemRepo}>
+                      <Link to={"/SalonEmployee"} className={style.navLink}>
+                        Thông tin cửa hàng
+                      </Link>
+                    </li>
+                    <li className={style.navItemRepo}>
+                      <Link
+                        to={"/EmployeeStatistics"}
+                        className={style.navLink}
+                      >
+                        Thống kê cá nhân
                       </Link>
                     </li>
                   </>

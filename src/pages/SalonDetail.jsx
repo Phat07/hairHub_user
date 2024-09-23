@@ -63,6 +63,7 @@ import TitleCard from "@/components/TitleCard";
 import { DragCards } from "@/components/DragCards";
 import { HoverImageLinks } from "@/components/HoverImageLinks";
 import AnimatedList from "@/components/AnimatedList";
+import { SmoothScrollHero } from "@/components/SmoothScrollHero";
 const { Panel } = Collapse;
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -1309,27 +1310,10 @@ function SalonDetail(props) {
           <Row justify="center" gutter={0}>
             <Col xs={24} md={14} className={style["detail-salon-col-1"]}>
               <div>
-                {/* <div className="rating-overlay">
-                    <div className="rating-score">
-                      {averageRating !== "NaN" ? <>{averageRating}</> : <>0</>}
-                    </div>
-                    <div>Dựa trên {listFeedback.length} đánh giá</div>
-                  </div> */}
+                {/* <SmoothScrollHero imageSalon={salonDetail?.img} /> */}
                 <div className="relative w-full h-full">
                   {/* <TitleCard img={salonDetail.img} /> */}
                   <Carousel autoplay className="w-full h-full">
-                    {/* <img
-                      src={salonDetail.img}
-                      alt={salonDetail?.id}
-                      className={style["carousel-image"]}
-                    /> */}
-                    {/* <Image
-                      // className="w-full h-full object-cover max-w-screen-lg max-h-[600px] min-h-[300px] sm:min-h-[400px]"
-                      src={salonDetail.img}
-                      alt={salonDetail?.id}
-                      className={style["carousel-image"]}
-                      preview={true} // Tắt chế độ preview nếu không cần
-                    /> */}
                     <TitleCard img={salonDetail.img} />
                   </Carousel>
                 </div>
@@ -1366,14 +1350,6 @@ function SalonDetail(props) {
                   {salonDetail?.name}
                 </motion.h2>
                 <span
-                  // style={{
-                  //   fontSize: "1rem",
-                  //   fontWeight: "bold",
-                  //   textAlign: "start",
-                  //   display: "flex",
-                  //   justifyContent: "space-between",
-                  //   alignItems: "center",
-                  // }}
                   className={style["text-address"]}
                 >
                   <div>
@@ -1396,16 +1372,6 @@ function SalonDetail(props) {
                     Chỉ đường
                   </a>
                 </span>
-                {/* <Space>
-                  <Button
-                    type="text"
-                    icon={<ShareAltOutlined style={{ fontSize: "2rem" }} />}
-                  />
-                  <Button
-                    type="text"
-                    icon={<HeartOutlined style={{ fontSize: "2rem" }} />}
-                  />
-                </Space> */}
               </div>
 
               <div>
@@ -2376,15 +2342,14 @@ function SalonDetail(props) {
                 <Title level={2} className={style["info_title"]}>
                   Chi tiết cửa hàng
                 </Title>
-                <div className={style["text-address"]}>
+
+                {/* <div className={style["text-address"]}>
                   <div>
                     <Title level={5}>Địa chỉ</Title>
                     <Text style={{ fontWeight: "normal" }}>
                       {salonDetail.address}{" "}
                     </Text>
                   </div>
-
-                  {/* <br /> */}
                   <a
                     href={`https://www.google.com/maps/dir/?api=1&destination=${salonDetail.latitude},${salonDetail.longitude}`}
                     target="_blank"
@@ -2393,7 +2358,7 @@ function SalonDetail(props) {
                   >
                     Chỉ đường
                   </a>
-                </div>
+                </div> */}
                 <Divider />
                 <div>
                   <Title level={5}>Thông tin</Title>

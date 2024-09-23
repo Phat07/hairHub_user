@@ -13,6 +13,7 @@ import style from "../css/footer-mobile.module.css";
 function FooterMobileAuth() {
   const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
   const idOwner = useSelector((state) => state.ACCOUNT.idOwner);
+  const idEmployee = useSelector((state) => state.ACCOUNT.idEmployee);
   const navigate = useNavigate();
 
   const handleEmptySalon = () => {
@@ -41,6 +42,22 @@ function FooterMobileAuth() {
                 <Link to="/customer_appointment">
                   <CalendarOutlined />
                   <span>Cuộc hẹn</span>
+                </Link>
+              </li>
+            </>
+          )}
+          {idEmployee && (
+            <>
+              <li className={style.footerItem}>
+                <Link to="/SalonEmployee">
+                  <ShopOutlined />
+                  <span>Thông tin cửa hàng</span>
+                </Link>
+              </li>
+              <li className={style.footerItem}>
+                <Link to="/EmployeeStatistics">
+                  <AreaChartOutlined />
+                  <span>Thống kê cá nhân</span>
                 </Link>
               </li>
             </>

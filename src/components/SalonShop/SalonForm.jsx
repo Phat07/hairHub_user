@@ -1,5 +1,11 @@
 import { UploadOutlined } from "@ant-design/icons";
-import { LoadScript, StandaloneSearchBox } from "@react-google-maps/api";
+import {
+  GoogleMap,
+  LoadScript,
+  StandaloneSearchBox,
+  Marker,
+  Autocomplete,
+} from "@react-google-maps/api";
 import {
   Button,
   Card,
@@ -64,6 +70,34 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
   });
   const userName = useSelector((state) => state.ACCOUNT.userName);
   const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
+  const defaultCenter = {
+    lat: 10.762622,
+    lng: 106.660172,
+  };
+
+  // Tạo state để lưu vị trí được chọn
+  const [selectedPosition, setSelectedPosition] = useState(defaultCenter);
+  const handleMapClick = (event) => {
+    setSelectedPosition({
+      lat: event.latLng.lat(),
+      lng: event.latLng.lng(),
+    });
+  };
+  console.log("see", selectedPosition);
+  const [autocomplete, setAutocomplete] = useState(null);
+  const [placeDetails, setPlaceDetails] = useState(null);
+  console.log("see1", autocomplete);
+  const onPlaceChanged = () => {
+    if (autocomplete !== null) {
+      const place = autocomplete.getPlace();
+      if (place.geometry) {
+        setSelectedPosition({
+          lat: place.geometry.location.lat(),
+          lng: place.geometry.location.lng(),
+        });
+      }
+    }
+  };
   const ownerId = useSelector((state) => state.ACCOUNT.idOwner);
   const uid = useSelector((state) => state.ACCOUNT.uid);
   const salonDetail = useSelector(
@@ -280,7 +314,9 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
   //     // Check for types in the place
   //     const types = place.types || [];
   //     const hasValidType =
-  //       types.includes("hair_care") || types.includes("health") || types.includes("street_address");
+  //       types.includes("hair_care") ||
+  //       types.includes("health") ||
+  //       types.includes("street_address");
 
   //     if (hasValidType) {
   //       message.info("Địa điểm của bạn đã có trên map.");
@@ -693,6 +729,43 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
         }
         onLoad={() => setIsApiLoaded(true)}
       >
+        {/* <GoogleMap
+          mapContainerStyle={{ width: "100%", height: "400px" }}
+          center={selectedPosition}
+          zoom={15}
+          onClick={handleMapClick} // Bắt sự kiện click để chọn vị trí
+        >
+
+          <Autocomplete
+            onLoad={(autocompleteInstance) =>
+              setAutocomplete(autocompleteInstance)
+            }
+            onPlaceChanged={onPlaceChanged}
+          >
+            <input
+              type="text"
+              placeholder="Tìm kiếm địa điểm"
+              style={{
+                boxSizing: "border-box",
+                border: "1px solid transparent",
+                width: "240px",
+                height: "32px",
+                padding: "0 12px",
+                borderRadius: "3px",
+                boxShadow: "0 2px 6px rgba(0, 0, 0, 0.3)",
+                fontSize: "14px",
+                outline: "none",
+                textOverflow: "ellipses",
+                position: "absolute",
+                left: "50%",
+                top: "10px",
+                marginLeft: "-120px",
+              }}
+            />
+          </Autocomplete>
+
+          <Marker position={selectedPosition} />
+        </GoogleMap> */}
         {form && (
           <Card
             style={{ backgroundColor: "#ece8de" }}
