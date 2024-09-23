@@ -41,6 +41,7 @@ function Header(props) {
   const handleSignOut = () => {
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("role");
     message.success("Đăng xuất thành công");
     navigate("/");
   };

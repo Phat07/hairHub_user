@@ -14,8 +14,6 @@ const initialState = {
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case LOGIN_ACCOUNT:
-      console.log("dc", action.payload);
-
       localStorage.setItem("refreshToken", action.payload.refreshToken);
       localStorage.setItem("accessToken", action.payload.accessToken);
       localStorage.setItem("role", action.payload.roleName);
@@ -35,6 +33,7 @@ const reducer = (state = initialState, action) => {
       };
 
     case FETCH_USER:
+      localStorage.setItem("role", action.payload.roleName);
       return {
         ...state,
         // token: action.payload.accessToken,

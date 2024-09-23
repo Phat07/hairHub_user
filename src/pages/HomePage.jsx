@@ -38,6 +38,7 @@ import { actGetStatusPayment } from "../store/salonPayment/action";
 import ImageCarouselComponent from "@/components/Artcards/ImageCarouselComponent";
 import ReactCarouselComponent from "@/components/react-carousel/ReactCarouselComponent";
 import CarrousselComponent from "@/components/Artcards/CarrousselComponent";
+import { SmoothScrollHero } from "@/components/SmoothScrollHero";
 
 const { Title, Text } = Typography;
 function HomePage(props) {
@@ -423,6 +424,7 @@ function HomePage(props) {
               </div>
             </div>
           </Flex>
+          {/* <SmoothScrollHero/> */}
           <div className="container">
             <div className="customTitle mt-8" style={{ color: "#bf9456" }}>
               Dịch vụ nổi bật

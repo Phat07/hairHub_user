@@ -1,5 +1,11 @@
 import { UploadOutlined } from "@ant-design/icons";
-import { LoadScript, StandaloneSearchBox } from "@react-google-maps/api";
+import {
+  GoogleMap,
+  LoadScript,
+  StandaloneSearchBox,
+  Marker,
+  Autocomplete,
+} from "@react-google-maps/api";
 import {
   Button,
   Card,
@@ -64,6 +70,34 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
   });
   const userName = useSelector((state) => state.ACCOUNT.userName);
   const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
+  const defaultCenter = {
+    lat: 10.762622,
+    lng: 106.660172,
+  };
+
+  // Tạo state để lưu vị trí được chọn
+  const [selectedPosition, setSelectedPosition] = useState(defaultCenter);
+  const handleMapClick = (event) => {
+    setSelectedPosition({
+      lat: event.latLng.lat(),
+      lng: event.latLng.lng(),
+    });
+  };
+  console.log("see", selectedPosition);
+  const [autocomplete, setAutocomplete] = useState(null);
+  const [placeDetails, setPlaceDetails] = useState(null);
+  console.log("see1", autocomplete);
+  const onPlaceChanged = () => {
+    if (autocomplete !== null) {
+      const place = autocomplete.getPlace();
+      if (place.geometry) {
+        setSelectedPosition({
+          lat: place.geometry.location.lat(),
+          lng: place.geometry.location.lng(),
+        });
+      }
+    }
+  };
   const ownerId = useSelector((state) => state.ACCOUNT.idOwner);
   const uid = useSelector((state) => state.ACCOUNT.uid);
   const salonDetail = useSelector(
@@ -227,117 +261,119 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
     setDayOff({});
   };
 
-  // const handlePlacesChanged = async () => {
-  //   const places = searchBoxRef.current.getPlaces();
-  //   console.log("places", places);
-
-  //   if (places.length > 0) {
-  //     const place = places[0];
-  //     if (place && place.formatted_address) {
-  //       form.setFieldsValue({ location: place.formatted_address });
-  //       try {
-  //         const response = await axios.get(
-  //           "https://maps.googleapis.com/maps/api/geocode/json",
-  //           {
-  //             params: {
-  //               address: place.formatted_address,
-  //               key: import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY, // Replace with your API key
-  //             },
-  //           }
-  //         );
-
-  //         const { results } = response.data;
-  //         if (results && results.length > 0) {
-  //           const { location } = results[0].geometry;
-  //           console.log("re", results);
-  //           console.log("lo", location);
-
-  //           setCoordinates({
-  //             Longitude: location.lng,
-  //             Latitude: location.lat,
-  //           });
-  //         } else {
-  //           message.error("No coordinates found for the given address.");
-  //         }
-  //       } catch (error) {
-  //         console.error("Error fetching coordinates:", error);
-  //         message.error("Failed to fetch coordinates.");
-  //       }
-  //     } else {
-  //       console.error("Invalid place or formatted address");
-  //     }
-  //   } else {
-  //     console.error("No places found");
-  //   }
-  // };
   const handlePlacesChanged = async () => {
     const places = searchBoxRef.current.getPlaces();
     console.log("places", places);
 
     if (places.length > 0) {
       const place = places[0];
+      if (place && place.formatted_address) {
+        form.setFieldsValue({ location: place.formatted_address });
+        try {
+          const response = await axios.get(
+            "https://maps.googleapis.com/maps/api/geocode/json",
+            {
+              params: {
+                address: place.formatted_address,
+                key: import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY, // Replace with your API key
+              },
+            }
+          );
 
-      // Check for types in the place
-      const types = place.types || [];
-      const hasValidType =
-        types.includes("hair_care") || types.includes("health") || types.includes("street_address");
+          const { results } = response.data;
+          if (results && results.length > 0) {
+            const { location } = results[0].geometry;
+            console.log("re", results);
+            console.log("lo", location);
 
-      if (hasValidType) {
-        message.info("Địa điểm của bạn đã có trên map.");
-      } else {
-        message.warning("Tiệm của bạn chưa có trên map.");
-      }
-
-      // Construct location from name and formatted_address
-      let location = place.formatted_address; // Default to formatted_address
-      if (place.name) {
-        location = `${place.name}, ${location}`; // Prepend name if it exists
-      }
-
-      // Set the combined location
-      form.setFieldsValue({ location });
-
-      console.log("Combined Location:", location);
-
-      try {
-        // API call logic remains the same
-        const response = await axios.get(
-          "https://maps.googleapis.com/maps/api/geocode/json",
-          {
-            params: {
-              address: encodeURIComponent(location),
-              key: import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY,
-            },
+            setCoordinates({
+              Longitude: location.lng,
+              Latitude: location.lat,
+            });
+          } else {
+            message.error("No coordinates found for the given address.");
           }
-        );
-
-        const { results } = response.data;
-        console.log("re", results);
-
-        if (results && results.length > 0) {
-          const { location: coords } = results[0].geometry;
-          console.log("lo", coords);
-
-          setCoordinates({
-            Longitude: coords.lng,
-            Latitude: coords.lat,
-          });
-
-          console.log("Tọa độ:", {
-            Longitude: coords.lng,
-            Latitude: coords.lat,
-          });
-        } else {
-          message.error("No coordinates found for the given address.");
+        } catch (error) {
+          console.error("Error fetching coordinates:", error);
+          message.error("Failed to fetch coordinates.");
         }
-      } catch (error) {
-        console.error("Error fetching coordinates:", error);
-        message.error("Failed to fetch coordinates.");
+      } else {
+        console.error("Invalid place or formatted address");
       }
     } else {
       console.error("No places found");
     }
   };
+  // const handlePlacesChanged = async () => {
+  //   const places = searchBoxRef.current.getPlaces();
+  //   console.log("places", places);
+
+  //   if (places.length > 0) {
+  //     const place = places[0];
+
+  //     // Check for types in the place
+  //     const types = place.types || [];
+  //     const hasValidType =
+  //       types.includes("hair_care") ||
+  //       types.includes("health") ||
+  //       types.includes("street_address");
+
+  //     if (hasValidType) {
+  //       message.info("Địa điểm của bạn đã có trên map.");
+  //     } else {
+  //       message.warning("Tiệm của bạn chưa có trên map.");
+  //     }
+
+  //     // Construct location from name and formatted_address
+  //     let location = place.formatted_address; // Default to formatted_address
+  //     if (place.name) {
+  //       location = `${place.name}, ${location}`; // Prepend name if it exists
+  //     }
+
+  //     // Set the combined location
+  //     form.setFieldsValue({ location });
+
+  //     console.log("Combined Location:", location);
+
+  //     try {
+  //       // API call logic remains the same
+  //       const response = await axios.get(
+  //         "https://maps.googleapis.com/maps/api/geocode/json",
+  //         {
+  //           params: {
+  //             address: encodeURIComponent(location),
+  //             key: import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY,
+  //           },
+  //         }
+  //       );
+
+  //       const { results } = response.data;
+  //       console.log("re", results);
+
+  //       if (results && results.length > 0) {
+  //         const { location: coords } = results[0].geometry;
+  //         console.log("lo", coords);
+
+  //         setCoordinates({
+  //           Longitude: coords.lng,
+  //           Latitude: coords.lat,
+  //         });
+
+  //         console.log("Tọa độ:", {
+  //           Longitude: coords.lng,
+  //           Latitude: coords.lat,
+  //         });
+  //       } else {
+  //         message.error("No coordinates found for the given address.");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching coordinates:", error);
+  //       message.error("Failed to fetch coordinates.");
+  //     }
+  //   } else {
+  //     console.error("No places found");
+  //   }
+  // };
 
   const handleFieldChange = (dayValue) => {
     setActiveButtons({ ...activeButtons, [dayValue]: true });
@@ -693,6 +729,43 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
         }
         onLoad={() => setIsApiLoaded(true)}
       >
+        {/* <GoogleMap
+          mapContainerStyle={{ width: "100%", height: "400px" }}
+          center={selectedPosition}
+          zoom={15}
+          onClick={handleMapClick} // Bắt sự kiện click để chọn vị trí
+        >
+
+          <Autocomplete
+            onLoad={(autocompleteInstance) =>
+              setAutocomplete(autocompleteInstance)
+            }
+            onPlaceChanged={onPlaceChanged}
+          >
+            <input
+              type="text"
+              placeholder="Tìm kiếm địa điểm"
+              style={{
+                boxSizing: "border-box",
+                border: "1px solid transparent",
+                width: "240px",
+                height: "32px",
+                padding: "0 12px",
+                borderRadius: "3px",
+                boxShadow: "0 2px 6px rgba(0, 0, 0, 0.3)",
+                fontSize: "14px",
+                outline: "none",
+                textOverflow: "ellipses",
+                position: "absolute",
+                left: "50%",
+                top: "10px",
+                marginLeft: "-120px",
+              }}
+            />
+          </Autocomplete>
+
+          <Marker position={selectedPosition} />
+        </GoogleMap> */}
         {form && (
           <Card
             style={{ backgroundColor: "#ece8de" }}
