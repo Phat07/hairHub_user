@@ -25,7 +25,8 @@ const reducer = (state = initialState, action) => {
         token: action.payload.accessToken,
         username:
           action.payload?.salonOwnerResponse?.fullName ||
-          action.payload?.customerResponse?.fullName,
+          action.payload?.customerResponse?.fullName ||
+          action.payload?.salonEmployeeResponse?.fullName,
         uid: action.payload.accountId,
         idOwner: action.payload?.salonOwnerResponse?.id,
         idCustomer: action.payload?.customerResponse?.id,
@@ -39,10 +40,12 @@ const reducer = (state = initialState, action) => {
         // token: action.payload.accessToken,
         username:
           action.payload?.salonOwnerResponse?.fullName ||
-          action.payload?.customerResponse?.fullName,
+          action.payload?.customerResponse?.fullName ||
+          action.payload?.salonEmployeeResponse?.fullName,
         avatar:
           action.payload?.salonOwnerResponse?.img ||
-          action.payload?.customerResponse?.img,
+          action.payload?.customerResponse?.img ||
+          action.payload?.salonEmployeeResponse?.img,
         uid: action.payload.accountId,
         idOwner: action.payload?.salonOwnerResponse?.id,
         idCustomer: action.payload?.customerResponse?.id,

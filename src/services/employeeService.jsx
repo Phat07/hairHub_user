@@ -31,11 +31,14 @@ export const employeeService = {
   GetScheduleByEmployeeId(id) {
     return API.get(`/schedules/GetScheduleByEmployeeId/${id}`);
   },
-  GetServiceHairByEmployeeId(id, page, size) {
+  GetServiceHairByEmployeeId(id, page, size, search, filter, orderby) {
     return API.get(`/servicehairs/GetServiceHairByEmployeeId/${id}`, {
       params: {
         page,
         size,
+        search,
+        filter,
+        orderby,
       },
     });
   },

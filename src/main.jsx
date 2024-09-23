@@ -212,7 +212,10 @@ const router = createBrowserRouter([
       {
         path: "Account/:id",
         element: (
-          <RequireAuth requiredRoles={['SalonOwner', 'Customer']} fallbackPath="/login">
+          <RequireAuth
+            requiredRoles={["SalonOwner", "Customer", "SalonEmployee"]}
+            fallbackPath="/login"
+          >
             <SalonOwnerAccountPage />
           </RequireAuth>
         ),
@@ -276,7 +279,7 @@ const router = createBrowserRouter([
       {
         path: "EmployeeStatistics",
         element: (
-          <RequireAuth fallbackPath="/login">
+          <RequireAuth requiredRoles={["SalonEmployee"]} fallbackPath="/login">
             <EmployeeStatistics />
           </RequireAuth>
         ),
@@ -284,7 +287,7 @@ const router = createBrowserRouter([
       {
         path: "SalonEmployee",
         element: (
-          <RequireAuth fallbackPath="/login">
+          <RequireAuth requiredRoles={["SalonEmployee"]} fallbackPath="/login">
             <SalonEmployee />
           </RequireAuth>
         ),

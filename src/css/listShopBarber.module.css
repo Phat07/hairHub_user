@@ -76,9 +76,11 @@ margin-inline: 2rem;
 }
 
 .custom-header {
-  color: rgb(0, 0, 0);
+  color: #bf9456;
   text-align: start;
   font-weight: bold;
+  font-size: 1.3rem;
+
 }
 
 @media (max-width: 768px) {
@@ -137,6 +139,7 @@ margin-inline: 2rem;
   }
   .table-fillter-item {
     margin-bottom: 5px;
+    width: 100%;
   }
   .table-container {
     padding: 10px; /* Optional: Add padding for better UX on small screens */

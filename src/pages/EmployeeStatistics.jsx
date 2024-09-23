@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Line, Pie } from "react-chartjs-2";
-import { DatePicker, Row, Col, Button } from "antd";
+import { DatePicker, Row, Col, Button, message } from "antd";
 import "antd/dist/reset.css";
 import styles from "../css/EmployeeStatistics.module.css"; // Import CSS tùy chỉnh
 import "../css/datePickerCustome.css";
@@ -20,7 +20,8 @@ import {
   actGetRevenueandNumberofAppointment,
   actGetRateAppointmentByStatus,
 } from "../store/employee/action";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import dayjs from "dayjs";
 
 // Đăng ký chart.js
 ChartJS.register(
@@ -37,7 +38,18 @@ ChartJS.register(
 const { RangePicker } = DatePicker;
 
 const EmployeeStatistics = () => {
-  const [dates, setDates] = useState([]);
+  const dispatch = useDispatch();
+  const [tempDates, setTempDates] = useState([
+    dayjs().subtract(7, "day"), // Ngày bắt đầu
+    dayjs(), // Ngày kết thúc
+  ]);
+  const [selectedStartDates, setSelectedStartDates] = useState(
+    dayjs().subtract(7, "day").format("YYYY-MM-DD")
+  ); // 7 ngày trước
+  const [selectedEndDates, setSelectedEndDates] = useState(
+    dayjs().format("YYYY-MM-DD")
+  ); // Hôm nay
+  const idEmployee = useSelector((state) => state.ACCOUNT.idEmployee);
   const numberAppointment = useSelector(
     (state) => state.EMPLOYEE.getNumberAppointmentByStatus
   );
@@ -47,6 +59,32 @@ const EmployeeStatistics = () => {
   const revenueandNumber = useSelector(
     (state) => state.EMPLOYEE.getRevenueandNumberofAppointment
   );
+
+  useEffect(() => {
+    if ((idEmployee, selectedStartDates, selectedEndDates)) {
+      dispatch(
+        actGetNumberAppointmentByStatus(
+          idEmployee,
+          selectedStartDates,
+          selectedEndDates
+        )
+      );
+      dispatch(
+        actGetRevenueandNumberofAppointment(
+          idEmployee,
+          selectedStartDates,
+          selectedEndDates
+        )
+      );
+      dispatch(
+        actGetRateAppointmentByStatus(
+          idEmployee,
+          selectedStartDates,
+          selectedEndDates
+        )
+      );
+    }
+  }, [idEmployee, selectedStartDates, selectedEndDates]);
   // Dữ liệu giả lập cho các chart
   const moneyData = {
     labels: [
@@ -104,27 +142,41 @@ const EmployeeStatistics = () => {
           maxTicksLimit: 7, // Giới hạn số nhãn tối đa
         },
       },
+      y: {
+        min: 0, // Đặt giá trị tối thiểu cho trục Y
+      },
     },
   };
 
+  // Chuyển đổi dữ liệu thành định dạng phù hợp cho biểu đồ Line
+  const appointmentLabels = numberAppointment.map((item) =>
+    dayjs(item.date).format("DD/MM")
+  ); // Chuyển đổi ngày thành định dạng "DD/MM"
+
+  const successedData = numberAppointment.map((item) => item.successed);
+  const failedData = numberAppointment.map((item) => item.failed);
+  const cancelByCustomerData = numberAppointment.map(
+    (item) => item.cancelByCustomer
+  );
+
   const appointmentData = {
-    labels: ["01/09", "02/09", "03/09", "04/09"], // Các ngày
+    labels: appointmentLabels, // Gán nhãn cho biểu đồ
     datasets: [
       {
         label: "Lịch hẹn thành công",
-        data: [10, 20, 15, 30],
+        data: successedData, // Dữ liệu lịch hẹn thành công
         borderColor: "rgba(54, 162, 235, 1)",
         fill: false,
       },
       {
         label: "Lịch hẹn thất bại",
-        data: [5, 10, 7, 12],
+        data: failedData, // Dữ liệu lịch hẹn thất bại
         borderColor: "rgba(255, 99, 132, 1)",
         fill: false,
       },
       {
         label: "Lịch hẹn hủy bởi khách hàng",
-        data: [2, 3, 5, 4],
+        data: cancelByCustomerData, // Dữ liệu lịch hẹn hủy bởi khách hàng
         borderColor: "rgba(255, 205, 86, 1)",
         fill: false,
       },
@@ -132,22 +184,46 @@ const EmployeeStatistics = () => {
   };
 
   const appointmentPieData = {
-    labels: ["Thành công", "Thất bại", "Hủy bởi khách hàng"],
+    labels: ["Thành công", "Thất bại", "Hủy bởi khách hàng"], // Nhãn cho các phần trong Pie
     datasets: [
       {
-        data: [70, 20, 10], // Tỉ lệ lịch hẹn
-        backgroundColor: ["#36A2EB", "#FF6384", "#FFCD56"],
-        hoverBackgroundColor: ["#36A2EB", "#FF6384", "#FFCD56"],
+        data: [
+          rateAppointment.successedRate,
+          rateAppointment.failedRate,
+          rateAppointment.cancelByCustomerRate,
+        ], // Dữ liệu tỉ lệ
+        backgroundColor: ["#36A2EB", "#FF6384", "#FFCD56"], // Màu sắc các phần
+        hoverBackgroundColor: ["#36A2EB", "#FF6384", "#FFCD56"], // Màu khi hover
       },
     ],
   };
 
-  // Hàm xử lý thay đổi khoảng ngày
   const handleDateChange = (dates) => {
-    setDates(dates);
-    console.log("Khoảng ngày:", dates);
-    // Fetch dữ liệu mới từ API dựa vào khoảng thời gian được chọn
+    setTempDates(dates); // Lưu ngày tạm thời
   };
+
+  const handleFilter = () => {
+    if (tempDates && tempDates.length === 2) {
+      const [startDate, endDate] = tempDates; // Lấy ngày bắt đầu và kết thúc
+
+      // Kiểm tra khoảng cách giữa ngày bắt đầu và ngày kết thúc
+      const diffDays = endDate.diff(startDate, "day"); // Tính số ngày chênh lệch
+      if (diffDays > 30) {
+        message.error("Khoảng thời gian tối đa là 30 ngày.");
+        return; // Dừng hàm nếu khoảng cách vượt quá 30 ngày
+      }
+
+      setSelectedStartDates(startDate.format("YYYY-MM-DD")); // Lưu ngày bắt đầu
+      setSelectedEndDates(endDate.format("YYYY-MM-DD")); // Lưu ngày kết thúc
+    } else {
+      message.error("Vui lòng chọn khoảng thời gian.");
+    }
+  };
+
+  const isEmptyData =
+    rateAppointment.successedRate === 0 &&
+    rateAppointment.failedRate === 0 &&
+    rateAppointment.cancelByCustomerRate === 0;
 
   return (
     <div className={styles.dashboardContainer}>
@@ -158,8 +234,12 @@ const EmployeeStatistics = () => {
         className="datePickerCustome"
         // className={styles["date-picker-custome"]}
       >
-        <RangePicker onChange={handleDateChange} />
-        <Button type="primary" onClick={() => handleDateChange(dates)}>
+        <RangePicker
+          onChange={handleDateChange}
+          defaultValue={tempDates}
+          dropdownClassName="custom-dropdown-range-picker"
+        />
+        <Button type="primary" onClick={handleFilter}>
           Lọc
         </Button>
       </div>
@@ -172,19 +252,26 @@ const EmployeeStatistics = () => {
       <Row gutter={16} className={styles.responsiveCharts}>
         <Col xs={24} lg={17}>
           <div className={styles.chartContainer}>
-            <h2>Số tiền nhận được thông qua hệ thống</h2>
+            <h2>
+              Số tiền nhận được thông qua hệ thống từ {selectedStartDates} đến{" "}
+              {selectedEndDates}
+            </h2>
             <Line data={moneyData} options={options} />;
           </div>
         </Col>
 
         <Col xs={24} lg={7}>
           <div className={styles.chartContainer}>
-            <h2>Số tiền kiếm được từ ngày đến ngày</h2>
+            <h2>
+              Số tiền kiếm được từ {selectedStartDates} đến {selectedEndDates}
+            </h2>
             <div>
               <span style={{ fontSize: "1.5rem", color: "#bf9456" }}>
-                200,000
+                {revenueandNumber.totalRevenue} Vnd
               </span>{" "}
-              <span style={{ fontSize: "1rem", color: "black" }}>/15 đơn</span>
+              <span style={{ fontSize: "1rem", color: "black" }}>
+                / {revenueandNumber.totalAppointmentSuccessed} đơn
+              </span>
             </div>
           </div>
         </Col>
@@ -193,15 +280,23 @@ const EmployeeStatistics = () => {
       <Row gutter={16} className={styles.responsiveCharts}>
         <Col xs={24} lg={17}>
           <div className={styles.chartContainer}>
-            <h2>Số lượng lịch hẹn</h2>
-            <Line data={appointmentData} />
+            <h2>
+              Số lượng lịch hẹn từ {selectedStartDates} đến {selectedEndDates}
+            </h2>
+            <Line data={appointmentData} options={options} />
           </div>
         </Col>
 
         <Col xs={24} lg={7}>
           <div className={styles.chartContainer}>
-            <h2>Tỉ lệ lịch hẹn</h2>
-            <Pie data={appointmentPieData} />
+            <h2>
+              Tỉ lệ lịch hẹn từ {selectedStartDates} đến {selectedEndDates}
+            </h2>
+            {isEmptyData ? (
+              <p>Không có dữ liệu để hiển thị.</p> // Hiển thị text nếu không có dữ liệu
+            ) : (
+              <Pie data={appointmentPieData} /> // Hiển thị Pie chart nếu có dữ liệu
+            )}
           </div>
         </Col>
       </Row>
