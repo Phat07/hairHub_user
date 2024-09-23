@@ -17,6 +17,14 @@ export const employeeService = {
       },
     });
   },
+  RevenueofAppointmentDaybyDay(id, startdate, enddate) {
+    return API.get(`/appointments/RevenueofAppointmentDaybyDay/${id}`, {
+      params: {
+        startdate,
+        enddate,
+      },
+    });
+  },
   RevenueandNumberofAppointment(id, startdate, enddate) {
     return API.get(`/appointments/RevenueandNumberofAppointment/${id}`, {
       params: {
