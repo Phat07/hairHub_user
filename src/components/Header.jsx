@@ -146,6 +146,11 @@ function Header(props) {
                   </Link>
                 </li>
                 <li className={style.navItem}>
+                  <Link to={"/employee_appointment"} className={style.navLink}>
+                    Cuộc hẹn
+                  </Link>
+                </li>
+                <li className={style.navItem}>
                   <Link to={"/EmployeeStatistics"} className={style.navLink}>
                     Thống kê cá nhân
                   </Link>
@@ -155,6 +160,14 @@ function Header(props) {
                     <li className={style.navItemRepo}>
                       <Link to={"/SalonEmployee"} className={style.navLink}>
                         Thông tin cửa hàng
+                      </Link>
+                    </li>
+                    <li className={style.navItemRepo}>
+                      <Link
+                        to={"/employee_appointment"}
+                        className={style.navLink}
+                      >
+                        Cuộc hẹn
                       </Link>
                     </li>
                     <li className={style.navItemRepo}>

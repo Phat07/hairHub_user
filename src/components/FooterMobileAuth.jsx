@@ -55,6 +55,12 @@ function FooterMobileAuth() {
                 </Link>
               </li>
               <li className={style.footerItem}>
+                <Link to="/employee_appointment">
+                  <CalendarOutlined />
+                  <span>Cuộc hẹn</span>
+                </Link>
+              </li>
+              <li className={style.footerItem}>
                 <Link to="/EmployeeStatistics">
                   <AreaChartOutlined />
                   <span>Thống kê cá nhân</span>

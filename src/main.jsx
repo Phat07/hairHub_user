@@ -39,6 +39,7 @@ import PackageSuccessPage from "./pages/PackageSuccessPage.jsx";
 import PaymentCommissionPage from "./pages/PaymentCommissionPage.jsx";
 import SalonAppointment from "./pages/SalonAppointment.jsx";
 import SalonAppointmentVer2 from "./pages/SalonAppointmentVer2.jsx";
+import EmployeeAppointment from "./pages/EmployeeAppointment.jsx";
 import SalonDetail from "./pages/SalonDetail.jsx";
 import SalonFeedback from "./pages/SalonFeedback.jsx";
 import SalonOwnerAccountPage from "./pages/SalonOwnerAccountPage.jsx";
@@ -158,6 +159,14 @@ const router = createBrowserRouter([
         element: (
           <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
             <SalonAppointmentVer2 />
+          </RequireAuth>
+        ),
+      },
+      {
+        path: "employee_appointment",
+        element: (
+          <RequireAuth requiredRoles={["SalonEmployee"]} fallbackPath="/login">
+            <EmployeeAppointment />
           </RequireAuth>
         ),
       },
