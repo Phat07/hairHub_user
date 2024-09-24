@@ -19,7 +19,7 @@
 
 .register-child-img {
   width: 100%;
-  height: auto; 
+  min-height: 20rem; 
   object-fit: cover; 
 }
 
