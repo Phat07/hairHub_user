@@ -55,6 +55,10 @@
   transition: color 0.3s;
 }
 
+.navLink.active {
+  color: #bf9456; /* Màu chữ khi liên kết được active */
+}
+
 .navLink:hover,
 .navLink:focus {
   color: #bf9456;

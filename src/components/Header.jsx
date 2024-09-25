@@ -4,7 +4,13 @@ import { DownOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons";
 import { Avatar, Button, Dropdown, Menu, message } from "antd";
 import { IoMenu } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, Outlet, useNavigate, useParams } from "react-router-dom";
+import {
+  Link,
+  Outlet,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import hairHubLogo from "../assets/images/hairhubFinalLogo.png";
 import style from "../css/header.module.css";
 import { actGetSalonInformationByOwnerIdByCheck } from "../store/salonInformation/action";
@@ -12,6 +18,7 @@ import { actGetSalonInformationByOwnerIdByCheck } from "../store/salonInformatio
 function Header(props) {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation(); // Lấy đường dẫn hiện tại
   const dispatch = useDispatch();
   const userName = useSelector((state) => state.ACCOUNT.userName);
   const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
@@ -75,6 +82,8 @@ function Header(props) {
     setMenuActive(!menuActive);
   };
 
+  const isActive = (path) => location.pathname === path;
+
   return (
     <div>
       <header className={style.headerContainer}>
@@ -96,17 +105,32 @@ function Header(props) {
             <nav className={style.navbar}>
               <ul className={style.navList}>
                 <li className={style.navItem}>
-                  <Link to={"/"} className={style.navLink}>
+                  <Link
+                    to={"/"}
+                    className={`${style.navLink} ${
+                      isActive("/") ? style.active : ""
+                    }`}
+                  >
                     Trang chủ
                   </Link>
                 </li>
                 <li className={style.navItem}>
-                  <Link to={"/list_salon_ver2"} className={style.navLink}>
+                  <Link
+                    to={"/list_salon_ver2"}
+                    className={`${style.navLink} ${
+                      isActive("/list_salon_ver2") ? style.active : ""
+                    }`}
+                  >
                     Hệ thống cửa hàng
                   </Link>
                 </li>
                 <li className={style.navItem}>
-                  <Link to={"/customer_appointment"} className={style.navLink}>
+                  <Link
+                    to={"/customer_appointment"}
+                    className={`${style.navLink} ${
+                      isActive("/customer_appointment") ? style.active : ""
+                    }`}
+                  >
                     Cuộc hẹn
                   </Link>
                 </li>
@@ -140,12 +164,22 @@ function Header(props) {
             <nav className={style.navbar}>
               <ul className={style.navList}>
                 <li className={style.navItem}>
-                  <Link to={"/SalonEmployee"} className={style.navLink}>
+                  <Link
+                    to={"/SalonEmployee"}
+                    className={`${style.navLink} ${
+                      isActive("/SalonEmployee") ? style.active : ""
+                    }`}
+                  >
                     Thông tin cửa hàng
                   </Link>
                 </li>
                 <li className={style.navItem}>
-                  <Link to={"/EmployeeStatistics"} className={style.navLink}>
+                  <Link
+                    to={"/EmployeeStatistics"}
+                    className={`${style.navLink} ${
+                      isActive("/EmployeeStatistics") ? style.active : ""
+                    }`}
+                  >
                     Thống kê cá nhân
                   </Link>
                 </li>
@@ -175,22 +209,44 @@ function Header(props) {
             <nav className={style.navbar}>
               <ul className={style.navList}>
                 <li className={style.navItem}>
-                  <Link className={style.navLink} to={handleEmptySalon()}>
+                  <Link
+                    className={`${style.navLink} ${
+                      isActive("/create_shop") || isActive("/list_shop")
+                        ? style.active
+                        : ""
+                    }`}
+                    to={handleEmptySalon()}
+                  >
                     Quản lý Salon
                   </Link>
                 </li>
                 <li className={style.navItem}>
-                  <Link to={"/salon_appointment"} className={style.navLink}>
+                  <Link
+                    to={"/salon_appointment"}
+                    className={`${style.navLink} ${
+                      isActive("/salon_appointment") ? style.active : ""
+                    }`}
+                  >
                     Cuộc hẹn
                   </Link>
                 </li>
                 <li className={style.navItem}>
-                  <Link to="/salon_report" className={style.navLink}>
+                  <Link
+                    to="/salon_report"
+                    className={`${style.navLink} ${
+                      isActive("/salon_report") ? style.active : ""
+                    }`}
+                  >
                     Danh sách báo cáo
                   </Link>
                 </li>
                 <li className={style.navItem}>
-                  <Link to="/dashboardTransaction" className={style.navLink}>
+                  <Link
+                    to="/dashboardTransaction"
+                    className={`${style.navLink} ${
+                      isActive("/dashboardTransaction") ? style.active : ""
+                    }`}
+                  >
                     Thống kê doanh thu
                   </Link>
                 </li>

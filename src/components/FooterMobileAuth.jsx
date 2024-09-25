@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom"; // Import useLocation
 import {
   HomeOutlined,
   CalendarOutlined,
@@ -14,11 +14,14 @@ function FooterMobileAuth() {
   const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
   const idOwner = useSelector((state) => state.ACCOUNT.idOwner);
   const idEmployee = useSelector((state) => state.ACCOUNT.idEmployee);
-  const navigate = useNavigate();
+  const location = useLocation(); // Lấy đường dẫn hiện tại
 
   const handleEmptySalon = () => {
     return idOwner ? "/list_shop" : "/create_shop";
   };
+
+  // Hàm kiểm tra đường dẫn hiện tại có khớp với link hay không
+  const isActive = (path) => location.pathname === path;
 
   return (
     <footer className={style.footerMobile}>
@@ -26,21 +29,33 @@ function FooterMobileAuth() {
         <ul className={style.footerList}>
           {idCustomer && (
             <>
-              <li className={style.footerItem}>
+              <li
+                className={`${style.footerItem} ${
+                  isActive("/") ? style.active : ""
+                }`}
+              >
                 <Link to="/">
-                  <HomeOutlined />
+                  <HomeOutlined className={style.icon} />
                   <span>Trang chủ</span>
                 </Link>
               </li>
-              <li className={style.footerItem}>
+              <li
+                className={`${style.footerItem} ${
+                  isActive("/list_salon_ver2") ? style.active : ""
+                }`}
+              >
                 <Link to="/list_salon_ver2">
-                  <ShopOutlined />
+                  <ShopOutlined className={style.icon} />
                   <span>Hệ thống</span>
                 </Link>
               </li>
-              <li className={style.footerItem}>
+              <li
+                className={`${style.footerItem} ${
+                  isActive("/customer_appointment") ? style.active : ""
+                }`}
+              >
                 <Link to="/customer_appointment">
-                  <CalendarOutlined />
+                  <CalendarOutlined className={style.icon} />
                   <span>Cuộc hẹn</span>
                 </Link>
               </li>
@@ -48,15 +63,23 @@ function FooterMobileAuth() {
           )}
           {idEmployee && (
             <>
-              <li className={style.footerItem}>
+              <li
+                className={`${style.footerItem} ${
+                  isActive("/SalonEmployee") ? style.active : ""
+                }`}
+              >
                 <Link to="/SalonEmployee">
-                  <ShopOutlined />
+                  <ShopOutlined className={style.icon} />
                   <span>Thông tin cửa hàng</span>
                 </Link>
               </li>
-              <li className={style.footerItem}>
+              <li
+                className={`${style.footerItem} ${
+                  isActive("/EmployeeStatistics") ? style.active : ""
+                }`}
+              >
                 <Link to="/EmployeeStatistics">
-                  <AreaChartOutlined />
+                  <AreaChartOutlined className={style.icon} />
                   <span>Thống kê cá nhân</span>
                 </Link>
               </li>
@@ -64,27 +87,43 @@ function FooterMobileAuth() {
           )}
           {idOwner && (
             <>
-              <li className={style.footerItem}>
+              <li
+                className={`${style.footerItem} ${
+                  isActive(handleEmptySalon()) ? style.active : ""
+                }`}
+              >
                 <Link to={handleEmptySalon()}>
-                  <ShopOutlined />
+                  <ShopOutlined className={style.icon} />
                   <span>Quản lý Salon</span>
                 </Link>
               </li>
-              <li className={style.footerItem}>
+              <li
+                className={`${style.footerItem} ${
+                  isActive("/salon_appointment") ? style.active : ""
+                }`}
+              >
                 <Link to="/salon_appointment">
-                  <CalendarOutlined />
+                  <CalendarOutlined className={style.icon} />
                   <span>Cuộc hẹn</span>
                 </Link>
               </li>
-              <li className={style.footerItem}>
+              <li
+                className={`${style.footerItem} ${
+                  isActive("/salon_report") ? style.active : ""
+                }`}
+              >
                 <Link to="/salon_report">
-                  <WarningOutlined />
+                  <WarningOutlined className={style.icon} />
                   <span>Báo cáo</span>
                 </Link>
               </li>
-              <li className={style.footerItem}>
-                <Link to="/dashboardTransaction" className={style.navLink}>
-                  <AreaChartOutlined />
+              <li
+                className={`${style.footerItem} ${
+                  isActive("/dashboardTransaction") ? style.active : ""
+                }`}
+              >
+                <Link to="/dashboardTransaction">
+                  <AreaChartOutlined className={style.icon} />
                   <span>Thống kê doanh thu</span>
                 </Link>
               </li>
