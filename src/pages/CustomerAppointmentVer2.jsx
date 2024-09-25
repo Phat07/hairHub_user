@@ -347,15 +347,7 @@ function CustomerAppointmentVer2(props) {
             className={styles.appointmentDetailB2}
             style={{ marginTop: "1rem" }}
           >
-            {selectedAppointmentDetail?.status !== "CANCEL_BY_CUSTOMER" && (
-              <div style={{ padding: "10px", border: "1px solid #ccc" }}>
-                <Text strong>Mã QR xác nhận để thành công:</Text>
-                <Image
-                  src={selectedAppointmentDetail?.qrCodeImg}
-                  style={{ width: "100%", marginTop: "10px" }}
-                />
-              </div>
-            )}
+            {selectedAppointmentDetail?.status === "" && <div></div>}
           </div>
         </div>
 

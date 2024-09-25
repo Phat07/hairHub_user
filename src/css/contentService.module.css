@@ -3,7 +3,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 60vh;
+    height: 70vh;
     padding: 5px; 
     text-align: center;
 }
@@ -24,7 +24,7 @@
     .contentService {
         margin-top: 10px;
         flex-direction: row; /* Align items horizontally */
-        height: 60vh;
+        height: 70vh;
         padding: 15px;
     }
 }
@@ -34,7 +34,7 @@
     .contentService {
         margin-top: 10px;
         flex-direction: row; /* Align items horizontally */
-        height: 60vh;
+        height: 70vh;
         padding: 20px; /* Maintain padding */
     }
 }

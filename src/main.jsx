@@ -39,6 +39,7 @@ import PackageSuccessPage from "./pages/PackageSuccessPage.jsx";
 import PaymentCommissionPage from "./pages/PaymentCommissionPage.jsx";
 import SalonAppointment from "./pages/SalonAppointment.jsx";
 import SalonAppointmentVer2 from "./pages/SalonAppointmentVer2.jsx";
+import EmployeeAppointment from "./pages/EmployeeAppointment.jsx";
 import SalonDetail from "./pages/SalonDetail.jsx";
 import SalonFeedback from "./pages/SalonFeedback.jsx";
 import SalonOwnerAccountPage from "./pages/SalonOwnerAccountPage.jsx";
@@ -162,6 +163,14 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "employee_appointment",
+        element: (
+          <RequireAuth requiredRoles={["SalonEmployee"]} fallbackPath="/login">
+            <EmployeeAppointment />
+          </RequireAuth>
+        ),
+      },
+      {
         path: "list_favorite",
         element: (
           <RequireAuth fallbackPath="/login">
@@ -255,7 +264,7 @@ const router = createBrowserRouter([
       {
         path: "listPayment",
         element: (
-          <RequireAuth fallbackPath="/login">
+          <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
             <PackageSuccessPage />
           </RequireAuth>
         ),

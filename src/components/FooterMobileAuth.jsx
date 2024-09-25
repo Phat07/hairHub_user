@@ -73,6 +73,12 @@ function FooterMobileAuth() {
                   <span>Thông tin cửa hàng</span>
                 </Link>
               </li>
+              <li className={style.footerItem}>
+                <Link to="/employee_appointment">
+                  <CalendarOutlined />
+                  <span>Cuộc hẹn</span>
+                </Link>
+              </li>
               <li
                 className={`${style.footerItem} ${
                   isActive("/EmployeeStatistics") ? style.active : ""
