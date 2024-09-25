@@ -22,6 +22,8 @@ import {
   TimePicker,
   Typography,
   Upload,
+  Modal,
+  Select,
 } from "antd";
 import axios from "axios";
 import dayjs from "dayjs";
@@ -37,7 +39,7 @@ import {
 } from "../../store/salonInformation/action";
 import Loader from "../Loader";
 import { fullNamePattern } from "../Regex/Patterns";
-
+const { Option } = Select;
 const daysOfWeek = [
   { label: "Thứ hai", value: "monday" },
   { label: "Thứ ba", value: "tuesday" },
@@ -77,19 +79,103 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
 
   // Tạo state để lưu vị trí được chọn
   const [selectedPosition, setSelectedPosition] = useState(defaultCenter);
-  const handleMapClick = (event) => {
-    setSelectedPosition({
-      lat: event.latLng.lat(),
-      lng: event.latLng.lng(),
-    });
-  };
-  console.log("see", selectedPosition);
   const [autocomplete, setAutocomplete] = useState(null);
-  const [placeDetails, setPlaceDetails] = useState(null);
+  const [address, setAddress] = useState("");
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [filteredResults, setFilteredResults] = useState([]);
+  const [selectedAddress, setSelectedAddress] = useState(null);
   console.log("see1", autocomplete);
+  const geocodeLatLng = async (lat, lng) => {
+    try {
+      const geocoder = new window.google.maps.Geocoder();
+      const response = await geocoder.geocode({ location: { lat, lng } });
+      console.log("test", response);
+
+      if (response.results.length > 0) {
+        // Lọc kết quả dựa trên types
+        const filteredResults1 = response.results.filter((result) =>
+          result.types.some((type) => type === "hair_care" || type === "health")
+        );
+        const filteredResults = response.results;
+        console.log("te", filteredResults);
+        if (filteredResults1.length > 0) {
+          message.success("Chúc mừng tiệm của bạn đã có trên maps google");
+        } else {
+          message.info(
+            "Tiệm của bạn chưa có thông tin trên maps google. Chúng tôi sẽ giúp bạn"
+          );
+        }
+        if (filteredResults.length > 0) {
+          // message.success("Chúc mừng tiệm của bạn đã có trên maps google");
+          // Trả về kết quả đã lọc
+          return filteredResults;
+        } else {
+          // message.info(
+          //   "Tiệm của bạn chưa có thông tin trên maps google. Chúng tôi sẽ giúp bạn"
+          // );
+          console.error("Không tìm thấy thông tin địa chỉ với loại mong muốn.");
+          return [];
+        }
+      } else {
+        console.error("Không tìm thấy thông tin địa chỉ.");
+        return [];
+      }
+    } catch (error) {
+      console.error("Lỗi khi lấy thông tin địa chỉ:", error);
+      return [];
+    }
+  };
+
+  // const handleMapClick = (event) => {
+  //   setSelectedPosition({
+  //     lat: event.latLng.lat(),
+  //     lng: event.latLng.lng(),
+  //   });
+  // };
+  const handleMapClick = async (event) => {
+    // Bước 1: Lấy tọa độ từ sự kiện click
+    const lat = event.latLng.lat();
+    const lng = event.latLng.lng();
+
+    // Bước 2: Cập nhật vị trí đã chọn vào state
+    setSelectedPosition({ lat, lng });
+    console.log("lat", lat);
+    console.log("lng", lng);
+
+    // Bước 3: Gọi hàm geocode để lấy thông tin địa chỉ từ tọa độ
+    const geocodeResult = await geocodeLatLng(lat, lng);
+    if (geocodeResult) {
+      // Bước 4: Lưu địa chỉ vào state hoặc xử lý theo nhu cầu
+      setFilteredResults(geocodeResult); // Lưu kết quả lọc vào state
+      setIsModalVisible(true); // Hiển thị modal
+    }
+  };
+  console.log("ad", address);
+
+  console.log("see", selectedPosition);
+  const handleOk = () => {
+    // Xử lý logic khi chọn xong option
+    console.log("Selected Address:", selectedAddress);
+    // Đóng modal
+    form.setFieldsValue({ location: selectedAddress });
+    setIsModalVisible(false);
+  };
+
+  const handleCancelMap = () => {
+    // Đóng modal mà không cần xử lý thêm
+    setIsModalVisible(false);
+  };
+
+  const handleSelectChange = (value) => {
+    // Lưu địa chỉ đã chọn vào state
+    setSelectedAddress(value);
+    console.log("value", value);
+  };
   const onPlaceChanged = () => {
     if (autocomplete !== null) {
       const place = autocomplete.getPlace();
+      console.log("place", place);
+
       if (place.geometry) {
         setSelectedPosition({
           lat: place.geometry.location.lat(),
@@ -217,8 +303,9 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
     formData.append("Address", location);
     formData.append("Description", description);
     formData.append("Img", imageFile);
-    formData.append("Longitude", coordinates?.Longitude);
-    formData.append("Latitude", coordinates?.Latitude);
+    // setSelectedPosition({ lat, lng });
+    formData.append("Longitude", selectedPosition?.lng);
+    formData.append("Latitude", selectedPosition?.lat);
 
     convertedSchedules.forEach((schedule, index) => {
       formData.append(
@@ -283,9 +370,6 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
           const { results } = response.data;
           if (results && results.length > 0) {
             const { location } = results[0].geometry;
-            console.log("re", results);
-            console.log("lo", location);
-
             setCoordinates({
               Longitude: location.lng,
               Latitude: location.lat,
@@ -729,13 +813,12 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
         }
         onLoad={() => setIsApiLoaded(true)}
       >
-        {/* <GoogleMap
+        <GoogleMap
           mapContainerStyle={{ width: "100%", height: "400px" }}
           center={selectedPosition}
           zoom={15}
           onClick={handleMapClick} // Bắt sự kiện click để chọn vị trí
         >
-
           <Autocomplete
             onLoad={(autocompleteInstance) =>
               setAutocomplete(autocompleteInstance)
@@ -765,7 +848,25 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
           </Autocomplete>
 
           <Marker position={selectedPosition} />
-        </GoogleMap> */}
+        </GoogleMap>
+        <Modal
+          title="Chọn Địa Chỉ"
+          visible={isModalVisible}
+          onOk={handleOk}
+          onCancel={handleCancelMap}
+        >
+          <Select
+            style={{ width: "100%" }}
+            placeholder="Chọn địa chỉ"
+            onChange={handleSelectChange}
+          >
+            {filteredResults.map((result, index) => (
+              <Option key={index} value={result.formatted_address}>
+                {result.formatted_address}
+              </Option>
+            ))}
+          </Select>
+        </Modal>
         {form && (
           <Card
             style={{ backgroundColor: "#ece8de" }}
@@ -805,6 +906,18 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
                 </div>
               ))}
               <Form form={form} onFinish={onFinish} layout="vertical">
+                {/* <StandaloneSearchBox
+                  onLoad={(ref) => (searchBoxRef.current = ref)}
+                  onPlacesChanged={handlePlacesChanged}
+                > */}
+                <Form.Item
+                  name="location"
+                  label="Địa chỉ"
+                  rules={[{ required: true }]}
+                >
+                  <Input readOnly placeholder="Điền vị trí" />
+                </Form.Item>
+                {/* </StandaloneSearchBox> */}
                 <Form.Item
                   name="image"
                   label="Tải hình ảnh lên"
@@ -836,18 +949,7 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
                 >
                   <Input placeholder="Điền tên Salon" />
                 </Form.Item>
-                <StandaloneSearchBox
-                  onLoad={(ref) => (searchBoxRef.current = ref)}
-                  onPlacesChanged={handlePlacesChanged}
-                >
-                  <Form.Item
-                    name="location"
-                    label="Địa chỉ"
-                    rules={[{ required: true }]}
-                  >
-                    <Input placeholder="Điền vị trí" />
-                  </Form.Item>
-                </StandaloneSearchBox>
+
                 <Form.Item
                   name="description"
                   label="Mô tả"
