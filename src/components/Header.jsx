@@ -91,7 +91,7 @@ function Header(props) {
         <div className={style.header}>
           <div className={style.logoContainer}>
             <Link
-              to={idOwner ? "/list_shop" : idEmployee ? "/SalonEmployee" : "/"}
+              to={idOwner ? handleEmptySalon() : idEmployee ? "/SalonEmployee" : "/"}
             >
               <img
                 className={style.logo}
