@@ -4,6 +4,7 @@ import thunk from "redux-thunk";
 import salonInformationReducer from "../store/salonInformation/reducer";
 import salonEmployeesReducer from "../store/salonEmployees/reducer";
 import appointmentReducer from "./salonAppointments/reducer";
+import employeeAppointmentReducer from "./employeeAppointments/reducer";
 import salonVoucherReducer from "./manageVoucher/reducer";
 import customerAppoinmentReducer from "./customerAppointments/reducer";
 import reportReducer from "./report/reducer";
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
   SALONINFORMATION: salonInformationReducer,
   SALONEMPLOYEES: salonEmployeesReducer,
   SALONAPPOINTMENTS: appointmentReducer,
+  EMPLOYEEAPPOINTMENTS: employeeAppointmentReducer,
   SALONVOUCHERS: salonVoucherReducer,
   CUSTOMERAPPOINTMENTS: customerAppoinmentReducer,
   REPORTREDUCER: reportReducer,

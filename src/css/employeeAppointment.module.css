@@ -1,0 +1,143 @@
+.appointmentContainer {
+    max-width: 1200px;
+    margin: 100px auto;
+    margin-top: 10rem;
+    padding: 20px;
+    background-color: #f4f2eb;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .statusfilter {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  /* Ví dụ với CSS thông thường */
+  :global(.custom-status .btn-primary) {
+    background-color: #BF9456; /* Màu nền chính cho nút */
+    color: #fff; /* Màu chữ cho nút */
+  }
+  
+  .btn-default {
+    background-color: #f0f0f0; /* Màu nền mặc định cho nút */
+    color: #000; /* Màu chữ cho nút */
+  }
+  
+  
+  .filterDate {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .appointmentTable {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-collapse: collapse;
+    width: 100%;
+    border-radius: 10px;
+  }
+  
+  .detailBtn {
+    border-color: #bf9456;
+    color: #0c0c0c;
+    margin-right: 1rem;
+  }
+  
+  .select {
+    width: 7rem;
+    margin-bottom: 1rem;
+  }
+  
+  .appointmentDetail {
+    display: flex;
+  }
+  
+  .appointmentDetailA1,
+  .appointmentDetailA2 {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .appointmentDetailA1 {
+    flex: 1;
+  }
+  
+  .appointmentDetailA2 {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    margin-left: 1rem;
+  }
+  
+  .appointmentDetailB1,
+  .appointmentDetailB2 {
+    flex: 1;
+  }
+  
+  .appointmentDetailC1 {
+    flex: 1;
+  }
+  
+  .appointmentDetailC2 {
+    flex: 1;
+    display: flex;
+  }
+  
+  .appointmentDetailD1,
+  .appointmentDetailD2 {
+    flex: 1;
+  }
+  
+  @media (max-width: 768px) {
+    .appointmentDetail {
+      flex-direction: column;
+    }
+  
+    .appointmentDetailA1,
+    .appointmentDetailA2 {
+      width: 100%;
+      margin: 0;
+    }
+  
+    .appointmentDetailA1,
+    .appointmentDetailA2 {
+      flex: none;
+    }
+  
+    .appointmentDetailA1 {
+      margin-bottom: 1rem;
+    }
+  
+    .appointmentDetailA2 {
+      margin-top: 1rem;
+      margin-left: 0rem;
+    }
+  
+    .appointmentDetailB1,
+    .appointmentDetailB2,
+    .appointmentDetailC1,
+    .appointmentDetailC2,
+    .appointmentDetailD1,
+    .appointmentDetailD2 {
+      width: 100%;
+    }
+  
+    table {
+      width: 100%;
+      display: block;
+      overflow-x: auto;
+    }
+  
+    th,
+    td {
+      white-space: nowrap;
+    }
+  }
+  
+  :global(.my-custom-modal .ant-modal-content) {
+    background-color: #ece8de !important;
+  }
+  

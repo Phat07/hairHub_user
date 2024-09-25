@@ -18,6 +18,7 @@ import "../css/dashboardTransaction.css";
 import { actGetSalonInformationByOwnerIdAsync } from "../store/salonAppointments/action";
 import { actGetAppointmentTransaction } from "../store/salonTransaction/action";
 import moment from "moment";
+import { actGetAllPaymentList } from "@/store/config/action";
 const { RangePicker } = DatePicker;
 
 ChartJS.register(
@@ -55,6 +56,7 @@ function DashboardTransactionPage(props) {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage2, setCurrentPage2] = useState(1);
   const pageSize = 5;
 
   useEffect(() => {
@@ -72,6 +74,56 @@ function DashboardTransactionPage(props) {
       }
     }
   }, [salonInformationByOwnerId, startDate, endDate]);
+
+  const listPayment = useSelector(
+    (state) => state.CONFIGREDUCER.getAllPaymentList
+  );
+
+  useEffect(() => {
+    if (idOwner) {
+      dispatch(actGetAllPaymentList(idOwner, currentPage2, pageSize));
+    }
+  }, [idOwner, currentPage2]);
+
+  const columnsPayment = [
+    {
+      title: "STT",
+      dataIndex: "index",
+      key: "index",
+      render: (text, record, index) =>
+        index + 1 + (currentPage2 - 1) * pageSize,
+    },
+    {
+      title: "Ngày",
+      dataIndex: "paymentDate",
+      key: "paymentDate",
+      render: (text) => moment(text).format("DD/MM/YYYY"), // Định dạng ngày
+    },
+    {
+      title: "Tiền thanh toán (vnd)",
+      dataIndex: "totalAmount",
+      key: "totalAmount",
+      render: (text) => text?.toLocaleString() || 0,
+    },
+    {
+      title: "Mô tả",
+      dataIndex: "description",
+      key: "description",
+    },
+  ];
+
+  const totalItemsPayment = listPayment?.length || 0;
+  const dataSourcePayment = listPayment?.map((payment, index) => ({
+    key: payment.id,
+    index: (currentPage2 - 1) * pageSize + index + 1,
+    paymentDate: payment.paymentDate,
+    totalAmount: payment.totalAmount,
+    description: payment.description,
+  }));
+
+  const handleTableChangePayment = (pagination) => {
+    setCurrentPage2(pagination.current);
+  };
 
   const filteredTransactions = useMemo(() => {
     if (!salonTransaction || !salonTransaction.appointmentTransactions) {
@@ -135,18 +187,6 @@ function DashboardTransactionPage(props) {
       },
     ],
   };
-  console.log(
-    "successedAppointmentCount",
-    salonTransaction.successedAppointmentCount
-  );
-  console.log(
-    "failedAppointmentCount",
-    salonTransaction.failedAppointmentCount
-  );
-  console.log(
-    "canceledAppointmentCount",
-    salonTransaction.canceledAppointmentCount
-  );
 
   const handleTableChange = (pagination, filters, sorter) => {
     setCurrentPage(pagination.current);
@@ -298,6 +338,7 @@ function DashboardTransactionPage(props) {
           columns={columns}
           rowKey="key"
           pagination={{
+            className: "paginationAppointment",
             current: currentPage,
             pageSize: pageSize,
             total: totalItems,
@@ -305,6 +346,44 @@ function DashboardTransactionPage(props) {
           }}
           onChange={handleTableChange}
         />
+      </div>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginTop: "3rem",
+          marginBottom: "1rem",
+        }}
+      >
+        <div style={{ flex: 1 }}>
+          <p
+            style={{
+              fontSize: "2rem",
+              fontWeight: "bold",
+              color: "#333",
+              textAlign: "left",
+              margin: 0,
+            }}
+          >
+            Lịch sử thanh toán
+          </p>
+          <div>
+            <Table
+              dataSource={dataSourcePayment}
+              columns={columnsPayment}
+              rowKey="key"
+              pagination={{
+                className: "paginationAppointment",
+                current: currentPage2,
+                pageSize: pageSize,
+                total: totalItemsPayment,
+                position: ["bottomCenter"],
+              }}
+              onChange={handleTableChangePayment}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -21,6 +21,29 @@ export const AppointmentService = {
       },
     });
   },
+  GetAppointmentEmployeeByStatus(
+    employeeId,
+    page,
+    size,
+    status,
+    isAscending,
+    date,
+    customerName
+  ) {
+    return API.get(
+      `/appointments/GetAppointmentEmployeeByStatus/${employeeId}`,
+      {
+        params: {
+          page,
+          size,
+          status,
+          isAscending,
+          date,
+          customerName,
+        },
+      }
+    );
+  },
   GetAppointmentCustomerByStatus(
     customerId,
     page,

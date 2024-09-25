@@ -26,6 +26,18 @@
     text-align: center;
     flex: 1;
   }
+
+  .footerItem .icon {
+    color: #000; /* Màu mặc định của icon */
+  }
+  
+  .footerItem.active .icon {
+    color: #ece8de; /* Màu icon khi active */
+  }
+
+  .footerItem.active span {
+    color: #ece8de; /* Màu icon khi active */
+  }
   
   .footerItem a {
     display: block;
