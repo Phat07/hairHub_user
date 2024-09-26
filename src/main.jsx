@@ -356,17 +356,29 @@ const router = createBrowserRouter([
   },
 ]);
 
+// const customTheme = {
+//   token: {
+//     fontFamily: '"Lora", serif',
+//   },
+//   components: {
+//     Typography: {
+//       fontFamily: '"Lora", serif',
+//       fontSize: 16, // font size of Text
+//     },
+//   },
+// };
 const customTheme = {
   token: {
-    fontFamily: '"Lora", serif',
+    fontFamily: '"Dancing Script", cursive',
   },
   components: {
     Typography: {
-      fontFamily: '"Lora", serif',
-      fontSize: 16, // font size of Text
+      fontFamily: '"Dancing Script", cursive',
+      fontSize: 16, 
     },
   },
 };
+
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
