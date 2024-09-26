@@ -871,7 +871,7 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
                     </Popconfirm>
                   </Form.Item>
                 ) : (
-                  <h6 style={{ fontSize: "2rem" }}>Thời gian làm việc</h6>
+                  <h6 style={{ fontSize: "2rem", marginBottom:"2rem" }}>Thời gian làm việc</h6>
                 )}
 
                 {renderTimePickers()}
