@@ -848,19 +848,19 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
                 >
                   <Input.TextArea placeholder="Điền mô tả" />
                 </Form.Item>
-                <Form.Item>
-                  <Popconfirm
-                    title={
-                      id
-                        ? "Bạn có chắc muốn chỉnh sửa thông tin salon?"
-                        : "Bạn có chắc muốn tạo salon?"
-                    }
-                    onConfirm={handleChangeSalon} // This will be triggered when the user clicks "Yes"
-                    onCancel={handleCancelChangeSalon}
-                    okText="Có"
-                    cancelText="Hủy"
-                  >
-                    {id ? (
+                {id ? (
+                  <Form.Item>
+                    <Popconfirm
+                      title={
+                        id
+                          ? "Bạn có chắc muốn chỉnh sửa thông tin salon?"
+                          : "Bạn có chắc muốn tạo salon?"
+                      }
+                      onConfirm={handleChangeSalon} // This will be triggered when the user clicks "Yes"
+                      onCancel={handleCancelChangeSalon}
+                      okText="Có"
+                      cancelText="Hủy"
+                    >
                       <Button
                         style={{ width: "100%", backgroundColor: "#bf9456" }}
                         type="primary"
@@ -868,11 +868,11 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
                       >
                         Chỉnh sửa thông tin salon
                       </Button>
-                    ) : (
-                      <h6 style={{ fontSize: "2rem" }}>Thời gian làm việc</h6>
-                    )}
-                  </Popconfirm>
-                </Form.Item>
+                    </Popconfirm>
+                  </Form.Item>
+                ) : (
+                  <h6 style={{ fontSize: "2rem" }}>Thời gian làm việc</h6>
+                )}
 
                 {renderTimePickers()}
                 {!id ? (
