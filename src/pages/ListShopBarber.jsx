@@ -508,151 +508,6 @@ function ListShopBarber(props) {
     );
   };
 
-  // const columnsEmployee = [
-  //   {
-  //     title: "Hình ảnh",
-  //     dataIndex: "img",
-  //     key: "img",
-  //     align: "center",
-  //     render: (text) => <Avatar shape="square" size={"large"} src={text} />,
-  //   },
-  //   {
-  //     title: "Họ và tên",
-  //     dataIndex: "fullName",
-  //     key: "fullName",
-  //     align: "center",
-  //   },
-  //   {
-  //     title: "Giới tính",
-  //     dataIndex: "gender",
-  //     key: "gender",
-  //     align: "center",
-  //   },
-  //   // {
-  //   //   title: "Số điện thoại",
-  //   //   dataIndex: "phone",
-  //   //   key: "phone",
-  //   //   align: "center",
-  //   // },
-  //   {
-  //     title: "Trạng thái",
-  //     dataIndex: "isActive",
-  //     key: "isActive",
-  //     align: "center",
-  //     render: (isActive) =>
-  //       isActive ? (
-  //         <Tag icon={<CheckCircleOutlined />} color="green">
-  //           Hoạt động
-  //         </Tag>
-  //       ) : (
-  //         <Tag icon={<CloseCircleOutlined />} color="red">
-  //           Không hoạt động
-  //         </Tag>
-  //       ),
-  //   },
-  //   {
-  //     title: "Hành động",
-  //     key: "action",
-  //     align: "center",
-  //     width: "10rem",
-  //     render: (_, record) => (
-  //       <Space size="middle">
-  //         <Link to={`account_details/${record.id}`}>
-  //           <Button
-  //             disabled={record.isActive === false}
-  //             className="editButtonStyle"
-  //             onClick={() => {}}
-  //             icon={<EditOutlined />}
-  //           >
-  //             Chỉnh sửa
-  //           </Button>
-  //         </Link>
-  //         <Popconfirm
-  //           title="Bạn có chắc chắn muốn xóa nhân viên này không?"
-  //           onConfirm={() => handleDeleteEmployee(record)}
-  //           okText="Có"
-  //           cancelText="Không"
-  //         >
-  //           <Button
-  //             disabled={record.isActive === false}
-  //             className="deleteButtonStyle"
-  //             icon={<DeleteOutlined />}
-  //             danger
-  //           >
-  //             Xóa
-  //           </Button>
-  //         </Popconfirm>
-  //         {show && (
-  //           <div style={{ textAlign: "center" }}>
-  //             <Input
-  //               placeholder="Vui lòng nhập email"
-  //               value={isEmail}
-  //               readOnly={emailVerified || loading}
-  //               onChange={handleEmailChange}
-  //               style={{ marginTop: "1rem", marginBottom: "1rem", width:"10rem" }}
-  //             />
-  //             {errorMessage && (
-  //               <div style={{ color: "red", marginBottom: "1rem" }}>
-  //                 {errorMessage}
-  //               </div>
-  //             )}
-
-  //             <Button
-  //               className={styles.customButton}
-  //               style={{ marginBottom: "1rem" }}
-  //               onClick={showOtpModal}
-  //               loading={loading}
-  //             >
-  //               Gửi Otp
-  //             </Button>
-  //           </div>
-  //         )}
-
-  //         <Button
-  //           disabled={record.isActive === false}
-  //           onClick={() => setShow(!show)}
-  //           className={styles.customButton}
-  //         >
-  //           {show ? "Hủy" : "Kích hoạt tài khoản"}
-  //         </Button>
-  //         <Modal
-  //           title="Enter OTP"
-  //           visible={isOtpModalOpen}
-  //           onOk={() => verifyOtp(record?.id)}
-  //           onCancel={() => setIsOtpModalOpen(false)}
-  //         >
-  //           <div
-  //             style={{
-  //               display: "flex",
-  //               justifyContent: "center",
-  //               marginBottom: "1rem",
-  //             }}
-  //           >
-  //             <OTPInput
-  //               value={otp}
-  //               onChange={setOtp}
-  //               numInputs={6}
-  //               renderInput={renderInput}
-  //               separator={<span>-</span>}
-  //               isInputNum
-  //               inputStyle={{
-  //                 borderRadius: "50%",
-  //                 border: "2px solid #1119",
-  //                 width: "4rem",
-  //                 height: "4rem",
-  //                 margin: "0 0.5rem",
-  //                 fontSize: "2rem",
-  //                 color: "black",
-  //                 textAlign: "center",
-  //               }}
-  //             />
-  //           </div>
-  //           <ResendCode isOtpModalOpen={isOtpModalOpen} form={form} />
-  //         </Modal>
-  //       </Space>
-  //     ),
-  //   },
-  // ];
   const columnsEmployee = [
     {
       title: "Hình ảnh",
@@ -1840,9 +1695,10 @@ function ListShopBarber(props) {
                   isReset={(e) => {
                     setReset(e);
                   }}
-                  isOpen={(e) => {
-                    setOpen(e); //e is False from serviceForm component pass value to ListBarberServices
-                  }}
+                  // isOpen={(e) => {
+                  //   setOpen(e);
+                  // }}
+                  isOpen={() => setOpen(!open)}
                   salonInformationId={salonDetail.id}
                 />
               </Modal>
@@ -2037,7 +1893,7 @@ function ListShopBarber(props) {
               >
                 <AddEmployeeForm
                   salonInformation={salonDetail}
-                  isOpen={(e) => setOpenEmployee(!e)}
+                  isOpen={() => setOpenEmployee(!openEmployee)}
                 />
               </Modal>
               <Modal

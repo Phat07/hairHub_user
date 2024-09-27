@@ -125,21 +125,23 @@ export function actGetAllServicesBySalonIdNoPaging(id) {
 }
 export function actPostCreateSalonService(data, id) {
   return (dispatch) => {
-    ServiceHairServices.createServiceHair(data)
+    return ServiceHairServices.createServiceHair(data)
       .then((response) => {
         if (response.status === 200 || response.status === 201) {
-          message.success("Thêm dịch vụ thành công!");
+          // message.success("Thêm dịch vụ thành công!");
           dispatch(actGetAllServicesBySalonId(id, 1, 4));
         } else {
-          message.error("Dịch vụ chưa được tạo!");
+          // message.error("Dịch vụ chưa được tạo!");
         }
+        return response; // Return the response for chaining
       })
       .catch((error) => {
-        // Xử lý lỗi nếu có
-        // console.error("Error while fetching all config money:", error);
+        // message.error("Có lỗi xảy ra khi tạo dịch vụ!");
+        throw error; // Throw the error so it can be caught later
       });
   };
 }
+
 export function actGetAllEmployees(
   id,
   currentPage,

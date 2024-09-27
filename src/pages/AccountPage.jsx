@@ -693,9 +693,9 @@ function AccountPage() {
                   </Form.Item>
                   <Form.Item label="Giới tính:" name="gender">
                     <Select>
-                      <Select.Option value="Male">Nam</Select.Option>
-                      <Select.Option value="Female">Nữ</Select.Option>
-                      <Select.Option value="Other">Khác</Select.Option>
+                      <Select.Option value="Nam">Nam</Select.Option>
+                      <Select.Option value="Nữ">Nữ</Select.Option>
+                      <Select.Option value="Khác">Khác</Select.Option>
                     </Select>
                   </Form.Item>
                   {/* <Form.Item

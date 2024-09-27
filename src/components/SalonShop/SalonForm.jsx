@@ -90,17 +90,14 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
     try {
       const geocoder = new window.google.maps.Geocoder();
       const response = await geocoder.geocode({ location: { lat, lng } });
-      console.log("test", response);
-
       if (response.results.length > 0) {
         // Lọc kết quả dựa trên types
         const filteredResults1 = response.results.filter((result) =>
           result.types.some((type) => type === "hair_care" || type === "health")
         );
         const filteredResults = response.results;
-        console.log("te", filteredResults);
         if (filteredResults1.length > 0) {
-          message.success("Chúc mừng tiệm của bạn đã có trên maps google");
+          message.success("Tiệm của bạn đã có trên maps google");
         } else {
           message.info(
             "Tiệm của bạn chưa có thông tin trên maps google. Chúng tôi sẽ giúp bạn"
@@ -140,27 +137,20 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
 
     // Bước 2: Cập nhật vị trí đã chọn vào state
     setSelectedPosition({ lat, lng });
-    console.log("lat", lat);
-    console.log("lng", lng);
 
     // Bước 3: Gọi hàm geocode để lấy thông tin địa chỉ từ tọa độ
     const geocodeResult = await geocodeLatLng(lat, lng);
     if (geocodeResult) {
-      // Bước 4: Lưu địa chỉ vào state hoặc xử lý theo nhu cầu
-      setFilteredResults(geocodeResult); // Lưu kết quả lọc vào state
-      setIsModalVisible(true); // Hiển thị modal
+      setFilteredResults(geocodeResult);
+      // setIsModalVisible(true);
     }
   };
   const handleOk = () => {
-    // Xử lý logic khi chọn xong option
-    console.log("Selected Address:", selectedAddress);
-    // Đóng modal
     form.setFieldsValue({ location: selectedAddress });
     setIsModalVisible(false);
   };
 
   const handleCancelMap = () => {
-    // Đóng modal mà không cần xử lý thêm
     setIsModalVisible(false);
   };
 
@@ -806,7 +796,7 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
                   label="Địa chỉ"
                   rules={[{ required: true }]}
                 >
-                  <Input readOnly placeholder="Điền vị trí" />
+                  <Input placeholder="Điền vị trí" />
                 </Form.Item>
                 {/* </StandaloneSearchBox> */}
                 <Form.Item
@@ -871,7 +861,9 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
                     </Popconfirm>
                   </Form.Item>
                 ) : (
-                  <h6 style={{ fontSize: "2rem", marginBottom:"2rem" }}>Thời gian làm việc</h6>
+                  <h6 style={{ fontSize: "2rem", marginBottom: "2rem" }}>
+                    Thời gian làm việc
+                  </h6>
                 )}
 
                 {renderTimePickers()}
