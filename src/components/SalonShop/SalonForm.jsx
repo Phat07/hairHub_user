@@ -97,10 +97,12 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
         );
         const filteredResults = response.results;
         if (filteredResults1.length > 0) {
-          message.success("Tiệm của bạn đã có trên maps google");
+          message.success(
+            "Tiệm của bạn đã có trên maps google. Chúng tôi đã có vị trí tiệm của bạn"
+          );
         } else {
           message.info(
-            "Tiệm của bạn chưa có thông tin trên maps google. Chúng tôi sẽ giúp bạn"
+            "Tiệm của bạn chưa có thông tin trên maps google. Chúng tôi sẽ giúp bạn, đã có vị trí tiệm của bạn"
           );
         }
         if (filteredResults.length > 0) {
@@ -639,8 +641,8 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
     formData.append("Address", location);
     formData.append("Description", description);
     formData.append("Image", imageFile);
-    formData.append("Longitude", coordinates?.Longitude);
-    formData.append("Latitude", coordinates?.Latitude);
+    formData.append("Longitude", selectedPosition?.lng);
+    formData.append("Latitude", selectedPosition?.lat);
 
     dispatch(
       actPutSalonInformationByOwnerId(

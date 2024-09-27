@@ -577,7 +577,6 @@ function AccountPage() {
             setLoading(false);
             message.error("Email này đã được đăng ký trước đó!");
           } else {
-            console.log("45");
             // setLoading(false);
             sendOtp();
           }

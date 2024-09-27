@@ -379,7 +379,7 @@ function SalonOwnerAccountPage() {
           </div>
           <div>
             <Typography.Text strong style={{ fontSize: "2rem" }}>
-              Chỉnh sửa thông tin người dùng
+              Thông tin người dùng
             </Typography.Text>
             <Form form={form} layout="vertical" onFinish={handleSave}>
               <Form.Item
