@@ -1388,8 +1388,8 @@ function ListShopBarber(props) {
                               schedule.dayOfWeek
                             )}
                           >
-                            {schedule.startTime === "00:00:00" &&
-                            schedule.endTime === "00:00:00" ? (
+                            {schedule.startTime === "00:00" &&
+                            schedule.endTime === "00:00" ? (
                               <Typography.Text strong style={{ color: "red" }}>
                                 Không hoạt động
                               </Typography.Text>
