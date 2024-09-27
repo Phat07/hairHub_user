@@ -287,8 +287,8 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
       !imageFile ||
       !upperCaseName ||
       !location ||
-      !coordinates.Longitude ||
-      !coordinates.Latitude ||
+      !selectedPosition.lng ||
+      !selectedPosition.lat ||
       !description ||
       Object.keys(formattedSchedules).length === 0
     ) {
