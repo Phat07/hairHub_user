@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Card,
   Avatar,
@@ -30,7 +30,7 @@ import {
 import { AccountServices } from "../services/accountServices";
 import { Link, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import QrScanner from "react-qr-scanner";
+import QrReader  from "react-qr-scanner";
 import "../css/SalonOwnerAccountPage.css";
 import dayjs from "dayjs";
 import Loader from "../components/Loader";
@@ -52,14 +52,8 @@ function SalonOwnerAccountPage() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [passwordForm] = Form.useForm();
 
-  const [facingMode, setFacingMode] = useState("user");
-  const [isMobile, setIsMobile] = useState(false);
+  const [facingMode, setFacingMode] = useState("rear");
   // Function to detect if the user is on a mobile device
-  useEffect(() => {
-    const isMobileDevice = /Mobi|Android/i.test(navigator.userAgent);
-    setIsMobile(isMobileDevice);
-    setFacingMode(isMobileDevice ? "user" : "environment");
-  }, []);
   useEffect(() => {
     AccountServices.GetInformationAccount(id)
       .then((res) => {
@@ -113,28 +107,34 @@ function SalonOwnerAccountPage() {
   };
 
   const handleError = (err) => {
-    console.error(err);
-    message.error("Không truy cập máy ảnh!");
+    console.error("Camera error:", err);
+    // if (err.name === "OverconstrainedError") {
+    //   console.error("Switching to front camera.");
+    //   setFacingMode("user"); // Switch to user camera as a fallback
+    // }
   };
 
-  // const previewStyle = {
-  //   height: 240,
-  //   width: 320,
-  // };
   const previewStyle = {
     width: "100%",
     height: "auto",
   };
 
   const toggleFacingMode = () => {
-    if (facingMode === "user") {
-      setFacingMode("environment");
-    } else {
-      setFacingMode("environment");
-    }
+    // Toggle between 'front' and 'rear'
+    setFacingMode((prevMode) => {
+      const newMode = prevMode === 'rear' ? 'front' : 'rear';
+      console.log(`Switching to ${newMode} camera`); // Debug log
+      return newMode;
+    });
   };
-  
-  
+
+  // useEffect(() => {
+  //   const checkMobile = () => {
+  //     setIsMobile(/Mobi|Android/i.test(navigator.userAgent));
+  //   };
+  //   checkMobile();
+  // }, []);
+
   const maskPassword = (password) => {
     if (!password) return "";
     return "*".repeat(password.length - 2) + password.slice(-2);
@@ -148,10 +148,7 @@ function SalonOwnerAccountPage() {
       return;
     }
     const file = info.file;
-    console.log("File info:", info.file);
-    console.log("Origin File Object:", info.file.originFileObj);
     if (file) {
-      console.log("File selected:", file); // Debugging log
       setAvatarFile(file);
       const url = URL.createObjectURL(file);
       setAvatarUrl(url);
@@ -206,9 +203,6 @@ function SalonOwnerAccountPage() {
   const handleSave = async (values) => {
     // Biến đổi salonData trước khi so sánh
     const transformedSalonData = formatSalonData(salonData);
-    console.log(JSON.stringify(transformedSalonData));
-    console.log(JSON.stringify(values));
-
     // So sánh biến đổi salonData với values
     if (
       JSON.stringify(sortObject(transformedSalonData)) ===
@@ -343,6 +337,7 @@ function SalonOwnerAccountPage() {
       )}
     </Menu>
   );
+  console.log("te", facingMode);
 
   return (
     <div className="salon-owner-account">
@@ -375,19 +370,22 @@ function SalonOwnerAccountPage() {
               </Button>
             </Dropdown>
             {showScanner && (
-              <div style={{ margin: "0 auto" }}>
-                <QrScanner
+              <div>
+                <QrReader 
                   delay={300}
                   onError={handleError}
                   onScan={handleScan}
-                  style={previewStyle}
-                  facingMode={facingMode}
+                  // style={previewStyle}
+                  constraints={{
+                    video:true,
+                    facingMode: { exact: "environment" },
+                  }}
                 />
-                {isMobile && (
-                  <Button onClick={toggleFacingMode}>
-                    Chuyển sang camera {facingMode === "user" ? "sau" : "trước"}
-                  </Button>
-                )}
+                {/* {isMobile && ( */}
+                <Button onClick={toggleFacingMode}>
+                  Chuyển sang camera {facingMode === "rear" ? "trước" : "sau"}
+                </Button>
+                {/* )} */}
                 <Button
                   onClick={() => setShowScanner(!showScanner)}
                   style={{ marginTop: "1rem" }}

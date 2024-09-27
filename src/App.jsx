@@ -112,16 +112,16 @@ function App() {
               // Chỉ phát âm thanh khi điều kiện đúng
               const audio = new Audio(audioVer1); // Đảm bảo audioVer1 là đường dẫn hợp lệ
               audio.play().catch((error) => {
-                console.error("Lỗi phát âm thanh:", error);
+                // console.error("Lỗi phát âm thanh:", error);
               });
             } else {
               // Nếu không đúng điều kiện, in ra lỗi và không phát âm thanh
-              console.error("Không trùng khớp idOwner với ownerId");
+              // console.error("Không trùng khớp idOwner với ownerId");
             }
           }
         );
       } catch (error) {
-        console.error("Lỗi khi thiết lập SignalR:", error);
+        // console.error("Lỗi khi thiết lập SignalR:", error);
       }
     };
 
@@ -129,7 +129,9 @@ function App() {
 
     // Dọn dẹp kết nối khi component bị hủy
     return () => {
-      connection.stop().then(() => console.log("Đã ngắt kết nối SignalR."));
+      connection.stop().then(() =>{
+
+      } );
     };
   }, [idOwner]);
 
