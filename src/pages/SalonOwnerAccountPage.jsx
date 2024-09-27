@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Card,
   Avatar,
@@ -52,7 +52,28 @@ function SalonOwnerAccountPage() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [passwordForm] = Form.useForm();
   const [cameraFacingMode, setCameraFacingMode] = useState("environment");
+  const qrRef = useRef(null);
+  useEffect(() => {
+    const handleCameraSwitch = async () => {
+      if (qrRef.current) {
+        qrRef.current.getVideoTracks().forEach((track) => track.stop());
+        const constraints = {
+          facingMode: cameraFacingMode,
+        };
 
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: constraints,
+          });
+          qrRef.current.srcObject = stream;
+        } catch (error) {
+          console.error("Error accessing camera: ", error);
+        }
+      }
+    };
+
+    handleCameraSwitch();
+  }, [cameraFacingMode]);
   useEffect(() => {
     AccountServices.GetInformationAccount(id)
       .then((res) => {
@@ -78,6 +99,7 @@ function SalonOwnerAccountPage() {
       prevMode === "environment" ? "user" : "environment"
     );
   };
+
   const handleReload = () => {
     window?.location?.reload();
   };
@@ -132,8 +154,6 @@ function SalonOwnerAccountPage() {
       return;
     }
     const file = info.file;
-    console.log("File info:", info.file);
-    console.log("Origin File Object:", info.file.originFileObj);
     if (file) {
       console.log("File selected:", file); // Debugging log
       setAvatarFile(file);
@@ -365,20 +385,20 @@ function SalonOwnerAccountPage() {
                   onError={handleError}
                   onScan={handleScan}
                   style={previewStyle}
-                  facingMode={cameraFacingMode}
+                  // facingMode={cameraFacingMode}
                 />
                 <Button
                   onClick={toggleCamera}
                   style={{ marginTop: "1rem", marginRight: "1rem" }}
                 >
-                  Đổi Camera
-                  {cameraFacingMode === "environment" ? "Trước" : "Sau"}
+                  Đổi Camera{" "}
+                  {cameraFacingMode === "environment" ? "Sau" : "Trước"}
                 </Button>
                 <Button
-                  onClick={() => setShowScanner(!showScanner)}
+                  onClick={() => setShowScanner(false)}
                   style={{ marginTop: "1rem" }}
                 >
-                  Đóng Qr
+                  Đóng QR
                 </Button>
               </div>
             )}
