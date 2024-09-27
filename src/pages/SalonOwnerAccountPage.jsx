@@ -130,7 +130,7 @@ function SalonOwnerAccountPage() {
     if (facingMode === "user") {
       setFacingMode("environment");
     } else {
-      setFacingMode("user");
+      setFacingMode("environment");
     }
   };
   
