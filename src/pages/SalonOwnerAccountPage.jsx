@@ -51,12 +51,14 @@ function SalonOwnerAccountPage() {
   const [form] = Form.useForm();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [passwordForm] = Form.useForm();
-  const [facingMode, setFacingMode] = useState("user"); // Default is 'user' for laptop
 
+  const [facingMode, setFacingMode] = useState("user");
+  const [isMobile, setIsMobile] = useState(false);
   // Function to detect if the user is on a mobile device
   useEffect(() => {
-    const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-    setFacingMode(isMobile ? "environment" : "user"); // Sử dụng camera sau trên di động
+    const isMobileDevice = /Mobi|Android/i.test(navigator.userAgent);
+    setIsMobile(isMobileDevice);
+    setFacingMode(isMobileDevice ? "user" : "environment");
   }, []);
   useEffect(() => {
     AccountServices.GetInformationAccount(id)
@@ -115,9 +117,17 @@ function SalonOwnerAccountPage() {
     message.error("Không truy cập máy ảnh!");
   };
 
+  // const previewStyle = {
+  //   height: 240,
+  //   width: 320,
+  // };
   const previewStyle = {
-    height: 240,
-    width: 320,
+    width: "100%",
+    height: "auto",
+  };
+
+  const toggleFacingMode = () => {
+    setFacingMode((prevMode) => (prevMode === "user" ? "environment" : "user"));
   };
 
   const maskPassword = (password) => {
@@ -366,8 +376,13 @@ function SalonOwnerAccountPage() {
                   onError={handleError}
                   onScan={handleScan}
                   style={previewStyle}
-                  facingMode={facingMode} 
+                  facingMode={facingMode}
                 />
+                {isMobile && (
+                  <Button onClick={toggleFacingMode}>
+                    Chuyển sang camera {facingMode === "user" ? "sau" : "trước"}
+                  </Button>
+                )}
                 <Button
                   onClick={() => setShowScanner(!showScanner)}
                   style={{ marginTop: "1rem" }}
