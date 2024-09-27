@@ -23,6 +23,7 @@
     "@react-spring/web": "^9.7.4",
     "@react-three/drei": "^9.99.5",
     "@react-three/fiber": "^8.15.16",
+    "@zxing/library": "^0.21.3",
     "ant-design-icons": "^1.3.3",
     "axios": "^1.7.2",
     "chart.js": "^4.4.3",

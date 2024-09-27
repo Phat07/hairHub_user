@@ -127,9 +127,14 @@ function SalonOwnerAccountPage() {
   };
 
   const toggleFacingMode = () => {
-    setFacingMode((prevMode) => (prevMode === "user" ? "environment" : "user"));
+    if (facingMode === "user") {
+      setFacingMode("environment");
+    } else {
+      setFacingMode("user");
+    }
   };
-
+  
+  
   const maskPassword = (password) => {
     if (!password) return "";
     return "*".repeat(password.length - 2) + password.slice(-2);
