@@ -54,15 +54,9 @@ function SalonOwnerAccountPage() {
   const [facingMode, setFacingMode] = useState("user"); // Default is 'user' for laptop
 
   // Function to detect if the user is on a mobile device
-  const isMobileDevice = () => {
-    return /Mobi|Android/i.test(navigator.userAgent);
-  };
-
   useEffect(() => {
-    // Set facingMode to 'environment' (camera sau) if on mobile
-    if (isMobileDevice()) {
-      setFacingMode("environment");
-    }
+    const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+    setFacingMode(isMobile ? "environment" : "user"); // Sử dụng camera sau trên di động
   }, []);
   useEffect(() => {
     AccountServices.GetInformationAccount(id)
@@ -372,7 +366,7 @@ function SalonOwnerAccountPage() {
                   onError={handleError}
                   onScan={handleScan}
                   style={previewStyle}
-                  facingMode={facingMode}
+                  facingMode={facingMode} 
                 />
                 <Button
                   onClick={() => setShowScanner(!showScanner)}
