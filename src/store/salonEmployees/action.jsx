@@ -151,7 +151,7 @@ export function actGetAllEmployees(
   nameEmployee
 ) {
   return (dispatch) => {
-    SalonEmployeesServices.getSalonEmployeeBySalonInformationId(
+    return SalonEmployeesServices.getSalonEmployeeBySalonInformationId(
       id,
       currentPage,
       pageSize,
@@ -160,13 +160,22 @@ export function actGetAllEmployees(
       nameEmployee
     )
       .then((res) => {
-        dispatch(getAllEmployee(res?.data?.items, res?.data?.total));
+        if (res && res.data) {
+          dispatch(getAllEmployee(res.data.items, res.data.total));
+        } else {
+          console.error("No data received:", res);
+        }
+        return res; // Trả về phản hồi để có thể sử dụng .then()
       })
       .catch((err) => {
+        console.error("Error fetching employees:", err);
+        // Có thể hiển thị thông báo lỗi nếu cần
         // message.error("Nhân viên chưa được thêm!");
+        throw err; // Ném lỗi để có thể xử lý bên ngoài nếu cần
       });
   };
 }
+
 
 export const actDeleteEmployee = (employeeId, salonId) => {
   return (dispatch) => {

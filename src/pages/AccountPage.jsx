@@ -601,63 +601,36 @@ function AccountPage() {
                 direction="vertical"
                 className="w-full"
               >
-                <Avatar
-                  size={250}
-                  shape="circle"
-                  src={
-                    user?.img ||
-                    "https://www.shutterstock.com/image-vector/vector-flat-illustration-grayscale-avatar-600nw-2264922221.jpg"
-                  }
-                />
-                {/* {show && (
-                  <div style={{ textAlign: "center" }}>
-                    <Input
-                      placeholder="Vui lòng nhập email"
-                      value={isEmail}
-                      readOnly={emailVerified}
-                      onChange={handleEmailChange}
-                      style={{ marginTop: "1rem", marginBottom: "1rem" }}
-                    />
-                    {errorMessage && (
-                      <div style={{ color: "red", marginBottom: "1rem" }}>
-                        {errorMessage}
-                      </div>
-                    )}
-
-                    <Button
-                      className={styles.customButton}
-                      style={{ marginBottom: "1rem" }}
-                      onClick={showOtpModal}
+                {fileList.length > 0 ? (
+                  fileList.map((file) => (
+                    <div
+                      key={file.uid}
+                      className="max-w-full md:max-w-[40rem] mt-8"
+                      style={{ maxHeight: "50rem" }}
                     >
-                      Gửi Otp
-                    </Button>
-                  </div>
-                )} */}
-
-                {/* <Button
-                  onClick={() => setShow(!show)}
-                  className={styles.customButton}
-                >
-                  {show ? "Hủy" : "Kích hoạt tài khoản"}
-                </Button> */}
-                {fileList.map((file) => (
-                  <div
-                    key={file.uid}
-                    className="max-w-full md:max-w-[40rem] mt-8"
-                    style={{ maxHeight: "50rem" }}
-                  >
-                    <Image
-                      width="100%"
-                      src={
-                        file.url ||
-                        (file.originFileObj
-                          ? URL.createObjectURL(file.originFileObj)
-                          : null)
-                      }
-                      alt={file.name}
-                    />
-                  </div>
-                ))}
+                      <Avatar
+                        size={250}
+                        shape="circle"
+                        src={
+                          file.url ||
+                          (file.originFileObj
+                            ? URL.createObjectURL(file.originFileObj)
+                            : null)
+                        }
+                        alt={file.name}
+                      />
+                    </div>
+                  ))
+                ) : (
+                  <Avatar
+                    size={250}
+                    shape="circle"
+                    src={
+                      user?.img ||
+                      "https://www.shutterstock.com/image-vector/vector-flat-illustration-grayscale-avatar-600nw-2264922221.jpg"
+                    }
+                  />
+                )}
                 <Form
                   className="w-full md:w-[90%] lg:w-[50rem]"
                   id={employeeId}
@@ -672,7 +645,7 @@ function AccountPage() {
                     tooltip="Add only one Image!"
                   >
                     <Upload
-                      multiple
+                      // multiple
                       listType="picture"
                       fileList={fileList}
                       onChange={handleUploadChange}
@@ -718,9 +691,9 @@ function AccountPage() {
                   <Form.Item
                     label="Email:"
                     name="email"
-                    rules={[
-                      { required: true, message: "Vui lòng không để trống!" },
-                    ]}
+                    // rules={[
+                    //   { required: true, message: "Vui lòng không để trống!" },
+                    // ]}
                   >
                     <Input readOnly />
                   </Form.Item>
@@ -731,7 +704,7 @@ function AccountPage() {
                       className={styles.customButton}
                       // className="bg-[#BF9456] text-black border border-transparent hover:text-white hover:border-black px-4 py-2 rounded"
                     >
-                      Chỉnh sửa nhưng không chỉnh sửa lịch làm
+                      Chỉnh sửa thông tin
                     </Button>
                   </Form.Item>
                   <Form.Item

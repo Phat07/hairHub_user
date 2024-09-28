@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../css/flaticon.min.css";
 import { DownOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons";
-import { Avatar, Button, Dropdown, Menu, message } from "antd";
+import { Avatar, Badge, Button, Dropdown, Menu, message } from "antd";
 import { IoMenu } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -20,6 +20,7 @@ function Header(props) {
   const navigate = useNavigate();
   const location = useLocation(); // Lấy đường dẫn hiện tại
   const dispatch = useDispatch();
+  const [newAppointments, setNewAppointments] = useState(0);
   const userName = useSelector((state) => state.ACCOUNT.userName);
   const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
   const idOwner = useSelector((state) => state.ACCOUNT.idOwner);
@@ -91,7 +92,13 @@ function Header(props) {
         <div className={style.header}>
           <div className={style.logoContainer}>
             <Link
-              to={idOwner ? handleEmptySalon() : idEmployee ? "/SalonEmployee" : "/"}
+              to={
+                idOwner
+                  ? handleEmptySalon()
+                  : idEmployee
+                  ? "/SalonEmployee"
+                  : "/"
+              }
             >
               <img
                 className={style.logo}
@@ -125,15 +132,17 @@ function Header(props) {
                     Hệ thống cửa hàng
                   </Link>
                 </li>
-                <li className={style.navItem}>
-                  <Link
-                    to={"/customer_appointment"}
-                    className={`${style.navLink} ${
-                      isActive("/customer_appointment") ? style.active : ""
-                    }`}
-                  >
-                    Cuộc hẹn
-                  </Link>
+                <li style={{marginTop:"0.35rem"}} className={style.navItem}>
+                  <Badge count={newAppointments} offset={[10, 0]}>
+                    <Link
+                      to={"/customer_appointment"}
+                      className={`${style.navLink} ${
+                        isActive("/customer_appointment") ? style.active : ""
+                      }`}
+                    >
+                      Cuộc hẹn
+                    </Link>
+                  </Badge>
                 </li>
                 {menuActive && (
                   <>

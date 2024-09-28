@@ -369,15 +369,16 @@ const router = createBrowserRouter([
 // };
 const customTheme = {
   token: {
-    fontFamily: '"Dancing Script", cursive',
+    fontFamily: '"Sofadi One", cursive',
   },
   components: {
     Typography: {
-      fontFamily: '"Dancing Script", cursive',
+      fontFamily: '"Sofadi One", cursive',
       fontSize: 16, 
     },
   },
 };
+
 
 
 ReactDOM.createRoot(document.getElementById("root")).render(

@@ -33,6 +33,7 @@ import {
   Row,
   Skeleton,
   Space,
+  Spin,
   Table,
   Tag,
   TimePicker,
@@ -107,6 +108,7 @@ function ListShopBarber(props) {
   const [show, setShow] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [emailVerified, setEmailVerified] = useState(false);
+  const [loadingEmployee, setLoadingEmployee] = useState(false);
 
   // const auth = useAuthUser();
   // const ownerId = auth?.idOwner;
@@ -322,6 +324,7 @@ function ListShopBarber(props) {
 
   useEffect(() => {
     if (salonDetail || currentPageEmployee) {
+      setLoadingEmployee(true);
       dispatch(
         actGetAllEmployees(
           salonDetail?.id,
@@ -331,7 +334,16 @@ function ListShopBarber(props) {
           FillterEmployee,
           searchEmployeeKey
         )
-      );
+      )
+        .then((res) => {
+          setLoadingEmployee(false);
+        })
+        .catch((err) => {
+          setLoadingEmployee(false);
+        })
+        .finally((err) => {
+          setLoadingEmployee(false);
+        });
     }
   }, [
     salonDetail,
@@ -1482,12 +1494,14 @@ function ListShopBarber(props) {
                         />
                       </div>
                       <div className={styles["table-container"]}>
-                        <Table
-                          dataSource={listEmployee}
-                          columns={columnsEmployee}
-                          pagination={false}
-                          // rowKey="phone"
-                        />
+                        <Spin spinning={loadingEmployee} tip="Loading...">
+                          <Table
+                            dataSource={listEmployee}
+                            columns={columnsEmployee}
+                            pagination={false}
+                            // rowKey="phone"
+                          />
+                        </Spin>
                       </div>
 
                       <Pagination

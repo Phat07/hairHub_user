@@ -337,7 +337,6 @@ function SalonOwnerAccountPage() {
       )}
     </Menu>
   );
-  console.log("te", facingMode);
 
   return (
     <div className="salon-owner-account">
@@ -375,16 +374,13 @@ function SalonOwnerAccountPage() {
                   delay={300}
                   onError={handleError}
                   onScan={handleScan}
-                  // style={previewStyle}
-                  constraints={{
-                    video:true,
-                    facingMode: { exact: "environment" },
-                  }}
+                  style={previewStyle}
+                  facingMode={facingMode === 'rear' ? { exact: 'environment' } : { exact: 'user' }} // Set facingMode correctly
                 />
                 {/* {isMobile && ( */}
-                <Button onClick={toggleFacingMode}>
+                {/* <Button onClick={toggleFacingMode}>
                   Chuyển sang camera {facingMode === "rear" ? "trước" : "sau"}
-                </Button>
+                </Button> */}
                 {/* )} */}
                 <Button
                   onClick={() => setShowScanner(!showScanner)}
