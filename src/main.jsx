@@ -304,7 +304,7 @@ const router = createBrowserRouter([
       {
         path: "reviewEmployee",
         element: (
-          <RequireAuth fallbackPath="/login">
+          <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
             <ReviewEmployee />
           </RequireAuth>
         ),
@@ -374,12 +374,10 @@ const customTheme = {
   components: {
     Typography: {
       fontFamily: '"Sofadi One", cursive',
-      fontSize: 16, 
+      fontSize: 16,
     },
   },
 };
-
-
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

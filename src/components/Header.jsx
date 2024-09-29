@@ -273,6 +273,16 @@ function Header(props) {
                     Thống kê doanh thu
                   </Link>
                 </li>
+                <li className={style.navItem}>
+                  <Link
+                    to="/reviewEmployee"
+                    className={`${style.navLink} ${
+                      isActive("/reviewEmployee") ? style.active : ""
+                    }`}
+                  >
+                    Đánh giá nhân viên
+                  </Link>
+                </li>
                 {menuActive && (
                   <>
                     <li className={style.navItemRepo}>
