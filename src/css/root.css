@@ -33,6 +33,12 @@ body {
     min-height: 100vh;
 }
 
+@media (max-width: 768px) {
+    .super-container {
+        padding-bottom: 40px;
+    }
+}
+
 /* .root {
     background-color: #f4f2eb;
     min-height: calc(100vh - 100px); 

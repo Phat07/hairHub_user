@@ -12,7 +12,9 @@ function FooterMobileUnAuth() {
   const location = useLocation(); // Lấy thông tin đường dẫn hiện tại
 
   const isActive = (path) => location.pathname === path; // Kiểm tra đường dẫn hiện tại
-
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
   return (
     <footer className={style.footerMobile}>
       <nav className={style.footerNav}>
@@ -22,7 +24,7 @@ function FooterMobileUnAuth() {
               isActive("/") ? style.active : ""
             }`}
           >
-            <Link to="/">
+            <Link to="/" onClick={scrollToTop}>
               <HomeOutlined className={style.icon} />
               <span>Trang chủ</span>
             </Link>
@@ -32,7 +34,7 @@ function FooterMobileUnAuth() {
               isActive("/about") ? style.active : ""
             }`}
           >
-            <Link to="/about">
+            <Link to="/about" onClick={scrollToTop}>
               <SnippetsOutlined className={style.icon} />
               <span>Giới thiệu</span>
             </Link>
@@ -42,7 +44,7 @@ function FooterMobileUnAuth() {
               isActive("/list_salon_ver2") ? style.active : ""
             }`}
           >
-            <Link to="/list_salon_ver2">
+            <Link to="/list_salon_ver2" onClick={scrollToTop}>
               <ShopOutlined className={style.icon} />
               <span>Hệ thống</span>
             </Link>
@@ -52,7 +54,7 @@ function FooterMobileUnAuth() {
               isActive("/login") ? style.active : ""
             }`}
           >
-            <Link to="/login">
+            <Link to="/login" onClick={scrollToTop}>
               <LoginOutlined className={style.icon} />
               <span>Đăng nhập</span>
             </Link>

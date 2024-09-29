@@ -84,14 +84,23 @@ function Header(props) {
   };
 
   const isActive = (path) => location.pathname === path;
-
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
   return (
     <div>
       <header className={style.headerContainer}>
         <div className={style.header}>
           <div className={style.logoContainer}>
             <Link
-              to={idOwner ? handleEmptySalon() : idEmployee ? "/SalonEmployee" : "/"}
+              to={
+                idOwner
+                  ? handleEmptySalon()
+                  : idEmployee
+                  ? "/SalonEmployee"
+                  : "/"
+              }
+              onClick={scrollToTop}
             >
               <img
                 className={style.logo}
@@ -111,6 +120,7 @@ function Header(props) {
                     className={`${style.navLink} ${
                       isActive("/") ? style.active : ""
                     }`}
+                    onClick={scrollToTop}
                   >
                     Trang chủ
                   </Link>
@@ -121,6 +131,7 @@ function Header(props) {
                     className={`${style.navLink} ${
                       isActive("/list_salon_ver2") ? style.active : ""
                     }`}
+                    onClick={scrollToTop}
                   >
                     Hệ thống cửa hàng
                   </Link>
@@ -131,6 +142,7 @@ function Header(props) {
                     className={`${style.navLink} ${
                       isActive("/customer_appointment") ? style.active : ""
                     }`}
+                    onClick={scrollToTop}
                   >
                     Cuộc hẹn
                   </Link>
@@ -170,21 +182,40 @@ function Header(props) {
                     className={`${style.navLink} ${
                       isActive("/SalonEmployee") ? style.active : ""
                     }`}
+                    onClick={scrollToTop}
                   >
                     Thông tin cửa hàng
                   </Link>
                 </li>
                 <li className={style.navItem}>
-                  <Link to={"/employee_appointment"} className={style.navLink}>
+                  <Link
+                    to={"/employee_appointment"}
+                    className={`${style.navLink} ${
+                      isActive("/employee_appointment") ? style.active : ""
+                    }`}
+                    onClick={scrollToTop}
+                  >
                     Cuộc hẹn
                   </Link>
                 </li>
+                {/* <li className={style.navItem}>
+                  <Link
+                    to={"/EmployeeSchedule"}
+                    className={`${style.navLink} ${
+                      isActive("/EmployeeSchedule") ? style.active : ""
+                    }`}
+                    onClick={scrollToTop}
+                  >
+                    Cuộc hẹn
+                  </Link>
+                </li> */}
                 <li className={style.navItem}>
                   <Link
                     to={"/EmployeeStatistics"}
                     className={`${style.navLink} ${
                       isActive("/EmployeeStatistics") ? style.active : ""
                     }`}
+                    onClick={scrollToTop}
                   >
                     Thống kê cá nhân
                   </Link>
@@ -230,6 +261,7 @@ function Header(props) {
                         : ""
                     }`}
                     to={handleEmptySalon()}
+                    onClick={scrollToTop}
                   >
                     Quản lý Salon
                   </Link>
@@ -240,6 +272,7 @@ function Header(props) {
                     className={`${style.navLink} ${
                       isActive("/salon_appointment") ? style.active : ""
                     }`}
+                    onClick={scrollToTop}
                   >
                     Cuộc hẹn
                   </Link>
@@ -250,6 +283,7 @@ function Header(props) {
                     className={`${style.navLink} ${
                       isActive("/salon_report") ? style.active : ""
                     }`}
+                    onClick={scrollToTop}
                   >
                     Danh sách báo cáo
                   </Link>
@@ -260,6 +294,7 @@ function Header(props) {
                     className={`${style.navLink} ${
                       isActive("/dashboardTransaction") ? style.active : ""
                     }`}
+                    onClick={scrollToTop}
                   >
                     Thống kê doanh thu
                   </Link>
