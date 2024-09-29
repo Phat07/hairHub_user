@@ -1349,9 +1349,7 @@ function SalonDetail(props) {
                 >
                   {salonDetail?.name}
                 </motion.h2>
-                <span
-                  className={style["text-address"]}
-                >
+                <span className={style["text-address"]}>
                   <div>
                     Địa chỉ:{" "}
                     <span
@@ -1503,12 +1501,7 @@ function SalonDetail(props) {
                       <>
                         <Spin spinning={loading}>
                           <div>
-                            <Title
-                              style={{ backgroundColor: "white" }}
-                              level={3}
-                            >
-                              Thêm những dịch vụ khác
-                            </Title>
+                            <Title level={3}>Thêm những dịch vụ khác</Title>
                             <List
                               itemLayout="horizontal"
                               dataSource={data}
@@ -1557,12 +1550,9 @@ function SalonDetail(props) {
                                         </Title>
                                       }
                                       description={
-                                        <Typography
-                                          style={{ backgroundColor: "white" }}
-                                          className="w-fit"
-                                        >
+                                        <Typography className="w-fit">
                                           <Text strong>
-                                            Mô tả: &nbsp;
+                                            Mô tả:&nbsp;
                                             <Text
                                               style={{
                                                 display: "inline",
@@ -1571,9 +1561,10 @@ function SalonDetail(props) {
                                             >
                                               {service.description}
                                             </Text>
-                                          </Text>
+                                          </Text>{" "}
+                                          <br />
                                           <Text strong>
-                                            Giá: &nbsp;
+                                            Giá:&nbsp;
                                             <Text
                                               style={{
                                                 display: "inline",
@@ -1582,9 +1573,10 @@ function SalonDetail(props) {
                                             >
                                               {formatMoneyVND(service.price)}
                                             </Text>
+                                            <br />
                                           </Text>
                                           <Text strong>
-                                            Thời gian: &nbsp;
+                                            Thời gian:&nbsp;
                                             <Text
                                               style={{
                                                 display: "inline",
