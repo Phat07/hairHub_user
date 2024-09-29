@@ -939,7 +939,7 @@ const LoginPage = () => {
                     handleOk();
                   }}
                 >
-                  Xong
+                  Đóng
                 </Button>,
               ]}
             >

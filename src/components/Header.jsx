@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../css/flaticon.min.css";
 import { DownOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons";
-import { Avatar, Button, Dropdown, Menu, message } from "antd";
+import { Avatar, Badge, Button, Dropdown, Menu, message } from "antd";
 import { IoMenu } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -20,6 +20,7 @@ function Header(props) {
   const navigate = useNavigate();
   const location = useLocation(); // Lấy đường dẫn hiện tại
   const dispatch = useDispatch();
+  const [newAppointments, setNewAppointments] = useState(0);
   const userName = useSelector((state) => state.ACCOUNT.userName);
   const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
   const idOwner = useSelector((state) => state.ACCOUNT.idOwner);
@@ -297,6 +298,16 @@ function Header(props) {
                     onClick={scrollToTop}
                   >
                     Thống kê doanh thu
+                  </Link>
+                </li>
+                <li className={style.navItem}>
+                  <Link
+                    to="/reviewEmployee"
+                    className={`${style.navLink} ${
+                      isActive("/reviewEmployee") ? style.active : ""
+                    }`}
+                  >
+                    Đánh giá nhân viên
                   </Link>
                 </li>
                 {menuActive && (

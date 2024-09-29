@@ -304,7 +304,7 @@ const router = createBrowserRouter([
       {
         path: "reviewEmployee",
         element: (
-          <RequireAuth fallbackPath="/login">
+          <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
             <ReviewEmployee />
           </RequireAuth>
         ),
@@ -356,14 +356,25 @@ const router = createBrowserRouter([
   },
 ]);
 
+// const customTheme = {
+//   token: {
+//     fontFamily: '"Lora", serif',
+//   },
+//   components: {
+//     Typography: {
+//       fontFamily: '"Lora", serif',
+//       fontSize: 16, // font size of Text
+//     },
+//   },
+// };
 const customTheme = {
   token: {
-    fontFamily: '"Lora", serif',
+    fontFamily: '"Sofadi One", cursive',
   },
   components: {
     Typography: {
-      fontFamily: '"Lora", serif',
-      fontSize: 16, // font size of Text
+      fontFamily: '"Sofadi One", cursive',
+      fontSize: 16,
     },
   },
 };

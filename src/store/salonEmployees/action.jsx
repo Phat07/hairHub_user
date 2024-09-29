@@ -125,21 +125,23 @@ export function actGetAllServicesBySalonIdNoPaging(id) {
 }
 export function actPostCreateSalonService(data, id) {
   return (dispatch) => {
-    ServiceHairServices.createServiceHair(data)
+    return ServiceHairServices.createServiceHair(data)
       .then((response) => {
         if (response.status === 200 || response.status === 201) {
-          message.success("Thêm dịch vụ thành công!");
+          // message.success("Thêm dịch vụ thành công!");
           dispatch(actGetAllServicesBySalonId(id, 1, 4));
         } else {
-          message.error("Dịch vụ chưa được tạo!");
+          // message.error("Dịch vụ chưa được tạo!");
         }
+        return response; // Return the response for chaining
       })
       .catch((error) => {
-        // Xử lý lỗi nếu có
-        // console.error("Error while fetching all config money:", error);
+        // message.error("Có lỗi xảy ra khi tạo dịch vụ!");
+        throw error; // Throw the error so it can be caught later
       });
   };
 }
+
 export function actGetAllEmployees(
   id,
   currentPage,
@@ -149,7 +151,7 @@ export function actGetAllEmployees(
   nameEmployee
 ) {
   return (dispatch) => {
-    SalonEmployeesServices.getSalonEmployeeBySalonInformationId(
+    return SalonEmployeesServices.getSalonEmployeeBySalonInformationId(
       id,
       currentPage,
       pageSize,
@@ -158,13 +160,22 @@ export function actGetAllEmployees(
       nameEmployee
     )
       .then((res) => {
-        dispatch(getAllEmployee(res?.data?.items, res?.data?.total));
+        if (res && res.data) {
+          dispatch(getAllEmployee(res.data.items, res.data.total));
+        } else {
+          console.error("No data received:", res);
+        }
+        return res; // Trả về phản hồi để có thể sử dụng .then()
       })
       .catch((err) => {
+        console.error("Error fetching employees:", err);
+        // Có thể hiển thị thông báo lỗi nếu cần
         // message.error("Nhân viên chưa được thêm!");
+        throw err; // Ném lỗi để có thể xử lý bên ngoài nếu cần
       });
   };
 }
+
 
 export const actDeleteEmployee = (employeeId, salonId) => {
   return (dispatch) => {

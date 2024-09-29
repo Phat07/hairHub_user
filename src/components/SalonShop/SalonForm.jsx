@@ -5,6 +5,7 @@ import {
   StandaloneSearchBox,
   Marker,
   Autocomplete,
+  MarkerF,
 } from "@react-google-maps/api";
 import {
   Button,
@@ -80,29 +81,28 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
   // Tạo state để lưu vị trí được chọn
   const [selectedPosition, setSelectedPosition] = useState(defaultCenter);
   const [autocomplete, setAutocomplete] = useState(null);
-  const [address, setAddress] = useState("");
+
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [filteredResults, setFilteredResults] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
-  console.log("see1", autocomplete);
+
   const geocodeLatLng = async (lat, lng) => {
     try {
       const geocoder = new window.google.maps.Geocoder();
       const response = await geocoder.geocode({ location: { lat, lng } });
-      console.log("test", response);
-
       if (response.results.length > 0) {
         // Lọc kết quả dựa trên types
         const filteredResults1 = response.results.filter((result) =>
           result.types.some((type) => type === "hair_care" || type === "health")
         );
         const filteredResults = response.results;
-        console.log("te", filteredResults);
         if (filteredResults1.length > 0) {
-          message.success("Chúc mừng tiệm của bạn đã có trên maps google");
+          message.success(
+            "Tiệm của bạn đã có trên maps google. Chúng tôi đã có vị trí tiệm của bạn"
+          );
         } else {
           message.info(
-            "Tiệm của bạn chưa có thông tin trên maps google. Chúng tôi sẽ giúp bạn"
+            "Tiệm của bạn chưa có thông tin trên maps google. Chúng tôi sẽ giúp bạn, đã có vị trí tiệm của bạn"
           );
         }
         if (filteredResults.length > 0) {
@@ -139,43 +139,30 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
 
     // Bước 2: Cập nhật vị trí đã chọn vào state
     setSelectedPosition({ lat, lng });
-    console.log("lat", lat);
-    console.log("lng", lng);
 
     // Bước 3: Gọi hàm geocode để lấy thông tin địa chỉ từ tọa độ
     const geocodeResult = await geocodeLatLng(lat, lng);
     if (geocodeResult) {
-      // Bước 4: Lưu địa chỉ vào state hoặc xử lý theo nhu cầu
-      setFilteredResults(geocodeResult); // Lưu kết quả lọc vào state
-      setIsModalVisible(true); // Hiển thị modal
+      setFilteredResults(geocodeResult);
+      // setIsModalVisible(true);
     }
   };
-  console.log("ad", address);
-
-  console.log("see", selectedPosition);
   const handleOk = () => {
-    // Xử lý logic khi chọn xong option
-    console.log("Selected Address:", selectedAddress);
-    // Đóng modal
     form.setFieldsValue({ location: selectedAddress });
     setIsModalVisible(false);
   };
 
   const handleCancelMap = () => {
-    // Đóng modal mà không cần xử lý thêm
     setIsModalVisible(false);
   };
 
   const handleSelectChange = (value) => {
     // Lưu địa chỉ đã chọn vào state
     setSelectedAddress(value);
-    console.log("value", value);
   };
   const onPlaceChanged = () => {
     if (autocomplete !== null) {
       const place = autocomplete.getPlace();
-      console.log("place", place);
-
       if (place.geometry) {
         setSelectedPosition({
           lat: place.geometry.location.lat(),
@@ -225,9 +212,12 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
           return acc;
         }, {}),
       });
+      setSelectedPosition({
+        lat: salonDetail?.latitude,
+        lng: salonDetail?.longitude,
+      });
     }
   }, [id, salonDetail, form]);
-
   const convertScheduleFormat = (scheduleData) => {
     const daysOfWeek = [
       "Monday",
@@ -289,8 +279,8 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
       !imageFile ||
       !upperCaseName ||
       !location ||
-      !coordinates.Longitude ||
-      !coordinates.Latitude ||
+      !selectedPosition.lng ||
+      !selectedPosition.lat ||
       !description ||
       Object.keys(formattedSchedules).length === 0
     ) {
@@ -388,76 +378,6 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
       console.error("No places found");
     }
   };
-  // const handlePlacesChanged = async () => {
-  //   const places = searchBoxRef.current.getPlaces();
-  //   console.log("places", places);
-
-  //   if (places.length > 0) {
-  //     const place = places[0];
-
-  //     // Check for types in the place
-  //     const types = place.types || [];
-  //     const hasValidType =
-  //       types.includes("hair_care") ||
-  //       types.includes("health") ||
-  //       types.includes("street_address");
-
-  //     if (hasValidType) {
-  //       message.info("Địa điểm của bạn đã có trên map.");
-  //     } else {
-  //       message.warning("Tiệm của bạn chưa có trên map.");
-  //     }
-
-  //     // Construct location from name and formatted_address
-  //     let location = place.formatted_address; // Default to formatted_address
-  //     if (place.name) {
-  //       location = `${place.name}, ${location}`; // Prepend name if it exists
-  //     }
-
-  //     // Set the combined location
-  //     form.setFieldsValue({ location });
-
-  //     console.log("Combined Location:", location);
-
-  //     try {
-  //       // API call logic remains the same
-  //       const response = await axios.get(
-  //         "https://maps.googleapis.com/maps/api/geocode/json",
-  //         {
-  //           params: {
-  //             address: encodeURIComponent(location),
-  //             key: import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY,
-  //           },
-  //         }
-  //       );
-
-  //       const { results } = response.data;
-  //       console.log("re", results);
-
-  //       if (results && results.length > 0) {
-  //         const { location: coords } = results[0].geometry;
-  //         console.log("lo", coords);
-
-  //         setCoordinates({
-  //           Longitude: coords.lng,
-  //           Latitude: coords.lat,
-  //         });
-
-  //         console.log("Tọa độ:", {
-  //           Longitude: coords.lng,
-  //           Latitude: coords.lat,
-  //         });
-  //       } else {
-  //         message.error("No coordinates found for the given address.");
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching coordinates:", error);
-  //       message.error("Failed to fetch coordinates.");
-  //     }
-  //   } else {
-  //     console.error("No places found");
-  //   }
-  // };
 
   const handleFieldChange = (dayValue) => {
     setActiveButtons({ ...activeButtons, [dayValue]: true });
@@ -564,25 +484,6 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
             name={[day.value, "start"]}
             label={`${day.label} bắt đầu`}
             dependencies={[[day.value, "end"]]}
-            // rules={[
-            //   {
-            //     required: !dayOff[day.value],
-            //     message: "Phải có thời gian bắt đầu trừ khi đó là ngày nghỉ!",
-            //   },
-            //   ({ getFieldValue }) => ({
-            //     validator(_, value) {
-            //       const endTime = getFieldValue([day.value, "end"]);
-            //       if (!value || !endTime || value.isBefore(endTime)) {
-            //         return Promise.resolve();
-            //       }
-            //       return Promise.reject(
-            //         new Error(
-            //           "Thời gian bắt đầu phải trước thời gian kết thúc!"
-            //         )
-            //       );
-            //     },
-            //   }),
-            // ]}
             rules={[
               {
                 required: !dayOff[day.value],
@@ -630,24 +531,6 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
             name={[day.value, "end"]}
             label={`${day.label} kết thúc`}
             dependencies={[[day.value, "start"]]}
-            // rules={[
-            //   {
-            //     required: !dayOff[day.value],
-            //     message:
-            //       "Cần phải có thời gian kết thúc trừ khi đó là ngày nghỉ!",
-            //   },
-            //   ({ getFieldValue }) => ({
-            //     validator(_, value) {
-            //       const startTime = getFieldValue([day.value, "start"]);
-            //       if (!value || !startTime || value.isAfter(startTime)) {
-            //         return Promise.resolve();
-            //       }
-            //       return Promise.reject(
-            //         new Error("Thời gian kết thúc phải sau thời gian bắt đầu!")
-            //       );
-            //     },
-            //   }),
-            // ]}
             rules={[
               {
                 required: !dayOff[day.value],
@@ -708,7 +591,7 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
             >
               <Button
                 style={{ backgroundColor: "#BF9456" }}
-                htmlType="submit"
+                // htmlType="submit"
                 disabled={!activeButtons[day.value]}
               >
                 Chỉnh sửa
@@ -758,8 +641,8 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
     formData.append("Address", location);
     formData.append("Description", description);
     formData.append("Image", imageFile);
-    formData.append("Longitude", coordinates?.Longitude);
-    formData.append("Latitude", coordinates?.Latitude);
+    formData.append("Longitude", selectedPosition?.lng);
+    formData.append("Latitude", selectedPosition?.lat);
 
     dispatch(
       actPutSalonInformationByOwnerId(
@@ -847,7 +730,7 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
             />
           </Autocomplete>
 
-          <Marker position={selectedPosition} />
+          <MarkerF position={selectedPosition} />
         </GoogleMap>
         <Modal
           title="Chọn Địa Chỉ"
@@ -915,7 +798,7 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
                   label="Địa chỉ"
                   rules={[{ required: true }]}
                 >
-                  <Input readOnly placeholder="Điền vị trí" />
+                  <Input placeholder="Điền vị trí" />
                 </Form.Item>
                 {/* </StandaloneSearchBox> */}
                 <Form.Item
@@ -957,27 +840,33 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
                 >
                   <Input.TextArea placeholder="Điền mô tả" />
                 </Form.Item>
-                <Form.Item>
-                  <Popconfirm
-                    title={
-                      id
-                        ? "Bạn có chắc muốn chỉnh sửa thông tin salon?"
-                        : "Bạn có chắc muốn tạo salon?"
-                    }
-                    onConfirm={handleChangeSalon} // This will be triggered when the user clicks "Yes"
-                    onCancel={handleCancelChangeSalon}
-                    okText="Có"
-                    cancelText="Hủy"
-                  >
-                    <Button
-                      style={{ width: "100%", backgroundColor: "#bf9456" }}
-                      type="primary"
-                      // Removed the direct onClick as it's now handled in Popconfirm
+                {id ? (
+                  <Form.Item>
+                    <Popconfirm
+                      title={
+                        id
+                          ? "Bạn có chắc muốn chỉnh sửa thông tin salon?"
+                          : "Bạn có chắc muốn tạo salon?"
+                      }
+                      onConfirm={handleChangeSalon} // This will be triggered when the user clicks "Yes"
+                      onCancel={handleCancelChangeSalon}
+                      okText="Có"
+                      cancelText="Hủy"
                     >
-                      {id ? "Chỉnh sửa thông tin salon" : "Tạo Salon"}
-                    </Button>
-                  </Popconfirm>
-                </Form.Item>
+                      <Button
+                        style={{ width: "100%", backgroundColor: "#bf9456" }}
+                        type="primary"
+                        // Removed the direct onClick as it's now handled in Popconfirm
+                      >
+                        Chỉnh sửa thông tin salon
+                      </Button>
+                    </Popconfirm>
+                  </Form.Item>
+                ) : (
+                  <h6 style={{ fontSize: "2rem", marginBottom: "2rem" }}>
+                    Thời gian làm việc
+                  </h6>
+                )}
 
                 {renderTimePickers()}
                 {!id ? (

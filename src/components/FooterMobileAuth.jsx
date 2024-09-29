@@ -146,7 +146,17 @@ function FooterMobileAuth() {
               >
                 <Link to="/dashboardTransaction" onClick={scrollToTop}>
                   <AreaChartOutlined className={style.icon} />
-                  <span>Thống kê doanh thu</span>
+                  <span>Doanh thu</span>
+                </Link>
+              </li>
+              <li
+                className={`${style.footerItem} ${
+                  isActive("/reviewEmployee") ? style.active : ""
+                }`}
+              >
+                <Link to="/reviewEmployee">
+                  <AreaChartOutlined className={style.icon} />
+                  <span>Nhân viên</span>
                 </Link>
               </li>
             </>

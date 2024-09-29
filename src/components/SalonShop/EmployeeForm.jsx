@@ -234,7 +234,7 @@ const AddEmployeeForm = ({
         .finally((err) => {
           setLoading(false);
         });
-      isOpen(false);
+      isOpen();
       setDayOff({
         Monday: false,
         Tuesday: false,
@@ -258,7 +258,7 @@ const AddEmployeeForm = ({
       Saturday: false,
       Sunday: false,
     });
-    isOpen(false);
+    isOpen();
     form.resetFields();
     setFileList([]);
   };
@@ -385,7 +385,6 @@ const AddEmployeeForm = ({
       setLoading(false);
       message.error("Email chưa đúng hoặc chưa điền!");
     } else {
-      console.log("333");
       const response = await axios
         .post("https://hairhub.gahonghac.net/api/v1/otps/CheckExistEmail", {
           email,
@@ -477,9 +476,9 @@ const AddEmployeeForm = ({
               rules={[{ required: true, message: "Vui lòng chọn giới tính!" }]}
             >
               <Select placeholder="Giới tính">
-                <Option value="Male">Nam</Option>
-                <Option value="Female">Nữ</Option>
-                <Option value="Other">Khác</Option>
+                <Option value="Nam">Nam</Option>
+                <Option value="Nữ">Nữ</Option>
+                <Option value="Khác">Khác</Option>
               </Select>
             </Form.Item>
             {/* <Form.Item
