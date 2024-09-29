@@ -47,7 +47,7 @@ function App() {
     try {
       const refreshToken = localStorage.getItem("refreshToken");
       if (refreshToken) {
-        const res = await AccountServices.refreshToken(refreshToken);        
+        const res = await AccountServices.refreshToken(refreshToken);
         if (res.data?.accessToken) {
           localStorage.setItem("accessToken", res.data.accessToken);
           localStorage.setItem("refreshToken", res.data.refreshToken);
@@ -129,9 +129,7 @@ function App() {
 
     // Dọn dẹp kết nối khi component bị hủy
     return () => {
-      connection.stop().then(() =>{
-
-      } );
+      connection.stop().then(() => {});
     };
   }, [idOwner]);
 
@@ -161,6 +159,7 @@ function App() {
         {localStorage.getItem("refreshToken") ? <Header /> : <HeaderUnAuth />}
       </div>
       <Footer2 />
+      <ChatBox />
       {localStorage.getItem("refreshToken") ? (
         <FooterMobileAuth />
       ) : (

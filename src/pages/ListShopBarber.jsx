@@ -1505,11 +1505,11 @@ function ListShopBarber(props) {
                       </div>
 
                       <Pagination
+                        className="paginationAppointment"
                         current={currentPageEmployee}
                         pageSize={pageSizeEmployee}
                         total={totalPagesEmployee}
                         onChange={onPageChangeEmployee}
-                        style={{ marginTop: "20px", textAlign: "center" }}
                       />
                     </Panel>
                   </Collapse>
@@ -1588,6 +1588,7 @@ function ListShopBarber(props) {
                       </div>
 
                       <Pagination
+                        className="paginationAppointment"
                         current={currentPageService}
                         pageSize={pageSizeService}
                         total={totalPagesService}
@@ -1673,11 +1674,11 @@ function ListShopBarber(props) {
                       </div>
 
                       <Pagination
+                        className="paginationAppointment"
                         current={currentPageVoucher}
                         pageSize={pageSizeVoucher}
                         total={totalPagesVoucher}
                         onChange={onPageChangeVoucher}
-                        style={{ marginTop: "20px", textAlign: "center" }}
                       />
                     </Panel>
                   </Collapse>
