@@ -105,6 +105,90 @@
   display: none;
 }
 
+.iconHeaderActive{
+  font-size: 24px;
+color: #bf9456;
+}
+
+.iconHeader {
+  font-size: 24px;
+color: #ffffff;
+}
+
+.iconHeader :hover {
+  color: #bf9456;
+  }
+
+.avatarContaint {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+}
+
+.modalAvatar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  border-bottom-width: 1px;
+  border-color: #bf9456;
+  padding-bottom: 5px;
+  margin-bottom: 5px;
+}
+.modalLinkContaint{
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: flex-start;
+  border-bottom-width: 1px;
+  border-color: #bf9456;
+  padding-bottom: 5px;
+  margin-bottom: 5px;
+}
+.modalLink {
+  color: #333333;
+  text-decoration: none;
+  font-size: 1.2rem;
+  transition: color 0.3s;
+}
+
+.modalLink.active {
+  color: #bf9456; /* Màu chữ khi liên kết được active */
+}
+
+.modalLink:hover,
+.modalLink:focus {
+  color: #bf9456;
+  text-decoration: none;
+}
+
+.customNotification {
+  position: fixed; /* Đặt ở vị trí cố định */
+  margin-top: 80px;
+  top: -100%; /* Bắt đầu từ bên ngoài màn hình ở phía trên */
+  right: 0; /* Đặt modal sát cạnh phải */
+  width: 20%; /* Chiều rộng 1/5 chiều rộng màn hình */
+  height: 100vh; /* Chiều cao toàn màn hình */
+  background-color: white; /* Màu nền */
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2); /* Đổ bóng */
+  z-index: 900; /* Đặt z-index cao hơn để hiển thị trên các thành phần khác */
+  overflow-y: auto; /* Cho phép cuộn dọc */
+  transition: top 0.5s ease; /* Thêm hiệu ứng chuyển động */
+  min-width: 300px;
+}
+
+.customNotification.show {
+  top: 0; /* Di chuyển vào trong màn hình từ trên xuống */
+}
+
+
+
+.notificationContent {
+  padding: 10px; /* Thêm khoảng cách bên trong */
+}
+
 @media (max-width: 768px) {
   .header {
     padding: 1rem;
@@ -134,5 +218,8 @@
 
   .loginLink {
     display: none;
+  }
+  .customNotification {
+    width: 100%;
   }
 }

@@ -22,7 +22,9 @@ function FooterMobileAuth() {
 
   // Hàm kiểm tra đường dẫn hiện tại có khớp với link hay không
   const isActive = (path) => location.pathname === path;
-
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
   return (
     <footer className={style.footerMobile}>
       <nav className={style.footerNav}>
@@ -34,7 +36,7 @@ function FooterMobileAuth() {
                   isActive("/") ? style.active : ""
                 }`}
               >
-                <Link to="/">
+                <Link to="/" onClick={scrollToTop}>
                   <HomeOutlined className={style.icon} />
                   <span>Trang chủ</span>
                 </Link>
@@ -44,7 +46,7 @@ function FooterMobileAuth() {
                   isActive("/list_salon_ver2") ? style.active : ""
                 }`}
               >
-                <Link to="/list_salon_ver2">
+                <Link to="/list_salon_ver2" onClick={scrollToTop}>
                   <ShopOutlined className={style.icon} />
                   <span>Hệ thống</span>
                 </Link>
@@ -54,7 +56,7 @@ function FooterMobileAuth() {
                   isActive("/customer_appointment") ? style.active : ""
                 }`}
               >
-                <Link to="/customer_appointment">
+                <Link to="/customer_appointment" onClick={scrollToTop}>
                   <CalendarOutlined className={style.icon} />
                   <span>Cuộc hẹn</span>
                 </Link>
@@ -68,23 +70,37 @@ function FooterMobileAuth() {
                   isActive("/SalonEmployee") ? style.active : ""
                 }`}
               >
-                <Link to="/SalonEmployee">
+                <Link to="/SalonEmployee" onClick={scrollToTop}>
                   <ShopOutlined className={style.icon} />
                   <span>Thông tin cửa hàng</span>
                 </Link>
               </li>
-              <li className={style.footerItem}>
-                <Link to="/employee_appointment">
+              <li
+                className={`${style.footerItem} ${
+                  isActive("/employee_appointment") ? style.active : ""
+                }`}
+              >
+                <Link to="/employee_appointment" onClick={scrollToTop}>
                   <CalendarOutlined />
                   <span>Cuộc hẹn</span>
                 </Link>
               </li>
+              {/* <li
+                className={`${style.footerItem} ${
+                  isActive("/EmployeeSchedule") ? style.active : ""
+                }`}
+              >
+                <Link to="/EmployeeSchedule" onClick={scrollToTop}>
+                  <CalendarOutlined />
+                  <span>Cuộc hẹn</span>
+                </Link>
+              </li> */}
               <li
                 className={`${style.footerItem} ${
                   isActive("/EmployeeStatistics") ? style.active : ""
                 }`}
               >
-                <Link to="/EmployeeStatistics">
+                <Link to="/EmployeeStatistics" onClick={scrollToTop}>
                   <AreaChartOutlined className={style.icon} />
                   <span>Thống kê cá nhân</span>
                 </Link>
@@ -98,7 +114,7 @@ function FooterMobileAuth() {
                   isActive(handleEmptySalon()) ? style.active : ""
                 }`}
               >
-                <Link to={handleEmptySalon()}>
+                <Link to={handleEmptySalon()} onClick={scrollToTop}>
                   <ShopOutlined className={style.icon} />
                   <span>Quản lý Salon</span>
                 </Link>
@@ -108,7 +124,7 @@ function FooterMobileAuth() {
                   isActive("/salon_appointment") ? style.active : ""
                 }`}
               >
-                <Link to="/salon_appointment">
+                <Link to="/salon_appointment" onClick={scrollToTop}>
                   <CalendarOutlined className={style.icon} />
                   <span>Cuộc hẹn</span>
                 </Link>
@@ -118,7 +134,7 @@ function FooterMobileAuth() {
                   isActive("/salon_report") ? style.active : ""
                 }`}
               >
-                <Link to="/salon_report">
+                <Link to="/salon_report" onClick={scrollToTop}>
                   <WarningOutlined className={style.icon} />
                   <span>Báo cáo</span>
                 </Link>
@@ -128,7 +144,7 @@ function FooterMobileAuth() {
                   isActive("/dashboardTransaction") ? style.active : ""
                 }`}
               >
-                <Link to="/dashboardTransaction">
+                <Link to="/dashboardTransaction" onClick={scrollToTop}>
                   <AreaChartOutlined className={style.icon} />
                   <span>Doanh thu</span>
                 </Link>

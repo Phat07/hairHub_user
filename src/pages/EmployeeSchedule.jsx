@@ -1,9 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
-import "moment/locale/vi"; // Import ngôn ngữ tiếng Việt từ moment
+import "moment/dist/locale/vi";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { Modal, Button, Typography, Image, Divider } from "antd"; // Import các component của Ant Design
+import {
+  Modal,
+  Button,
+  Typography,
+  Image,
+  Divider,
+  Row,
+  Col,
+  DatePicker,
+} from "antd"; // Import các component của Ant Design
 // import FullCalendar from "@fullcalendar/react";
 // import dayGridPlugin from "@fullcalendar/daygrid";
 // import timeGridPlugin from "@fullcalendar/timegrid";
@@ -11,145 +20,124 @@ import { Modal, Button, Typography, Image, Divider } from "antd"; // Import các
 import style from "../css/schedule.module.css"; // Import CSS Modules
 import styles from "../css/customerAppointment.module.css";
 import "../css/Customeschedule.css";
+import "react-calendar/dist/Calendar.css";
+import ReactCalendar from "react-calendar";
+import { useDispatch, useSelector } from "react-redux";
+import { actGetAppointmentByEmployeeId } from "@/store/employeeAppointments/action";
+
 const { Text } = Typography;
 
-const localizer = momentLocalizer(moment);
-
-const events = [
-  {
-    title: "Cắt tóc nam - Khách A",
-    start: new Date(2024, 8, 19, 9, 0),
-    end: new Date(2024, 8, 19, 10, 0),
-    salonInformation: {
-      id: 1,
-      img: "https://images.unsplash.com/photo-1600948836101-f9ffda59d250?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fHNhbG9ufGVufDB8fDB8fHww",
-      name: "Salon A",
-      address: "123 Đường ABC",
-    },
-    qrCodeImg:
-      "https://images.unsplash.com/photo-1600948836101-f9ffda59d250?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fHNhbG9ufGVufDB8fDB8fHww",
-    status: "CONFIRMED",
-    appointmentDetails: [
-      {
-        serviceHairId: 1,
-        serviceName: "Cắt tóc nam",
-        salonEmployee: {
-          fullName: "Nhân viên A",
-        },
-        startTime: new Date(2024, 8, 19, 9, 0),
-        endTime: new Date(2024, 8, 19, 10, 0),
-        priceServiceHair: 100000,
-      },
-    ],
-    id: "12345",
-    customer: {
-      fullName: "Khách A",
-    },
-    createdDate: new Date(2024, 8, 10),
-    originalPrice: 100000,
-    discountedPrice: 90000,
-    totalPrice: 90000,
-    cancellationTime: null,
-    reasonCancel: null,
-  },
-  {
-    title: "Cắt tóc nam - Khách A fasfasfasf",
-    start: new Date(2024, 8, 19, 10, 0),
-    end: new Date(2024, 8, 19, 11, 0),
-    salonInformation: {
-      id: 1,
-      img: "https://images.unsplash.com/photo-1600948836101-f9ffda59d250?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fHNhbG9ufGVufDB8fDB8fHww",
-      name: "Salon A",
-      address: "123 Đường ABC",
-    },
-    qrCodeImg:
-      "https://images.unsplash.com/photo-1600948836101-f9ffda59d250?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fHNhbG9ufGVufDB8fDB8fHww",
-    status: "CONFIRMED",
-    appointmentDetails: [
-      {
-        serviceHairId: 1,
-        serviceName: "Cắt tóc nam",
-        salonEmployee: {
-          fullName: "Nhân viên A",
-        },
-        startTime: new Date(2024, 8, 19, 9, 0),
-        endTime: new Date(2024, 8, 19, 10, 0),
-        priceServiceHair: 100000,
-      },
-    ],
-    id: "12345",
-    customer: {
-      fullName: "Khách A",
-    },
-    createdDate: new Date(2024, 8, 10),
-    originalPrice: 100000,
-    discountedPrice: 90000,
-    totalPrice: 90000,
-    cancellationTime: null,
-    reasonCancel: null,
-  },
-  {
-    title: "Cắt tóc nam - Khách A",
-    start: new Date(2024, 8, 19, 11, 30),
-    end: new Date(2024, 8, 19, 13, 0),
-    salonInformation: {
-      id: 1,
-      img: "https://images.unsplash.com/photo-1600948836101-f9ffda59d250?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fHNhbG9ufGVufDB8fDB8fHww",
-      name: "Salon A",
-      address: "123 Đường ABC",
-    },
-    qrCodeImg:
-      "https://images.unsplash.com/photo-1600948836101-f9ffda59d250?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fHNhbG9ufGVufDB8fDB8fHww",
-    status: "CONFIRMED",
-    appointmentDetails: [
-      {
-        serviceHairId: 1,
-        serviceName: "Cắt tóc nam",
-        salonEmployee: {
-          fullName: "Nhân viên A",
-        },
-        startTime: new Date(2024, 8, 19, 9, 0),
-        endTime: new Date(2024, 8, 19, 10, 0),
-        priceServiceHair: 100000,
-      },
-    ],
-    id: "12345",
-    customer: {
-      fullName: "Khách A",
-    },
-    createdDate: new Date(2024, 8, 10),
-    originalPrice: 100000,
-    discountedPrice: 90000,
-    totalPrice: 90000,
-    cancellationTime: null,
-    reasonCancel: null,
-  },
-  // Thêm các sự kiện khác ở đây...
-];
-
 const EmployeeSchedule = () => {
+  const dispatch = useDispatch();
+  moment.locale("vi");
+  const localizer = momentLocalizer(moment);
   const [visible, setVisible] = useState(false); // State để quản lý việc hiển thị modal
   const [selectedAppointmentDetail, setSelectedAppointmentDetail] =
     useState(null); // State để lưu sự kiện được chọn
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState("BOOKING");
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 100;
+
+  const employeeId = useSelector((state) => state.ACCOUNT.idEmployee);
+
+  const employeeAppointments = useSelector(
+    (state) => state.EMPLOYEEAPPOINTMENTS.appointment
+  );
+
+  const totalPages = useSelector(
+    (state) => state.EMPLOYEEAPPOINTMENTS.totalPages
+  );
+
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      if (status) {
+        setLoading(true);
+        await dispatch(
+          actGetAppointmentByEmployeeId(
+            employeeId,
+            currentPage,
+            pageSize,
+            status,
+            true
+          )
+        );
+        setLoading(false);
+      }
+    };
+
+    fetchAppointments();
+  }, [employeeId, status, currentPage]);
+
+  const events = employeeAppointments.map((appointment) => {
+    const appointmentDetails = appointment.appointmentDetails;
+    const startTime = new Date(appointmentDetails[0].startTime); // Chuyển đổi startTime thành đối tượng Date
+    const endTime = new Date(
+      appointmentDetails[appointmentDetails.length - 1].endTime
+    ); // Chuyển đổi endTime thành đối tượng Date
+    const serviceNames = appointmentDetails
+      .map((detail) => detail.serviceName)
+      .join(" - ");
+    const customerName = appointment.customer.fullName;
+    const title = `${customerName} - [${serviceNames}]`;
+    return {
+      id: appointment.id,
+      start: startTime, // Đối tượng Date cho thời gian bắt đầu
+      end: endTime, // Đối tượng Date cho thời gian kết thúc
+      title: title, // Ví dụ: Tên salon
+    };
+  });
+
+  // console.log(events[0].start);
+
+  // const minTime = events.reduce(
+  //   (min, event) => (event.start < min ? event.start : min),
+  //   new Date()
+  // );
+  // const maxTime = events.reduce(
+  //   (max, event) => (event.end > max ? event.end : max),
+  //   new Date()
+  // );
+  // Cập nhật sự kiện khi người dùng chọn một ngày mới
+  const handleDateChange = (date) => {
+    console.log("date", date);
+
+    setSelectedDate(date); // Chuyển đổi từ moment về Date
+  };
 
   const handleEventClick = (clickInfo) => {
-    // setSelectedAppointmentDetail(clickInfo.event.extendedProps);
-    setSelectedAppointmentDetail(clickInfo);
-    setVisible(true); // Hiển thị modal
+    const selectedAppointment = employeeAppointments.find(
+      (appointment) => appointment.id === clickInfo.id
+    );
+
+    if (selectedAppointment) {
+      setSelectedAppointmentDetail(selectedAppointment);
+      setVisible(true); // Hiển thị modal
+    }
   };
 
   const handleModalClose = () => {
     setVisible(false); // Đóng modal
   };
 
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const today = new Date(); // Ngày hôm nay
+  const maxDate = new Date(today); // Tạo một bản sao của ngày hôm nay
+  maxDate.setDate(today.getDate() + 7); // Cộng thêm 7 ngày
+  const goToToday = () => {
+    setSelectedDate(new Date());
+  };
   const renderAppointmentDetail = () => {
     if (!selectedAppointmentDetail) return null;
 
     return (
       <div className={styles.appointmentDetail}>
-        <div className={styles.appointmentDetailA1}>
-          {/* B1: Thông tin Salon */}
-          <div
+        {selectedAppointmentDetail?.status === "BOOKING" && (
+          <div className={styles.appointmentDetailA1}>
+            {/* B1: Thông tin Salon */}
+            {/* <div
             className={styles.appointmentDetailB1}
             style={{
               border: "1px solid #ccc",
@@ -181,14 +169,13 @@ const EmployeeSchedule = () => {
                 </Text>
               </p>
             </div>
-          </div>
+          </div> */}
 
-          {/* B2: Mã QR */}
-          <div
-            className={styles.appointmentDetailB2}
-            style={{ marginTop: "1rem" }}
-          >
-            {selectedAppointmentDetail?.status !== "CANCEL_BY_CUSTOMER" && (
+            {/* B2: Mã QR */}
+            <div
+              className={styles.appointmentDetailB2}
+              style={{ marginTop: "1rem" }}
+            >
               <div style={{ padding: "10px", border: "1px solid #ccc" }}>
                 <Text strong>Mã QR xác nhận để thành công:</Text>
                 <Image
@@ -196,10 +183,9 @@ const EmployeeSchedule = () => {
                   style={{ width: "100%", marginTop: "10px" }}
                 />
               </div>
-            )}
+            </div>
           </div>
-        </div>
-
+        )}
         <div className={styles.appointmentDetailA2}>
           {/* C1: Chi tiết dịch vụ */}
           <div
@@ -383,17 +369,64 @@ const EmployeeSchedule = () => {
   return (
     <div className={style.schedule}>
       <h1 className={style.header}>Lịch Hẹn Cắt Tóc</h1>
-      <Calendar
-        localizer={localizer}
-        events={events}
-        startAccessor="start"
-        endAccessor="end"
-        views={["day", "agenda", "week"]}
-        defaultView="day"
-        // style={{ height: 400 }}
-        className="customeSchedule"
-        onSelectEvent={handleEventClick}
-      />
+      <Row gutter={[16, 16]}>
+        <Col
+          xs={24} // Trên màn hình nhỏ (mobile) thì chiếm 100% (24 cột)
+          sm={24} // Trên màn hình nhỏ hơn (tablet) thì cũng chiếm 100%
+          md={24} // Trên màn hình trung bình (laptop) thì chiếm 2/3 (16/24 cột)
+          lg={24} // Trên màn hình lớn (desktop) thì cũng chiếm 2/3 (16/24 cột)
+        >
+          <Calendar
+            localizer={localizer}
+            // min={new Date(minTime.setHours(8, 0))}
+            // max={new Date(maxTime.setHours(21, 0))}
+            events={events}
+            startAccessor="start"
+            endAccessor="end"
+            views={["day", "week", "month", "agenda"]}
+            defaultView="day"
+            // date={selectedDate}
+            className="customeSchedule"
+            onSelectEvent={handleEventClick}
+            style={{ height: 600 }}
+            culture="vi"
+            // min={today}
+            // max={maxDate}
+            messages={{
+              next: "Tiếp theo",
+              previous: "Trước đó",
+              today: "Xem hôm nay",
+              month: "Tháng",
+              week: "Tuần",
+              day: "Ngày",
+              agenda: "Lịch",
+              date: "Ngày",
+              time: "Thời gian",
+              event: "Lịch hẹn",
+            }}
+          />
+        </Col>
+        {/* <Col
+          xs={24} // Trên màn hình nhỏ (mobile) thì chiếm 100% (24 cột)
+          sm={24} // Trên màn hình nhỏ hơn (tablet) thì cũng chiếm 100%
+          md={8} // Trên màn hình trung bình (laptop) thì chiếm 1/3 (8/24 cột)
+          lg={8} // Trên màn hình lớn (desktop) thì cũng chiếm 1/3 (8/24 cột)
+        >
+          <ReactCalendar
+            onChange={handleDateChange}
+            value={selectedDate} // Chọn ngày
+            minDate={yesterday} // Ngày nhỏ nhất là ngày hôm qua
+            view="month" // Bắt đầu ở chế độ xem tháng
+            maxDetail="month" // Giới hạn chi tiết tối đa là tháng (không cho chỉnh thập kỷ, năm)
+            next2Label={null} // Ẩn nút chuyển thế kỷ
+            prev2Label={null} // Ẩn nút chuyển thế kỷ
+            style={{ width: "100%" }} // Đảm bảo lịch chiếm toàn bộ chiều rộng
+          />
+          <Button onClick={goToToday} style={{ marginTop: "10px" }}>
+            Quay lại ngày hôm nay
+          </Button>
+        </Col> */}
+      </Row>
       {/* <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]} // Sử dụng các plugin
         initialView="timeGridDay" // Chế độ xem mặc định là theo ngày

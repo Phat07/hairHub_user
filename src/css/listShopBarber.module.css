@@ -10,6 +10,9 @@ margin-inline: 2rem;
 .responsive-card {
   width: 100%;
   padding: 0;
+  background-color: #ece8de;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 .responsive-card .ant-card-body {
   width: 100%;

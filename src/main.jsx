@@ -277,14 +277,14 @@ const router = createBrowserRouter([
           </RequireAuth>
         ),
       },
-      // {
-      //   path: "EmployeeSchedule",
-      //   element: (
-      //     <RequireAuth fallbackPath="/login">
-      //       <EmployeeSchedule />
-      //     </RequireAuth>
-      //   ),
-      // },
+      {
+        path: "EmployeeSchedule",
+        element: (
+          <RequireAuth requiredRoles={["SalonEmployee"]} fallbackPath="/login">
+            <EmployeeSchedule />
+          </RequireAuth>
+        ),
+      },
       {
         path: "EmployeeStatistics",
         element: (
