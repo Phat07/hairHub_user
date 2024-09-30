@@ -369,11 +369,11 @@ const router = createBrowserRouter([
 // };
 const customTheme = {
   token: {
-    fontFamily: '"Sofadi One", cursive',
+    fontFamily: '"Oswald", cursive',
   },
   components: {
     Typography: {
-      fontFamily: '"Sofadi One", cursive',
+      fontFamily: '"Oswald", cursive',
       fontSize: 16,
     },
   },
