@@ -1,7 +1,8 @@
 import {
+  GoogleOutlined,
   LockOutlined,
   UserOutlined,
-  createFromIconfontCN
+  createFromIconfontCN,
 } from "@ant-design/icons";
 import {
   Button,
@@ -20,6 +21,7 @@ import {
 import { motion } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import "../css/login.css";
+import styles from "../css/login.module.css";
 
 import {
   LoginFormPage,
@@ -46,6 +48,7 @@ import { AccountServices } from "../services/accountServices";
 import { loginAccount } from "../store/account/action";
 // import LoginGoogle from "../components/googleSignIn/LoginGoogle";
 import hairhubLogo from "../assets/images/hairHubLogo.png";
+import classNames from "classnames";
 
 const { Meta } = Card;
 //icon
@@ -234,10 +237,10 @@ const LoginPage = () => {
           })
           .catch((err) => {
             message.error("Thất bại trong việc đăng ký!");
-          })
-          // .finally(() => {
-          //   setLoading(false);
-          // });
+          });
+        // .finally(() => {
+        //   setLoading(false);
+        // });
       } catch (error) {
         setLoading(false);
         message.error(error);
@@ -986,45 +989,6 @@ const LoginPage = () => {
                   </Button>
                 )}
               </div>
-
-              {/* <motion.div
-              variants={{
-                hidden: { y: "-100vh", opacity: 0 },
-                visible: {
-                  y: "-1px",
-                  opacity: 1,
-                  transition: {
-                    delay: 0.5,
-                    type: "spring",
-                    stiffness: 500,
-                  },
-                },
-              }}
-              initial="hidden"
-              animate="visible"
-            >
-              <Divider>
-                <Typography.Title level={5}>
-                  Đăng nhập bằng...
-                </Typography.Title>
-              </Divider>
-              <Space size={3} className="flex justify-center">
-                <Button
-                  className="bg-[#f5f5f5ee] hover:bg-blue-500 text-black"
-                  type="primary"
-                  shape="circle"
-                >
-                  <GoogleOutlined />
-                </Button>
-                <Button
-                  className="bg-[#f5f5f5ee] hover:bg-blue-500 text-black"
-                  type="primary"
-                  shape="circle"
-                >
-                  <IconFont type="icon-facebook" />
-                </Button>
-              </Space>
-            </motion.div> */}
             </Modal>
           )}
           {accessType === "login" && (
@@ -1045,6 +1009,36 @@ const LoginPage = () => {
               >
                 Quên mật khẩu
               </a>
+              {/* <motion.div
+                variants={{
+                  hidden: { y: "-100vh", opacity: 0 },
+                  visible: {
+                    y: "-1px",
+                    opacity: 1,
+                    transition: {
+                      delay: 0.5,
+                      type: "spring",
+                      stiffness: 500,
+                    },
+                  },
+                }}
+                initial="hidden"
+                animate="visible"
+              >
+                <Divider>
+                  <Typography.Title level={5}>
+                    Đăng nhập bằng...
+                  </Typography.Title>
+                </Divider>
+                <Space size={3} className="flex justify-center">
+                  <Button
+                    className="bg-[#f5f5f5ee] border border-transparent hover:!border-red-500 hover:!text-red-500 text-black"
+                    shape="circle"
+                  >
+                    <GoogleOutlined />
+                  </Button>
+                </Space>
+              </motion.div> */}
             </div>
           )}
         </LoginFormPage>

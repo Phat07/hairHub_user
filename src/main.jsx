@@ -369,15 +369,16 @@ const router = createBrowserRouter([
 // };
 const customTheme = {
   token: {
-    fontFamily: '"Sofadi One", cursive',
+    fontFamily: '"Kanit", sans-serif',
   },
   components: {
     Typography: {
-      fontFamily: '"Sofadi One", cursive',
+      fontFamily: '"Kanit", sans-serif',
       fontSize: 16,
     },
   },
 };
+
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
