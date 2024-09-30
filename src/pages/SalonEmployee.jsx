@@ -322,6 +322,18 @@ function SalonEmployee(props) {
                             }}
                           />
                         </div>
+                        <div
+                          style={{ padding: "1rem" }}
+                          className={classNames(
+                            "my-custom-add",
+                            styles["salon-title-cover"]
+                          )}
+                          // className={styles["salon-title-cover"]}
+                        >
+                          <div className={styles["salon-title"]}>
+                            {salonDetailEmployee.name}
+                          </div>
+                        </div>
                       </div>
                     }
                     bordered

@@ -1,8 +1,9 @@
 .dashboardContainer {
     padding: 20px;
-    font-family: Arial, sans-serif;
+    /* font-family: Arial, sans-serif; */
     margin-inline: 20px;
     margin-bottom: 10px;
+    margin-top: 65px;
   }
 
   .dashboardContainer h1 {

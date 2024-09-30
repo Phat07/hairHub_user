@@ -1,7 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "../css/flaticon.min.css";
-import { DownOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons";
-import { Avatar, Badge, Button, Dropdown, Menu, message } from "antd";
+import {
+  AreaChartOutlined,
+  AuditOutlined,
+  BellOutlined,
+  CalendarOutlined,
+  DownOutlined,
+  HomeOutlined,
+  LogoutOutlined,
+  ShopOutlined,
+  UserOutlined,
+  WarningOutlined,
+} from "@ant-design/icons";
+import { Avatar, Badge, Button, Dropdown, Menu, message, Modal } from "antd";
 import { IoMenu } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -14,6 +25,7 @@ import {
 import hairHubLogo from "../assets/images/hairhubFinalLogo.png";
 import style from "../css/header.module.css";
 import { actGetSalonInformationByOwnerIdByCheck } from "../store/salonInformation/action";
+import classNames from "classnames";
 
 function Header(props) {
   const { id } = useParams();
@@ -88,6 +100,45 @@ function Header(props) {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  const [isNotificationVisible, setNotificationVisible] = useState(false);
+  const notificationRef = useRef(null); // Tạo ref để tham chiếu đến thông báo
+
+  const toggleNotification = (e) => {
+    // e.stopPropagation();
+    setNotificationVisible(!isNotificationVisible); // Đóng/mở modal
+  };
+
+  // Lắng nghe nhấn chuột bên ngoài modal
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Nếu nhấn vào Badge thì không đóng modal
+      if (
+        notificationRef.current &&
+        !notificationRef.current.contains(event.target) &&
+        !event.target.closest(".ant-badge")
+      ) {
+        setNotificationVisible(false); // Đóng modal
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <div>
       <header className={style.headerContainer}>
@@ -355,20 +406,167 @@ function Header(props) {
           </button>
 
           {account ? (
-            <Dropdown overlay={accountMenu} trigger={["click"]}>
-              <a onClick={(e) => e.preventDefault()}>
-                {/* <Avatar className={style.avatarLink} icon={<UserOutlined />} /> */}
+            <div className={style.avatarContaint}>
+              {/* <Dropdown overlay={accountMenu} trigger={["click"]}>
+                <a onClick={(e) => e.preventDefault()}>
+                  
+                  <Avatar
+                    className={style.avatarLink}
+                    src={avatar || <UserOutlined />}
+                  />
+                </a>
+              </Dropdown> */}
+              {/* {isNotificationVisible ? (
+                <Badge count={5} onClick={toggleNotification}>
+                  <BellOutlined className={style.iconHeaderActive} />
+                </Badge>
+              ) : (
+                <Badge count={5} onClick={toggleNotification}>
+                  <BellOutlined className={style.iconHeader} />
+                </Badge>
+              )} */}
+
+              <a onClick={showModal} style={{ marginLeft: "20px" }}>
                 <Avatar
                   className={style.avatarLink}
                   src={avatar || <UserOutlined />}
                 />
               </a>
-            </Dropdown>
+            </div>
           ) : (
             <Link to={"/login"}>
               <Button type="primary">Đăng nhập</Button>
             </Link>
           )}
+        </div>
+
+        <Modal
+          title="Tài khoản của bạn"
+          visible={isModalVisible}
+          onCancel={handleCancel}
+          footer={null}
+        >
+          <div className={style.modalAvatar}>
+            <Avatar
+              className={style.avatarLink}
+              src={avatar || <UserOutlined />}
+            />
+            <p style={{ marginBottom: "0", marginLeft: "10px" }}>{account}</p>
+          </div>
+          <div className={style.modalLinkContaint}>
+            <p style={{ marginBottom: "0" }}>
+              <Link to={`/Account/${uid}`} className={style.modalLink}>
+                <UserOutlined /> Thông tin cá nhân
+              </Link>
+            </p>
+            {idCustomer && (
+              <>
+                <li>
+                  <Link to={"/"} className={style.modalLink}>
+                    <HomeOutlined className={style.icon} /> Trang chủ
+                  </Link>
+                </li>
+                <li>
+                  <Link to={"/list_salon_ver2"} className={style.modalLink}>
+                    <ShopOutlined className={style.icon} /> Hệ thống cửa hàng
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to={"/customer_appointment"}
+                    className={style.modalLink}
+                  >
+                    <CalendarOutlined className={style.icon} /> Cuộc hẹn
+                  </Link>
+                </li>
+              </>
+            )}
+
+            {idEmployee && (
+              <>
+                <li>
+                  <Link to={"/SalonEmployee"} className={style.modalLink}>
+                    <ShopOutlined className={style.icon} /> Thông tin cửa hàng
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to={"/employee_appointment"}
+                    className={style.modalLink}
+                  >
+                    <CalendarOutlined className={style.icon} /> Cuộc hẹn
+                  </Link>
+                </li>
+                <li>
+                  <Link to={"/EmployeeStatistics"} className={style.modalLink}>
+                    <AreaChartOutlined className={style.icon} /> Thống kê cá
+                    nhân
+                  </Link>
+                </li>
+              </>
+            )}
+            {idOwner && (
+              <>
+                <li>
+                  <Link className={style.modalLink} to={handleEmptySalon()}>
+                    <ShopOutlined className={style.icon} /> Quản lý Salon
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/salon_report" className={style.modalLink}>
+                    <WarningOutlined className={style.icon} /> Danh sách báo cáo
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/dashboardTransaction" className={style.modalLink}>
+                    <AreaChartOutlined className={style.icon} /> Thống kê doanh
+                    thu
+                  </Link>
+                </li>
+                <li>
+                  <Link to={"/salon_appointment"} className={style.modalLink}>
+                    <CalendarOutlined className={style.icon} /> Cuộc hẹn
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/reviewEmployee" className={style.modalLink}>
+                    <AuditOutlined className={style.icon} />
+                    <span>Nhân viên</span>
+                  </Link>
+                </li>
+              </>
+            )}
+          </div>
+          <Button onClick={handleSignOut} icon={<LogoutOutlined />}>
+            Đăng xuất
+          </Button>
+        </Modal>
+        {/* <Modal
+          open={isModalVisibleNoti}
+          onCancel={handleCancelNoti}
+          footer={null}
+          closable={false}
+          className={style["notification-modal"]}
+          bodyStyle={{
+            height: "80vh", 
+            overflow: "auto", 
+          }}
+        >
+          <p>Danh sách thông báo của bạn...</p>
+    
+        </Modal> */}
+
+        <div
+          ref={notificationRef} // Gán ref vào div thông báo
+          className={`${style.customNotification} ${
+            isNotificationVisible ? style.show : ""
+          }`}
+        >
+          <div className={style.notificationContent}>
+            <p>Danh sách thông báo của bạn...</p>
+            {/* Nội dung thông báo */}
+            <button onClick={toggleNotification}>Đóng</button>
+          </div>
         </div>
       </header>
       <Outlet />

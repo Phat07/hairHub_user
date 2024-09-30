@@ -36,7 +36,7 @@ const EmployeeSchedule = () => {
     useState(null); // State để lưu sự kiện được chọn
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState("FAILED");
+  const [status, setStatus] = useState("BOOKING");
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 100;
 
