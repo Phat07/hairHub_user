@@ -14,6 +14,7 @@ import {
 import hairHubLogo from "../assets/images/hairhubFinalLogo.png";
 import style from "../css/header.module.css";
 import { actGetSalonInformationByOwnerIdByCheck } from "../store/salonInformation/action";
+import HeaderUnAuth from "./HeaderUnAuth";
 
 function Header(props) {
   const { id } = useParams();
@@ -132,7 +133,7 @@ function Header(props) {
                     Hệ thống cửa hàng
                   </Link>
                 </li>
-                <li style={{marginTop:"0.35rem"}} className={style.navItem}>
+                <li style={{ marginTop: "0.35rem" }} className={style.navItem}>
                   <Badge count={newAppointments} offset={[10, 0]}>
                     <Link
                       to={"/customer_appointment"}
@@ -338,9 +339,7 @@ function Header(props) {
               </a>
             </Dropdown>
           ) : (
-            <Link to={"/login"}>
-              <Button type="primary">Đăng nhập</Button>
-            </Link>
+            <HeaderUnAuth />
           )}
         </div>
       </header>
