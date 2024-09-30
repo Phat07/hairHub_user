@@ -369,11 +369,11 @@ const router = createBrowserRouter([
 // };
 const customTheme = {
   token: {
-    fontFamily: '"Kanit", sans-serif',
+    fontFamily: '"Oswald", cursive',
   },
   components: {
     Typography: {
-      fontFamily: '"Kanit", sans-serif',
+      fontFamily: '"Oswald", cursive',
       fontSize: 16,
     },
   },
