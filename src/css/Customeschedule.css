@@ -8,10 +8,15 @@
   }
 }
 
+.customeSchedule .rbc-timeslot-group {
+min-height: 5rem;
+}
+
 .customeSchedule .rbc-event {
     background-color: #ece8de !important; /* Sử dụng !important để ưu tiên */
     color: rgb(0, 0, 0) !important; /* Sử dụng !important nếu cần */
-    border-width: 0;
+    border-width: 1;
+    border-color: #bf9456;
   }
 
   .customeSchedule .rbc-selected {

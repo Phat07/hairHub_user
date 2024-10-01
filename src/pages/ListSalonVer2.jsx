@@ -1117,14 +1117,14 @@ function ListSalonVer2(props) {
                           <p style={{ fontSize: "1rem" }}>
                             <strong>Địa chỉ:</strong> {salon.address}
                           </p>
-                          <Button
+                          {/* <Button
                             onClick={() =>
                               navigate(`/salon_detail/${salon?.id}`)
                             }
                             className={styles["book-button"]}
                           >
                             Đặt lịch
-                          </Button>
+                          </Button> */}
                           <ul>
                             {salon.services
                               .slice(0, 3)
@@ -1149,6 +1149,14 @@ function ListSalonVer2(props) {
                                       {formatMoneyVND(service.price)} vnđ
                                     </span>
                                   </div>
+                                  <Button
+                                    onClick={() =>
+                                      navigate(`/salon_detail/${salon?.id}`)
+                                    }
+                                    className={styles["book-button"]}
+                                  >
+                                    Đặt lịch
+                                  </Button>
                                 </motion.li>
                               ))}
                           </ul>

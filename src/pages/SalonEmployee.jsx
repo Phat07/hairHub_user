@@ -322,6 +322,18 @@ function SalonEmployee(props) {
                             }}
                           />
                         </div>
+                        <div
+                          style={{ padding: "1rem" }}
+                          className={classNames(
+                            "my-custom-add",
+                            styles["salon-title-cover"]
+                          )}
+                          // className={styles["salon-title-cover"]}
+                        >
+                          <div className={styles["salon-title"]}>
+                            {salonDetailEmployee.name}
+                          </div>
+                        </div>
                       </div>
                     }
                     bordered
@@ -472,8 +484,8 @@ function SalonEmployee(props) {
                               schedule.dayOfWeek
                             )}
                           >
-                            {schedule.startTime === "00:00:00" &&
-                            schedule.endTime === "00:00:00" ? (
+                            {schedule.startTime === "00:00" ||
+                            schedule.endTime === "00:00" ? (
                               <Typography.Text strong style={{ color: "red" }}>
                                 Không hoạt động
                               </Typography.Text>
