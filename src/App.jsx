@@ -58,6 +58,8 @@ function App() {
         }
       }
     } catch (error) {
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("accessToken");
       message?.info(error?.response?.data?.message, 1);
       // navigate("/login");
       // message.error("Có lỗi xảy ra khi làm mới token");
@@ -68,8 +70,6 @@ function App() {
     try {
       let accessToken = localStorage.getItem("accessToken");
       if (accessToken && !isTokenExpired(accessToken)) {
-        localStorage.removeItem("refreshToken");
-        localStorage.removeItem("accessToken");
         await dispatch(fetchUserByTokenApi(accessToken, navigate));
       } else {
         accessToken = await refreshToken();
