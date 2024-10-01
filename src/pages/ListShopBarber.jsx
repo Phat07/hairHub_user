@@ -1315,6 +1315,16 @@ function ListShopBarber(props) {
                           >
                             Chỉnh sửa thông tin
                           </Button>
+                          <br />
+                          <Button
+                            style={{ marginTop: "1rem" }}
+                            // type="primary"
+                            onClick={() => {
+                              navigate(`/salon_iamges/${salonDetail?.id}`);
+                            }}
+                          >
+                            Thêm hình cho salon của bạn
+                          </Button>
                         </div>
                       </div>
                     }

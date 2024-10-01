@@ -339,7 +339,7 @@ function Header(props) {
               </a>
             </Dropdown>
           ) : (
-            <HeaderUnAuth />
+            <></>
           )}
         </div>
       </header>

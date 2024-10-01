@@ -21,6 +21,7 @@ import {
   Divider,
   Select,
   DatePicker,
+  Avatar,
 } from "antd";
 import moment from "moment";
 import { DownOutlined, UploadOutlined } from "@ant-design/icons";
@@ -729,14 +730,16 @@ function CustomerAppointmentVer2(props) {
         />
       </Modal>
 
-      <Modal
-        title="Đánh giá dịch vụ"
+      {/* <Modal
+        title="Đánh giá"
         visible={isRatingModalVisible}
         onOk={handleRatingOk}
         onCancel={handleRatingCancel}
         okText="Gửi"
         cancelText="Hủy"
+        style={{textAlign:"center"}}
       >
+        <h1 >Đánh giá nhân viên</h1>
         <div>
           <Rate
             value={rating}
@@ -748,7 +751,7 @@ function CustomerAppointmentVer2(props) {
           rows={4}
           value={comment}
           onChange={(e) => setComment(e.target.value)}
-          placeholder="Nhập bình luận"
+          placeholder="Bình luận tại đây ..."
         />
         <Upload
           multiple
@@ -760,6 +763,74 @@ function CustomerAppointmentVer2(props) {
         >
           <Button icon={<UploadOutlined />}></Button>
         </Upload>
+      </Modal> */}
+      <Modal
+        title={
+          <div style={{ textAlign: "center", width: "100%", fontSize: "2rem" }}>
+            Đánh giá
+          </div>
+        }
+        visible={isRatingModalVisible}
+        onOk={handleRatingOk}
+        onCancel={handleRatingCancel}
+        footer={null} // Custom footer with your own buttons
+        // style={{
+        //   textAlign: "center",
+        //   borderRadius: "10px",
+        //   overflow: "hidden",
+        // }}
+      >
+        <h2 className="text-lg font-medium mb-4">Đánh giá nhân viên</h2>
+
+        {/* Employee Card Section */}
+        <div className="bg-[#E9E6D9] p-4 rounded-lg shadow-md mb-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center justify-normal">
+              <Avatar size={40} src="avatar_url" alt="Trần Xuân Tiến" />
+              <h3 className="text-md font-medium">Trần Xuân Tiến</h3>
+            </div>
+            <div className="ml-3">
+              <p className="text-sm text-gray-500">
+                Dịch vụ: Cắt tóc, gội đầu, ...
+              </p>
+            </div>
+          </div>
+          <Rate
+            value={rating}
+            onChange={(value) => setRating(value)}
+            style={{ fontSize: 20, marginTop: "10px", marginLeft: "30%" }}
+          />
+        </div>
+        <Input.TextArea
+          rows={4}
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          placeholder="Bình luận tại đây ..."
+          className="rounded-lg border border-gray-300 p-3 mt-4"
+        />
+
+        {/* Upload Section */}
+        <div className="flex items-center mt-4">
+          <Upload
+            multiple
+            fileList={feedbackFileList}
+            onChange={handleFeedbackUploadChange}
+            listType="picture-card"
+            beforeUpload={() => false}
+          >
+            <Button icon={<UploadOutlined />}>Tải ảnh lên</Button>
+          </Upload>
+        </div>
+
+        {/* Submit Button */}
+        <div className="flex justify-end">
+          <Button
+            onClick={handleRatingOk}
+            className="bg-[#8C6239] text-white mt-4 py-2 px-8 rounded-lg hover:!border-white hover:!bg-[#b08d5f] hover:!text-black"
+          >
+            Gửi
+          </Button>
+        </div>
       </Modal>
 
       <Modal

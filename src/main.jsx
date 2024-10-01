@@ -54,6 +54,9 @@ import Footer2 from "./components/Footer2.jsx";
 import EmployeeSchedule from "./pages/EmployeeSchedule.jsx";
 import EmployeeStatistics from "./pages/EmployeeStatistics.jsx";
 import SalonEmployee from "./pages/SalonEmployee.jsx";
+import ImageForSalon from "./pages/ImageForSalon.jsx";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import LoginGoogle from "./components/LoginGoogle/index.jsx";
 
 const router = createBrowserRouter([
   {
@@ -191,6 +194,14 @@ const router = createBrowserRouter([
         element: (
           <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
             <SalonReport />
+          </RequireAuth>
+        ),
+      },
+      {
+        path: "salon_iamges/:id",
+        element: (
+          <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
+            <ImageForSalon />
           </RequireAuth>
         ),
       },
@@ -379,15 +390,16 @@ const customTheme = {
   },
 };
 
-
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>
+    <GoogleOAuthProvider clientId="160573115812-l88je63eolr52ichb690e7i8g3f59r9t.apps.googleusercontent.com">
       <ConfigProvider locale={viVn} theme={customTheme}>
         <App>
           <RouterProvider router={router}>{/* <App /> */}</RouterProvider>
         </App>
       </ConfigProvider>
+      </GoogleOAuthProvider>
     </Provider>
   </React.StrictMode>
 );

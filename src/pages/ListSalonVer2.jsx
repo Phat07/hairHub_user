@@ -980,7 +980,7 @@ function ListSalonVer2(props) {
                         initial={{ opacity: 0 }} // Initial opacity for scroll effect
                         animate={{ opacity: 1 }} // Final opacity for scroll effect
                         exit={{ opacity: 0 }} // Fade out on exit
-                        style={{ position: "relative"}} // Make the parent relative for absolute child positioning
+                        style={{ position: "relative" }} // Make the parent relative for absolute child positioning
                       >
                         {/* Animated Star rating and review count */}
                         <motion.div
@@ -1105,7 +1105,11 @@ function ListSalonVer2(props) {
                         {/* Salon details */}
                         <div
                           className={styles["list-salon-info"]}
-                          style={{ width: "70%", paddingLeft: "16px", marginTop:"2.5rem" }}
+                          style={{
+                            width: "70%",
+                            paddingLeft: "16px",
+                            marginTop: "2.5rem",
+                          }}
                         >
                           <p style={{ fontSize: "1rem" }}>
                             <strong>Mô tả:</strong> {salon.description}
@@ -1113,6 +1117,14 @@ function ListSalonVer2(props) {
                           <p style={{ fontSize: "1rem" }}>
                             <strong>Địa chỉ:</strong> {salon.address}
                           </p>
+                          <Button
+                            onClick={() =>
+                              navigate(`/salon_detail/${salon?.id}`)
+                            }
+                            className={styles["book-button"]}
+                          >
+                            Đặt lịch
+                          </Button>
                           <ul>
                             {salon.services
                               .slice(0, 3)
@@ -1137,18 +1149,9 @@ function ListSalonVer2(props) {
                                       {formatMoneyVND(service.price)} vnđ
                                     </span>
                                   </div>
-                                  <Button
-                                    onClick={() =>
-                                      navigate(`/salon_detail/${salon?.id}`)
-                                    }
-                                    className={styles["book-button"]}
-                                  >
-                                    Đặt lịch
-                                  </Button>
                                 </motion.li>
                               ))}
                           </ul>
-
                           {salon.services.length > 3 && (
                             <div style={{ marginTop: "8px" }}>
                               <Button

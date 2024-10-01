@@ -49,6 +49,7 @@ import { loginAccount } from "../store/account/action";
 // import LoginGoogle from "../components/googleSignIn/LoginGoogle";
 import hairhubLogo from "../assets/images/hairHubLogo.png";
 import classNames from "classnames";
+import LoginGoogle from "@/components/LoginGoogle";
 
 const { Meta } = Card;
 //icon
@@ -1009,6 +1010,7 @@ const LoginPage = () => {
               >
                 Quên mật khẩu
               </a>
+              <LoginGoogle />
               {/* <motion.div
                 variants={{
                   hidden: { y: "-100vh", opacity: 0 },

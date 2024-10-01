@@ -68,6 +68,8 @@ function App() {
     try {
       let accessToken = localStorage.getItem("accessToken");
       if (accessToken && !isTokenExpired(accessToken)) {
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("accessToken");
         await dispatch(fetchUserByTokenApi(accessToken, navigate));
       } else {
         accessToken = await refreshToken();
