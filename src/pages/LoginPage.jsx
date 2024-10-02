@@ -803,13 +803,33 @@ const LoginPage = () => {
                   : "Đăng ký",
             },
             htmlType: "button",
+            //   submitButtonProps: {
+            //     ref: submitButtonRef,
+            //     style: {
+            //       backgroundColor: "#bf9456",
+            //       width: "100%",
+            //     },
+            //   }, // uncomment this line
+            // }}
             submitButtonProps: {
               ref: submitButtonRef,
               style: {
                 backgroundColor: "#bf9456",
                 width: "100%",
               },
-            }, // uncomment this line
+            },
+            resetButtonProps: false, 
+            render: (props, doms) => {
+              return (
+                <>
+                  {doms}
+                  {/* Google Login Button below the submit button */}
+                  <div style={{ marginTop: "1rem", textAlign: "center" }}>
+                    <LoginGoogle />
+                  </div>
+                </>
+              );
+            },
           }}
           onKeyDown={handleKeyDown}
           onFinish={handleFinish}
@@ -1010,37 +1030,6 @@ const LoginPage = () => {
               >
                 Quên mật khẩu
               </a>
-              <LoginGoogle />
-              {/* <motion.div
-                variants={{
-                  hidden: { y: "-100vh", opacity: 0 },
-                  visible: {
-                    y: "-1px",
-                    opacity: 1,
-                    transition: {
-                      delay: 0.5,
-                      type: "spring",
-                      stiffness: 500,
-                    },
-                  },
-                }}
-                initial="hidden"
-                animate="visible"
-              >
-                <Divider>
-                  <Typography.Title level={5}>
-                    Đăng nhập bằng...
-                  </Typography.Title>
-                </Divider>
-                <Space size={3} className="flex justify-center">
-                  <Button
-                    className="bg-[#f5f5f5ee] border border-transparent hover:!border-red-500 hover:!text-red-500 text-black"
-                    shape="circle"
-                  >
-                    <GoogleOutlined />
-                  </Button>
-                </Space>
-              </motion.div> */}
             </div>
           )}
         </LoginFormPage>

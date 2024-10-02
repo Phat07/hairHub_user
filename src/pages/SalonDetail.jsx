@@ -2126,78 +2126,78 @@ function SalonDetail(props) {
                   </Modal>
                 </Spin>
               </div>
-              {/* <div>
-                <div className="our-work-section">
-                  <h2
-                    style={{
-                      fontSize: "1.8rem",
-                      fontWeight: "bold",
-                      marginBottom: "1rem",
-                    }}
-                  >
-                    See Our Work
-                  </h2>
-                  <Row gutter={16}>
-                    <Col xs={24} sm={12}>
-                      <img
-                        src={ourWorkImages[0]}
-                        alt="Main Work"
-                        style={{
-                          width: "100%",
-                          height: "auto",
-                          borderRadius: "8px",
-                        }}
-                      />
-                    </Col>
-                    <Col xs={24} sm={12}>
-                      <Row gutter={[8, 8]}>
-                        {ourWorkImages.slice(1, 5).map((image, index) => (
-                          <Col key={index} span={12}>
+                <div>
+                  <div className="our-work-section">
+                    <h2
+                      style={{
+                        fontSize: "1.8rem",
+                        fontWeight: "bold",
+                        marginBottom: "1rem",
+                      }}
+                    >
+                      See Our Work
+                    </h2>
+                    <Row gutter={16}>
+                      <Col xs={24} sm={12}>
+                        <img
+                          src={ourWorkImages[0]}
+                          alt="Main Work"
+                          style={{
+                            width: "80%",
+                            height: "auto",
+                            borderRadius: "8px",
+                          }}
+                        />
+                      </Col>
+                      <Col xs={24} sm={12}>
+                        <Row gutter={[8, 8]}> 
+                          {ourWorkImages.slice(1, 5).map((image, index) => (
+                            <Col key={index} span={12}>
+                              <img
+                                src={image}
+                                alt={`Work ${index + 1}`}
+                                style={{
+                                  width: "75%",
+                                  height: "auto",
+                                  borderRadius: "8px",
+                                }}
+                              />
+                            </Col>
+                          ))}
+                        </Row>
+                      </Col>
+                    </Row>
+                    <Button
+                      block
+                      onClick={() => setShowAllWork(true)}
+                      style={{ marginTop: "16px" }}
+                    >
+                      SEE ALL WORK
+                    </Button>
+                  </div>
+
+                  <div>
+                    <Modal
+                      title="All Our Work"
+                      visible={showAllWork}
+                      onCancel={() => setShowAllWork(false)}
+                      footer={null}
+                      width={800}
+                    >
+                      <Carousel arrows infinite={false}>
+                        {ourWorkImages.map((image, index) => (
+                          <div key={index}>
                             <img
                               src={image}
-                              alt={`Work ${index + 1}`}
-                              style={{
-                                width: "100%",
-                                height: "auto",
-                                borderRadius: "8px",
-                              }}
+                              alt={`Work ${index}`}
+                              style={{ width: "100%", height: "auto" }}
                             />
-                          </Col>
+                          </div>
                         ))}
-                      </Row>
-                    </Col>
-                  </Row>
-                  <Button
-                    block
-                    onClick={() => setShowAllWork(true)}
-                    style={{ marginTop: "16px" }}
-                  >
-                    SEE ALL WORK
-                  </Button>
+                      </Carousel>
+                    </Modal>
+                  </div>
                 </div>
-
-                <div>
-                  <Modal
-                    title="All Our Work"
-                    visible={showAllWork}
-                    onCancel={() => setShowAllWork(false)}
-                    footer={null}
-                    width={800}
-                  >
-                    <Carousel arrows infinite={false}>
-                      {ourWorkImages.map((image, index) => (
-                        <div key={index}>
-                          <img
-                            src={image}
-                            alt={`Work ${index}`}
-                            style={{ width: "100%", height: "auto" }}
-                          />
-                        </div>
-                      ))}
-                    </Carousel>
-                  </Modal>
-                </div>
-              </div> */}
               <div>
                 <h2
                   style={{
