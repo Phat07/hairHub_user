@@ -67,18 +67,38 @@ export function loginAccount(data, navigate) {
 //   };
 // }
 
+// export function fetchUserByTokenApi(data, navigate) {
+//   return async (dispatch) => {
+//     try {
+//       const response = await AccountServices.fetchUserByToken(data);
+//       if (response.status === 200 || response.status === 201) {
+//         dispatch(fetchUser(response.data));
+//       } else {
+//         message.error("Session hết hạn");
+//         navigate("/login");
+//       }
+//     } catch (error) {
+//       // message.error("Lỗi khi fetch user bằng token");
+//     }
+//   };
+// }
+
 export function fetchUserByTokenApi(data, navigate) {
   return async (dispatch) => {
     try {
       const response = await AccountServices.fetchUserByToken(data);
       if (response.status === 200 || response.status === 201) {
         dispatch(fetchUser(response.data));
+        return response; // Return the response so that .then can be used
       } else {
         message.error("Session hết hạn");
         navigate("/login");
+        return Promise.reject("Session expired"); // Return rejection for error handling in .then
       }
     } catch (error) {
-      // message.error("Lỗi khi fetch user bằng token");
+      // Handle the error if needed
+      return Promise.reject(error); // Ensure the error is propagated to the .catch
     }
   };
 }
+

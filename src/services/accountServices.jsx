@@ -38,5 +38,8 @@ export const AccountServices = {
   },
   loginGoogle(data){
     return API.post("/accounts/GoogleLogin", data)
+  },
+  createAccountByGoogle(data){
+    return API.post("/accounts/RegisterAccountLoginGoogle", data) 
   }
 };
