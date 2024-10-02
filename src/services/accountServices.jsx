@@ -35,5 +35,8 @@ export const AccountServices = {
   },
   forgotPassword(data){
     return API.post("/accounts/ForgotPassword", data)
+  },
+  loginGoogle(data){
+    return API.post("/accounts/GoogleLogin", data)
   }
 };

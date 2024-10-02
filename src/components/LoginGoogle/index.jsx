@@ -1,26 +1,35 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Button, Divider, Space, Typography } from "antd";
+import { Button, Divider, message, Space, Typography } from "antd";
 import { GoogleOutlined } from "@ant-design/icons";
 import { GoogleLogin, googleLogout } from "@react-oauth/google";
 import axios from "axios"; // Để gửi idToken về server
+import { AccountServices } from "@/services/accountServices";
 
 function LoginGoogle(props) {
   // Hàm xử lý khi đăng nhập thành công
   const handleLoginSuccess = (response) => {
     const idToken = response.credential; // Lấy idToken từ response
-    console.log("idToken:", idToken);
-    console.log("res", response);
-    
-    // Gửi idToken về server
-    axios
-      .post("/api/auth/google", { idToken })
+    console.log("idToken", idToken);
+    let data = {
+      idToken: idToken,
+    };
+    AccountServices.loginGoogle(data)
       .then((res) => {
-        console.log("Server response:", res.data);
+        console.log("res", res);
       })
       .catch((err) => {
-        console.error("Error sending idToken to server:", err);
+        message.error(err?.response?.data?.message);
       });
+    // Gửi idToken về server
+    // axios
+    //   .post("/api/auth/google", { idToken })
+    //   .then((res) => {
+    //     console.log("Server response:", res.data);
+    //   })
+    //   .catch((err) => {
+    //     console.error("Error sending idToken to server:", err);
+    //   });
   };
 
   return (

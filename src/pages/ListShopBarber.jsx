@@ -319,8 +319,10 @@ function ListShopBarber(props) {
   };
 
   useEffect(() => {
-    dispatch(actGetSalonInformationByOwnerId(ownerId));
-  }, []);
+    if (ownerId) {
+      dispatch(actGetSalonInformationByOwnerId(ownerId));
+    }
+  }, [ownerId]);
 
   useEffect(() => {
     if (salonDetail || currentPageEmployee) {
@@ -464,19 +466,20 @@ function ListShopBarber(props) {
   };
 
   useEffect(() => {
-    if (isEmptyObject(salonDetail)) {
+    if (isEmptyObject(salonDetail) || ownerId) {
       setTimeout(() => {
         // message.info("Bạn cần phải tạo salon đầu tiên!");
         if (isEmptyObject(salonDetail)) {
-          // navigate("/create_shop");
+          navigate("/create_shop");
         } else {
           return;
         }
       }, 3000);
-    } else if (ownerId) {
-      dispatch(actGetSalonInformationByOwnerId(ownerId));
-      setInitLoading(false);
     }
+    //  else if (ownerId) {
+    //   dispatch(actGetSalonInformationByOwnerId(ownerId));
+    //   setInitLoading(false);
+    // }
   }, [ownerId]);
 
   const handleDeleteEmployee = (employee) => {
