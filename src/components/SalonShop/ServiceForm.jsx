@@ -9,6 +9,7 @@ import {
   InputNumber,
   Typography,
   Flex,
+  Spin,
 } from "antd";
 import { DollarCircleOutlined, UploadOutlined } from "@ant-design/icons";
 import axios from "axios";
@@ -22,10 +23,11 @@ const AddServiceForm = ({ salonInformationId, status, isOpen }) => {
   const timeFormat = "HH:mm";
   const [serviceTime, setServiceTime] = useState(dayjs("00:00", timeFormat));
   const [currencyValue, setCurrencyValue] = useState(100000); // Initial value //100.000 d
-
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
   const onFinish = async (values) => {
+    setLoading(true);
     const { serviceName, description } = values;
     const imageFile = fileList.length > 0 ? fileList[0].originFileObj : null;
     // console.log(services, "servicesss");
@@ -57,10 +59,14 @@ const AddServiceForm = ({ salonInformationId, status, isOpen }) => {
         setFileList([]);
         status();
         isOpen();
+        setLoading(false);
       })
       .catch((error) => {
         message.error("Dịch vụ chưa được tạo!");
         // Handle the error
+      })
+      .finally((err) => {
+        setLoading(false);
       });
 
     // dispatch(actPostCreateSalonService(formData, salonInformationId));
@@ -114,74 +120,81 @@ const AddServiceForm = ({ salonInformationId, status, isOpen }) => {
   };
 
   return (
-    <Form form={form} onFinish={onFinish} layout="vertical">
-      <Form.Item
-        name="serviceName"
-        label="Tên dịch vụ"
-        rules={[{ required: true, message: "Vui lòng nhập tên dịch vụ!" }]}
-      >
-        <Input placeholder="Tên dịch vụ" />
-      </Form.Item>
-      <Form.Item
-        name="description"
-        label="Mô tả"
-        rules={[{ required: true, message: "Vui lòng nhập mô tả!" }]}
-      >
-        <Input placeholder="Mô tả" />
-      </Form.Item>
-      <Form.Item
-        name="price"
-        label="Giá (VND)"
-        initialValue={currencyValue}
-        // rules={[{ required: true, message: "Please enter price!" }]}
-      >
-        <InputNumber
-          value={currencyValue}
-          onChange={(value) => setCurrencyValue(value)}
-          // formatter={() =>formatCurrency(currencyValue)}
-          // parser={(value) => value.replace(/\D/g,'')}
-          type="number"
-          // defaultValue={100000}
-        />
-        <Flex className="mt-3" gap={"small"}>
-          {<DollarCircleOutlined />}
-          <Typography.Text strong>
-            Giá: {formatCurrency(currencyValue)}
-          </Typography.Text>
-        </Flex>
-      </Form.Item>
-      <Form.Item
-        name="time"
-        label="Thời lượng (khoảng cách 15 phút)"
-        // rules={[{ required: true, message: "Please enter time!" }]}
-      >
-        <TimePicker
-          onChange={onTimeChange}
-          // defaultValue={dayjs("00:00", timeFormat)}
-          format={timeFormat}
-          minuteStep={15}
-        />
-      </Form.Item>
-      <Form.Item
-        name="img"
-        label="Ảnh"
-        rules={[{ required: true, message: "Vui lòng tải lên hình ảnh!" }]}
-      >
-        <Upload
-          listType="picture"
-          fileList={fileList}
-          onChange={handleUploadChange}
-          beforeUpload={() => false}
+    <Spin spinning={loading}>
+      <Form form={form} onFinish={onFinish} layout="vertical">
+        <Form.Item
+          name="serviceName"
+          label="Tên dịch vụ"
+          rules={[{ required: true, message: "Vui lòng nhập tên dịch vụ!" }]}
         >
-          <Button icon={<UploadOutlined />}>Tải ảnh</Button>
-        </Upload>
-      </Form.Item>
-      <Form.Item>
-        <Button style={{ width: "100%" }} type="primary" htmlType="submit">
-          Lưu dịch vụ
-        </Button>
-      </Form.Item>
-    </Form>
+          <Input placeholder="Tên dịch vụ" />
+        </Form.Item>
+        <Form.Item
+          name="description"
+          label="Mô tả"
+          rules={[{ required: true, message: "Vui lòng nhập mô tả!" }]}
+        >
+          <Input placeholder="Mô tả" />
+        </Form.Item>
+        <Form.Item
+          name="price"
+          label="Giá (VND)"
+          initialValue={currencyValue}
+          // rules={[{ required: true, message: "Please enter price!" }]}
+        >
+          <InputNumber
+            value={currencyValue}
+            onChange={(value) => setCurrencyValue(value)}
+            // formatter={() =>formatCurrency(currencyValue)}
+            // parser={(value) => value.replace(/\D/g,'')}
+            type="number"
+            // defaultValue={100000}
+          />
+          <Flex className="mt-3" gap={"small"}>
+            {<DollarCircleOutlined />}
+            <Typography.Text strong>
+              Giá: {formatCurrency(currencyValue)}
+            </Typography.Text>
+          </Flex>
+        </Form.Item>
+        <Form.Item
+          name="time"
+          label="Thời lượng (khoảng cách 15 phút)"
+          // rules={[{ required: true, message: "Please enter time!" }]}
+        >
+          <TimePicker
+            onChange={onTimeChange}
+            // defaultValue={dayjs("00:00", timeFormat)}
+            format={timeFormat}
+            minuteStep={15}
+          />
+        </Form.Item>
+        <Form.Item
+          name="img"
+          label="Ảnh"
+          rules={[{ required: true, message: "Vui lòng tải lên hình ảnh!" }]}
+        >
+          <Upload
+            listType="picture"
+            fileList={fileList}
+            onChange={handleUploadChange}
+            beforeUpload={() => false}
+          >
+            <Button icon={<UploadOutlined />}>Tải ảnh</Button>
+          </Upload>
+        </Form.Item>
+        <Form.Item>
+          <Button
+            style={{ width: "100%" }}
+            loading={loading}
+            type="primary"
+            htmlType="submit"
+          >
+            Lưu dịch vụ
+          </Button>
+        </Form.Item>
+      </Form>
+    </Spin>
   );
 };
 

@@ -1,10 +1,7 @@
-import React from "react";
-import { motion } from "framer-motion";
-import { Button, Divider, message, Space, Typography } from "antd";
-import { GoogleOutlined } from "@ant-design/icons";
-import { GoogleLogin, googleLogout } from "@react-oauth/google";
-import axios from "axios"; // Để gửi idToken về server
 import { AccountServices } from "@/services/accountServices";
+import { GoogleLogin } from "@react-oauth/google";
+import { Divider, message, Space, Typography } from "antd";
+import { motion } from "framer-motion";
 
 function LoginGoogle(props) {
   // Hàm xử lý khi đăng nhập thành công

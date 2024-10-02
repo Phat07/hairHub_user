@@ -380,15 +380,16 @@ const router = createBrowserRouter([
 // };
 const customTheme = {
   token: {
-    fontFamily: '"Oswald", cursive',
+    fontFamily: '"Fredoka", sans-serif', // Update font family to Fredoka
   },
   components: {
     Typography: {
-      fontFamily: '"Oswald", cursive',
+      fontFamily: '"Fredoka", sans-serif', // Update Typography to use Fredoka
       fontSize: 16,
     },
   },
 };
+
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

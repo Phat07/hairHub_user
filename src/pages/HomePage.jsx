@@ -154,10 +154,22 @@ function HomePage(props) {
 
   return (
     <div style={{ marginTop: "80px" }}>
-      <section
+      <motion.section
         className="section hero has-before has-bg-image"
         id="home"
         aria-label="home"
+        initial={{
+          backgroundPosition: "center top",
+          opacity: 0,
+        }}
+        animate={{
+          backgroundPosition: "center",
+          opacity: 1,
+          transition: {
+            duration: 1.5,
+            ease: "easeInOut",
+          },
+        }}
         style={{
           backgroundImage: `url(${heroBanner})`,
           paddingBlock: "10rem",
@@ -192,7 +204,7 @@ function HomePage(props) {
             </Text>
           </Link>
         </motion.div>
-      </section>
+      </motion.section>
       <main className="homepage-container">
         <article>
           {/* HERO */}

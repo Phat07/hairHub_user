@@ -137,7 +137,6 @@ function ListSalonVer2(props) {
   const salonNameUrl = searchParams.get("salonName");
   const locationSalonUrl = searchParams.get("location");
 
-  console.log("salonList", salonList);
 
   const [servicesName, setServicesName] = useState(servicesNameUrl || "");
   const [locationSalon, setLocationSalon] = useState(locationSalonUrl || "");
@@ -574,7 +573,6 @@ function ListSalonVer2(props) {
   function formatMoneyVND(amount) {
     return amount.toLocaleString("vi-VN");
   }
-  console.log("i", salonList);
 
   return (
     <div

@@ -236,6 +236,7 @@ function SalonDetail(props) {
 
   const [statusChangeStaff, setStatusChangeStaff] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingService, setIsLoadingService] = useState(false);
   const [filterRating, setFilterRating] = useState(null);
   const navigate = useNavigate();
 
@@ -329,6 +330,7 @@ function SalonDetail(props) {
   }, []);
 
   useEffect(() => {
+    setIsLoadingService(true)
     SalonEmployeesServices.getSalonEmployeeBySalonInformationId(id).then(
       (res) => {
         setSalonEmployeeList(res.data.items);
@@ -342,6 +344,8 @@ function SalonDetail(props) {
       })
       .catch((err) => {
         setError(err);
+      }).finally((err)=>{
+        setIsLoadingService(false)
       });
 
     // AppointmentService.calculatePrice(calculateAppointmentData)
@@ -1412,70 +1416,74 @@ function SalonDetail(props) {
                     }
                     key="1"
                   >
-                    <List
-                      itemLayout="horizontal"
-                      // dataSource={services}
-                      dataSource={data}
-                      renderItem={(service) => (
-                        <motion.div
-                          variants={listItemVariants}
-                          initial="hidden"
-                          animate="visible"
-                          whileHover="hover"
-                        >
-                          <List.Item
-                            actions={[
-                              <Button
-                                type="primary"
-                                key="book"
-                                onClick={() => handleBookClick(service)}
-                                style={{ backgroundColor: "#bf9456" }}
-                              >
-                                Đặt lịch
-                              </Button>,
-                            ]}
+                    <Spin spinning={isLoadingService}>
+                      <List
+                        itemLayout="horizontal"
+                        // dataSource={services}
+                        dataSource={data}
+                        renderItem={(service) => (
+                          <motion.div
+                            variants={listItemVariants}
+                            initial="hidden"
+                            animate="visible"
+                            whileHover="hover"
                           >
-                            <List.Item.Meta
-                              avatar={
-                                <Avatar
-                                  shape="square"
-                                  size={{
-                                    xs: 24,
-                                    sm: 32,
-                                    md: 40,
-                                    lg: 64,
-                                    xl: 50,
-                                    xxl: 50,
-                                  }}
-                                  src={service?.img}
-                                />
-                              }
-                              title={
-                                <span
-                                  style={{
-                                    fontSize: "1.1rem",
-                                    cursor: "pointer",
-                                  }}
-                                  onClick={() => setIsBookingModalVisible(true)}
+                            <List.Item
+                              actions={[
+                                <Button
+                                  type="primary"
+                                  key="book"
+                                  onClick={() => handleBookClick(service)}
+                                  style={{ backgroundColor: "#bf9456" }}
                                 >
-                                  {service?.serviceName}
-                                </span>
-                              }
-                              description={`${formatMoneyVND(
-                                service?.price
-                              )} vnđ • ${formatTime(service?.time)}`}
-                            />
-                          </List.Item>
-                        </motion.div>
-                      )}
-                      style={{ backgroundColor: "transparent" }}
-                      pagination={{
-                        pageSize: 5,
-                        showSizeChanger: true,
-                        pageSizeOptions: ["5", "10", "20"],
-                        className: "paginationAppointment",
-                      }}
-                    />
+                                  Đặt lịch
+                                </Button>,
+                              ]}
+                            >
+                              <List.Item.Meta
+                                avatar={
+                                  <Avatar
+                                    shape="square"
+                                    size={{
+                                      xs: 24,
+                                      sm: 32,
+                                      md: 40,
+                                      lg: 64,
+                                      xl: 50,
+                                      xxl: 50,
+                                    }}
+                                    src={service?.img}
+                                  />
+                                }
+                                title={
+                                  <span
+                                    style={{
+                                      fontSize: "1.1rem",
+                                      cursor: "pointer",
+                                    }}
+                                    onClick={() =>
+                                      setIsBookingModalVisible(true)
+                                    }
+                                  >
+                                    {service?.serviceName}
+                                  </span>
+                                }
+                                description={`${formatMoneyVND(
+                                  service?.price
+                                )} vnđ • ${formatTime(service?.time)}`}
+                              />
+                            </List.Item>
+                          </motion.div>
+                        )}
+                        style={{ backgroundColor: "transparent" }}
+                        pagination={{
+                          pageSize: 5,
+                          // showSizeChanger: true,
+                          pageSizeOptions: ["5", "10", "20"],
+                          className: "paginationAppointment",
+                        }}
+                      />
+                    </Spin>
                   </Panel>
                 </Collapse>
               </div>

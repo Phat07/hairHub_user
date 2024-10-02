@@ -100,7 +100,7 @@ export function actGetAllServicesBySalonId(
   orderby
 ) {
   return (dispatch) => {
-    ServiceHairServices.getServiceHairBySalonInformationId(
+    return ServiceHairServices.getServiceHairBySalonInformationId(
       id,
       currentPage,
       pageSize,
@@ -110,10 +110,15 @@ export function actGetAllServicesBySalonId(
     )
       .then((res) => {
         dispatch(getAllService(res?.data?.items, res?.data?.total));
+        return res; // return the response to allow chaining
       })
-      .catch((err) => console.log(err, "errors"));
+      .catch((err) => {
+        console.log(err, "errors");
+        throw err; // re-throw the error to propagate it to the caller
+      });
   };
 }
+
 export function actGetAllServicesBySalonIdNoPaging(id) {
   return (dispatch) => {
     ServiceHairServices.getServiceHairBySalonNotPaging(id)

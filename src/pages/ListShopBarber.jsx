@@ -109,6 +109,7 @@ function ListShopBarber(props) {
   const [errorMessage, setErrorMessage] = useState("");
   const [emailVerified, setEmailVerified] = useState(false);
   const [loadingEmployee, setLoadingEmployee] = useState(false);
+  const [loadingService, setLoadingService] = useState(false);
 
   // const auth = useAuthUser();
   // const ownerId = auth?.idOwner;
@@ -364,6 +365,7 @@ function ListShopBarber(props) {
       currentPageService &&
       pageSizeService
     ) {
+      setLoadingService(true);
       dispatch(
         actGetAllServicesBySalonId(
           salonDetail.id,
@@ -373,7 +375,17 @@ function ListShopBarber(props) {
           FillterService,
           SortService
         )
-      );
+      )
+        .then((res) => {
+          setLoadingService(false);
+        })
+        .catch((err) => {
+          // console.error("Error:", err);
+        })
+        .finally((err) => {
+          setLoadingService(false);
+        });
+
       // setIsLoading(false);
     }
   }, [
@@ -484,6 +496,20 @@ function ListShopBarber(props) {
 
   const handleDeleteEmployee = (employee) => {
     dispatch(actDeleteEmployee(employee.id, salonDetail?.id));
+  };
+  const handleDeleteService = (service) => {
+    console.log("er",service);
+    
+    setLoadingService(true);
+    ServiceHairServices.deleteServiceHairById(service.id)
+      .then((res) => {
+        setLoadingService(false);
+        message.success("Xóa dịch vụ thành công");
+      })
+      .catch((err) => message.error("Xảy ra lỗi vui lòng thử lại"))
+      .finally((err) => {
+        setLoadingService(false);
+      });
   };
 
   const convertDayOfWeekToVietnamese = (dayOfWeek) => {
@@ -883,7 +909,7 @@ function ListShopBarber(props) {
           </Button>
           <Popconfirm
             description="Bạn có chắc chắn muốn xóa dịch vụ này?"
-            onConfirm={() => {}}
+            onConfirm={() => handleDeleteService(record)}
             okText="Đồng ý"
             cancelText="Hủy"
           >
@@ -1592,12 +1618,14 @@ function ListShopBarber(props) {
                         />
                       </div>
                       <div className={styles["table-container"]}>
-                        <Table
-                          dataSource={listTotalService}
-                          columns={columnsService}
-                          pagination={false}
-                          rowKey="phone"
-                        />
+                        <Spin spinning={loadingService} tip="Loading...">
+                          <Table
+                            dataSource={listTotalService}
+                            columns={columnsService}
+                            pagination={false}
+                            // rowKey="phone"
+                          />
+                        </Spin>
                       </div>
 
                       <Pagination
@@ -1709,14 +1737,15 @@ function ListShopBarber(props) {
                 open={open}
                 onOk={handleOk}
                 onCancel={handleCancel}
-                footer={[
-                  <Button key="back" onClick={handleCancel}>
-                    Quay lại
-                  </Button>,
-                  <Button type="primary" key="submit" onClick={handleCancel}>
-                    Hoàn thành
-                  </Button>,
-                ]}
+                // footer={[
+                //   <Button key="back" onClick={handleCancel}>
+                //     Quay lại
+                //   </Button>,
+                //   <Button type="primary" key="submit" onClick={handleCancel}>
+                //     Hoàn thành
+                //   </Button>,
+                // ]}
+                footer={null}
               >
                 <AddServiceForm
                   status={handleChange}
