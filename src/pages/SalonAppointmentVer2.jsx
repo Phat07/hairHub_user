@@ -176,7 +176,7 @@ function SalonAppointmentVer2(props) {
         } else {
           message.warning("Chưa cập nhật trạng thái thành công cho khách hàng");
         }
-        console.log("notpAging", dataId);
+        // console.log("notpAging", dataId);
       })
       .catch(() => {
         console.log("err", error);

@@ -56,6 +56,15 @@ function CustomerAppointmentVer2(props) {
   const [dateFilter, setDateFilter] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const pageSize = 5;
+  const [ratings, setRatings] = useState({});
+  const [expanded, setExpanded] = useState({});
+
+  const handleRatingChange = (employeeId, value) => {
+    setRatings({
+      ...ratings,
+      [employeeId]: value, // Cập nhật rating của nhân viên theo employeeId
+    });
+  };
 
   const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
   const customerAppointments = useSelector(
@@ -178,23 +187,48 @@ function CustomerAppointmentVer2(props) {
       );
       formData.append("Rating", rating);
       formData.append("Comment", comment);
+      selectedAppointment?.appointmentDetails.forEach((appointment, index) => {
+        const employeeId = appointment?.salonEmployee?.id;
+        const employeeRating = ratings[employeeId] || 0; // Get the rating for the employee
+
+        // Debugging output for each appointment
+        console.log(
+          `Appointment ID: ${appointment?.appointmentId}, Employee ID: ${employeeId}, Rating: ${employeeRating}`
+        );
+
+        // Create a feedback detail object for each appointment
+        formData.append(
+          `FeedbackDetailRequests[${index}].AppointmentDetailId`,
+          appointment?.id // Each appointment's ID
+        );
+        formData.append(
+          `FeedbackDetailRequests[${index}].Rating`,
+          employeeRating // Ensure we are sending the correct rating
+        );
+      });
       feedbackFileList.forEach((file) => {
         formData.append("ImgFeedbacks", file.originFileObj);
       });
 
-      setIsRatingModalVisible(false);
-
-      await dispatch(actCreateFeedbackCustomer(formData, idCustomer));
+      await dispatch(actCreateFeedbackCustomer(formData, idCustomer))
+        .then((res) => {
+          setRating(null);
+          setComment(null);
+          setFeedbackFileList([]);
+          setSelectedAppointment(null);
+          setIsRatingModalVisible(false);
+        })
+        .catch((err) => {})
+        .finally((err) => {
+          setLoading(false);
+          setIsLoading(false);
+        });
 
       await dispatch(
         actGetAppointmentByCustomerId(idCustomer, currentPage, pageSize, status)
       );
 
       // Reset state sau khi thành công
-      setRating(null);
-      setComment(null);
-      setFeedbackFileList([]);
-      setSelectedAppointment(null);
     } catch (error) {
       // Xử lý lỗi
       console.error("Error creating feedback:", error);
@@ -207,6 +241,7 @@ function CustomerAppointmentVer2(props) {
 
   const handleRatingCancel = () => {
     setRating(0);
+    setRatings({});
     setComment("");
     setFeedbackImage(null);
     setIsRatingModalVisible(false);
@@ -629,6 +664,46 @@ function CustomerAppointmentVer2(props) {
       },
     },
   ];
+  // const groupedServices = selectedAppointment?.appointmentDetails.reduce(
+  //   (acc, curr) => {
+  //     const { salonEmployee } = curr;
+  //     if (!acc[salonEmployee.id]) {
+  //       acc[salonEmployee.id] = {
+  //         employee: salonEmployee,
+  //         services: [],
+  //       };
+  //     }
+  //     acc[salonEmployee.id].services.push(curr);
+  //     return acc;
+  //   },
+  //   {}
+  // );
+  const groupedAppointments =
+    selectedAppointment?.appointmentDetails &&
+    Array.isArray(selectedAppointment?.appointmentDetails)
+      ? selectedAppointment?.appointmentDetails.reduce((acc, curr) => {
+          // Kiểm tra salonEmployee có tồn tại không
+          const employeeId = curr?.salonEmployee?.id;
+          if (employeeId) {
+            if (!acc[employeeId]) {
+              acc[employeeId] = {
+                employee: curr.salonEmployee,
+                services: [],
+              };
+            }
+            acc[employeeId].services.push(curr.serviceName);
+          }
+          return acc;
+        }, {})
+      : {};
+
+  const handleExpandToggle = (employeeId) => {
+    setExpanded({
+      ...expanded,
+      [employeeId]: !expanded[employeeId], // Đảo ngược trạng thái mở rộng
+    });
+  };
+
 
   return (
     <div className={styles.appointmentContainer}>
@@ -782,25 +857,60 @@ function CustomerAppointmentVer2(props) {
       >
         <h2 className="text-lg font-medium mb-4">Đánh giá nhân viên</h2>
 
-        {/* Employee Card Section */}
-        <div className="bg-[#E9E6D9] p-4 rounded-lg shadow-md mb-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center justify-normal">
-              <Avatar size={40} src="avatar_url" alt="Trần Xuân Tiến" />
-              <h3 className="text-md font-medium">Trần Xuân Tiến</h3>
+        {Object.keys(groupedAppointments).map((employeeId) => {
+          const employee = groupedAppointments[employeeId]?.employee;
+          const services = Array.isArray(
+            groupedAppointments[employeeId]?.services
+          )
+            ? groupedAppointments[employeeId].services
+            : [];
+          const isExpanded = expanded[employeeId];
+
+          const displayedServices = isExpanded
+            ? services
+            : services.slice(0, 1);
+
+          return (
+            <div
+              className="bg-[#E9E6D9] p-4 rounded-lg shadow-md mb-4"
+              key={employeeId}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center justify-normal">
+                  <Avatar
+                    size={40}
+                    src={employee?.img}
+                    alt={employee?.fullName}
+                  />
+                  <h3 className="text-md font-medium ml-2">
+                    {employee?.fullName}
+                  </h3>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm text-gray-500">
+                    Dịch vụ:{" "}
+                    {Array.isArray(displayedServices)
+                      ? displayedServices.join(", ")
+                      : ""}
+                  </p>
+                  {services.length > 3 && (
+                    <Button
+                      type="link"
+                      onClick={() => handleExpandToggle(employeeId)}
+                    >
+                      {isExpanded ? "Thu gọn" : "Xem thêm"}
+                    </Button>
+                  )}
+                </div>
+              </div>
+              <Rate
+                value={ratings[employeeId] || 0}
+                onChange={(value) => handleRatingChange(employeeId, value)}
+                style={{ fontSize: 20, marginTop: "10px", marginLeft: "30%" }}
+              />
             </div>
-            <div className="ml-3">
-              <p className="text-sm text-gray-500">
-                Dịch vụ: Cắt tóc, gội đầu, ...
-              </p>
-            </div>
-          </div>
-          <Rate
-            value={rating}
-            onChange={(value) => setRating(value)}
-            style={{ fontSize: 20, marginTop: "10px", marginLeft: "30%" }}
-          />
-        </div>
+          );
+        })}
         <Input.TextArea
           rows={4}
           value={comment}
@@ -809,7 +919,6 @@ function CustomerAppointmentVer2(props) {
           className="rounded-lg border border-gray-300 p-3 mt-4"
         />
 
-        {/* Upload Section */}
         <div className="flex items-center mt-4">
           <Upload
             multiple
@@ -818,17 +927,17 @@ function CustomerAppointmentVer2(props) {
             listType="picture-card"
             beforeUpload={() => false}
           >
-            <Button icon={<UploadOutlined />}>Tải ảnh lên</Button>
+            <Button loading={loading} icon={<UploadOutlined />}>Tải ảnh lên</Button>
           </Upload>
         </div>
 
-        {/* Submit Button */}
         <div className="flex justify-end">
           <Button
+            loading={loading}
             onClick={handleRatingOk}
             className="bg-[#8C6239] text-white mt-4 py-2 px-8 rounded-lg hover:!border-white hover:!bg-[#b08d5f] hover:!text-black"
           >
-            Gửi
+            Gửi đánh giá
           </Button>
         </div>
       </Modal>
