@@ -106,7 +106,7 @@ function ListServices() {
         );
         setServicesList(updatedServiceList);
         message.success("Service was deleted!");
-        console.log(res.status);
+        // console.log(res.status);
       })
       .catch((err) => console.log(err, "errors"));
   };

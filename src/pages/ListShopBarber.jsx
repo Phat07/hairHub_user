@@ -65,6 +65,7 @@ import classNames from "classnames";
 import { emailPattern } from "@/components/Regex/Patterns";
 import OTPInput from "react-otp-input";
 import ResendCode from "@/components/Resend/resendCode";
+import { SalonEmployeesServices } from "@/services/salonEmployeesServices";
 const renderInput = (props) => (
   <input
     {...props}
@@ -305,6 +306,7 @@ function ListShopBarber(props) {
       <Menu.Item key="false">Lọc theo trạng thái không hoạt động</Menu.Item>
     </Menu>
   );
+console.log("sa", salonDetail);
 
   const handleSearchEmployee = () => {
     setSearchEmployeeKey(searchEmployee);
@@ -326,7 +328,7 @@ function ListShopBarber(props) {
   }, [ownerId]);
 
   useEffect(() => {
-    if (salonDetail || currentPageEmployee) {
+    if (salonDetail && salonDetail?.id && currentPageEmployee) {
       setLoadingEmployee(true);
       dispatch(
         actGetAllEmployees(
@@ -462,8 +464,10 @@ function ListShopBarber(props) {
     setList(filteredList);
   };
   useEffect(() => {
-    dispatch(actGetAllServicesBySalonId(salonDetail.id, 1, 4));
-  }, []);
+    if (salonDetail) {
+      dispatch(actGetAllServicesBySalonId(salonDetail.id, 1, 4));
+    }
+  }, [salonDetail]);
   const listService = useSelector(
     (state) => state.SALONEMPLOYEES.salonServicesList
   );
@@ -492,14 +496,12 @@ function ListShopBarber(props) {
     //   dispatch(actGetSalonInformationByOwnerId(ownerId));
     //   setInitLoading(false);
     // }
-  }, [ownerId]);
+  }, [ownerId, salonDetail]);
 
   const handleDeleteEmployee = (employee) => {
     dispatch(actDeleteEmployee(employee.id, salonDetail?.id));
   };
   const handleDeleteService = (service) => {
-    console.log("er",service);
-    
     setLoadingService(true);
     ServiceHairServices.deleteServiceHairById(service.id)
       .then((res) => {
@@ -1271,7 +1273,6 @@ function ListShopBarber(props) {
             setLoading(false);
             message.error("Email này đã được đăng ký trước đó!");
           } else {
-            console.log("45");
             // setLoading(false);
             sendOtp();
           }
@@ -1284,6 +1285,7 @@ function ListShopBarber(props) {
       // });
     }
   };
+
   return (
     <div>
       <div className={styles["container_list"]}>
@@ -1416,8 +1418,18 @@ function ListShopBarber(props) {
                     </Descriptions.Item>
 
                     <Descriptions.Item label="Đánh giá">
-                      <Rate disabled defaultValue={salonDetail?.rate} />
+                      <div>
+                        <Rate
+                          disabled
+                          allowHalf
+                          defaultValue={salonDetail?.rate ?? 0}
+                        />
+                        <span style={{ marginLeft: 8 }}>
+                          {salonDetail?.rate?.toFixed(1) ?? 0}
+                        </span>
+                      </div>
                     </Descriptions.Item>
+
                     <Descriptions.Item label="Tổng đánh giá">
                       {salonDetail?.totalRating}
                     </Descriptions.Item>

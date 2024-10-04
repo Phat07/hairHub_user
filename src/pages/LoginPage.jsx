@@ -574,7 +574,6 @@ const LoginPage = () => {
       .then(() => {
         message.success("Đăng nhập thành công");
         // Handle success (optional)
-        console.log("Login action dispatched successfully.");
       })
       .catch((error) => {
         // Handle any errors (optional)

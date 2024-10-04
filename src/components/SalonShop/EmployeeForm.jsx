@@ -247,7 +247,7 @@ const AddEmployeeForm = ({
       form.resetFields();
       setFileList([]);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     }
     setDayOff({
       Monday: false,

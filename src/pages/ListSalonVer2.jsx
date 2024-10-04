@@ -396,7 +396,7 @@ function ListSalonVer2(props) {
       setTotalPages(salonRes.data.total);
       setTotal(salonRes.data.total);
     } catch (err) {
-      console.log(err, "errors");
+      // console.log(err, "errors");
     } finally {
       setLoading(false);
     }

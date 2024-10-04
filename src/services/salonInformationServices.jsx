@@ -4,6 +4,9 @@ export const SalonInformationServices = {
   createSalonInformation(data) {
     return API.post("/saloninformations/CreateSalonInformation/", data);
   },
+  createSalonImages(id, data) {
+    return API.post(`/saloninformations/AddSalonInformationImages/${id}`, data);
+  },
   getAllSalonInformation(page, size) {
     return API.get("/saloninformations/GetAllSalonInformation", {
       params: {
@@ -69,5 +72,8 @@ export const SalonInformationServices = {
   },
   putSalonScheduleById(id, data) {
     return API.put(`/schedules/UpdateScheduleofSalon/ ${id}`, data);
+  },
+  getImagesForSalon(id) {
+    return API.get(`/saloninformations/GetSalonInformationImages/ ${id}`);
   },
 };

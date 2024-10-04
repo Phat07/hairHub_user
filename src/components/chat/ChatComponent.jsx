@@ -116,7 +116,6 @@ import "../../css/ChatComponent.css";
 const ChatComponent = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
-  console.log("message", messages);
   
   const handleSend = async (message) => {
     if (message.trim() === '') return;

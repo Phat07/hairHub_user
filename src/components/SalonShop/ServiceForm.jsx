@@ -92,20 +92,20 @@ const AddServiceForm = ({ salonInformationId, status, isOpen }) => {
     for (let i = 0; i < 10; i++) {
       //chọn khoảng thời gian cho phép làm tóc 10 = 10 tiếng :))
       if (serviceTimeString + 0.1 === i + 0.25) {
-        console.log(`rounded15: ${rounded15}, expected: ${i + 0.25}`);
+        // console.log(`rounded15: ${rounded15}, expected: ${i + 0.25}`);
         setServiceTime(rounded15);
         return;
       } else if (serviceTimeString + 0.2 === i + 0.5) {
         // < 0.0001
-        console.log(`rounded30: ${rounded30}, expected: ${i + 0.5}`);
+        // console.log(`rounded30: ${rounded30}, expected: ${i + 0.5}`);
         setServiceTime(rounded30);
         return;
       } else if (serviceTimeString + 0.3 === i + 0.75) {
-        console.log(`rounded45: ${rounded45}, expected: ${i + 0.75}`);
+        // console.log(`rounded45: ${rounded45}, expected: ${i + 0.75}`);
         setServiceTime(rounded45);
         return;
       } else if (Number.isInteger(serviceTimeString)) {
-        console.log(`rounded00: ${rounded1}, expected: ${i}`);
+        // console.log(`rounded00: ${rounded1}, expected: ${i}`);
         setServiceTime(rounded1);
         return;
       }

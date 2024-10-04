@@ -319,10 +319,12 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
     const asyncOnFinish = async () => {
       setLoading(true);
       try {
-        await dispatch(actPostCreateSalonInformation(formData)).then((res) => {
-          message.success("Tạo salon thành công");
-          navigate("/list_shop");
-        });
+        await dispatch(actPostCreateSalonInformation(ownerId, formData)).then(
+          (res) => {
+            message.success("Tạo salon thành công");
+            navigate("/list_shop");
+          }
+        );
       } catch (error) {
         console.error("Error occurred:", error);
       } finally {
@@ -340,7 +342,7 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
 
   const handlePlacesChanged = async () => {
     const places = searchBoxRef.current.getPlaces();
-    console.log("places", places);
+    // console.log("places", places);
 
     if (places.length > 0) {
       const place = places[0];
