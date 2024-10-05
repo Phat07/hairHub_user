@@ -8,6 +8,7 @@ import {
   DownOutlined,
   HomeOutlined,
   LogoutOutlined,
+  QrcodeOutlined,
   ShopOutlined,
   UserOutlined,
   WarningOutlined,
@@ -198,6 +199,9 @@ function Header(props) {
                   >
                     Cuộc hẹn
                   </Link>
+                </li>
+                <li className={style.navItem}>
+                  <QrcodeOutlined className={style.qr} />
                 </li>
                 {menuActive && (
                   <>

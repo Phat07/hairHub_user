@@ -105,19 +105,24 @@
   display: none;
 }
 
-.iconHeaderActive{
+.iconHeaderActive {
   font-size: 24px;
-color: #bf9456;
+  color: #bf9456;
 }
 
 .iconHeader {
   font-size: 24px;
-color: #ffffff;
+  color: #ffffff;
 }
 
 .iconHeader :hover {
   color: #bf9456;
-  }
+}
+
+.qr {
+  color: white;
+  font-size: 2rem;
+}
 
 .avatarContaint {
   display: flex;
@@ -137,7 +142,7 @@ color: #ffffff;
   padding-bottom: 5px;
   margin-bottom: 5px;
 }
-.modalLinkContaint{
+.modalLinkContaint {
   display: flex;
   flex-direction: column;
   align-items: start;
@@ -182,8 +187,6 @@ color: #ffffff;
 .customNotification.show {
   top: 0; /* Di chuyển vào trong màn hình từ trên xuống */
 }
-
-
 
 .notificationContent {
   padding: 10px; /* Thêm khoảng cách bên trong */
