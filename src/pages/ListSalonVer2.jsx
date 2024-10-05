@@ -670,7 +670,7 @@ function ListSalonVer2(props) {
               </MotionDiv>
               {/* </Popover> */}
             </Col>
-            <Col span={11}>
+            <Col span={12}>
               <MotionDiv
                 // whileHover={{ scale: 0.6 }} 
                 whileTap={{ scale: 0.95 }} // Giảm nhẹ kích thước khi nhấn

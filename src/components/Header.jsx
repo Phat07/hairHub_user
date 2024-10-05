@@ -404,19 +404,31 @@ function Header(props) {
           >
             <IoMenu />
           </button>
-
-          {account ? (
+          {avatar && (
+            <Dropdown
+              overlay={accountMenu}
+              trigger={["click"]}
+              // onClick={scrollToTop}
+            >
+              <a onClick={(e) => e.preventDefault()}>
+                <Avatar
+                  className={style.avatarLink}
+                  src={avatar || <UserOutlined />}
+                />
+              </a>
+            </Dropdown>
+          )}
+          {/* {account && (
             <div className={style.avatarContaint}>
               <Dropdown overlay={accountMenu} trigger={["click"]}>
                 <a onClick={(e) => e.preventDefault()}>
-                  
                   <Avatar
                     className={style.avatarLink}
                     src={avatar || <UserOutlined />}
                   />
                 </a>
               </Dropdown>
-              {/* {isNotificationVisible ? (
+              {isNotificationVisible ? (
                 <Badge count={5} onClick={toggleNotification}>
                   <BellOutlined className={style.iconHeaderActive} />
                 </Badge>
@@ -424,21 +436,19 @@ function Header(props) {
                 <Badge count={5} onClick={toggleNotification}>
                   <BellOutlined className={style.iconHeader} />
                 </Badge>
-              )} */}
+              )}
 
-              {/* <a onClick={showModal} style={{ marginLeft: "20px" }}>
+              <a onClick={showModal} style={{ marginLeft: "20px" }}>
                 <Avatar
                   className={style.avatarLink}
                   src={avatar || <UserOutlined />}
                 />
-              </a> */}
+              </a>
             </div>
-          ) : (
-            <></>
-          )}
+          )} */}
         </div>
 
-        <Modal
+        {/* <Modal
           title="Tài khoản của bạn"
           visible={isModalVisible}
           onCancel={handleCancel}
@@ -539,21 +549,6 @@ function Header(props) {
             Đăng xuất
           </Button>
         </Modal>
-        {/* <Modal
-          open={isModalVisibleNoti}
-          onCancel={handleCancelNoti}
-          footer={null}
-          closable={false}
-          className={style["notification-modal"]}
-          bodyStyle={{
-            height: "80vh", 
-            overflow: "auto", 
-          }}
-        >
-          <p>Danh sách thông báo của bạn...</p>
-    
-        </Modal> */}
-
         <div
           ref={notificationRef} // Gán ref vào div thông báo
           className={`${style.customNotification} ${
@@ -562,10 +557,9 @@ function Header(props) {
         >
           <div className={style.notificationContent}>
             <p>Danh sách thông báo của bạn...</p>
-            {/* Nội dung thông báo */}
             <button onClick={toggleNotification}>Đóng</button>
           </div>
-        </div>
+        </div> */}
       </header>
       <Outlet />
     </div>
