@@ -70,6 +70,7 @@ function ImageForSalon(props) {
     });
     dispatch(actPostCreateImages(salonDetail?.id, formData))
       .then((res) => {
+        setFileList([])
         message.success("Đã thêm ảnh thành công!!!");
       })
       .catch((err) => {
@@ -120,7 +121,7 @@ function ImageForSalon(props) {
                   className="w-full h-48 md:h-auto"
                 >
                   <Image
-                    src={image}
+                    src={image.img}
                     alt={`Salon Image ${index}`}
                     className="w-full h-full object-cover rounded-lg"
                   />

@@ -868,7 +868,7 @@ function CustomerAppointmentVer2(props) {
 
           const displayedServices = isExpanded
             ? services
-            : services.slice(0, 1);
+            : services.slice(0, 3);
 
           return (
             <div

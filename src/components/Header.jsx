@@ -407,7 +407,7 @@ function Header(props) {
 
           {account ? (
             <div className={style.avatarContaint}>
-              {/* <Dropdown overlay={accountMenu} trigger={["click"]}>
+              <Dropdown overlay={accountMenu} trigger={["click"]}>
                 <a onClick={(e) => e.preventDefault()}>
                   
                   <Avatar
@@ -415,7 +415,7 @@ function Header(props) {
                     src={avatar || <UserOutlined />}
                   />
                 </a>
-              </Dropdown> */}
+              </Dropdown>
               {/* {isNotificationVisible ? (
                 <Badge count={5} onClick={toggleNotification}>
                   <BellOutlined className={style.iconHeaderActive} />
@@ -426,12 +426,12 @@ function Header(props) {
                 </Badge>
               )} */}
 
-              <a onClick={showModal} style={{ marginLeft: "20px" }}>
+              {/* <a onClick={showModal} style={{ marginLeft: "20px" }}>
                 <Avatar
                   className={style.avatarLink}
                   src={avatar || <UserOutlined />}
                 />
-              </a>
+              </a> */}
             </div>
           ) : (
             <></>

@@ -572,7 +572,7 @@ const LoginPage = () => {
     if (accessType === "login") {
       dispatch(loginAccount(values, navigate))
       .then(() => {
-        message.success("Đăng nhập thành công");
+        // message.success("Đăng nhập thành công");
         // Handle success (optional)
       })
       .catch((error) => {

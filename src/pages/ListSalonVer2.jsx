@@ -137,7 +137,6 @@ function ListSalonVer2(props) {
   const salonNameUrl = searchParams.get("salonName");
   const locationSalonUrl = searchParams.get("location");
 
-
   const [servicesName, setServicesName] = useState(servicesNameUrl || "");
   const [locationSalon, setLocationSalon] = useState(locationSalonUrl || "");
   const [salonName, setSalonName] = useState(salonNameUrl || "");
@@ -671,15 +670,23 @@ function ListSalonVer2(props) {
               </MotionDiv>
               {/* </Popover> */}
             </Col>
-            <Col span={12}>
+            <Col span={11}>
               <MotionDiv
-                whileHover={{ scale: 1.02 }} // Tăng nhẹ kích thước khi hover
+                // whileHover={{ scale: 0.6 }} 
                 whileTap={{ scale: 0.95 }} // Giảm nhẹ kích thước khi nhấn
                 transition={{ duration: 0.3 }} // Thời gian chuyển đổi
               >
                 <Input
                   className={styles["ant-input"]}
-                  allowClear
+                  // allowClear
+                  suffix={
+                    salonName && (
+                      <CloseCircleOutlined
+                        style={{ fontSize: "1.5rem" }}
+                        onClick={() => setSalonName("")}
+                      />
+                    )
+                  }
                   placeholder="Tìm kiếm salon"
                   prefix={<SearchOutlined />}
                   onChange={handleSalonNameChange}

@@ -60,8 +60,10 @@ export function actGetSalonInformationByOwnerIdForImages(id) {
     const result = SalonInformationServices.getImagesForSalon(id);
     await result
       .then((response) => {
+        console.log("ré",response);
+        
         if (response.status === 200 || response.status === 201) {
-          dispatch(getSalonInformationByOwnerIdForImages(response.data));
+          dispatch(getSalonInformationByOwnerIdForImages(response.data.salonImages));
         } else {
           message.error("không thể lấy thông tin salon!!!");
         }

@@ -121,9 +121,11 @@ function renderStars(stars) {
         key={`partial-${filledStars}`}
         style={{
           position: "relative",
-          display: "block",
-          width: "2.1rem", // kích thước sao
+          display: "inline-block", // Keep stars inline
+          width: "2.1rem", // Star size
           height: "2.1rem",
+          overflow: "hidden",
+          verticalAlign: "middle",
         }}
       >
         <StarFilled
@@ -224,6 +226,7 @@ function SalonDetail(props) {
   const [listVoucher, setListVoucher] = useState([]);
   const [selectedVouchers, setSelectedVouchers] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingFeedback, setLoadingFeedback] = useState(false);
   const [loadingTime, setLoadingTime] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [loadingEmployee, setLoadingEmployee] = useState(false);
@@ -250,11 +253,20 @@ function SalonDetail(props) {
   );
 
   const totalPagesFeedback = useSelector((state) => state.RATING.totalPages);
-
+  useEffect(() => {
+    if (id || currentPage) {
+      setLoadingFeedback(true);
+      dispatch(actGetAllFeedbackBySalonId(id, currentPage, pageSize))
+        .then((res) => {})
+        .catch((err) => {})
+        .finally((err) => {
+          setLoadingFeedback(false);
+        });
+    }
+  }, [id, currentPage]);
   useEffect(() => {
     if (id) {
       setLoadingEmployee(true);
-      dispatch(actGetAllFeedbackBySalonId(id, currentPage, pageSize));
       dispatch(actGetAllSalonInformation());
       const fetchEmployees = async () => {
         // setLoading(true);
@@ -279,33 +291,20 @@ function SalonDetail(props) {
 
       fetchEmployees();
     }
-  }, [id, currentPage, page]);
+  }, [id, page]);
 
   useEffect(() => {
     setListVoucher(listVoucherNotPaging);
   }, [listVoucherNotPaging]);
+
+  useEffect(() => {
+    if (additionalServices.length === 0) {
+      setSelectedTimeSlot(null);
+    }
+  }, [additionalServices]);
   const SALONDETAIL_URL =
     "https://hairhub.gahonghac.net/api/v1/saloninformations/GetSalonInformationById/";
 
-  const handleScroll = (direction, containerRef) => {
-    const maxScroll =
-      containerRef.current.scrollWidth - containerRef.current.clientWidth;
-    const scrollAmount = containerRef.current.clientWidth / 2;
-
-    if (direction === "left" && scrollIndex > 0) {
-      setScrollIndex(scrollIndex - 1);
-      containerRef.current.scrollBy({
-        left: -scrollAmount,
-        behavior: "smooth",
-      });
-    } else if (
-      direction === "right" &&
-      containerRef.current.scrollLeft < maxScroll
-    ) {
-      setScrollIndex(scrollIndex + 1);
-      containerRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
-    }
-  };
   const handleScroll1 = (direction, containerRef) => {
     const maxScroll =
       containerRef.current.scrollWidth - containerRef.current.clientWidth;
@@ -326,11 +325,13 @@ function SalonDetail(props) {
     }
   };
   useEffect(() => {
-    dispatch(actGetVoucherBySalonIdNotPaging(id));
-  }, []);
+    if (id) {
+      dispatch(actGetVoucherBySalonIdNotPaging(id));
+    }
+  }, [id]);
 
   useEffect(() => {
-    setIsLoadingService(true)
+    setIsLoadingService(true);
     SalonEmployeesServices.getSalonEmployeeBySalonInformationId(id).then(
       (res) => {
         setSalonEmployeeList(res.data.items);
@@ -344,8 +345,9 @@ function SalonDetail(props) {
       })
       .catch((err) => {
         setError(err);
-      }).finally((err)=>{
-        setIsLoadingService(false)
+      })
+      .finally((err) => {
+        setIsLoadingService(false);
       });
 
     // AppointmentService.calculatePrice(calculateAppointmentData)
@@ -377,7 +379,6 @@ function SalonDetail(props) {
     // fetchData();
   }, [id, voucherSelected, additionalServices, calculateAppointmentData]);
 
-  const dateContainerRef = useRef(null);
   const timeContainerRef = useRef(null);
 
   function generateNextSevenDays() {
@@ -431,17 +432,25 @@ function SalonDetail(props) {
       };
       setSelectedDate(currentDate);
       try {
+        // Using async/await to make the API call
         const response = await SalonInformationServices.getGetAvailableTime(
           postData
-        )
-          .then((res) => {
-            setTimeSlots(res?.data);
-          })
-          .catch((err) => {
-            setTimeSlots("");
-          });
+        );
+
+        if (response.status === 200 || response.status === 201) {
+          setTimeSlots(response?.data); // Set time slots if response is successful
+        } else {
+          setTimeSlots([]); // Clear time slots in case of a different status
+        }
       } catch (error) {
-        console.error("Error posting data:", error);
+        // Check if the error response contains a status code
+        if (error.response?.status === 404) {
+          // Suppress the NotFound error and handle it silently
+          setTimeSlots([]); // Clear time slots when no data is found
+        } else {
+          // Optionally handle other errors here (without logging them)
+          setTimeSlots([]); // Clear time slots in case of other errors
+        }
       }
     }
     setOneServiceData(service);
@@ -451,7 +460,6 @@ function SalonDetail(props) {
 
     if (isServiceAlreadySelected) {
       // Hiển thị thông báo nếu dịch vụ đã được chọn
-      setIsBookingModalVisible(true);
       setIsBookingModalVisible(true);
       message.warning("Dịch vụ này đã được chọn trước đó.");
     } else {
@@ -604,7 +612,7 @@ function SalonDetail(props) {
         .catch((error) => {
           setStatusChangeStaff(true);
           // Xử lý lỗi nếu có
-          console.error("Error booking appointment:", error);
+          // console.error("Error booking appointment:", error);
           // message.warning(error.response.data.message);
         });
 
@@ -810,18 +818,6 @@ function SalonDetail(props) {
     return formattedTotalPrice;
   }
 
-  const showReportModal = () => {
-    setIsReportModalVisible(true);
-  };
-
-  const handleReport = () => {
-    setIsReportModalVisible(false);
-  };
-
-  const onChangeCheckbox = (checkedValues) => {
-    setSelectedReports(checkedValues);
-  };
-
   const calculateRatingDistribution = (feedbacks) => {
     const totalReviews = feedbacks.length;
     const ratingDistribution = {
@@ -847,25 +843,6 @@ function SalonDetail(props) {
 
   const { averageRating, ratingDistribution, totalReviews } =
     calculateRatingDistribution(listFeedback);
-
-  const handleModalOk = () => {
-    setAdditionalServices((prevServices) =>
-      prevServices.map((s) =>
-        s.id === currentService.id
-          ? {
-              ...s,
-              bookingDetail: {
-                serviceHairId: currentService.id,
-                isAnyOne: true,
-                salonEmployeeId: s?.bookingDetail?.salonEmployeeId,
-              },
-            }
-          : s
-      )
-    );
-    setIsModalVisible(false);
-    setCurrentService(null);
-  };
   const getSelectedEmployeeName = (serviceId) => {
     const selectedService = additionalServices.find((s) => s.id === serviceId);
     const selectedEmployeeId = selectedService?.bookingDetail?.salonEmployeeId;
@@ -958,81 +935,10 @@ function SalonDetail(props) {
     return timeString.trim() || "0 phút";
   };
 
-  const handleChangeSelectedService = async () => {
-    const formatDate = (date) => {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0"); // Thêm số 0 vào trước tháng nếu cần
-      const day = String(date.getDate()).padStart(2, "0"); // Thêm số 0 vào trước ngày nếu cần
-      return `${year}-${month}-${day}`;
-    };
-    const dataMapping = [...additionalServices];
-    const databooking = await dataMapping?.map((e) => {
-      return {
-        serviceHairId: e?.id,
-        isAnyOne: true,
-        salonEmployeeId: e?.bookingDetailResponses?.employees?.id || null,
-      };
-    });
-
-    const formattedDate = formatDate(selectedDate);
-    const requestBody = {
-      day: formattedDate, // Thay bằng ngày bạn muốn book
-      availableSlot: selectedTimeSlot || 0, // Thay bằng slot bạn muốn book
-      salonId: id, // Thay bằng id của salon
-      bookingDetail: databooking,
-    };
-    setDataBooking(databooking); //serviceHairId, salonEmployeeId
-
-    SalonInformationServices.getBookAppointment(requestBody)
-      .then((response) => {
-        // Xử lý kết quả từ server nếu cần
-        const updatedAdditionalServices = [...additionalServices];
-        let total = 0;
-        updatedAdditionalServices?.map((e) => {
-          total += e?.price;
-        });
-
-        const totalPriceMapping = listVoucherNotPaging?.filter(
-          (e) => e?.minimumOrderAmount <= total
-        );
-        // setListVoucher(totalPriceMapping);
-        setVoucherList(totalPriceMapping);
-        const updatedVoucherSelected = voucherSelected?.filter(
-          (voucher) => voucher?.minimumOrderAmount <= total
-        );
-
-        setVoucherSelected(updatedVoucherSelected);
-        // console.log("totalPriceMapping", totalPriceMapping);
-
-        for (const service of additionalServices) {
-          const matchingBookingDetailResponse =
-            response.data.bookingDetailResponses.find(
-              (responseDetail) => responseDetail?.serviceHair?.id === service.id
-            );
-
-          if (matchingBookingDetailResponse) {
-            service.bookingDetailResponses = matchingBookingDetailResponse;
-          }
-        }
-
-        setAdditionalServices(updatedAdditionalServices);
-        setShowServiceList(false);
-
-        // Cập nhật state hoặc hiển thị thông báo thành công
-      })
-      .catch((error) => {
-        message.warning(error?.response?.data?.message);
-        // Xử lý lỗi nếu có
-        // console.error("Error booking appointment:", error);
-        // Hiển thị thông báo lỗi cho người dùng nếu cần
-      });
-  };
-
   const formatCurrency = (value) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
       currency: "VND", // Replace 'USD' with your desired currency code
-      // minimumFractionDigits: 5, // Adjust decimal places as needed
     }).format(value);
   };
   const formatDiscountPercentage = (value) => {
@@ -1042,6 +948,11 @@ function SalonDetail(props) {
   const handleBooking = async () => {
     if (additionalServices.length === 0) {
       message.info("Vui lòng chọn dịch vụ!!");
+      setIsPriceModalVisible(false);
+      return;
+    }
+    if (selectedTimeSlot === null) {
+      message.info("Vui lòng chọn giờ!!");
       setIsPriceModalVisible(false);
       return;
     }
@@ -1102,9 +1013,6 @@ function SalonDetail(props) {
       isAnyOne: true,
     };
 
-    // Update the selected date (if needed)
-    // setSelectedDate(currentDate);
-
     try {
       // Call the API to get available time slots
       const response = await SalonInformationServices.getGetAvailableTime(
@@ -1123,29 +1031,6 @@ function SalonDetail(props) {
       setTimeSlots([]); // Clear time slots in case of an error
     }
   };
-
-  // useEffect(() => {
-  //   const setupSignalR = async () => {
-  //     try {
-  //       await startConnection();
-
-  //       onBookAppointmentMessage(async (message) => {
-  //         console.log('Message from server:', message);
-  //         // Handle the received message
-  //         await fetchAvailable(currentDate, id, service);
-  //       });
-  //     } catch (error) {
-  //       console.error("Error setting up SignalR:", error);
-  //     }
-  //   };
-
-  //   setupSignalR();
-
-  //   // Clean up the connection when the component unmounts
-  //   // return () => {
-  //   //   stopConnection();
-  //   // };
-  // }, []);
 
   useEffect(() => {
     let connection;
@@ -1306,15 +1191,25 @@ function SalonDetail(props) {
     setAdditionalServices(updatedServices);
   };
   const handleFilterChange = (rating) => {
+    setCurrentPage(1)
+    setLoadingFeedback(true);
+    dispatch(actGetAllFeedbackBySalonId(id, currentPage, pageSize, rating))
+      .then((res) => {})
+      .catch((err) => {})
+      .finally((err) => {
+        setLoadingFeedback(false);
+      });
+
     setFilterRating(rating);
   };
 
-  const filteredFeedback = filterRating
-    ? listFeedback.filter((feedback) => feedback?.rating === filterRating)
-    : listFeedback;
+  // const filteredFeedback = filterRating
+  //   ? listFeedback.filter((feedback) => feedback?.rating === filterRating)
+  //   : listFeedback;
   function formatMoneyVND(amount) {
     return amount.toLocaleString("vi-VN");
   }
+
   return (
     <div style={{ marginTop: "75px" }}>
       <Layout>
@@ -2126,78 +2021,78 @@ function SalonDetail(props) {
                   </Modal>
                 </Spin>
               </div>
-                <div>
-                  <div className="our-work-section">
-                    <h2
-                      style={{
-                        fontSize: "1.8rem",
-                        fontWeight: "bold",
-                        marginBottom: "1rem",
-                      }}
-                    >
-                      See Our Work
-                    </h2>
-                    <Row gutter={16}>
-                      <Col xs={24} sm={12}>
-                        <img
-                          src={ourWorkImages[0]}
-                          alt="Main Work"
-                          style={{
-                            width: "80%",
-                            height: "auto",
-                            borderRadius: "8px",
-                          }}
-                        />
-                      </Col>
-                      <Col xs={24} sm={12}>
-                        <Row gutter={[8, 8]}> 
-                          {ourWorkImages.slice(1, 5).map((image, index) => (
-                            <Col key={index} span={12}>
-                              <img
-                                src={image}
-                                alt={`Work ${index + 1}`}
-                                style={{
-                                  width: "75%",
-                                  height: "auto",
-                                  borderRadius: "8px",
-                                }}
-                              />
-                            </Col>
-                          ))}
-                        </Row>
-                      </Col>
-                    </Row>
-                    <Button
-                      block
-                      onClick={() => setShowAllWork(true)}
-                      style={{ marginTop: "16px" }}
-                    >
-                      SEE ALL WORK
-                    </Button>
-                  </div>
-
-                  <div>
-                    <Modal
-                      title="All Our Work"
-                      visible={showAllWork}
-                      onCancel={() => setShowAllWork(false)}
-                      footer={null}
-                      width={800}
-                    >
-                      <Carousel arrows infinite={false}>
-                        {ourWorkImages.map((image, index) => (
-                          <div key={index}>
+              <div>
+                <div className="our-work-section">
+                  <h2
+                    style={{
+                      fontSize: "1.8rem",
+                      fontWeight: "bold",
+                      marginBottom: "1rem",
+                    }}
+                  >
+                    See Our Work
+                  </h2>
+                  <Row gutter={16}>
+                    <Col xs={24} sm={12}>
+                      <img
+                        src={ourWorkImages[0]}
+                        alt="Main Work"
+                        style={{
+                          width: "80%",
+                          height: "auto",
+                          borderRadius: "8px",
+                        }}
+                      />
+                    </Col>
+                    <Col xs={24} sm={12}>
+                      <Row gutter={[8, 8]}>
+                        {ourWorkImages.slice(1, 5).map((image, index) => (
+                          <Col key={index} span={12}>
                             <img
                               src={image}
-                              alt={`Work ${index}`}
-                              style={{ width: "100%", height: "auto" }}
+                              alt={`Work ${index + 1}`}
+                              style={{
+                                width: "75%",
+                                height: "auto",
+                                borderRadius: "8px",
+                              }}
                             />
-                          </div>
+                          </Col>
                         ))}
-                      </Carousel>
-                    </Modal>
-                  </div>
+                      </Row>
+                    </Col>
+                  </Row>
+                  <Button
+                    block
+                    onClick={() => setShowAllWork(true)}
+                    style={{ marginTop: "16px" }}
+                  >
+                    SEE ALL WORK
+                  </Button>
                 </div>
+
+                <div>
+                  <Modal
+                    title="All Our Work"
+                    visible={showAllWork}
+                    onCancel={() => setShowAllWork(false)}
+                    footer={null}
+                    width={800}
+                  >
+                    <Carousel arrows infinite={false}>
+                      {ourWorkImages.map((image, index) => (
+                        <div key={index}>
+                          <img
+                            src={image}
+                            alt={`Work ${index}`}
+                            style={{ width: "100%", height: "auto" }}
+                          />
+                        </div>
+                      ))}
+                    </Carousel>
+                  </Modal>
+                </div>
+              </div>
               <div>
                 <h2
                   style={{
@@ -2295,11 +2190,12 @@ function SalonDetail(props) {
                 <List
                   itemLayout="horizontal"
                   locale={{
-                    emptyText: filterRating
-                      ? `Không có đánh giá ${filterRating} sao nào`
+                    emptyText: listFeedback
+                      ? `Không có đánh giá ${listFeedback} sao nào`
                       : "Không có đánh giá nào",
                   }}
-                  dataSource={filteredFeedback}
+                  loading={loadingFeedback}
+                  dataSource={listFeedback}
                   renderItem={(feedback) => (
                     <List.Item className={style.listItem}>
                       <List.Item.Meta
@@ -2321,7 +2217,7 @@ function SalonDetail(props) {
                                       year: "numeric",
                                       month: "long",
                                       day: "numeric",
-                                    })}{" "}
+                                    })}
                                     | Dịch vụ sử dụng:{" "}
                                     {feedback?.appointment?.appointmentDetails?.map(
                                       (e, index, array) => (
@@ -2334,16 +2230,6 @@ function SalonDetail(props) {
                                   </p>
                                 </div>
                               </div>
-                              {/* <p style={{ marginTop: "0" }}>
-                                {new Date(
-                                  feedback?.createDate
-                                ).toLocaleDateString("vi-VI", {
-                                  year: "numeric",
-                                  month: "long",
-                                  day: "numeric",
-                                })}{" "}
-
-                              </p> */}
                             </div>
                             <div className={style.ratingFeedback}>
                               {renderStars(feedback?.rating)}
