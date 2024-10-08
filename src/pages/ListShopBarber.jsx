@@ -450,6 +450,7 @@ function ListShopBarber(props) {
       maximumOrderAmount,
       maximumDiscount,
       quantity,
+      startDate,
     } = voucherUpdate;
     console.log("vouvher", voucherUpdate);
 
@@ -459,6 +460,7 @@ function ListShopBarber(props) {
         descriptionUpdate: description,
         minimumOrderAmountUpdate: minimumOrderAmount,
         discountPercentageUpdate: configDiscountPercentage,
+        startDateUpdate: dayjs(startDate),
         expiryDateUpdate: dayjs(expiryDate), // Use moment to format date
         maximumDiscountUpdate: maximumDiscount,
         maximumOrderAmountUpdate: maximumOrderAmount,
@@ -791,13 +793,13 @@ function ListShopBarber(props) {
       align: "center",
       render: (value) => formatCurrency(value),
     },
-    {
-      title: "Số tiền tối da",
-      dataIndex: "maximumOrderAmount",
-      key: "maximumOrderAmount",
-      align: "center",
-      render: (value) => formatCurrency(value),
-    },
+    // {
+    //   title: "Số tiền tối da",
+    //   dataIndex: "maximumOrderAmount",
+    //   key: "maximumOrderAmount",
+    //   align: "center",
+    //   render: (value) => formatCurrency(value),
+    // },
     {
       title: "Giảm giá tối đa",
       dataIndex: "maximumDiscount",
@@ -820,26 +822,33 @@ function ListShopBarber(props) {
       // render: (value) => formatDiscount(value),
     },
     {
+      title: "Ngày bắt đầu",
+      dataIndex: "startDate",
+      key: "startDate",
+      align: "center",
+      render: (date) => formatDateTime(date), // Định dạng ngày giờ
+    },
+    {
       title: "Ngày hết hạn",
       dataIndex: "expiryDate",
       key: "expiryDate",
       align: "center",
       render: (date) => formatDateTime(date), // Định dạng ngày giờ
     },
-    {
-      title: "Ngày tạo",
-      dataIndex: "createdDate",
-      key: "createdDate",
-      align: "center",
-      render: (date) => formatDateTime(date), // Định dạng ngày giờ
-    },
-    {
-      title: "Ngày sửa đổi",
-      dataIndex: "modifiedDate",
-      key: "modifiedDate",
-      align: "center",
-      render: (date) => (date ? formatDateTime(date) : "Chưa sửa đổi"), // Định dạng ngày giờ hoặc hiển thị thông báo nếu chưa sửa đổi
-    },
+    // {
+    //   title: "Ngày tạo",
+    //   dataIndex: "createdDate",
+    //   key: "createdDate",
+    //   align: "center",
+    //   render: (date) => formatDateTime(date), // Định dạng ngày giờ
+    // },
+    // {
+    //   title: "Ngày sửa đổi",
+    //   dataIndex: "modifiedDate",
+    //   key: "modifiedDate",
+    //   align: "center",
+    //   render: (date) => (date ? formatDateTime(date) : "Chưa sửa đổi"), // Định dạng ngày giờ hoặc hiển thị thông báo nếu chưa sửa đổi
+    // },
     {
       title: "Trạng thái",
       dataIndex: "isActive",
@@ -1041,15 +1050,23 @@ function ListShopBarber(props) {
       minimumOrderAmount,
       discountPercentage,
       expiryDate,
-      maximumOrderAmount,
+      // maximumOrderAmount,
       maximumDiscount,
       quantity,
+      startDate,
     } = values;
     const configDiscountPercentage = discountPercentage / 100;
 
     const configExpiryDate = () => {
       // const newDate = new Date();
       const expiryDate1 = expiryDate.toDate();
+      const newExpiryDate = expiryDate1.getDate() + 1;
+      expiryDate1.setDate(newExpiryDate);
+      return expiryDate1;
+    };
+    const configStartDate = () => {
+      // const newDate = new Date();
+      const expiryDate1 = startDate.toDate();
       const newExpiryDate = expiryDate1.getDate() + 1;
       expiryDate1.setDate(newExpiryDate);
       return expiryDate1;
@@ -1066,12 +1083,13 @@ function ListShopBarber(props) {
       description: description,
       maximumDiscount: maximumDiscount,
       minimumOrderAmount: minimumOrderAmount,
-      maximumOrderAmount: maximumOrderAmount,
+      // maximumOrderAmount: maximumOrderAmount,
       quantity: quantity,
       discountPercentage: configDiscountPercentage,
       expiryDate: configExpiryDate(), //convert dayjs to new Date and plus 1 day :v
       createdDate: configCurrentDate(), //config dayjs to new Date and plus 1 day :v
       modifiedDate: null,
+      startDate: configStartDate(),
       isSystemCreated: false,
       isActive: true,
     };
@@ -1230,19 +1248,36 @@ function ListShopBarber(props) {
           discountPercentageUpdate,
           expiryDateUpdate,
           maximumDiscountUpdate,
-          maximumOrderAmountUpdate,
+          // maximumOrderAmountUpdate,
           quantityUpdate,
+          startDateUpdate,
         } = values;
+
+        const configExpiryDateUpdate = () => {
+          // const newDate = new Date();
+          const expiryDate1 = expiryDateUpdate.toDate();
+          const newExpiryDate = expiryDate1.getDate() + 1;
+          expiryDate1.setDate(newExpiryDate);
+          return expiryDate1;
+        };
+        const configStartDateUpdate = () => {
+          // const newDate = new Date();
+          const expiryDate1 = startDateUpdate.toDate();
+          const newExpiryDate = expiryDate1.getDate() + 1;
+          expiryDate1.setDate(newExpiryDate);
+          return expiryDate1;
+        };
         const configDiscountPercentageUpdate = discountPercentageUpdate / 100;
         const updatedVoucher = {
           ...voucherUpdate,
           description: descriptionUpdate,
           minimumOrderAmount: minimumOrderAmountUpdate,
           discountPercentage: configDiscountPercentageUpdate,
-          expiryDate: expiryDateUpdate,
+          expiryDate: configExpiryDateUpdate(),
           maximumDiscount: maximumDiscountUpdate,
-          maximumOrderAmount: maximumOrderAmountUpdate,
+          // maximumOrderAmount: maximumOrderAmountUpdate,
           quantity: quantityUpdate,
+          startDate: configStartDateUpdate(),
         };
 
         voucherServices
@@ -1275,8 +1310,9 @@ function ListShopBarber(props) {
       })
       .catch((error) => {
         console.error("Validation Failed:", error);
-      }).finally((err)=>{
-        setLoadingVoucher(false)
+      })
+      .finally((err) => {
+        setLoadingVoucher(false);
       });
   };
   const handleEmailChange = (e) => {
@@ -1927,13 +1963,13 @@ function ListShopBarber(props) {
                       style={{ width: "100%" }}
                     />
                   </Form.Item>
-                  <Flex className="mt-3" gap={"small"}>
+                  <Flex className="-mt-5 mb-5" gap={"small"}>
                     {<DollarCircleOutlined />}
                     <Typography.Text strong>
                       Giá: {formatCurrency(currencyValue)}
                     </Typography.Text>
                   </Flex>
-                  <Form.Item
+                  {/* <Form.Item
                     label="Giá cao nhất"
                     name="maximumOrderAmount"
                     initialValue={200000}
@@ -1950,16 +1986,16 @@ function ListShopBarber(props) {
                       min={1}
                       style={{ width: "100%" }}
                     />
-                  </Form.Item>
-                  <Flex className="mt-3" gap={"small"}>
+                  </Form.Item> */}
+                  {/* <Flex className="mt-1" gap={"small"}>
                     {<DollarCircleOutlined />}
                     <Typography.Text strong>
                       Giá: {formatCurrency(currencyValueMax)}
                     </Typography.Text>
-                  </Flex>
+                  </Flex> */}
 
                   <Form.Item
-                    label="Giảm (%)"
+                    label="(%) Giảm"
                     name="discountPercentage"
                     tooltip={"Your discount can from 1% to 100%"}
                     rules={[
@@ -1979,7 +2015,7 @@ function ListShopBarber(props) {
                     />
                   </Form.Item>
                   <Form.Item
-                    label="Giảm giá tối đa (vnđ)"
+                    label="Giá giảm tối đa (vnđ)"
                     name="maximumDiscount"
                     tooltip={"Your maximumDiscount can from 1% to 100%"}
                     rules={[
@@ -1987,19 +2023,33 @@ function ListShopBarber(props) {
                         required: true,
                         message: "Please input the maximumDiscount!",
                       },
+                      {
+                        validator: (_, value) => {
+                          const minimumOrderAmount =
+                            form.getFieldValue("minimumOrderAmount"); // Lấy giá trị của giá thấp nhất
+                          if (!value || !minimumOrderAmount) {
+                            return Promise.resolve(); // Nếu không có giá trị, không kiểm tra
+                          }
+                          const maxDiscountThreshold = minimumOrderAmount * 0.5; // Tính 50% của giá thấp nhất
+                          return value < maxDiscountThreshold
+                            ? Promise.resolve() // Nếu giá giảm tối đa nhỏ hơn 50% của giá thấp nhất, cho phép
+                            : Promise.reject(
+                                new Error(
+                                  "Giá giảm tối đa phải nhỏ hơn 50% của giá thấp nhất!"
+                                )
+                              ); // Thông báo lỗi
+                        },
+                      },
                     ]}
                   >
                     <InputNumber
                       type="number"
                       min={1}
-                      // max={100}
                       onChange={(value) => setCurrencyValueMaxDiscount(value)}
-                      // formatter={(value) => `${value}`}
-                      // parser={(value) => value.replace("%", "")}
                       style={{ width: "100%" }}
                     />
                   </Form.Item>
-                  <Flex className="mt-3" gap={"small"}>
+                  <Flex className="-mt-5 mb-5" gap={"small"}>
                     {<DollarCircleOutlined />}
                     <Typography.Text strong>
                       Giá: {formatCurrency(currencyValueMaxDiscount)}
@@ -2025,20 +2075,50 @@ function ListShopBarber(props) {
                     />
                   </Form.Item>
                   <Form.Item
-                    label="Ngày hết hạn"
-                    name="expiryDate"
+                    label="Ngày bắt đầu"
+                    name="startDate"
                     tooltip="Ngày/Tháng/Năm"
-                    // initialValue={currentDate}
                     rules={[
                       {
                         required: true,
-                        message: "Vui lòng chọn ngày hết hạn!",
+                        message: "Vui lòng chọn ngày bắt đầu!",
                       },
                     ]}
                   >
                     <DatePicker
                       style={{ width: "100%" }}
-                      // defaultValue={dayjs()} //if set defaultValue here, formItem does not receive data from initial //~~~~~~~~~~~~~~~~~~~~ Caution ~~~~~~~~~~~~~~~~~~~~ DatePicker or TimePicker receive Date Object, do not pass String value
+                      format={formattedDate}
+                      disabledDate={(current) => {
+                        return current && current < dayjs().startOf("day");
+                      }}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label="Ngày hết hạn"
+                    name="expiryDate"
+                    tooltip="Ngày/Tháng/Năm"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng chọn ngày hết hạn!",
+                      },
+                      {
+                        validator: (_, value) => {
+                          const startDate = form.getFieldValue("startDate"); // Lấy giá trị ngày bắt đầu
+                          if (!value || !startDate) {
+                            return Promise.resolve(); // Nếu không có giá trị, không kiểm tra
+                          }
+                          return dayjs(value).isAfter(dayjs(startDate))
+                            ? Promise.resolve() // Nếu ngày hết hạn sau ngày bắt đầu, cho phép
+                            : Promise.reject(
+                                new Error("Ngày hết hạn phải sau ngày bắt đầu!")
+                              ); // Thông báo lỗi
+                        },
+                      },
+                    ]}
+                  >
+                    <DatePicker
+                      style={{ width: "100%" }}
                       format={formattedDate}
                       disabledDate={(current) => {
                         return current && current < dayjs().startOf("day");
@@ -2087,7 +2167,7 @@ function ListShopBarber(props) {
                     />
                   </Form.Item>
                   <div
-                    className="mt-3"
+                    className="-mt-5 mb-5"
                     style={{ display: "flex", gap: "small" }}
                   >
                     <DollarCircleOutlined />
@@ -2095,7 +2175,7 @@ function ListShopBarber(props) {
                       Currency: {formatCurrency(currencyValueVoucherUpdate)}
                     </Typography.Text>
                   </div>
-                  <Form.Item
+                  {/* <Form.Item
                     label="Giá cao nhất"
                     name="maximumOrderAmountUpdate"
                     initialValue={200000}
@@ -2123,7 +2203,7 @@ function ListShopBarber(props) {
                     <Typography.Text strong>
                       Currency: {formatCurrency(currencyValueVoucherUpdateMax)}
                     </Typography.Text>
-                  </div>
+                  </div> */}
                   <Form.Item
                     label="Discount Percentage (%)"
                     name="discountPercentageUpdate"
@@ -2159,7 +2239,7 @@ function ListShopBarber(props) {
                       style={{ width: "100%" }}
                     />
                   </Form.Item>
-                  <Flex className="mt-3" gap={"small"}>
+                  <Flex className="-mt-5 mb-5" gap={"small"}>
                     {<DollarCircleOutlined />}
                     <Typography.Text strong>
                       Giá: {formatCurrency(currencyValueVoucherUpdateDiscount)}
@@ -2184,13 +2264,56 @@ function ListShopBarber(props) {
                       style={{ width: "100%" }}
                     />
                   </Form.Item>
-                  <Form.Item label="Expiry Date" name="expiryDateUpdate">
+                  <Form.Item
+                    label="Ngày bắt đầu"
+                    name="startDateUpdate"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng chọn ngày bắt đầu!",
+                      },
+                    ]}
+                  >
                     <DatePicker
                       style={{ width: "100%" }}
-                      format="YYYY-MM-DD"
-                      disabledDate={(current) => {
-                        return current && current < dayjs().startOf("day");
-                      }}
+                      format={formattedDate}
+                      disabledDate={(current) =>
+                        current && current < dayjs().startOf("day")
+                      }
+                      onChange={() => form.validateFields(["expiryDateUpdate"])} // Validate expiry date when start date changes
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label="Ngày hết hạn"
+                    name="expiryDateUpdate"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng chọn ngày hết hạn!",
+                      },
+                      {
+                        validator: (_, value) => {
+                          const startDate =
+                            form.getFieldValue("startDateUpdate"); // Get the value of the start date
+                          if (!value || !startDate) {
+                            return Promise.resolve(); // If there's no value, do not validate
+                          }
+                          return dayjs(value).isAfter(dayjs(startDate))
+                            ? Promise.resolve() // If the expiry date is after the start date, allow
+                            : Promise.reject(
+                                new Error("Ngày hết hạn phải sau ngày bắt đầu!")
+                              ); // Error message
+                        },
+                      },
+                    ]}
+                  >
+                    <DatePicker
+                      style={{ width: "100%" }}
+                      format={formattedDate}
+                      disabledDate={(current) =>
+                        current && current < dayjs().startOf("day")
+                      }
+                      onChange={() => form.validateFields(["startDateUpdate"])} // Validate start date when expiry date changes
                     />
                   </Form.Item>
                 </Form>
