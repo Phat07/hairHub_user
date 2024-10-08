@@ -2531,7 +2531,7 @@ function SalonDetail(props) {
                           marginBottom: "20px",
                           borderRadius: "8px",
                           padding: "20px",
-                          backgroundColor: "#fff",
+                          backgroundColor: "#ece8de",
                         }}
                       >
                         <Row gutter={16} align="middle">
