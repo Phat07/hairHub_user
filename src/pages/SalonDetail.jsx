@@ -190,6 +190,7 @@ function SalonDetail(props) {
   const [page, setPage] = useState(1);
   const [pageSizeEmployee, setPageSizeEmployee] = useState(3);
   const [total, setTotal] = useState(0);
+  const [totalPriceVoucher, setTotalPriceVoucher] = useState(0);
   const indexOfLastFeedback = currentPage * pageSize;
   const indexOfFirstFeedback = indexOfLastFeedback - pageSize;
 
@@ -418,10 +419,19 @@ function SalonDetail(props) {
       message.warning("Vui lòng đăng ký hoặc đăng nhập để đặt lịch");
     }
     if (additionalServices.length < 1) {
-      const data = listVoucherNotPaging?.filter(
-        (e) => e?.minimumOrderAmount <= service?.price
-      );
-      setVoucherList(data);
+      // const data = listVoucherNotPaging?.filter(
+      //   (e) => e?.minimumOrderAmount <= service?.price
+      // );
+      // setVoucherList(data);
+      console.log("servi", service);
+
+      let total = 0;
+      total += service?.price;
+      // updatedAdditionalServices?.map((e) => {
+      //   total += e?.price;
+      // });
+      setTotalPriceVoucher(total);
+
       const currentDate = new Date(); // Lấy ngày hôm nay
 
       const formatDate = (date) => {
@@ -716,16 +726,16 @@ function SalonDetail(props) {
             }
           : s
       );
-  
+
       // Set currentService to null after updating additionalServices
       setCurrentService(null);
       return updatedServices; // Return the updated services
     });
-    
+
     // Close the modal after updating the state
     setIsModalVisible(false);
   };
-  
+
   // const handleChangeRandomEmployee = () => {
   //   setAdditionalServices((prevServices) =>
   //     prevServices.map((s) =>
@@ -760,16 +770,15 @@ function SalonDetail(props) {
             }
           : s
       );
-  
+
       // Set currentService to null after updating additionalServices
       setCurrentService(null);
       return updatedServices; // Return the updated services
     });
-  
+
     // Close the modal after updating the state
     setIsModalVisible(false);
   };
-  
 
   const handleCancel = () => {
     setIsModalVisible(false);
@@ -820,12 +829,13 @@ function SalonDetail(props) {
           updatedAdditionalServices?.map((e) => {
             total += e?.price;
           });
+          setTotalPriceVoucher(total);
 
-          const totalPriceMapping = listVoucherNotPaging?.filter(
-            (e) => e?.minimumOrderAmount <= total
-          );
-          // setListVoucher(totalPriceMapping);
-          setVoucherList(totalPriceMapping);
+          // const totalPriceMapping = listVoucherNotPaging?.filter(
+          //   (e) => e?.minimumOrderAmount <= total
+          // );
+
+          // setVoucherList(totalPriceMapping);
           const updatedVoucherSelected = voucherSelected?.filter(
             (voucher) => voucher?.minimumOrderAmount <= total
           );
@@ -902,22 +912,21 @@ function SalonDetail(props) {
 
   const { averageRating, ratingDistribution, totalReviews } =
     calculateRatingDistribution(listFeedback);
-    const getSelectedEmployeeName = (serviceId) => {
-      const selectedService = additionalServices.find((s) => s.id === serviceId);
-      const selectedEmployeeId = selectedService?.bookingDetail?.salonEmployeeId;
-    
-      // Check if selectedEmployeeId is undefined
-      if (!selectedEmployeeId) {
-        return undefined; // Return undefined if no employee is selected
-      }
-    
-      const employee = currentService?.bookingDetailResponses?.employees.find(
-        (e) => e.id === selectedEmployeeId
-      );
-    
-      return employee?.fullName; // Returns employee's full name or undefined if not found
-    };
-    
+  const getSelectedEmployeeName = (serviceId) => {
+    const selectedService = additionalServices.find((s) => s.id === serviceId);
+    const selectedEmployeeId = selectedService?.bookingDetail?.salonEmployeeId;
+
+    // Check if selectedEmployeeId is undefined
+    if (!selectedEmployeeId) {
+      return undefined; // Return undefined if no employee is selected
+    }
+
+    const employee = currentService?.bookingDetailResponses?.employees.find(
+      (e) => e.id === selectedEmployeeId
+    );
+
+    return employee?.fullName; // Returns employee's full name or undefined if not found
+  };
 
   const handleChangeStaff = (service) => {
     if (!selectedTimeSlot) {
@@ -1017,11 +1026,14 @@ function SalonDetail(props) {
     if (additionalServices.length === 0) {
       message.info("Vui lòng chọn dịch vụ!!");
       setIsPriceModalVisible(false);
+      setLoadingBook(false);
+
       return;
     }
     if (selectedTimeSlot === null) {
       message.info("Vui lòng chọn giờ!!");
       setIsPriceModalVisible(false);
+      setLoadingBook(false);
       return;
     }
     // Function to format the date
@@ -1067,7 +1079,9 @@ function SalonDetail(props) {
         });
         setIsPriceModalVisible(true);
       })
-      .catch((err) => {})
+      .catch((err) => {
+        setLoadingBook(false);
+      })
       .finally((err) => {
         setLoadingBook(false);
       });
@@ -1257,6 +1271,17 @@ function SalonDetail(props) {
 
     // Update the state with the new array
     setAdditionalServices(updatedServices);
+    let total = 0;
+    updatedServices?.map((e) => {
+      total += e?.price;
+    });
+    setTotalPriceVoucher(total);
+
+    // const totalPriceMapping = listVoucherNotPaging?.filter(
+    //   (e) => e?.minimumOrderAmount <= total
+    // );
+    // setListVoucher(totalPriceMapping);
+    // setVoucherList(total);
   };
   const handleFilterChange = (rating) => {
     setCurrentPage(1);
@@ -1282,6 +1307,7 @@ function SalonDetail(props) {
       .filter((service) => service.bookingDetail?.salonEmployeeId)
       .map((service) => service.bookingDetail.salonEmployeeId);
   };
+
   return (
     <div style={{ marginTop: "75px" }}>
       <Layout>
@@ -1789,154 +1815,109 @@ function SalonDetail(props) {
                                     (e) =>
                                       e?.id ===
                                       service?.bookingDetail?.salonEmployeeId
-                                  ); // Define data if necessary
+                                  );
 
                                 return (
-                                  <List.Item
-                                    actions={[
-                                      <Button
-                                        key="change"
-                                        onClick={() =>
-                                          handleChangeStaff(service)
+                                  <List.Item>
+                                    <div className="flex justify-between w-full">
+                                      <List.Item.Meta
+                                        avatar={
+                                          <Avatar
+                                            size={{
+                                              xs: 24,
+                                              sm: 32,
+                                              md: 40,
+                                              lg: 64,
+                                              xl: 80,
+                                              xxl: 100,
+                                            }}
+                                            src={service?.img}
+                                          />
                                         }
-                                        disabled={statusChangeStaff}
-                                      >
-                                        Nhân viên
-                                      </Button>,
-                                      <Button
-                                        key="close"
-                                        type="text"
-                                        icon={<CloseOutlined />}
-                                        onClick={() =>
-                                          handleRemoveService(service)
+                                        title={
+                                          <span className="text-xl md:text-2xl font-bold transition-transform duration-300 hover:scale-105">
+                                            {service.serviceName}
+                                          </span>
                                         }
-                                        className={style["close-button-close"]}
-                                        style={{
-                                          // position: "absolute",
-                                          top: -30,
-                                          right: 0,
-                                          color: "#000",
-                                          zIndex: 1,
-                                          transition: "transform 0.3s ease",
-                                        }} // Customize color if necessary
-                                      />,
-                                    ]}
-                                  >
-                                    <List.Item.Meta
-                                      avatar={
-                                        <Avatar
-                                          size={{
-                                            xs: 24,
-                                            sm: 32,
-                                            md: 40,
-                                            lg: 64,
-                                            xl: 80,
-                                            xxl: 100,
-                                          }}
-                                          src={service?.img}
-                                        />
-                                      }
-                                      title={
-                                        <span
+                                        description={
+                                          <div className="inline-grid border border-gray-300 p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out">
+                                            <span className="text-base md:text-lg">
+                                              Tiền:{" "}
+                                              {formatMoneyVND(service.price)}{" "}
+                                              vnđ
+                                            </span>
+                                            <span className="text-base md:text-lg">
+                                              Thời gian dịch vụ:{" "}
+                                              {formatTime(service.time)}
+                                            </span>
+                                            <span className="text-base md:text-lg">
+                                              Thời gian chờ:{" "}
+                                              {formatTime(service.waitingTime)}
+                                            </span>
+                                            <span className="text-base md:text-lg">
+                                              Nhân viên:{" "}
+                                              {data ? (
+                                                <>{data?.fullName}</>
+                                              ) : (
+                                                <>
+                                                  <RandomIcon /> Ngẫu nhiên
+                                                </>
+                                              )}
+                                            </span>
+                                          </div>
+                                        }
+                                      />
+                                      <div className="relative flex flex-col justify-start ml-4">
+                                        <Button
+                                          key="close"
+                                          type="text"
+                                          icon={<CloseOutlined />}
+                                          onClick={() =>
+                                            handleRemoveService(service)
+                                          }
+                                          className={`${style["close-button-close"]} text-black absolute top-0 right-0 md:right-1 md:top-1`}
                                           style={{
-                                            fontSize: "1.7rem",
-                                            fontWeight: "bold",
+                                            zIndex: 1,
+                                            transition: "transform 0.3s ease",
                                           }}
+                                        />
+                                        <Button
+                                          key="change"
+                                          onClick={() =>
+                                            handleChangeStaff(service)
+                                          }
+                                          disabled={statusChangeStaff}
+                                          className="w-full mt-16" // Add margin-top to space from the close button
                                         >
-                                          {service.serviceName}
-                                        </span>
-                                      }
-                                      description={
-                                        <div style={{ display: "inline-grid" }}>
-                                          <span>
-                                            Tiền:{" "}
-                                            {formatMoneyVND(service.price)} vnđ
-                                          </span>
-                                          <span>
-                                            Thời gian dịch vụ:{" "}
-                                            {formatTime(service.time)}
-                                          </span>
-                                          <span>
-                                            Thời gian chờ:{" "}
-                                            {formatTime(service.waitingTime)}
-                                          </span>
-                                          <span>
-                                            Nhân viên:{" "}
-                                            {data ? (
-                                              <>
-                                                {data?.fullName}
-                                                {/* <Avatar
-                                                    size={{
-                                                      xs: 24,
-                                                      sm: 32,
-                                                      md: 40,
-                                                      lg: 34,
-                                                      xl: 40,
-                                                      xxl: 40,
-                                                    }}
-                                                    src={data?.img}
-                                                    style={{ marginRight: 8 }}
-                                                  />
-                                                  <div>
-                                                    <div>{data?.fullName}</div>
-                                                    <div
-                                                      style={{
-                                                        fontSize: "12px",
-                                                        color: "#888",
-                                                      }}
-                                                    >
-                                                      Bắt đầu:{" "}
-                                                      {dayjs(
-                                                        service
-                                                          ?.bookingDetailResponses
-                                                          ?.serviceHair
-                                                          ?.startTime
-                                                      ).format("HH:mm")}{" "}
-                                                      - Kết thúc:{" "}
-                                                      {dayjs(
-                                                        service
-                                                          ?.bookingDetailResponses
-                                                          ?.serviceHair
-                                                          ?.startTime
-                                                      ).format("HH:mm")}
-                                                    </div>
-                                                  </div> */}
-                                              </>
-                                            ) : (
-                                              <>
-                                                <RandomIcon /> Ngẫu nhiên
-                                              </>
-                                            )}
-                                          </span>
-                                        </div>
-                                      }
-                                    />
+                                          Chọn nhân viên
+                                        </Button>
+                                      </div>
+                                    </div>
                                     {currentService && (
                                       <Modal
                                         title="Chọn nhân viên"
                                         visible={isModalVisible}
-                                        // onOk={handleModalOk}
                                         onCancel={handleCancel}
                                         footer={null}
                                       >
                                         <Select
                                           placeholder="Lựa chọn 1 nhân viên"
                                           style={{ width: "100%" }}
-                                          // value={
-                                          //   selectedStaff[currentService.id]
-                                          // }
-                                          // value={
-                                          //   getSelectedEmployeeName(
-                                          //     currentService.id
-                                          //   ) || undefined
-                                          // }
                                           value={
-                                            additionalServices.some(service => 
-                                              service.id !== currentService.id && 
-                                              service.bookingDetail?.salonEmployeeId === getSelectedEmployeeName(currentService.id)
+                                            additionalServices.some(
+                                              (service) =>
+                                                service.id !==
+                                                  currentService.id &&
+                                                service.bookingDetail
+                                                  ?.salonEmployeeId ===
+                                                  getSelectedEmployeeName(
+                                                    currentService.id
+                                                  )
                                             )
-                                              ? undefined // If already assigned elsewhere, show placeholder
-                                              : getSelectedEmployeeName(currentService.id) || undefined
+                                              ? undefined
+                                              : getSelectedEmployeeName(
+                                                  currentService.id
+                                                ) || undefined
                                           }
                                           onChange={(value) => {
                                             if (value === "random") {
@@ -1958,16 +1939,11 @@ function SalonDetail(props) {
                                                 key={e.id}
                                                 value={e.id || e.fullName}
                                               >
-                                                <div
-                                                  style={{
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                  }}
-                                                >
+                                                <div className="flex items-center">
                                                   <Avatar
                                                     src={e.img}
                                                     alt={e.fullName}
-                                                    style={{ marginRight: 8 }}
+                                                    className="mr-2"
                                                   />
                                                   {e.fullName}
                                                 </div>
@@ -1998,8 +1974,8 @@ function SalonDetail(props) {
                           block
                           style={{
                             marginTop: "16px",
-                            opacity: 0.5, // Phủ mờ nút
-                            cursor: "not-allowed", // Không cho phép chọn
+                            // opacity: 0.5, // Phủ mờ nút
+                            // cursor: "not-allowed"
                           }}
                           onClick={handleDisplayVoucherList}
                           disabled
@@ -2007,10 +1983,10 @@ function SalonDetail(props) {
                           {displayVoucherList ? (
                             <Text>Đóng</Text>
                           ) : (
-                            <Text>Thêm voucher</Text>
+                            <Text>Voucher</Text>
                           )}
                         </Button>
-                        <p
+                        {/* <p
                           style={{
                             marginTop: "8px",
                             color: "#888",
@@ -2019,25 +1995,60 @@ function SalonDetail(props) {
                         >
                           Sử dụng ứng dụng di động HairHub để có thêm nhiều ưu
                           đãi hấp dẫn
-                        </p>
-                        {displayVoucherList && (
+                        </p> */}
+                        {/* {displayVoucherList && ( */}
+                        {listVoucherNotPaging ? (
+                          // <List
+                          //   style={{ marginTop: "16px", background: "#ee22" }}
+                          //   size="middle"
+                          //   bordered
+                          //   dataSource={voucherList}
+                          //   renderItem={(item) => (
+                          //     <List.Item
+                          //       style={{ cursor: "pointer" }}
+                          //       onClick={() => handleSelectedVoucher(item)}
+                          //     >
+                          //       {item.description}
+                          //     </List.Item>
+                          //   )}
+                          // />
                           <List
-                            style={{ marginTop: "16px", background: "#ee22" }}
+                            style={{ marginTop: "16px", background: "#f0f0f0" }}
                             size="middle"
                             bordered
-                            dataSource={voucherList}
+                            dataSource={listVoucherNotPaging}
                             renderItem={(item) => (
                               <List.Item
-                                style={{ cursor: "pointer" }}
-                                onClick={() => handleSelectedVoucher(item)}
+                                style={{
+                                  cursor:
+                                    item.minimumOrderAmount <= totalPriceVoucher
+                                      ? "pointer"
+                                      : "not-allowed",
+                                  opacity:
+                                    item.minimumOrderAmount <= totalPriceVoucher
+                                      ? 1
+                                      : 0.5,
+                                }}
+                                onClick={() => {
+                                  if (
+                                    item.minimumOrderAmount <= totalPriceVoucher
+                                  ) {
+                                    handleSelectedVoucher(item);
+                                  }
+                                }}
                               >
                                 {item.description}
+                                {item.minimumOrderAmount > totalPriceVoucher &&
+                                  " (Không đủ điều kiện)"}
                               </List.Item>
                             )}
                           />
+                        ) : (
+                          <div>
+                            <Empty />
+                          </div>
                         )}
-                        {/* Voucher added */}
-                        {voucherSelected &&
+                        {/* {voucherSelected &&
                           voucherSelected?.map((e) => {
                             return (
                               <>
@@ -2077,9 +2088,45 @@ function SalonDetail(props) {
                                 </Card>
                               </>
                             );
-                          })}
+                          })} */}
+                        {voucherSelected &&
+                          voucherSelected.map((e) => (
+                            <Card
+                              key={e.id}
+                              title="Voucher đã chọn"
+                              style={{
+                                marginTop: "16px",
+                                backgroundColor: "#fafafa",
+                              }}
+                              bordered={true}
+                            >
+                              <p>
+                                <Text strong>Mô tả:</Text> {e.description}
+                              </p>
+                              <p>
+                                <Text strong>Giá tối thiểu:</Text>{" "}
+                                {formatCurrency(e.minimumOrderAmount)}
+                              </p>
+                              <p>
+                                <Text strong>Phần trăm giảm:</Text>{" "}
+                                {formatDiscountPercentage(e.discountPercentage)}
+                                %
+                              </p>
+                              <p>
+                                <Text strong>Ngày hết hạn:</Text>{" "}
+                                {formattedDateUi(e.expiryDate)}
+                              </p>
+                              <Button
+                                type="primary"
+                                danger
+                                onClick={() => handleRemoveVoucher(e.id)}
+                              >
+                                Xóa mã khuyến mãi
+                              </Button>
+                            </Card>
+                          ))}
 
-                        <div style={{ marginTop: "16px" }}>
+                        {/* <div style={{ marginTop: "16px" }}>
                           <Title level={4}>Tổng</Title>
                           <p style={{ fontSize: "2rem" }}>{calculateTotal()}</p>
                           <Button
@@ -2087,6 +2134,36 @@ function SalonDetail(props) {
                             onClick={handleBooking}
                             type="primary"
                             block
+                          >
+                            Đặt lịch
+                          </Button>
+                        </div> */}
+                        <div style={{ marginTop: "16px" }}>
+                          <Title level={4}>Tổng</Title>
+                          <p style={{ fontSize: "2rem" }}>{calculateTotal()}</p>
+
+                          {/* Discount Section */}
+                          {voucherSelected?.length > 0 && (
+                            <div className="flex justify-between items-center mt-4">
+                              <span className="text-lg font-medium text-gray-700">
+                                Giảm giá:
+                              </span>
+                              <span className="text-xl font-bold text-green-500">
+                                -
+                                {formatDiscountPercentage(
+                                  voucherSelected[0]?.discountPercentage
+                                )}
+                                %
+                              </span>
+                            </div>
+                          )}
+
+                          <Button
+                            style={{ backgroundColor: "#bf9456" }}
+                            onClick={handleBooking}
+                            type="primary"
+                            block
+                            className="mt-4"
                           >
                             Đặt lịch
                           </Button>
