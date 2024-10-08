@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom"; // Import useLocation
 import {
   HomeOutlined,
@@ -6,16 +6,28 @@ import {
   ShopOutlined,
   AreaChartOutlined,
   WarningOutlined,
+  QrcodeOutlined,
 } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import style from "../css/footer-mobile.module.css";
+import QRScannerModal from "./QRScannerModal";
 
 function FooterMobileAuth() {
   const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
   const idOwner = useSelector((state) => state.ACCOUNT.idOwner);
   const idEmployee = useSelector((state) => state.ACCOUNT.idEmployee);
+  const [isModalVisibleQr, setIsModalVisibleQr] = useState(false);
+
   const location = useLocation(); // Lấy đường dẫn hiện tại
 
+  const showModalQr = () => {
+    setIsModalVisibleQr(true);
+  };
+
+  // Hàm đóng modal
+  const closeModal = () => {
+    setIsModalVisibleQr(false);
+  };
   const handleEmptySalon = () => {
     return idOwner ? "/list_shop" : "/create_shop";
   };
@@ -59,6 +71,16 @@ function FooterMobileAuth() {
                 <Link to="/customer_appointment" onClick={scrollToTop}>
                   <CalendarOutlined className={style.icon} />
                   <span>Cuộc hẹn</span>
+                </Link>
+              </li>
+              <li
+                style={{ cursor: "pointer" }}
+                className={`${style.footerItem}`}
+                onClick={showModalQr}
+              >
+                <Link>
+                  <QrcodeOutlined className={style.icon} />
+                  <span>Quét Qr </span>
                 </Link>
               </li>
             </>
@@ -163,6 +185,11 @@ function FooterMobileAuth() {
           )}
         </ul>
       </nav>
+      <QRScannerModal
+        isVisible={isModalVisibleQr}
+        onClose={closeModal}
+        idCustomer={idCustomer}
+      />
     </footer>
   );
 }
