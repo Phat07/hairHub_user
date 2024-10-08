@@ -55,17 +55,20 @@ export function actGetSalonInformationByOwnerId(id) {
       });
   };
 }
-export function actGetSalonInformationByOwnerIdForImages(id) {
+export function actGetSalonInformationByOwnerIdForImages(id, current, size) {
   return async (dispatch) => {
-    const result = SalonInformationServices.getImagesForSalon(id);
+    const result = SalonInformationServices.getImagesForSalon(
+      id,
+      current,
+      size
+    );
     await result
-      .then((response) => {
-        console.log("ré",response);
-        
+      .then((response) => {       
         if (response.status === 200 || response.status === 201) {
-          dispatch(getSalonInformationByOwnerIdForImages(response.data.salonImages));
+          dispatch(getSalonInformationByOwnerIdForImages(response.data));
+          return response;
         } else {
-          message.error("không thể lấy thông tin salon!!!");
+          return response;
         }
       })
       .catch((error) => {
@@ -74,7 +77,7 @@ export function actGetSalonInformationByOwnerIdForImages(id) {
       });
   };
 }
-export function actPostCreateImages(id, data) {
+export function actPostCreateImages(id, data, page, size) {
   return async (dispatch) => {
     try {
       const response = await SalonInformationServices.createSalonImages(
@@ -82,14 +85,31 @@ export function actPostCreateImages(id, data) {
         data
       );
       if (response.status === 200 || response.status === 201) {
-        dispatch(actGetSalonInformationByOwnerIdForImages(id));
+        dispatch(actGetSalonInformationByOwnerIdForImages(id, page, size));
         return response; // Return the response here
       } else {
         // Optionally handle non-success responses here
         return response; // Return the response even if status is not 200 or 201
       }
     } catch (error) {
-      console.error("Error while creating salon information:", error);
+      // console.error("Error while creating salon information:", error);
+      return { error }; // Return the error object
+    }
+  };
+}
+export function actDeleteImagesForSalon(id, data,page, size) {
+  return async (dispatch) => {
+    try {
+      const response = await SalonInformationServices.deleteImagesSalon(data);
+      if (response.status === 200 || response.status === 201) {
+        dispatch(actGetSalonInformationByOwnerIdForImages(id, page, size));
+        return response; // Return the response here
+      } else {
+        // Optionally handle non-success responses here
+        return response; // Return the response even if status is not 200 or 201
+      }
+    } catch (error) {
+      // console.error("Error while creating salon information:", error);
       return { error }; // Return the error object
     }
   };

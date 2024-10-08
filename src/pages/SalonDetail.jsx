@@ -18,6 +18,7 @@ import {
   Col,
   Collapse,
   Divider,
+  Empty,
   Image,
   Layout,
   List,
@@ -58,7 +59,10 @@ import {
 } from "../services/signalRService";
 import { actGetVoucherBySalonIdNotPaging } from "../store/manageVoucher/action";
 import { actGetAllFeedbackBySalonId } from "../store/ratingCutomer/action";
-import { actGetAllSalonInformation } from "../store/salonInformation/action";
+import {
+  actGetAllSalonInformation,
+  actGetSalonInformationByOwnerIdForImages,
+} from "../store/salonInformation/action";
 import TitleCard from "@/components/TitleCard";
 import { DragCards } from "@/components/DragCards";
 import { HoverImageLinks } from "@/components/HoverImageLinks";
@@ -239,6 +243,7 @@ function SalonDetail(props) {
 
   const [statusChangeStaff, setStatusChangeStaff] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingBook, setLoadingBook] = useState(false);
   const [isLoadingService, setIsLoadingService] = useState(false);
   const [filterRating, setFilterRating] = useState(null);
   const navigate = useNavigate();
@@ -248,8 +253,12 @@ function SalonDetail(props) {
   const listVoucherNotPaging = useSelector(
     (state) => state.SALONVOUCHERS.getVoucherBySalonIdNotPaging
   );
+
   const listFeedback = useSelector(
     (state) => state.RATING.getAllFeedbackbySalonId
+  );
+  const salonImages = useSelector(
+    (state) => state.SALONINFORMATION.getSalonByOwnerIdForImages
   );
 
   const totalPagesFeedback = useSelector((state) => state.RATING.totalPages);
@@ -292,6 +301,12 @@ function SalonDetail(props) {
       fetchEmployees();
     }
   }, [id, page]);
+  useEffect(() => {
+    if (id) {
+      dispatch(actGetVoucherBySalonIdNotPaging(id));
+      dispatch(actGetSalonInformationByOwnerIdForImages(id, 1, 100));
+    }
+  }, [id]);
 
   useEffect(() => {
     setListVoucher(listVoucherNotPaging);
@@ -324,12 +339,6 @@ function SalonDetail(props) {
       containerRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
     }
   };
-  useEffect(() => {
-    if (id) {
-      dispatch(actGetVoucherBySalonIdNotPaging(id));
-    }
-  }, [id]);
-
   useEffect(() => {
     setIsLoadingService(true);
     SalonEmployeesServices.getSalonEmployeeBySalonInformationId(id).then(
@@ -649,7 +658,6 @@ function SalonDetail(props) {
       .then((response) => {
         // Xử lý kết quả từ server nếu cần
         const updatedAdditionalServices = [...additionalServices];
-        console.log("responeTime", response.data);
 
         for (const service of additionalServices) {
           const matchingBookingDetailResponse =
@@ -675,9 +683,27 @@ function SalonDetail(props) {
       });
   };
 
+  // const handleChangeStaffSecond = (service, value) => {
+  //   setAdditionalServices((prevServices) =>
+  //     prevServices.map((s) =>
+  //       s.id === service.id
+  //         ? {
+  //             ...s,
+  //             bookingDetail: {
+  //               ...s.bookingDetail,
+  //               salonEmployeeId: value,
+  //               serviceHairId: service.id,
+  //               isAnyOne: true,
+  //             },
+  //           }
+  //         : s
+  //     )
+  //   );
+  //   setIsModalVisible(false);
+  // };
   const handleChangeStaffSecond = (service, value) => {
-    setAdditionalServices((prevServices) =>
-      prevServices.map((s) =>
+    setAdditionalServices((prevServices) => {
+      const updatedServices = prevServices.map((s) =>
         s.id === service.id
           ? {
               ...s,
@@ -689,13 +715,39 @@ function SalonDetail(props) {
               },
             }
           : s
-      )
-    );
+      );
+  
+      // Set currentService to null after updating additionalServices
+      setCurrentService(null);
+      return updatedServices; // Return the updated services
+    });
+    
+    // Close the modal after updating the state
     setIsModalVisible(false);
   };
+  
+  // const handleChangeRandomEmployee = () => {
+  //   setAdditionalServices((prevServices) =>
+  //     prevServices.map((s) =>
+  //       s.id === currentService.id
+  //         ? {
+  //             ...s,
+  //             bookingDetail: {
+  //               ...s.bookingDetail,
+  //               salonEmployeeId: null,
+  //               serviceHairId: currentService.id,
+  //               isAnyOne: true,
+  //             },
+  //           }
+  //         : s
+  //     )
+  //   );
+  //   setIsModalVisible(false);
+  // };
   const handleChangeRandomEmployee = () => {
-    setAdditionalServices((prevServices) =>
-      prevServices.map((s) =>
+    // Update additionalServices and then set currentService to null
+    setAdditionalServices((prevServices) => {
+      const updatedServices = prevServices.map((s) =>
         s.id === currentService.id
           ? {
               ...s,
@@ -707,10 +759,17 @@ function SalonDetail(props) {
               },
             }
           : s
-      )
-    );
+      );
+  
+      // Set currentService to null after updating additionalServices
+      setCurrentService(null);
+      return updatedServices; // Return the updated services
+    });
+  
+    // Close the modal after updating the state
     setIsModalVisible(false);
   };
+  
 
   const handleCancel = () => {
     setIsModalVisible(false);
@@ -843,14 +902,22 @@ function SalonDetail(props) {
 
   const { averageRating, ratingDistribution, totalReviews } =
     calculateRatingDistribution(listFeedback);
-  const getSelectedEmployeeName = (serviceId) => {
-    const selectedService = additionalServices.find((s) => s.id === serviceId);
-    const selectedEmployeeId = selectedService?.bookingDetail?.salonEmployeeId;
-    const employee = currentService?.bookingDetailResponses?.employees.find(
-      (e) => e.id === selectedEmployeeId
-    );
-    return employee?.fullName;
-  };
+    const getSelectedEmployeeName = (serviceId) => {
+      const selectedService = additionalServices.find((s) => s.id === serviceId);
+      const selectedEmployeeId = selectedService?.bookingDetail?.salonEmployeeId;
+    
+      // Check if selectedEmployeeId is undefined
+      if (!selectedEmployeeId) {
+        return undefined; // Return undefined if no employee is selected
+      }
+    
+      const employee = currentService?.bookingDetailResponses?.employees.find(
+        (e) => e.id === selectedEmployeeId
+      );
+    
+      return employee?.fullName; // Returns employee's full name or undefined if not found
+    };
+    
 
   const handleChangeStaff = (service) => {
     if (!selectedTimeSlot) {
@@ -946,6 +1013,7 @@ function SalonDetail(props) {
   };
 
   const handleBooking = async () => {
+    setLoadingBook(true);
     if (additionalServices.length === 0) {
       message.info("Vui lòng chọn dịch vụ!!");
       setIsPriceModalVisible(false);
@@ -973,35 +1041,36 @@ function SalonDetail(props) {
       serviceHairId: servicesId,
     };
 
-    try {
-      const res = await AppointmentService.calculatePrice(appointmentFormData);
-      setOriginalPrice(res.data.originalPrice);
-      setTotalPrice(res.data.totalPrice);
-      setDiscountedPrice(res.data.discountedPrice);
-      setAppointmentData({
-        customerId: userIdCustomer,
-        startDate: formattedDate,
-        totalPrice: res.data.totalPrice,
-        originalPrice: res.data.originalPrice,
-        discountedPrice: res.data.discountedPrice,
-        appointmentDetails: additionalServices.map((e) => ({
-          salonEmployeeId: e?.bookingDetail?.salonEmployeeId
-            ? e?.bookingDetail?.salonEmployeeId
-            : e?.bookingDetailResponses?.employees[0]?.id,
-          serviceHairId: e?.bookingDetail?.serviceHairId
-            ? e?.bookingDetail?.serviceHairId
-            : e?.bookingDetailResponses?.serviceHair?.id,
-          description: e?.description,
-          endTime: e?.bookingDetailResponses?.serviceHair?.endTime,
-          startTime: e?.bookingDetailResponses?.serviceHair?.startTime,
-        })),
-        voucherIds: voucherId ? [voucherId] : [],
+    await AppointmentService.calculatePrice(appointmentFormData)
+      .then((res) => {
+        setOriginalPrice(res.data.originalPrice);
+        setTotalPrice(res.data.totalPrice);
+        setDiscountedPrice(res.data.discountedPrice);
+        setAppointmentData({
+          customerId: userIdCustomer,
+          startDate: formattedDate,
+          totalPrice: res.data.totalPrice,
+          originalPrice: res.data.originalPrice,
+          discountedPrice: res.data.discountedPrice,
+          appointmentDetails: additionalServices.map((e) => ({
+            salonEmployeeId: e?.bookingDetail?.salonEmployeeId
+              ? e?.bookingDetail?.salonEmployeeId
+              : e?.bookingDetailResponses?.employees[0]?.id,
+            serviceHairId: e?.bookingDetail?.serviceHairId
+              ? e?.bookingDetail?.serviceHairId
+              : e?.bookingDetailResponses?.serviceHair?.id,
+            description: e?.description,
+            endTime: e?.bookingDetailResponses?.serviceHair?.endTime,
+            startTime: e?.bookingDetailResponses?.serviceHair?.startTime,
+          })),
+          voucherIds: voucherId ? [voucherId] : [],
+        });
+        setIsPriceModalVisible(true);
+      })
+      .catch((err) => {})
+      .finally((err) => {
+        setLoadingBook(false);
       });
-
-      setIsPriceModalVisible(true);
-    } catch (err) {
-      setError(err);
-    }
   };
   const fetchAvailable = async (currentDate) => {
     console.log("Inside fetchAvailable with dateAppointment:", currentDate);
@@ -1051,7 +1120,6 @@ function SalonDetail(props) {
           async (message, dateAppointment, datenow, salonId, serviceId) => {
             // Make sure selectedDate is properly defined
             if (!selectedDate) {
-              console.error("selectedDate is not defined");
               return;
             }
 
@@ -1191,7 +1259,7 @@ function SalonDetail(props) {
     setAdditionalServices(updatedServices);
   };
   const handleFilterChange = (rating) => {
-    setCurrentPage(1)
+    setCurrentPage(1);
     setLoadingFeedback(true);
     dispatch(actGetAllFeedbackBySalonId(id, currentPage, pageSize, rating))
       .then((res) => {})
@@ -1209,7 +1277,11 @@ function SalonDetail(props) {
   function formatMoneyVND(amount) {
     return amount.toLocaleString("vi-VN");
   }
-
+  const getSelectedEmployeeIds = () => {
+    return additionalServices
+      .filter((service) => service.bookingDetail?.salonEmployeeId)
+      .map((service) => service.bookingDetail.salonEmployeeId);
+  };
   return (
     <div style={{ marginTop: "75px" }}>
       <Layout>
@@ -1708,6 +1780,7 @@ function SalonDetail(props) {
                           <div>
                             <Title level={4}>Thêm dịch vụ</Title>
                             <List
+                              loading={loadingBook}
                               itemLayout="horizontal"
                               dataSource={additionalServices}
                               renderItem={(service) => {
@@ -1852,17 +1925,19 @@ function SalonDetail(props) {
                                           // value={
                                           //   selectedStaff[currentService.id]
                                           // }
-                                          value={
-                                            getSelectedEmployeeName(
-                                              currentService.id
-                                            ) || undefined
-                                          }
-                                          // onChange={(value) =>
-                                          //   handleChangeStaffSecond(
-                                          //     currentService,
-                                          //     value
-                                          //   )
+                                          // value={
+                                          //   getSelectedEmployeeName(
+                                          //     currentService.id
+                                          //   ) || undefined
                                           // }
+                                          value={
+                                            additionalServices.some(service => 
+                                              service.id !== currentService.id && 
+                                              service.bookingDetail?.salonEmployeeId === getSelectedEmployeeName(currentService.id)
+                                            )
+                                              ? undefined // If already assigned elsewhere, show placeholder
+                                              : getSelectedEmployeeName(currentService.id) || undefined
+                                          }
                                           onChange={(value) => {
                                             if (value === "random") {
                                               handleChangeRandomEmployee();
@@ -2023,76 +2098,73 @@ function SalonDetail(props) {
               </div>
               <div>
                 <div className="our-work-section">
-                  <h2
-                    style={{
-                      fontSize: "1.8rem",
-                      fontWeight: "bold",
-                      marginBottom: "1rem",
-                    }}
-                  >
-                    See Our Work
-                  </h2>
-                  <Row gutter={16}>
-                    <Col xs={24} sm={12}>
-                      <img
-                        src={ourWorkImages[0]}
-                        alt="Main Work"
-                        style={{
-                          width: "80%",
-                          height: "auto",
-                          borderRadius: "8px",
-                        }}
-                      />
-                    </Col>
-                    <Col xs={24} sm={12}>
-                      <Row gutter={[8, 8]}>
-                        {ourWorkImages.slice(1, 5).map((image, index) => (
-                          <Col key={index} span={12}>
-                            <img
-                              src={image}
-                              alt={`Work ${index + 1}`}
-                              style={{
-                                width: "75%",
-                                height: "auto",
-                                borderRadius: "8px",
-                              }}
-                            />
-                          </Col>
-                        ))}
-                      </Row>
-                    </Col>
-                  </Row>
+                  <h2 className="text-2xl font-bold mb-4">Ảnh</h2>
+                  <div className="flex flex-wrap justify-center">
+                    {salonImages?.items?.length > 0 &&
+                      salonImages.items[0]?.salonImages?.length > 0 && (
+                        <div className="w-full sm:w-1/2 flex justify-center">
+                          <img
+                            src={salonImages.items[0].salonImages[0].img}
+                            alt="Main Work"
+                            className="w-4/5 h-auto rounded-lg"
+                          />
+                        </div>
+                      )}
+                    <div className="w-full sm:w-1/2 grid grid-cols-2 gap-2 justify-center">
+                      {salonImages?.items?.length > 1 ? (
+                        salonImages.items.slice(1, 5).map((image, index) => (
+                          <div key={index} className="flex justify-center">
+                            {image?.salonImages?.length > 0 && (
+                              <img
+                                src={image.salonImages[0].img}
+                                alt={`Work ${index + 1}`}
+                                className="w-3/4 h-auto rounded-lg"
+                              />
+                            )}
+                          </div>
+                        ))
+                      ) : (
+                        <div className="col-span-2 text-center mt-4">
+                          <Empty />
+                        </div>
+                      )}
+                    </div>
+                  </div>
                   <Button
                     block
                     onClick={() => setShowAllWork(true)}
-                    style={{ marginTop: "16px" }}
+                    className="mt-4"
                   >
-                    SEE ALL WORK
+                    Ảnh khách hàng
                   </Button>
                 </div>
 
                 <div>
                   <Modal
-                    title="All Our Work"
+                    title="Ảnh khách hàng"
                     visible={showAllWork}
                     onCancel={() => setShowAllWork(false)}
                     footer={null}
-                    width={800}
+                    width={500}
                   >
                     <Carousel arrows infinite={false}>
-                      {ourWorkImages.map((image, index) => (
-                        <div key={index}>
-                          <img
-                            src={image}
-                            alt={`Work ${index}`}
-                            style={{ width: "100%", height: "auto" }}
-                          />
-                        </div>
-                      ))}
+                      {salonImages?.items?.length > 0 &&
+                        salonImages.items.map((image, index) => (
+                          <div key={index}>
+                            {image?.salonImages?.length > 0 && (
+                              <img
+                                src={image.salonImages[0].img}
+                                alt={`Work ${index}`}
+                                className="w-full h-auto"
+                              />
+                            )}
+                          </div>
+                        ))}
                     </Carousel>
                   </Modal>
                 </div>
               </div>
+
               <div>
                 <h2
                   style={{

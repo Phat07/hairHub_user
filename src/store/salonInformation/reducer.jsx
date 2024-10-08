@@ -11,7 +11,7 @@ const initialState = {
   salonInformation: {},
   getSalonByOwnerId: "",
   getAllSalon: [],
-  getSalonByOwnerIdForImages: []
+  getSalonByOwnerIdForImages: ''
 };
 
 const reducer = (state = initialState, action) => {

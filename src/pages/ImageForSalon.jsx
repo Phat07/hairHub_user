@@ -2,20 +2,35 @@ import React, { useEffect, useState } from "react";
 import styles from "../css/imagesForSalon.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  actDeleteImagesForSalon,
   actGetSalonInformationByOwnerId,
   actGetSalonInformationByOwnerIdForImages,
   actPostCreateImages,
 } from "@/store/salonInformation/action";
-import { Button, Image, message, Pagination, Spin, Upload } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import {
+  Button,
+  Image,
+  message,
+  Pagination,
+  Spin,
+  Upload,
+  Popconfirm,
+} from "antd";
+import { UploadOutlined, DeleteOutlined } from "@ant-design/icons";
 import { motion } from "framer-motion";
 import { useSpring, animated } from "react-spring";
+import { useParams } from "react-router-dom";
 
 function ImageForSalon(props) {
+  const { id } = useParams();
+
   const [fileList, setFileList] = useState([]);
   const [previewImage, setPreviewImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [uploadingDelete, setUploadingDelete] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1); // Current page
+  const pageSize = 6; // Page size
 
   const springProps = useSpring({
     from: { opacity: 0, transform: "translateY(20px)" },
@@ -24,6 +39,13 @@ function ImageForSalon(props) {
   });
 
   const ownerId = useSelector((state) => state.ACCOUNT.idOwner);
+
+  const salonDetail = useSelector(
+    (state) => state.SALONINFORMATION.getSalonByOwnerId
+  );
+  const salonImages = useSelector(
+    (state) => state.SALONINFORMATION.getSalonByOwnerIdForImages
+  );
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -32,18 +54,23 @@ function ImageForSalon(props) {
     }
   }, [ownerId]);
 
-  const salonDetail = useSelector(
-    (state) => state.SALONINFORMATION.getSalonByOwnerId
-  );
-  const salonImages = useSelector(
-    (state) => state.SALONINFORMATION.getSalonByOwnerIdForImages
-  );
-
   useEffect(() => {
-    if (salonDetail?.id) {
-      dispatch(actGetSalonInformationByOwnerIdForImages(salonDetail?.id));
+    if (id) {
+      setLoading(true);
+      dispatch(
+        actGetSalonInformationByOwnerIdForImages(id, currentPage, pageSize)
+      )
+        .then((res) => {
+          setLoading(false);
+        })
+        .catch((err) => {
+          // handle error if needed
+        })
+        .finally((err) => {
+          setLoading(false);
+        });
     }
-  }, [salonDetail, salonDetail?.id]);
+  }, [id, currentPage]);
 
   // Handle file change (upload)
   const handleUploadChange = ({ fileList: newFileList }) => {
@@ -68,9 +95,9 @@ function ImageForSalon(props) {
     fileList.forEach((file) => {
       formData.append("SalonImages", file.originFileObj);
     });
-    dispatch(actPostCreateImages(salonDetail?.id, formData))
+    dispatch(actPostCreateImages(id, formData, 1, pageSize))
       .then((res) => {
-        setFileList([])
+        setFileList([]);
         message.success("Đã thêm ảnh thành công!!!");
       })
       .catch((err) => {
@@ -81,16 +108,38 @@ function ImageForSalon(props) {
       });
   };
 
+  // Handle image deletion
+  const handleDeleteImage = (imageId) => {
+    let data= {
+      imagesId:[imageId]
+    }
+    setUploadingDelete(true);
+    dispatch(actDeleteImagesForSalon(id, data, 1, pageSize))
+      .then((res) => {
+        message.success("Đã xóa ảnh thành công!!!");
+      })
+      .catch((err) => {
+        message.error("Có lỗi xảy ra khi xóa ảnh!!!");
+      })
+      .finally((err) => {
+        setUploadingDelete(false);
+      });
+  };
+
+  // Handle page change
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
   return (
     <div className={styles["dashboard-container"]}>
       <div className="flex flex-col md:flex-row items-center justify-around min-h-screen bg-[#ece8de] p-4">
-        <div className="w-full md:w-3/12 h-96 md:h-4/5 bg-[#ece8de] p-4 rounded-lg shadow-lg mb-4 md:mb-0">
+        <div className="w-full md:w-4/12 h-96 md:h-4/5 bg-[#ece8de] p-4 rounded-lg shadow-lg mb-4 md:mb-0">
           <Upload
             listType="picture"
             fileList={fileList}
             onChange={handleUploadChange}
             beforeUpload={(file) => {
-              // Prevent the default upload behavior
               return false;
             }}
             multiple
@@ -98,7 +147,6 @@ function ImageForSalon(props) {
           >
             <Button icon={<UploadOutlined />}>Hình ảnh tiệm của bạn</Button>
           </Upload>
-          {/* Upload Button */}
           <Button
             type="primary"
             onClick={handleUploadImages}
@@ -110,21 +158,44 @@ function ImageForSalon(props) {
           </Button>
         </div>
         <Spin spinning={loading}>
-          <div className="w-full md:w-9/12 h-auto md:h-4/5 bg-[#ece8de] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4 rounded-lg shadow-lg">
-            {salonImages.length > 0 ? (
-              salonImages.map((image, index) => (
+          <div className="w-full md:w-8/12 h-auto md:h-4/5 bg-[#ece8de] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4 rounded-lg shadow-lg mx-auto">
+            {salonImages.items?.length > 0 ? (
+              salonImages.items?.map((image, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.5 }}
-                  className="w-full h-48 md:h-auto"
+                  className="relative w-full"
                 >
-                  <Image
-                    src={image.img}
-                    alt={`Salon Image ${index}`}
-                    className="w-full h-full object-cover rounded-lg"
-                  />
+                  <div className="w-full h-full">
+                    <Image
+                      src={image.salonImages[0]?.img}
+                      alt={`Salon Image ${index}`}
+                      className="w-full h-full object-cover rounded-lg"
+                      style={{
+                        aspectRatio: "16/9", // Giữ tỉ lệ ảnh
+                        maxHeight: "200px", // Giới hạn chiều cao
+                      }}
+                    />
+                  </div>
+                  {image.salonImages[0]?.id && (
+                    <Popconfirm
+                      title="Bạn có chắc muốn xóa ảnh này?"
+                      onConfirm={() =>
+                        handleDeleteImage(image.salonImages[0]?.id)
+                      }
+                    >
+                      <Button
+                        className="absolute top-2 right-2"
+                        type="primary"
+                        danger
+                        loading={uploadingDelete}
+                        shape="circle"
+                        icon={<DeleteOutlined />}
+                      />
+                    </Popconfirm>
+                  )}
                 </motion.div>
               ))
             ) : (
@@ -137,7 +208,13 @@ function ImageForSalon(props) {
                 </animated.p>
               </div>
             )}
-            <Pagination />
+            <Pagination
+              className="col-span-full mx-auto mt-4" // Thêm khoảng cách bên dưới
+              current={currentPage}
+              pageSize={pageSize}
+              total={salonImages?.total || 0}
+              onChange={handlePageChange}
+            />
           </div>
         </Spin>
       </div>

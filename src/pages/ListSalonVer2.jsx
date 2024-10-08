@@ -161,7 +161,8 @@ function ListSalonVer2(props) {
 
   const [searchBox, setSearchBox] = useState(null);
   const [inputLocation, setInputLocation] = useState(""); // Lưu giá trị nhập vào của vị trí
-
+  const [locationOptions, setLocationOptions] = useState([]);
+  const [selectedLocation, setSelectedLocation] = useState(null);
   const [mapStyle, setMapStyle] = useState({
     height: "500px",
     width: "auto",
@@ -506,15 +507,19 @@ function ListSalonVer2(props) {
       const distance = await validateDistance();
       if (!distance) {
         return Promise.reject(); // Trả về Promise.reject() để ngăn việc đóng modal
-      }
+      }         
 
       if ("geolocation" in navigator) {
         setLoading(true);
         navigator.geolocation.getCurrentPosition(
-          async (pos) => {
+          async (pos) => {     
+            console.log("ss",pos);
+                   
             const { latitude, longitude } = pos.coords;
+            console.log("loca", latitude);
+            console.log("loca2", longitude);
             try {
-              await fetchSalonDataNear(latitude, longitude, distance);
+              // await fetchSalonDataNear(latitude, longitude, distance);
               // message.success("Cảm ơn bạn đã kích hoạt dịch vụ định vị.");
               document.body.style.overflow = "";
             } catch (error) {

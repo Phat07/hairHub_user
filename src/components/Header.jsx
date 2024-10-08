@@ -8,6 +8,7 @@ import {
   DownOutlined,
   HomeOutlined,
   LogoutOutlined,
+  QrcodeOutlined,
   ShopOutlined,
   UserOutlined,
   WarningOutlined,
@@ -26,6 +27,7 @@ import hairHubLogo from "../assets/images/hairhubFinalLogo.png";
 import style from "../css/header.module.css";
 import { actGetSalonInformationByOwnerIdByCheck } from "../store/salonInformation/action";
 import HeaderUnAuth from "./HeaderUnAuth";
+import QRScannerModal from "./QRScannerModal";
 
 function Header(props) {
   const { id } = useParams();
@@ -41,6 +43,18 @@ function Header(props) {
   const salonDetail = useSelector(
     (state) => state.SALONINFORMATION.getSalonByOwnerId
   );
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalVisibleQr, setIsModalVisibleQr] = useState(false);
+
+  // Hàm mở modal
+  const showModalQr = () => {
+    setIsModalVisibleQr(true);
+  };
+
+  // Hàm đóng modal
+  const closeModal = () => {
+    setIsModalVisibleQr(false);
+  };
 
   const salonServicesList = useSelector(
     (state) => state.SALONEMPLOYEES.salonServicesList
@@ -101,7 +115,7 @@ function Header(props) {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const [isModalVisible, setIsModalVisible] = useState(false);
+
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -198,6 +212,13 @@ function Header(props) {
                   >
                     Cuộc hẹn
                   </Link>
+                </li>
+                <li
+                  style={{ cursor: "pointer" }}
+                  className={style.navItem}
+                  onClick={showModalQr}
+                >
+                  <QrcodeOutlined className={style.qr} />
                 </li>
                 {menuActive && (
                   <>
@@ -561,6 +582,11 @@ function Header(props) {
           </div>
         </div> */}
       </header>
+      <QRScannerModal
+        isVisible={isModalVisibleQr}
+        onClose={closeModal}
+        idCustomer={idCustomer}
+      />
       <Outlet />
     </div>
   );

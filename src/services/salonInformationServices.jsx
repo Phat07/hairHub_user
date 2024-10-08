@@ -7,6 +7,10 @@ export const SalonInformationServices = {
   createSalonImages(id, data) {
     return API.post(`/saloninformations/AddSalonInformationImages/${id}`, data);
   },
+  deleteImagesSalon(data) {
+    return API.post(`/saloninformations/DeleteSalonInformationImages/`, data);
+  },
+
   getAllSalonInformation(page, size) {
     return API.get("/saloninformations/GetAllSalonInformation", {
       params: {
@@ -73,7 +77,12 @@ export const SalonInformationServices = {
   putSalonScheduleById(id, data) {
     return API.put(`/schedules/UpdateScheduleofSalon/ ${id}`, data);
   },
-  getImagesForSalon(id) {
-    return API.get(`/saloninformations/GetSalonInformationImages/ ${id}`);
+  getImagesForSalon(id, page, size) {
+    return API.get(`/saloninformations/GetSalonInformationImages/${id}`, {
+      params: {
+        page: page,
+        size: size,
+      },
+    });
   },
 };

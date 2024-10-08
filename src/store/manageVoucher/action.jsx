@@ -15,6 +15,33 @@ export const getVoucherBySalonIdNotPaging = (list) => {
     payload: list,
   };
 };
+// export function actGetVoucherBySalonId(
+//   page,
+//   size,
+//   id,
+//   search,
+//   filter,
+//   orderby
+// ) {
+//   return (dispatch) => {
+//     voucherServices
+//       .getVoucherBySalonId(page, size, id, search, filter, orderby)
+//       .then((response) => {
+//         if (response.status === 200 || response.status === 201) {
+//           dispatch(
+//             getVoucherBySalonId(response.data.items, response.data.total)
+//           );
+//           return response;
+//         } else {
+//           return response;
+//         }
+//       })
+//       .catch((error) => {
+//         // Xử lý lỗi nếu có
+//         // console.error("Error while fetching all config money:", error);
+//       });
+//   };
+// }
 export function actGetVoucherBySalonId(
   page,
   size,
@@ -24,23 +51,25 @@ export function actGetVoucherBySalonId(
   orderby
 ) {
   return (dispatch) => {
-    voucherServices
+    return voucherServices
       .getVoucherBySalonId(page, size, id, search, filter, orderby)
       .then((response) => {
         if (response.status === 200 || response.status === 201) {
           dispatch(
             getVoucherBySalonId(response.data.items, response.data.total)
           );
+          return response;
         } else {
-          message.error("Do not have any voucher!!!");
+          return response;
         }
       })
       .catch((error) => {
-        // Xử lý lỗi nếu có
-        // console.error("Error while fetching all config money:", error);
+        // Handle error
+        console.error("Error while fetching voucher:", error);
       });
   };
 }
+
 export function actGetVoucherBySalonIdNotPaging(id) {
   return (dispatch) => {
     voucherServices

@@ -101,6 +101,8 @@ function ListShopBarber(props) {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [status, setStatus] = useState(false);
   const [currencyValue, setCurrencyValue] = useState(100000);
+  const [currencyValueMax, setCurrencyValueMax] = useState(200000);
+  const [currencyValueMaxDiscount, setCurrencyValueMaxDiscount] = useState(0);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currencyValueUpdate, setCurrencyValueUpdate] = useState(null);
   const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
@@ -111,6 +113,7 @@ function ListShopBarber(props) {
   const [emailVerified, setEmailVerified] = useState(false);
   const [loadingEmployee, setLoadingEmployee] = useState(false);
   const [loadingService, setLoadingService] = useState(false);
+  const [loadingVoucher, setLoadingVoucher] = useState(false);
 
   // const auth = useAuthUser();
   // const ownerId = auth?.idOwner;
@@ -132,6 +135,12 @@ function ListShopBarber(props) {
 
   const [currencyValueVoucherUpdate, setCurrencyValueVoucherUpdate] =
     useState(null);
+  const [currencyValueVoucherUpdateMax, setCurrencyValueVoucherUpdateMax] =
+    useState(null);
+  const [
+    currencyValueVoucherUpdateDiscount,
+    setCurrencyValueVoucherUpdateDiscount,
+  ] = useState(null);
   const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
   const [voucherUpdate, setVoucherUpdate] = useState({});
 
@@ -306,7 +315,6 @@ function ListShopBarber(props) {
       <Menu.Item key="false">Lọc theo trạng thái không hoạt động</Menu.Item>
     </Menu>
   );
-console.log("sa", salonDetail);
 
   const handleSearchEmployee = () => {
     setSearchEmployeeKey(searchEmployee);
@@ -406,16 +414,24 @@ console.log("sa", salonDetail);
       currentPageVoucher &&
       pageSizeVoucher
     ) {
+      setLoadingVoucher(true);
       dispatch(
         actGetVoucherBySalonId(
-          currentPageService,
-          pageSizeService,
+          currentPageVoucher,
+          pageSizeVoucher,
           salonDetail.id,
           searchVoucherKey,
           FillterVoucher,
           SortVoucher
         )
-      );
+      )
+        .then((res) => {
+          setLoadingVoucher(false);
+        })
+        .catch((err) => {})
+        .finally((err) => {
+          setLoadingVoucher(false);
+        });
     }
   }, [
     salonDetail,
@@ -426,8 +442,16 @@ console.log("sa", salonDetail);
     SortVoucher,
   ]);
   useEffect(() => {
-    const { description, minimumOrderAmount, discountPercentage, expiryDate } =
-      voucherUpdate;
+    const {
+      description,
+      minimumOrderAmount,
+      discountPercentage,
+      expiryDate,
+      maximumOrderAmount,
+      maximumDiscount,
+      quantity,
+    } = voucherUpdate;
+    console.log("vouvher", voucherUpdate);
 
     const configDiscountPercentage = discountPercentage * 100;
     if (isUpdateModalVisible && voucherUpdate) {
@@ -436,7 +460,13 @@ console.log("sa", salonDetail);
         minimumOrderAmountUpdate: minimumOrderAmount,
         discountPercentageUpdate: configDiscountPercentage,
         expiryDateUpdate: dayjs(expiryDate), // Use moment to format date
+        maximumDiscountUpdate: maximumDiscount,
+        maximumOrderAmountUpdate: maximumOrderAmount,
+        quantityUpdate: quantity,
       });
+      setCurrencyValueVoucherUpdate(minimumOrderAmount);
+      setCurrencyValueVoucherUpdateMax(maximumOrderAmount);
+      setCurrencyValueVoucherUpdateDiscount(maximumDiscount);
     }
   }, [isUpdateModalVisible, voucherUpdate]);
 
@@ -762,11 +792,32 @@ console.log("sa", salonDetail);
       render: (value) => formatCurrency(value),
     },
     {
-      title: "Phần trăm giảm giá",
+      title: "Số tiền tối da",
+      dataIndex: "maximumOrderAmount",
+      key: "maximumOrderAmount",
+      align: "center",
+      render: (value) => formatCurrency(value),
+    },
+    {
+      title: "Giảm giá tối đa",
+      dataIndex: "maximumDiscount",
+      key: "maximumDiscount",
+      align: "center",
+      render: (value) => formatCurrency(value),
+    },
+    {
+      title: "% giảm giá",
       dataIndex: "discountPercentage",
       key: "discountPercentage",
       align: "center",
       render: (value) => formatDiscount(value),
+    },
+    {
+      title: "Số lượng",
+      dataIndex: "quantity",
+      key: "quantity",
+      align: "center",
+      // render: (value) => formatDiscount(value),
     },
     {
       title: "Ngày hết hạn",
@@ -976,7 +1027,7 @@ console.log("sa", salonDetail);
   };
 
   const handleOkVoucher = () => {
-    setIsModalVisible(false);
+    // setIsModalVisible(false);
   };
 
   const handleCancelVoucher = () => {
@@ -984,8 +1035,16 @@ console.log("sa", salonDetail);
   };
 
   const onFinish = (values) => {
-    const { description, minimumOrderAmount, discountPercentage, expiryDate } =
-      values;
+    setLoadingVoucher(true);
+    const {
+      description,
+      minimumOrderAmount,
+      discountPercentage,
+      expiryDate,
+      maximumOrderAmount,
+      maximumDiscount,
+      quantity,
+    } = values;
     const configDiscountPercentage = discountPercentage / 100;
 
     const configExpiryDate = () => {
@@ -1005,7 +1064,10 @@ console.log("sa", salonDetail);
     const formVoucherData = {
       salonInformationId: salonDetail.id, //salonInformationId
       description: description,
+      maximumDiscount: maximumDiscount,
       minimumOrderAmount: minimumOrderAmount,
+      maximumOrderAmount: maximumOrderAmount,
+      quantity: quantity,
       discountPercentage: configDiscountPercentage,
       expiryDate: configExpiryDate(), //convert dayjs to new Date and plus 1 day :v
       createdDate: configCurrentDate(), //config dayjs to new Date and plus 1 day :v
@@ -1019,8 +1081,21 @@ console.log("sa", salonDetail);
         message.success("Voucher is created!");
         setStatus(!status);
         setIsModalVisible(!isModalVisible);
+        dispatch(
+          actGetVoucherBySalonId(
+            1,
+            pageSizeService,
+            salonDetail.id,
+            searchVoucherKey,
+            FillterVoucher,
+            SortVoucher
+          )
+        );
       })
-      .catch((err) => console.log(err, "errors"));
+      .catch((err) => console.log(err, "errors"))
+      .finally((err) => {
+        setLoadingVoucher(false);
+      });
 
     form.resetFields();
   };
@@ -1145,6 +1220,7 @@ console.log("sa", salonDetail);
     }
   };
   const handleUpdateVoucherOk = () => {
+    setLoadingVoucher(true);
     form
       .validateFields()
       .then((values) => {
@@ -1153,6 +1229,9 @@ console.log("sa", salonDetail);
           minimumOrderAmountUpdate,
           discountPercentageUpdate,
           expiryDateUpdate,
+          maximumDiscountUpdate,
+          maximumOrderAmountUpdate,
+          quantityUpdate,
         } = values;
         const configDiscountPercentageUpdate = discountPercentageUpdate / 100;
         const updatedVoucher = {
@@ -1161,6 +1240,9 @@ console.log("sa", salonDetail);
           minimumOrderAmount: minimumOrderAmountUpdate,
           discountPercentage: configDiscountPercentageUpdate,
           expiryDate: expiryDateUpdate,
+          maximumDiscount: maximumDiscountUpdate,
+          maximumOrderAmount: maximumOrderAmountUpdate,
+          quantity: quantityUpdate,
         };
 
         voucherServices
@@ -1169,6 +1251,23 @@ console.log("sa", salonDetail);
             message.success(
               `Cập  nhật voucher ${voucherUpdate.description} thành công!`
             );
+            dispatch(
+              actGetVoucherBySalonId(
+                1,
+                pageSizeVoucher,
+                salonDetail.id,
+                searchVoucherKey,
+                FillterVoucher,
+                SortVoucher
+              )
+            )
+              .then((res) => {
+                setLoadingVoucher(false);
+              })
+              .catch((err) => {})
+              .finally((err) => {
+                setLoadingVoucher(false);
+              });
           })
           .catch((err) => console.log(err, "errors"));
         setIsUpdateModalVisible(false); // Close modal after update
@@ -1176,6 +1275,8 @@ console.log("sa", salonDetail);
       })
       .catch((error) => {
         console.error("Validation Failed:", error);
+      }).finally((err)=>{
+        setLoadingVoucher(false)
       });
   };
   const handleEmailChange = (e) => {
@@ -1718,12 +1819,14 @@ console.log("sa", salonDetail);
                         />
                       </div>
                       <div className={styles["table-container"]}>
-                        <Table
-                          dataSource={voucherList}
-                          columns={columnsVoucher}
-                          rowKey="code"
-                          pagination={false} // Nếu bạn muốn thêm phân trang, có thể cấu hình tại đây
-                        />
+                        <Spin spinning={loadingVoucher} tip="Loading...">
+                          <Table
+                            dataSource={voucherList}
+                            columns={columnsVoucher}
+                            rowKey="code"
+                            pagination={false} // Nếu bạn muốn thêm phân trang, có thể cấu hình tại đây
+                          />
+                        </Spin>
                       </div>
 
                       <Pagination
@@ -1783,16 +1886,17 @@ console.log("sa", salonDetail);
                 onCancel={handleCancelVoucher}
                 width={"40rem"}
                 footer={[
-                  <Button key="back" onClick={handleCancelVoucher}>
-                    Quay lại
-                  </Button>,
-                  <Button
-                    type="primary"
-                    key="submit"
-                    onClick={handleCancelVoucher}
-                  >
-                    Hoàn tất
-                  </Button>,
+                  // <Button key="back" onClick={handleCancelVoucher}>
+                  //   Quay lại
+                  // </Button>,
+                  // <Button
+                  //   type="primary"
+                  //   key="submit"
+                  //   onClick={handleCancelVoucher}
+                  // >
+                  //   Hoàn tất
+                  // </Button>,
+                  null,
                 ]}
               >
                 <Form form={form} onFinish={onFinish} layout="vertical">
@@ -1817,6 +1921,7 @@ console.log("sa", salonDetail);
                     ]}
                   >
                     <InputNumber
+                      type="number"
                       onChange={(value) => setCurrencyValue(value)}
                       min={1}
                       style={{ width: "100%" }}
@@ -1828,6 +1933,30 @@ console.log("sa", salonDetail);
                       Giá: {formatCurrency(currencyValue)}
                     </Typography.Text>
                   </Flex>
+                  <Form.Item
+                    label="Giá cao nhất"
+                    name="maximumOrderAmount"
+                    initialValue={200000}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input the maximum order amount!",
+                      },
+                    ]}
+                  >
+                    <InputNumber
+                      type="number"
+                      onChange={(value) => setCurrencyValueMax(value)}
+                      min={1}
+                      style={{ width: "100%" }}
+                    />
+                  </Form.Item>
+                  <Flex className="mt-3" gap={"small"}>
+                    {<DollarCircleOutlined />}
+                    <Typography.Text strong>
+                      Giá: {formatCurrency(currencyValueMax)}
+                    </Typography.Text>
+                  </Flex>
 
                   <Form.Item
                     label="Giảm (%)"
@@ -1837,6 +1966,53 @@ console.log("sa", salonDetail);
                       {
                         required: true,
                         message: "Please input the discount percentage!",
+                      },
+                    ]}
+                  >
+                    <InputNumber
+                      min={1}
+                      max={100}
+                      type="number"
+                      // formatter={(value) => `${value}`}
+                      // parser={(value) => value.replace("%", "")}
+                      style={{ width: "100%" }}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label="Giảm giá tối đa (vnđ)"
+                    name="maximumDiscount"
+                    tooltip={"Your maximumDiscount can from 1% to 100%"}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input the maximumDiscount!",
+                      },
+                    ]}
+                  >
+                    <InputNumber
+                      type="number"
+                      min={1}
+                      // max={100}
+                      onChange={(value) => setCurrencyValueMaxDiscount(value)}
+                      // formatter={(value) => `${value}`}
+                      // parser={(value) => value.replace("%", "")}
+                      style={{ width: "100%" }}
+                    />
+                  </Form.Item>
+                  <Flex className="mt-3" gap={"small"}>
+                    {<DollarCircleOutlined />}
+                    <Typography.Text strong>
+                      Giá: {formatCurrency(currencyValueMaxDiscount)}
+                    </Typography.Text>
+                  </Flex>
+                  <Form.Item
+                    label="Số lượng"
+                    name="quantity"
+                    tooltip={"Số lượng có thể từ 1 đến 100"}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input the quantity!",
                       },
                     ]}
                   >
@@ -1897,11 +2073,11 @@ console.log("sa", salonDetail);
                 }}
               >
                 <Form form={form} layout="vertical">
-                  <Form.Item name="descriptionUpdate" label="Description">
+                  <Form.Item name="descriptionUpdate" label="Nội dung">
                     <Input />
                   </Form.Item>
                   <Form.Item
-                    label="Minimum Order Amount"
+                    label="Gia thấp nhất"
                     name="minimumOrderAmountUpdate"
                   >
                     <InputNumber
@@ -1920,6 +2096,35 @@ console.log("sa", salonDetail);
                     </Typography.Text>
                   </div>
                   <Form.Item
+                    label="Giá cao nhất"
+                    name="maximumOrderAmountUpdate"
+                    initialValue={200000}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input the maximum order amount!",
+                      },
+                    ]}
+                  >
+                    <InputNumber
+                      type="number"
+                      onChange={(value) =>
+                        setCurrencyValueVoucherUpdateMax(value)
+                      }
+                      min={1}
+                      style={{ width: "100%" }}
+                    />
+                  </Form.Item>
+                  <div
+                    className="mt-3"
+                    style={{ display: "flex", gap: "small" }}
+                  >
+                    <DollarCircleOutlined />
+                    <Typography.Text strong>
+                      Currency: {formatCurrency(currencyValueVoucherUpdateMax)}
+                    </Typography.Text>
+                  </div>
+                  <Form.Item
                     label="Discount Percentage (%)"
                     name="discountPercentageUpdate"
                   >
@@ -1928,6 +2133,54 @@ console.log("sa", salonDetail);
                       max={100}
                       formatter={(value) => `${value}`}
                       parser={(value) => value.replace("%", "")}
+                      style={{ width: "100%" }}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label="Giảm giá tối đa (vnđ)"
+                    name="maximumDiscountUpdate"
+                    tooltip={"Your maximumDiscount can from 1% to 100%"}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input the maximumDiscount!",
+                      },
+                    ]}
+                  >
+                    <InputNumber
+                      type="number"
+                      min={1}
+                      // max={100}
+                      onChange={(value) =>
+                        setCurrencyValueVoucherUpdateDiscount(value)
+                      }
+                      // formatter={(value) => `${value}`}
+                      // parser={(value) => value.replace("%", "")}
+                      style={{ width: "100%" }}
+                    />
+                  </Form.Item>
+                  <Flex className="mt-3" gap={"small"}>
+                    {<DollarCircleOutlined />}
+                    <Typography.Text strong>
+                      Giá: {formatCurrency(currencyValueVoucherUpdateDiscount)}
+                    </Typography.Text>
+                  </Flex>
+                  <Form.Item
+                    label="Số lượng"
+                    name="quantityUpdate"
+                    tooltip={"Số lượng có thể từ 1 đến 100"}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input the quantity!",
+                      },
+                    ]}
+                  >
+                    <InputNumber
+                      min={1}
+                      max={100}
+                      // formatter={(value) => `${value}`}
+                      // parser={(value) => value.replace("%", "")}
                       style={{ width: "100%" }}
                     />
                   </Form.Item>
