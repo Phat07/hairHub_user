@@ -423,8 +423,6 @@ function SalonDetail(props) {
       //   (e) => e?.minimumOrderAmount <= service?.price
       // );
       // setVoucherList(data);
-      console.log("servi", service);
-
       let total = 0;
       total += service?.price;
       // updatedAdditionalServices?.map((e) => {
