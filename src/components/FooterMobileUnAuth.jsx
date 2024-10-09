@@ -49,7 +49,7 @@ function FooterMobileUnAuth() {
               <span>Hệ thống</span>
             </Link>
           </li>
-          <li
+          {/* <li
             className={`${style.footerItem} ${
               isActive("/login") ? style.active : ""
             }`}
@@ -58,7 +58,7 @@ function FooterMobileUnAuth() {
               <LoginOutlined className={style.icon} />
               <span>Đăng nhập</span>
             </Link>
-          </li>
+          </li> */}
         </ul>
       </nav>
     </footer>

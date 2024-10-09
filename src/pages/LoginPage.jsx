@@ -571,18 +571,18 @@ const LoginPage = () => {
 
     if (accessType === "login") {
       dispatch(loginAccount(values, navigate))
-      .then(() => {
-        message.success("Đăng nhập thành công");
-        // Handle success (optional)
-        console.log("Login action dispatched successfully.");
-      })
-      .catch((error) => {
-        // Handle any errors (optional)
-        console.error("Error during login:", error);
-      }).finally((err)=>{
-        setSubmitting(false)
-      });
-    
+        .then(() => {
+          message.success("Đăng nhập thành công");
+          // Handle success (optional)
+          console.log("Login action dispatched successfully.");
+        })
+        .catch((error) => {
+          // Handle any errors (optional)
+          console.error("Error during login:", error);
+        })
+        .finally((err) => {
+          setSubmitting(false);
+        });
     } else {
       setIsModalOpen(true);
       setAccessType("register");

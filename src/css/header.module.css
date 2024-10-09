@@ -94,6 +94,7 @@
   height: 3rem;
   width: 3rem;
   background-color: #bf9456;
+  margin-left: 20px;
 }
 
 .menuToggle {
@@ -175,7 +176,7 @@
   top: -100%; /* Bắt đầu từ bên ngoài màn hình ở phía trên */
   right: 0; /* Đặt modal sát cạnh phải */
   width: 20%; /* Chiều rộng 1/5 chiều rộng màn hình */
-  height: 100vh; /* Chiều cao toàn màn hình */
+  height: 91vh; /* Chiều cao toàn màn hình */
   background-color: white; /* Màu nền */
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2); /* Đổ bóng */
   z-index: 900; /* Đặt z-index cao hơn để hiển thị trên các thành phần khác */
@@ -188,8 +189,68 @@
   top: 0; /* Di chuyển vào trong màn hình từ trên xuống */
 }
 
-.notificationContent {
+.notificationHeader {
   padding: 10px; /* Thêm khoảng cách bên trong */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.notificationHeader p{
+  margin: 0;
+  font-weight: bold;
+}
+.notificationButtonClose{
+  color: #bf9456;
+  font-weight: bold;
+}
+/* .notificationButtonClose button {
+  background-color: transparent;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+} */
+
+.notificationContent {
+  max-height: fit-content;
+  overflow-y: auto;
+  padding: 10px;
+
+  /* Ẩn thanh cuộn trên Webkit (Chrome, Safari) */
+  ::-webkit-scrollbar {
+    width: 0px; /* Đặt kích thước của scrollbar là 0 để ẩn */
+    background: transparent; /* Nền trong suốt để không hiển thị */
+    display: none;
+  }
+}
+
+
+.notificationItem {
+  padding: 10px;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: #cccccc;
+  /* border-width: 5px;
+  border-color: #bf9456; */
+  border-radius: 0.5rem;
+  margin-block: 5px;
+}
+
+/* .notificationItem:last-child {
+  border-bottom: none;
+} */
+
+.notificationTitle {
+  font-size: 16px;
+  font-weight: bold;
+  color: #bf9456;
+}
+
+.notificationSubTitle {
+  font-size: 14px;
+  color: #666;
+}
+
+.notificationItem:hover {
+  background-color: #b6b3b3;
 }
 
 @media (max-width: 768px) {
@@ -219,9 +280,9 @@
     display: block;
   } */
 
-  .loginLink {
+  /* .loginLink {
     display: none;
-  }
+  } */
   .customNotification {
     width: 100%;
   }

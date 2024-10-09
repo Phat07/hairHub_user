@@ -27,6 +27,7 @@ import hairHubLogo from "../assets/images/hairhubFinalLogo.png";
 import style from "../css/header.module.css";
 import { actGetSalonInformationByOwnerIdByCheck } from "../store/salonInformation/action";
 import HeaderUnAuth from "./HeaderUnAuth";
+import NotificationComponent from "./Notification";
 
 function Header(props) {
   const { id } = useParams();
@@ -408,7 +409,7 @@ function Header(props) {
           >
             <IoMenu />
           </button>
-          {avatar && (
+          {/* {avatar && (
             <Dropdown
               overlay={accountMenu}
               trigger={["click"]}
@@ -421,17 +422,9 @@ function Header(props) {
                 />
               </a>
             </Dropdown>
-          )}
-          {/* {account && (
+          )} */}
+          {account && (
             <div className={style.avatarContaint}>
-              <Dropdown overlay={accountMenu} trigger={["click"]}>
-                <a onClick={(e) => e.preventDefault()}>
-                  <Avatar
-                    className={style.avatarLink}
-                    src={avatar || <UserOutlined />}
-                  />
-                </a>
-              </Dropdown>
               {isNotificationVisible ? (
                 <Badge count={5} onClick={toggleNotification}>
                   <BellOutlined className={style.iconHeaderActive} />
@@ -441,15 +434,23 @@ function Header(props) {
                   <BellOutlined className={style.iconHeader} />
                 </Badge>
               )}
+              <Dropdown overlay={accountMenu} trigger={["click"]}>
+                <a onClick={(e) => e.preventDefault()}>
+                  <Avatar
+                    className={style.avatarLink}
+                    src={avatar || <UserOutlined />}
+                  />
+                </a>
+              </Dropdown>
 
-              <a onClick={showModal} style={{ marginLeft: "20px" }}>
+              {/* <a onClick={showModal} style={{ marginLeft: "20px" }}>
                 <Avatar
                   className={style.avatarLink}
                   src={avatar || <UserOutlined />}
                 />
-              </a>
+              </a> */}
             </div>
-          )} */}
+          )}
         </div>
 
         {/* <Modal
@@ -552,8 +553,8 @@ function Header(props) {
           <Button onClick={handleSignOut} icon={<LogoutOutlined />}>
             Đăng xuất
           </Button>
-        </Modal>
-        <div
+        </Modal> */}
+        {/* <div
           ref={notificationRef} // Gán ref vào div thông báo
           className={`${style.customNotification} ${
             isNotificationVisible ? style.show : ""
@@ -564,6 +565,11 @@ function Header(props) {
             <button onClick={toggleNotification}>Đóng</button>
           </div>
         </div> */}
+        <NotificationComponent
+          isVisible={isNotificationVisible}
+          toggleNotification={toggleNotification}
+          notificationRef={notificationRef}
+        />
       </header>
       <Outlet />
     </div>
