@@ -34,7 +34,7 @@ export function loginAccount(data, navigate) {
           } else {
             navigate("/");
           }
-          // message.success("Đăng nhập thành công");
+          message.success("Đăng nhập thành công");
         } else if (response.status === 401) {
           // console.log('err',response);
           // message.error("Đăng nhập không thành công");

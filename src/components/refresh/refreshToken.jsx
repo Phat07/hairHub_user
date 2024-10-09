@@ -77,7 +77,6 @@ const refresh = createRefresh({
       } else {
         // Token is still valid, fetch user data with current access token
         const userResponse = await AccountServices.fetchUserByToken(accessToken);
-        console.log("usr", userResponse);
         if (userResponse && userResponse.data) {
           const signIn = useSignIn();
           signIn({

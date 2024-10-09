@@ -3,12 +3,19 @@ import { SalonInformationServices } from "../../services/salonInformationService
 
 export const CREATE_SALON_INFORMATION = "CREATE_SALON_INFORMATION";
 export const GET_SALON_OWNERID = "GET_SALON_OWNERID";
+export const GET_SALON_OWNERID_IMAGES = "GET_SALON_OWNERID_IMAGES";
 export const GET_ALL_SALON = "GET_ALL_SALON";
 export const GET_ALL_SALON_SUGGESTION = "GET_ALL_SALON_SUGGESTION";
 
 export const postCreateSalonInformation = (list) => {
   return {
     type: CREATE_SALON_INFORMATION,
+    payload: list,
+  };
+};
+export const getSalonInformationByOwnerIdForImages = (list) => {
+  return {
+    type: GET_SALON_OWNERID_IMAGES,
     payload: list,
   };
 };
@@ -46,6 +53,65 @@ export function actGetSalonInformationByOwnerId(id) {
         // Xử lý lỗi nếu có
         console.error("error", error);
       });
+  };
+}
+export function actGetSalonInformationByOwnerIdForImages(id, current, size) {
+  return async (dispatch) => {
+    const result = SalonInformationServices.getImagesForSalon(
+      id,
+      current,
+      size
+    );
+    await result
+      .then((response) => {       
+        if (response.status === 200 || response.status === 201) {
+          dispatch(getSalonInformationByOwnerIdForImages(response.data));
+          return response;
+        } else {
+          return response;
+        }
+      })
+      .catch((error) => {
+        // Xử lý lỗi nếu có
+        console.error("error", error);
+      });
+  };
+}
+export function actPostCreateImages(id, data, page, size) {
+  return async (dispatch) => {
+    try {
+      const response = await SalonInformationServices.createSalonImages(
+        id,
+        data
+      );
+      if (response.status === 200 || response.status === 201) {
+        dispatch(actGetSalonInformationByOwnerIdForImages(id, page, size));
+        return response; // Return the response here
+      } else {
+        // Optionally handle non-success responses here
+        return response; // Return the response even if status is not 200 or 201
+      }
+    } catch (error) {
+      // console.error("Error while creating salon information:", error);
+      return { error }; // Return the error object
+    }
+  };
+}
+export function actDeleteImagesForSalon(id, data,page, size) {
+  return async (dispatch) => {
+    try {
+      const response = await SalonInformationServices.deleteImagesSalon(data);
+      if (response.status === 200 || response.status === 201) {
+        dispatch(actGetSalonInformationByOwnerIdForImages(id, page, size));
+        return response; // Return the response here
+      } else {
+        // Optionally handle non-success responses here
+        return response; // Return the response even if status is not 200 or 201
+      }
+    } catch (error) {
+      // console.error("Error while creating salon information:", error);
+      return { error }; // Return the error object
+    }
   };
 }
 export function actPutSalonInformationByOwnerId(id, data, ownerId) {
@@ -120,7 +186,7 @@ export function actGetAllSalonInformation() {
   };
 }
 
-export function actPostCreateSalonInformation(data) {
+export function actPostCreateSalonInformation(id, data) {
   return async (dispatch) => {
     try {
       const response = await SalonInformationServices.createSalonInformation(
@@ -128,12 +194,15 @@ export function actPostCreateSalonInformation(data) {
       );
       if (response.status === 200 || response.status === 201) {
         dispatch(postCreateSalonInformation(response.data));
+        dispatch(actGetSalonInformationByOwnerId(id));
+        return response; // Return the response here
       } else {
-        // message.error("No create salon information!!!!");
+        // Optionally handle non-success responses here
+        return response; // Return the response even if status is not 200 or 201
       }
     } catch (error) {
-      // message.error("An error occurred while creating salon information");
-      // console.error("Error while creating salon information:", error);
+      console.error("Error while creating salon information:", error);
+      return { error }; // Return the error object
     }
   };
 }

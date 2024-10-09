@@ -23,7 +23,7 @@ function BarberPage(props) {
         setLoading(false);
       });
   };
-  console.log("data", data);
+
   useEffect(() => {
     loadMoreData();
     window.scrollTo({ top: 3000, behavior: "smooth" });

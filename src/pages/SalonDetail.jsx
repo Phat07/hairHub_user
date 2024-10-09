@@ -18,6 +18,7 @@ import {
   Col,
   Collapse,
   Divider,
+  Empty,
   Image,
   Layout,
   List,
@@ -58,7 +59,10 @@ import {
 } from "../services/signalRService";
 import { actGetVoucherBySalonIdNotPaging } from "../store/manageVoucher/action";
 import { actGetAllFeedbackBySalonId } from "../store/ratingCutomer/action";
-import { actGetAllSalonInformation } from "../store/salonInformation/action";
+import {
+  actGetAllSalonInformation,
+  actGetSalonInformationByOwnerIdForImages,
+} from "../store/salonInformation/action";
 import TitleCard from "@/components/TitleCard";
 import { DragCards } from "@/components/DragCards";
 import { HoverImageLinks } from "@/components/HoverImageLinks";
@@ -121,9 +125,11 @@ function renderStars(stars) {
         key={`partial-${filledStars}`}
         style={{
           position: "relative",
-          display: "block",
-          width: "2.1rem", // kích thước sao
+          display: "inline-block", // Keep stars inline
+          width: "2.1rem", // Star size
           height: "2.1rem",
+          overflow: "hidden",
+          verticalAlign: "middle",
         }}
       >
         <StarFilled
@@ -184,6 +190,7 @@ function SalonDetail(props) {
   const [page, setPage] = useState(1);
   const [pageSizeEmployee, setPageSizeEmployee] = useState(3);
   const [total, setTotal] = useState(0);
+  const [totalPriceVoucher, setTotalPriceVoucher] = useState(0);
   const indexOfLastFeedback = currentPage * pageSize;
   const indexOfFirstFeedback = indexOfLastFeedback - pageSize;
 
@@ -224,6 +231,7 @@ function SalonDetail(props) {
   const [listVoucher, setListVoucher] = useState([]);
   const [selectedVouchers, setSelectedVouchers] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingFeedback, setLoadingFeedback] = useState(false);
   const [loadingTime, setLoadingTime] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [loadingEmployee, setLoadingEmployee] = useState(false);
@@ -236,6 +244,7 @@ function SalonDetail(props) {
 
   const [statusChangeStaff, setStatusChangeStaff] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingBook, setLoadingBook] = useState(false);
   const [isLoadingService, setIsLoadingService] = useState(false);
   const [filterRating, setFilterRating] = useState(null);
   const navigate = useNavigate();
@@ -245,16 +254,29 @@ function SalonDetail(props) {
   const listVoucherNotPaging = useSelector(
     (state) => state.SALONVOUCHERS.getVoucherBySalonIdNotPaging
   );
+
   const listFeedback = useSelector(
     (state) => state.RATING.getAllFeedbackbySalonId
   );
+  const salonImages = useSelector(
+    (state) => state.SALONINFORMATION.getSalonByOwnerIdForImages
+  );
 
   const totalPagesFeedback = useSelector((state) => state.RATING.totalPages);
-
+  useEffect(() => {
+    if (id || currentPage) {
+      setLoadingFeedback(true);
+      dispatch(actGetAllFeedbackBySalonId(id, currentPage, pageSize))
+        .then((res) => {})
+        .catch((err) => {})
+        .finally((err) => {
+          setLoadingFeedback(false);
+        });
+    }
+  }, [id, currentPage]);
   useEffect(() => {
     if (id) {
       setLoadingEmployee(true);
-      dispatch(actGetAllFeedbackBySalonId(id, currentPage, pageSize));
       dispatch(actGetAllSalonInformation());
       const fetchEmployees = async () => {
         // setLoading(true);
@@ -279,33 +301,26 @@ function SalonDetail(props) {
 
       fetchEmployees();
     }
-  }, [id, currentPage, page]);
+  }, [id, page]);
+  useEffect(() => {
+    if (id) {
+      dispatch(actGetVoucherBySalonIdNotPaging(id));
+      dispatch(actGetSalonInformationByOwnerIdForImages(id, 1, 100));
+    }
+  }, [id]);
 
   useEffect(() => {
     setListVoucher(listVoucherNotPaging);
   }, [listVoucherNotPaging]);
+
+  useEffect(() => {
+    if (additionalServices.length === 0) {
+      setSelectedTimeSlot(null);
+    }
+  }, [additionalServices]);
   const SALONDETAIL_URL =
     "https://hairhub.gahonghac.net/api/v1/saloninformations/GetSalonInformationById/";
 
-  const handleScroll = (direction, containerRef) => {
-    const maxScroll =
-      containerRef.current.scrollWidth - containerRef.current.clientWidth;
-    const scrollAmount = containerRef.current.clientWidth / 2;
-
-    if (direction === "left" && scrollIndex > 0) {
-      setScrollIndex(scrollIndex - 1);
-      containerRef.current.scrollBy({
-        left: -scrollAmount,
-        behavior: "smooth",
-      });
-    } else if (
-      direction === "right" &&
-      containerRef.current.scrollLeft < maxScroll
-    ) {
-      setScrollIndex(scrollIndex + 1);
-      containerRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
-    }
-  };
   const handleScroll1 = (direction, containerRef) => {
     const maxScroll =
       containerRef.current.scrollWidth - containerRef.current.clientWidth;
@@ -326,11 +341,7 @@ function SalonDetail(props) {
     }
   };
   useEffect(() => {
-    dispatch(actGetVoucherBySalonIdNotPaging(id));
-  }, []);
-
-  useEffect(() => {
-    setIsLoadingService(true)
+    setIsLoadingService(true);
     SalonEmployeesServices.getSalonEmployeeBySalonInformationId(id).then(
       (res) => {
         setSalonEmployeeList(res.data.items);
@@ -344,8 +355,9 @@ function SalonDetail(props) {
       })
       .catch((err) => {
         setError(err);
-      }).finally((err)=>{
-        setIsLoadingService(false)
+      })
+      .finally((err) => {
+        setIsLoadingService(false);
       });
 
     // AppointmentService.calculatePrice(calculateAppointmentData)
@@ -377,7 +389,6 @@ function SalonDetail(props) {
     // fetchData();
   }, [id, voucherSelected, additionalServices, calculateAppointmentData]);
 
-  const dateContainerRef = useRef(null);
   const timeContainerRef = useRef(null);
 
   function generateNextSevenDays() {
@@ -408,10 +419,17 @@ function SalonDetail(props) {
       message.warning("Vui lòng đăng ký hoặc đăng nhập để đặt lịch");
     }
     if (additionalServices.length < 1) {
-      const data = listVoucherNotPaging?.filter(
-        (e) => e?.minimumOrderAmount <= service?.price
-      );
-      setVoucherList(data);
+      // const data = listVoucherNotPaging?.filter(
+      //   (e) => e?.minimumOrderAmount <= service?.price
+      // );
+      // setVoucherList(data);
+      let total = 0;
+      total += service?.price;
+      // updatedAdditionalServices?.map((e) => {
+      //   total += e?.price;
+      // });
+      setTotalPriceVoucher(total);
+
       const currentDate = new Date(); // Lấy ngày hôm nay
 
       const formatDate = (date) => {
@@ -431,17 +449,25 @@ function SalonDetail(props) {
       };
       setSelectedDate(currentDate);
       try {
+        // Using async/await to make the API call
         const response = await SalonInformationServices.getGetAvailableTime(
           postData
-        )
-          .then((res) => {
-            setTimeSlots(res?.data);
-          })
-          .catch((err) => {
-            setTimeSlots("");
-          });
+        );
+
+        if (response.status === 200 || response.status === 201) {
+          setTimeSlots(response?.data); // Set time slots if response is successful
+        } else {
+          setTimeSlots([]); // Clear time slots in case of a different status
+        }
       } catch (error) {
-        console.error("Error posting data:", error);
+        // Check if the error response contains a status code
+        if (error.response?.status === 404) {
+          // Suppress the NotFound error and handle it silently
+          setTimeSlots([]); // Clear time slots when no data is found
+        } else {
+          // Optionally handle other errors here (without logging them)
+          setTimeSlots([]); // Clear time slots in case of other errors
+        }
       }
     }
     setOneServiceData(service);
@@ -451,7 +477,6 @@ function SalonDetail(props) {
 
     if (isServiceAlreadySelected) {
       // Hiển thị thông báo nếu dịch vụ đã được chọn
-      setIsBookingModalVisible(true);
       setIsBookingModalVisible(true);
       message.warning("Dịch vụ này đã được chọn trước đó.");
     } else {
@@ -604,7 +629,7 @@ function SalonDetail(props) {
         .catch((error) => {
           setStatusChangeStaff(true);
           // Xử lý lỗi nếu có
-          console.error("Error booking appointment:", error);
+          // console.error("Error booking appointment:", error);
           // message.warning(error.response.data.message);
         });
 
@@ -641,7 +666,6 @@ function SalonDetail(props) {
       .then((response) => {
         // Xử lý kết quả từ server nếu cần
         const updatedAdditionalServices = [...additionalServices];
-        console.log("responeTime", response.data);
 
         for (const service of additionalServices) {
           const matchingBookingDetailResponse =
@@ -667,9 +691,27 @@ function SalonDetail(props) {
       });
   };
 
+  // const handleChangeStaffSecond = (service, value) => {
+  //   setAdditionalServices((prevServices) =>
+  //     prevServices.map((s) =>
+  //       s.id === service.id
+  //         ? {
+  //             ...s,
+  //             bookingDetail: {
+  //               ...s.bookingDetail,
+  //               salonEmployeeId: value,
+  //               serviceHairId: service.id,
+  //               isAnyOne: true,
+  //             },
+  //           }
+  //         : s
+  //     )
+  //   );
+  //   setIsModalVisible(false);
+  // };
   const handleChangeStaffSecond = (service, value) => {
-    setAdditionalServices((prevServices) =>
-      prevServices.map((s) =>
+    setAdditionalServices((prevServices) => {
+      const updatedServices = prevServices.map((s) =>
         s.id === service.id
           ? {
               ...s,
@@ -681,13 +723,39 @@ function SalonDetail(props) {
               },
             }
           : s
-      )
-    );
+      );
+
+      // Set currentService to null after updating additionalServices
+      setCurrentService(null);
+      return updatedServices; // Return the updated services
+    });
+
+    // Close the modal after updating the state
     setIsModalVisible(false);
   };
+
+  // const handleChangeRandomEmployee = () => {
+  //   setAdditionalServices((prevServices) =>
+  //     prevServices.map((s) =>
+  //       s.id === currentService.id
+  //         ? {
+  //             ...s,
+  //             bookingDetail: {
+  //               ...s.bookingDetail,
+  //               salonEmployeeId: null,
+  //               serviceHairId: currentService.id,
+  //               isAnyOne: true,
+  //             },
+  //           }
+  //         : s
+  //     )
+  //   );
+  //   setIsModalVisible(false);
+  // };
   const handleChangeRandomEmployee = () => {
-    setAdditionalServices((prevServices) =>
-      prevServices.map((s) =>
+    // Update additionalServices and then set currentService to null
+    setAdditionalServices((prevServices) => {
+      const updatedServices = prevServices.map((s) =>
         s.id === currentService.id
           ? {
               ...s,
@@ -699,8 +767,14 @@ function SalonDetail(props) {
               },
             }
           : s
-      )
-    );
+      );
+
+      // Set currentService to null after updating additionalServices
+      setCurrentService(null);
+      return updatedServices; // Return the updated services
+    });
+
+    // Close the modal after updating the state
     setIsModalVisible(false);
   };
 
@@ -753,12 +827,13 @@ function SalonDetail(props) {
           updatedAdditionalServices?.map((e) => {
             total += e?.price;
           });
+          setTotalPriceVoucher(total);
 
-          const totalPriceMapping = listVoucherNotPaging?.filter(
-            (e) => e?.minimumOrderAmount <= total
-          );
-          // setListVoucher(totalPriceMapping);
-          setVoucherList(totalPriceMapping);
+          // const totalPriceMapping = listVoucherNotPaging?.filter(
+          //   (e) => e?.minimumOrderAmount <= total
+          // );
+
+          // setVoucherList(totalPriceMapping);
           const updatedVoucherSelected = voucherSelected?.filter(
             (voucher) => voucher?.minimumOrderAmount <= total
           );
@@ -810,18 +885,6 @@ function SalonDetail(props) {
     return formattedTotalPrice;
   }
 
-  const showReportModal = () => {
-    setIsReportModalVisible(true);
-  };
-
-  const handleReport = () => {
-    setIsReportModalVisible(false);
-  };
-
-  const onChangeCheckbox = (checkedValues) => {
-    setSelectedReports(checkedValues);
-  };
-
   const calculateRatingDistribution = (feedbacks) => {
     const totalReviews = feedbacks.length;
     const ratingDistribution = {
@@ -847,32 +910,20 @@ function SalonDetail(props) {
 
   const { averageRating, ratingDistribution, totalReviews } =
     calculateRatingDistribution(listFeedback);
-
-  const handleModalOk = () => {
-    setAdditionalServices((prevServices) =>
-      prevServices.map((s) =>
-        s.id === currentService.id
-          ? {
-              ...s,
-              bookingDetail: {
-                serviceHairId: currentService.id,
-                isAnyOne: true,
-                salonEmployeeId: s?.bookingDetail?.salonEmployeeId,
-              },
-            }
-          : s
-      )
-    );
-    setIsModalVisible(false);
-    setCurrentService(null);
-  };
   const getSelectedEmployeeName = (serviceId) => {
     const selectedService = additionalServices.find((s) => s.id === serviceId);
     const selectedEmployeeId = selectedService?.bookingDetail?.salonEmployeeId;
+
+    // Check if selectedEmployeeId is undefined
+    if (!selectedEmployeeId) {
+      return undefined; // Return undefined if no employee is selected
+    }
+
     const employee = currentService?.bookingDetailResponses?.employees.find(
       (e) => e.id === selectedEmployeeId
     );
-    return employee?.fullName;
+
+    return employee?.fullName; // Returns employee's full name or undefined if not found
   };
 
   const handleChangeStaff = (service) => {
@@ -958,81 +1009,10 @@ function SalonDetail(props) {
     return timeString.trim() || "0 phút";
   };
 
-  const handleChangeSelectedService = async () => {
-    const formatDate = (date) => {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0"); // Thêm số 0 vào trước tháng nếu cần
-      const day = String(date.getDate()).padStart(2, "0"); // Thêm số 0 vào trước ngày nếu cần
-      return `${year}-${month}-${day}`;
-    };
-    const dataMapping = [...additionalServices];
-    const databooking = await dataMapping?.map((e) => {
-      return {
-        serviceHairId: e?.id,
-        isAnyOne: true,
-        salonEmployeeId: e?.bookingDetailResponses?.employees?.id || null,
-      };
-    });
-
-    const formattedDate = formatDate(selectedDate);
-    const requestBody = {
-      day: formattedDate, // Thay bằng ngày bạn muốn book
-      availableSlot: selectedTimeSlot || 0, // Thay bằng slot bạn muốn book
-      salonId: id, // Thay bằng id của salon
-      bookingDetail: databooking,
-    };
-    setDataBooking(databooking); //serviceHairId, salonEmployeeId
-
-    SalonInformationServices.getBookAppointment(requestBody)
-      .then((response) => {
-        // Xử lý kết quả từ server nếu cần
-        const updatedAdditionalServices = [...additionalServices];
-        let total = 0;
-        updatedAdditionalServices?.map((e) => {
-          total += e?.price;
-        });
-
-        const totalPriceMapping = listVoucherNotPaging?.filter(
-          (e) => e?.minimumOrderAmount <= total
-        );
-        // setListVoucher(totalPriceMapping);
-        setVoucherList(totalPriceMapping);
-        const updatedVoucherSelected = voucherSelected?.filter(
-          (voucher) => voucher?.minimumOrderAmount <= total
-        );
-
-        setVoucherSelected(updatedVoucherSelected);
-        // console.log("totalPriceMapping", totalPriceMapping);
-
-        for (const service of additionalServices) {
-          const matchingBookingDetailResponse =
-            response.data.bookingDetailResponses.find(
-              (responseDetail) => responseDetail?.serviceHair?.id === service.id
-            );
-
-          if (matchingBookingDetailResponse) {
-            service.bookingDetailResponses = matchingBookingDetailResponse;
-          }
-        }
-
-        setAdditionalServices(updatedAdditionalServices);
-        setShowServiceList(false);
-
-        // Cập nhật state hoặc hiển thị thông báo thành công
-      })
-      .catch((error) => {
-        message.warning(error?.response?.data?.message);
-        // Xử lý lỗi nếu có
-        // console.error("Error booking appointment:", error);
-        // Hiển thị thông báo lỗi cho người dùng nếu cần
-      });
-  };
-
   const formatCurrency = (value) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
       currency: "VND", // Replace 'USD' with your desired currency code
-      // minimumFractionDigits: 5, // Adjust decimal places as needed
     }).format(value);
   };
   const formatDiscountPercentage = (value) => {
@@ -1040,9 +1020,18 @@ function SalonDetail(props) {
   };
 
   const handleBooking = async () => {
+    setLoadingBook(true);
     if (additionalServices.length === 0) {
       message.info("Vui lòng chọn dịch vụ!!");
       setIsPriceModalVisible(false);
+      setLoadingBook(false);
+
+      return;
+    }
+    if (selectedTimeSlot === null) {
+      message.info("Vui lòng chọn giờ!!");
+      setIsPriceModalVisible(false);
+      setLoadingBook(false);
       return;
     }
     // Function to format the date
@@ -1062,35 +1051,38 @@ function SalonDetail(props) {
       serviceHairId: servicesId,
     };
 
-    try {
-      const res = await AppointmentService.calculatePrice(appointmentFormData);
-      setOriginalPrice(res.data.originalPrice);
-      setTotalPrice(res.data.totalPrice);
-      setDiscountedPrice(res.data.discountedPrice);
-      setAppointmentData({
-        customerId: userIdCustomer,
-        startDate: formattedDate,
-        totalPrice: res.data.totalPrice,
-        originalPrice: res.data.originalPrice,
-        discountedPrice: res.data.discountedPrice,
-        appointmentDetails: additionalServices.map((e) => ({
-          salonEmployeeId: e?.bookingDetail?.salonEmployeeId
-            ? e?.bookingDetail?.salonEmployeeId
-            : e?.bookingDetailResponses?.employees[0]?.id,
-          serviceHairId: e?.bookingDetail?.serviceHairId
-            ? e?.bookingDetail?.serviceHairId
-            : e?.bookingDetailResponses?.serviceHair?.id,
-          description: e?.description,
-          endTime: e?.bookingDetailResponses?.serviceHair?.endTime,
-          startTime: e?.bookingDetailResponses?.serviceHair?.startTime,
-        })),
-        voucherIds: voucherId ? [voucherId] : [],
+    await AppointmentService.calculatePrice(appointmentFormData)
+      .then((res) => {
+        setOriginalPrice(res.data.originalPrice);
+        setTotalPrice(res.data.totalPrice);
+        setDiscountedPrice(res.data.discountedPrice);
+        setAppointmentData({
+          customerId: userIdCustomer,
+          startDate: formattedDate,
+          totalPrice: res.data.totalPrice,
+          originalPrice: res.data.originalPrice,
+          discountedPrice: res.data.discountedPrice,
+          appointmentDetails: additionalServices.map((e) => ({
+            salonEmployeeId: e?.bookingDetail?.salonEmployeeId
+              ? e?.bookingDetail?.salonEmployeeId
+              : e?.bookingDetailResponses?.employees[0]?.id,
+            serviceHairId: e?.bookingDetail?.serviceHairId
+              ? e?.bookingDetail?.serviceHairId
+              : e?.bookingDetailResponses?.serviceHair?.id,
+            description: e?.description,
+            endTime: e?.bookingDetailResponses?.serviceHair?.endTime,
+            startTime: e?.bookingDetailResponses?.serviceHair?.startTime,
+          })),
+          voucherIds: voucherId ? [voucherId] : [],
+        });
+        setIsPriceModalVisible(true);
+      })
+      .catch((err) => {
+        setLoadingBook(false);
+      })
+      .finally((err) => {
+        setLoadingBook(false);
       });
-
-      setIsPriceModalVisible(true);
-    } catch (err) {
-      setError(err);
-    }
   };
   const fetchAvailable = async (currentDate) => {
     console.log("Inside fetchAvailable with dateAppointment:", currentDate);
@@ -1101,9 +1093,6 @@ function SalonDetail(props) {
       salonEmployeeId: null,
       isAnyOne: true,
     };
-
-    // Update the selected date (if needed)
-    // setSelectedDate(currentDate);
 
     try {
       // Call the API to get available time slots
@@ -1124,29 +1113,6 @@ function SalonDetail(props) {
     }
   };
 
-  // useEffect(() => {
-  //   const setupSignalR = async () => {
-  //     try {
-  //       await startConnection();
-
-  //       onBookAppointmentMessage(async (message) => {
-  //         console.log('Message from server:', message);
-  //         // Handle the received message
-  //         await fetchAvailable(currentDate, id, service);
-  //       });
-  //     } catch (error) {
-  //       console.error("Error setting up SignalR:", error);
-  //     }
-  //   };
-
-  //   setupSignalR();
-
-  //   // Clean up the connection when the component unmounts
-  //   // return () => {
-  //   //   stopConnection();
-  //   // };
-  // }, []);
-
   useEffect(() => {
     let connection;
     const setupSignalR = async () => {
@@ -1166,7 +1132,6 @@ function SalonDetail(props) {
           async (message, dateAppointment, datenow, salonId, serviceId) => {
             // Make sure selectedDate is properly defined
             if (!selectedDate) {
-              console.error("selectedDate is not defined");
               return;
             }
 
@@ -1304,17 +1269,43 @@ function SalonDetail(props) {
 
     // Update the state with the new array
     setAdditionalServices(updatedServices);
+    let total = 0;
+    updatedServices?.map((e) => {
+      total += e?.price;
+    });
+    setTotalPriceVoucher(total);
+
+    // const totalPriceMapping = listVoucherNotPaging?.filter(
+    //   (e) => e?.minimumOrderAmount <= total
+    // );
+    // setListVoucher(totalPriceMapping);
+    // setVoucherList(total);
   };
   const handleFilterChange = (rating) => {
+    setCurrentPage(1);
+    setLoadingFeedback(true);
+    dispatch(actGetAllFeedbackBySalonId(id, currentPage, pageSize, rating))
+      .then((res) => {})
+      .catch((err) => {})
+      .finally((err) => {
+        setLoadingFeedback(false);
+      });
+
     setFilterRating(rating);
   };
 
-  const filteredFeedback = filterRating
-    ? listFeedback.filter((feedback) => feedback?.rating === filterRating)
-    : listFeedback;
+  // const filteredFeedback = filterRating
+  //   ? listFeedback.filter((feedback) => feedback?.rating === filterRating)
+  //   : listFeedback;
   function formatMoneyVND(amount) {
     return amount.toLocaleString("vi-VN");
   }
+  const getSelectedEmployeeIds = () => {
+    return additionalServices
+      .filter((service) => service.bookingDetail?.salonEmployeeId)
+      .map((service) => service.bookingDetail.salonEmployeeId);
+  };
+
   return (
     <div style={{ marginTop: "75px" }}>
       <Layout>
@@ -1813,6 +1804,7 @@ function SalonDetail(props) {
                           <div>
                             <Title level={4}>Thêm dịch vụ</Title>
                             <List
+                              loading={loadingBook}
                               itemLayout="horizontal"
                               dataSource={additionalServices}
                               renderItem={(service) => {
@@ -1821,153 +1813,110 @@ function SalonDetail(props) {
                                     (e) =>
                                       e?.id ===
                                       service?.bookingDetail?.salonEmployeeId
-                                  ); // Define data if necessary
+                                  );
 
                                 return (
-                                  <List.Item
-                                    actions={[
-                                      <Button
-                                        key="change"
-                                        onClick={() =>
-                                          handleChangeStaff(service)
+                                  <List.Item>
+                                    <div className="flex justify-between w-full">
+                                      <List.Item.Meta
+                                        avatar={
+                                          <Avatar
+                                            size={{
+                                              xs: 24,
+                                              sm: 32,
+                                              md: 40,
+                                              lg: 64,
+                                              xl: 80,
+                                              xxl: 100,
+                                            }}
+                                            src={service?.img}
+                                          />
                                         }
-                                        disabled={statusChangeStaff}
-                                      >
-                                        Nhân viên
-                                      </Button>,
-                                      <Button
-                                        key="close"
-                                        type="text"
-                                        icon={<CloseOutlined />}
-                                        onClick={() =>
-                                          handleRemoveService(service)
+                                        title={
+                                          <span className="text-xl md:text-2xl font-bold transition-transform duration-300 hover:scale-105">
+                                            {service.serviceName}
+                                          </span>
                                         }
-                                        className={style["close-button-close"]}
-                                        style={{
-                                          // position: "absolute",
-                                          top: -30,
-                                          right: 0,
-                                          color: "#000",
-                                          zIndex: 1,
-                                          transition: "transform 0.3s ease",
-                                        }} // Customize color if necessary
-                                      />,
-                                    ]}
-                                  >
-                                    <List.Item.Meta
-                                      avatar={
-                                        <Avatar
-                                          size={{
-                                            xs: 24,
-                                            sm: 32,
-                                            md: 40,
-                                            lg: 64,
-                                            xl: 80,
-                                            xxl: 100,
-                                          }}
-                                          src={service?.img}
-                                        />
-                                      }
-                                      title={
-                                        <span
+                                        description={
+                                          <div className="inline-grid border border-gray-300 p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out">
+                                            <span className="text-base md:text-lg">
+                                              Tiền:{" "}
+                                              {formatMoneyVND(service.price)}{" "}
+                                              vnđ
+                                            </span>
+                                            <span className="text-base md:text-lg">
+                                              Thời gian dịch vụ:{" "}
+                                              {formatTime(service.time)}
+                                            </span>
+                                            <span className="text-base md:text-lg">
+                                              Thời gian chờ:{" "}
+                                              {formatTime(service.waitingTime)}
+                                            </span>
+                                            <span className="text-base md:text-lg">
+                                              Nhân viên:{" "}
+                                              {data ? (
+                                                <>{data?.fullName}</>
+                                              ) : (
+                                                <>
+                                                  <RandomIcon /> Ngẫu nhiên
+                                                </>
+                                              )}
+                                            </span>
+                                          </div>
+                                        }
+                                      />
+                                      <div className="relative flex flex-col justify-start ml-4">
+                                        <Button
+                                          key="close"
+                                          type="text"
+                                          icon={<CloseOutlined />}
+                                          onClick={() =>
+                                            handleRemoveService(service)
+                                          }
+                                          className={`${style["close-button-close"]} text-black absolute top-0 right-0 md:right-1 md:top-1`}
                                           style={{
-                                            fontSize: "1.7rem",
-                                            fontWeight: "bold",
+                                            zIndex: 1,
+                                            transition: "transform 0.3s ease",
                                           }}
+                                        />
+                                        <Button
+                                          key="change"
+                                          onClick={() =>
+                                            handleChangeStaff(service)
+                                          }
+                                          disabled={statusChangeStaff}
+                                          className="w-full mt-16" // Add margin-top to space from the close button
                                         >
-                                          {service.serviceName}
-                                        </span>
-                                      }
-                                      description={
-                                        <div style={{ display: "inline-grid" }}>
-                                          <span>
-                                            Tiền:{" "}
-                                            {formatMoneyVND(service.price)} vnđ
-                                          </span>
-                                          <span>
-                                            Thời gian dịch vụ:{" "}
-                                            {formatTime(service.time)}
-                                          </span>
-                                          <span>
-                                            Thời gian chờ:{" "}
-                                            {formatTime(service.waitingTime)}
-                                          </span>
-                                          <span>
-                                            Nhân viên:{" "}
-                                            {data ? (
-                                              <>
-                                                {data?.fullName}
-                                                {/* <Avatar
-                                                    size={{
-                                                      xs: 24,
-                                                      sm: 32,
-                                                      md: 40,
-                                                      lg: 34,
-                                                      xl: 40,
-                                                      xxl: 40,
-                                                    }}
-                                                    src={data?.img}
-                                                    style={{ marginRight: 8 }}
-                                                  />
-                                                  <div>
-                                                    <div>{data?.fullName}</div>
-                                                    <div
-                                                      style={{
-                                                        fontSize: "12px",
-                                                        color: "#888",
-                                                      }}
-                                                    >
-                                                      Bắt đầu:{" "}
-                                                      {dayjs(
-                                                        service
-                                                          ?.bookingDetailResponses
-                                                          ?.serviceHair
-                                                          ?.startTime
-                                                      ).format("HH:mm")}{" "}
-                                                      - Kết thúc:{" "}
-                                                      {dayjs(
-                                                        service
-                                                          ?.bookingDetailResponses
-                                                          ?.serviceHair
-                                                          ?.startTime
-                                                      ).format("HH:mm")}
-                                                    </div>
-                                                  </div> */}
-                                              </>
-                                            ) : (
-                                              <>
-                                                <RandomIcon /> Ngẫu nhiên
-                                              </>
-                                            )}
-                                          </span>
-                                        </div>
-                                      }
-                                    />
+                                          Chọn nhân viên
+                                        </Button>
+                                      </div>
+                                    </div>
                                     {currentService && (
                                       <Modal
                                         title="Chọn nhân viên"
                                         visible={isModalVisible}
-                                        // onOk={handleModalOk}
                                         onCancel={handleCancel}
                                         footer={null}
                                       >
                                         <Select
                                           placeholder="Lựa chọn 1 nhân viên"
                                           style={{ width: "100%" }}
-                                          // value={
-                                          //   selectedStaff[currentService.id]
-                                          // }
                                           value={
-                                            getSelectedEmployeeName(
-                                              currentService.id
-                                            ) || undefined
+                                            additionalServices.some(
+                                              (service) =>
+                                                service.id !==
+                                                  currentService.id &&
+                                                service.bookingDetail
+                                                  ?.salonEmployeeId ===
+                                                  getSelectedEmployeeName(
+                                                    currentService.id
+                                                  )
+                                            )
+                                              ? undefined
+                                              : getSelectedEmployeeName(
+                                                  currentService.id
+                                                ) || undefined
                                           }
-                                          // onChange={(value) =>
-                                          //   handleChangeStaffSecond(
-                                          //     currentService,
-                                          //     value
-                                          //   )
-                                          // }
                                           onChange={(value) => {
                                             if (value === "random") {
                                               handleChangeRandomEmployee();
@@ -1988,16 +1937,11 @@ function SalonDetail(props) {
                                                 key={e.id}
                                                 value={e.id || e.fullName}
                                               >
-                                                <div
-                                                  style={{
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                  }}
-                                                >
+                                                <div className="flex items-center">
                                                   <Avatar
                                                     src={e.img}
                                                     alt={e.fullName}
-                                                    style={{ marginRight: 8 }}
+                                                    className="mr-2"
                                                   />
                                                   {e.fullName}
                                                 </div>
@@ -2028,8 +1972,8 @@ function SalonDetail(props) {
                           block
                           style={{
                             marginTop: "16px",
-                            opacity: 0.5, // Phủ mờ nút
-                            cursor: "not-allowed", // Không cho phép chọn
+                            // opacity: 0.5, // Phủ mờ nút
+                            // cursor: "not-allowed"
                           }}
                           onClick={handleDisplayVoucherList}
                           disabled
@@ -2037,10 +1981,10 @@ function SalonDetail(props) {
                           {displayVoucherList ? (
                             <Text>Đóng</Text>
                           ) : (
-                            <Text>Thêm voucher</Text>
+                            <Text>Voucher</Text>
                           )}
                         </Button>
-                        <p
+                        {/* <p
                           style={{
                             marginTop: "8px",
                             color: "#888",
@@ -2049,25 +1993,60 @@ function SalonDetail(props) {
                         >
                           Sử dụng ứng dụng di động HairHub để có thêm nhiều ưu
                           đãi hấp dẫn
-                        </p>
-                        {displayVoucherList && (
+                        </p> */}
+                        {/* {displayVoucherList && ( */}
+                        {listVoucherNotPaging ? (
+                          // <List
+                          //   style={{ marginTop: "16px", background: "#ee22" }}
+                          //   size="middle"
+                          //   bordered
+                          //   dataSource={voucherList}
+                          //   renderItem={(item) => (
+                          //     <List.Item
+                          //       style={{ cursor: "pointer" }}
+                          //       onClick={() => handleSelectedVoucher(item)}
+                          //     >
+                          //       {item.description}
+                          //     </List.Item>
+                          //   )}
+                          // />
                           <List
-                            style={{ marginTop: "16px", background: "#ee22" }}
+                            style={{ marginTop: "16px", background: "#f0f0f0" }}
                             size="middle"
                             bordered
-                            dataSource={voucherList}
+                            dataSource={listVoucherNotPaging}
                             renderItem={(item) => (
                               <List.Item
-                                style={{ cursor: "pointer" }}
-                                onClick={() => handleSelectedVoucher(item)}
+                                style={{
+                                  cursor:
+                                    item.minimumOrderAmount <= totalPriceVoucher
+                                      ? "pointer"
+                                      : "not-allowed",
+                                  opacity:
+                                    item.minimumOrderAmount <= totalPriceVoucher
+                                      ? 1
+                                      : 0.5,
+                                }}
+                                onClick={() => {
+                                  if (
+                                    item.minimumOrderAmount <= totalPriceVoucher
+                                  ) {
+                                    handleSelectedVoucher(item);
+                                  }
+                                }}
                               >
                                 {item.description}
+                                {item.minimumOrderAmount > totalPriceVoucher &&
+                                  " (Không đủ điều kiện)"}
                               </List.Item>
                             )}
                           />
+                        ) : (
+                          <div>
+                            <Empty />
+                          </div>
                         )}
-                        {/* Voucher added */}
-                        {voucherSelected &&
+                        {/* {voucherSelected &&
                           voucherSelected?.map((e) => {
                             return (
                               <>
@@ -2107,9 +2086,45 @@ function SalonDetail(props) {
                                 </Card>
                               </>
                             );
-                          })}
+                          })} */}
+                        {voucherSelected &&
+                          voucherSelected.map((e) => (
+                            <Card
+                              key={e.id}
+                              title="Voucher đã chọn"
+                              style={{
+                                marginTop: "16px",
+                                backgroundColor: "#fafafa",
+                              }}
+                              bordered={true}
+                            >
+                              <p>
+                                <Text strong>Mô tả:</Text> {e.description}
+                              </p>
+                              <p>
+                                <Text strong>Giá tối thiểu:</Text>{" "}
+                                {formatCurrency(e.minimumOrderAmount)}
+                              </p>
+                              <p>
+                                <Text strong>Phần trăm giảm:</Text>{" "}
+                                {formatDiscountPercentage(e.discountPercentage)}
+                                %
+                              </p>
+                              <p>
+                                <Text strong>Ngày hết hạn:</Text>{" "}
+                                {formattedDateUi(e.expiryDate)}
+                              </p>
+                              <Button
+                                type="primary"
+                                danger
+                                onClick={() => handleRemoveVoucher(e.id)}
+                              >
+                                Xóa mã khuyến mãi
+                              </Button>
+                            </Card>
+                          ))}
 
-                        <div style={{ marginTop: "16px" }}>
+                        {/* <div style={{ marginTop: "16px" }}>
                           <Title level={4}>Tổng</Title>
                           <p style={{ fontSize: "2rem" }}>{calculateTotal()}</p>
                           <Button
@@ -2120,84 +2135,111 @@ function SalonDetail(props) {
                           >
                             Đặt lịch
                           </Button>
+                        </div> */}
+                        <div style={{ marginTop: "16px" }}>
+                          <Title level={4}>Tổng</Title>
+                          <p style={{ fontSize: "2rem" }}>{calculateTotal()}</p>
+
+                          {/* Discount Section */}
+                          {voucherSelected?.length > 0 && (
+                            <div className="flex justify-between items-center mt-4">
+                              <span className="text-lg font-medium text-gray-700">
+                                Giảm giá:
+                              </span>
+                              <span className="text-xl font-bold text-green-500">
+                                -
+                                {formatDiscountPercentage(
+                                  voucherSelected[0]?.discountPercentage
+                                )}
+                                %
+                              </span>
+                            </div>
+                          )}
+
+                          <Button
+                            style={{ backgroundColor: "#bf9456" }}
+                            onClick={handleBooking}
+                            type="primary"
+                            block
+                            className="mt-4"
+                          >
+                            Đặt lịch
+                          </Button>
                         </div>
                       </div>
                     )}
                   </Modal>
                 </Spin>
               </div>
-                <div>
-                  <div className="our-work-section">
-                    <h2
-                      style={{
-                        fontSize: "1.8rem",
-                        fontWeight: "bold",
-                        marginBottom: "1rem",
-                      }}
-                    >
-                      See Our Work
-                    </h2>
-                    <Row gutter={16}>
-                      <Col xs={24} sm={12}>
-                        <img
-                          src={ourWorkImages[0]}
-                          alt="Main Work"
-                          style={{
-                            width: "80%",
-                            height: "auto",
-                            borderRadius: "8px",
-                          }}
-                        />
-                      </Col>
-                      <Col xs={24} sm={12}>
-                        <Row gutter={[8, 8]}> 
-                          {ourWorkImages.slice(1, 5).map((image, index) => (
-                            <Col key={index} span={12}>
+              <div>
+                <div className="our-work-section">
+                  <h2 className="text-2xl font-bold mb-4">Ảnh</h2>
+                  <div className="flex flex-wrap justify-center">
+                    {salonImages?.items?.length > 0 &&
+                      salonImages.items[0]?.salonImages?.length > 0 && (
+                        <div className="w-full sm:w-1/2 flex justify-center">
+                          <img
+                            src={salonImages.items[0].salonImages[0].img}
+                            alt="Main Work"
+                            className="w-4/5 h-auto rounded-lg"
+                          />
+                        </div>
+                      )}
+                    <div className="w-full sm:w-1/2 grid grid-cols-2 gap-2 justify-center">
+                      {salonImages?.items?.length > 1 ? (
+                        salonImages.items.slice(1, 5).map((image, index) => (
+                          <div key={index} className="flex justify-center">
+                            {image?.salonImages?.length > 0 && (
                               <img
-                                src={image}
+                                src={image.salonImages[0].img}
                                 alt={`Work ${index + 1}`}
-                                style={{
-                                  width: "75%",
-                                  height: "auto",
-                                  borderRadius: "8px",
-                                }}
+                                className="w-3/4 h-auto rounded-lg"
                               />
-                            </Col>
-                          ))}
-                        </Row>
-                      </Col>
-                    </Row>
-                    <Button
-                      block
-                      onClick={() => setShowAllWork(true)}
-                      style={{ marginTop: "16px" }}
-                    >
-                      SEE ALL WORK
-                    </Button>
+                            )}
+                          </div>
+                        ))
+                      ) : (
+                        <div className="col-span-2 text-center mt-4">
+                          <Empty />
+                        </div>
+                      )}
+                    </div>
                   </div>
+                  <Button
+                    block
+                    onClick={() => setShowAllWork(true)}
+                    className="mt-4"
+                  >
+                    Ảnh khách hàng
+                  </Button>
+                </div>
 
-                  <div>
-                    <Modal
-                      title="All Our Work"
-                      visible={showAllWork}
-                      onCancel={() => setShowAllWork(false)}
-                      footer={null}
-                      width={800}
-                    >
-                      <Carousel arrows infinite={false}>
-                        {ourWorkImages.map((image, index) => (
+                <div>
+                  <Modal
+                    title="Ảnh khách hàng"
+                    visible={showAllWork}
+                    onCancel={() => setShowAllWork(false)}
+                    footer={null}
+                    width={500}
+                  >
+                    <Carousel arrows infinite={false}>
+                      {salonImages?.items?.length > 0 &&
+                        salonImages.items.map((image, index) => (
                           <div key={index}>
-                            <img
-                              src={image}
-                              alt={`Work ${index}`}
-                              style={{ width: "100%", height: "auto" }}
-                            />
+                            {image?.salonImages?.length > 0 && (
+                              <img
+                                src={image.salonImages[0].img}
+                                alt={`Work ${index}`}
+                                className="w-full h-auto"
+                              />
+                            )}
                           </div>
                         ))}
-                      </Carousel>
-                    </Modal>
-                  </div>
+                    </Carousel>
+                  </Modal>
                 </div>
+              </div>
+
               <div>
                 <h2
                   style={{
@@ -2295,11 +2337,12 @@ function SalonDetail(props) {
                 <List
                   itemLayout="horizontal"
                   locale={{
-                    emptyText: filterRating
-                      ? `Không có đánh giá ${filterRating} sao nào`
+                    emptyText: listFeedback
+                      ? `Không có đánh giá ${listFeedback} sao nào`
                       : "Không có đánh giá nào",
                   }}
-                  dataSource={filteredFeedback}
+                  loading={loadingFeedback}
+                  dataSource={listFeedback}
                   renderItem={(feedback) => (
                     <List.Item className={style.listItem}>
                       <List.Item.Meta
@@ -2321,7 +2364,7 @@ function SalonDetail(props) {
                                       year: "numeric",
                                       month: "long",
                                       day: "numeric",
-                                    })}{" "}
+                                    })}
                                     | Dịch vụ sử dụng:{" "}
                                     {feedback?.appointment?.appointmentDetails?.map(
                                       (e, index, array) => (
@@ -2334,16 +2377,6 @@ function SalonDetail(props) {
                                   </p>
                                 </div>
                               </div>
-                              {/* <p style={{ marginTop: "0" }}>
-                                {new Date(
-                                  feedback?.createDate
-                                ).toLocaleDateString("vi-VI", {
-                                  year: "numeric",
-                                  month: "long",
-                                  day: "numeric",
-                                })}{" "}
-
-                              </p> */}
                             </div>
                             <div className={style.ratingFeedback}>
                               {renderStars(feedback?.rating)}

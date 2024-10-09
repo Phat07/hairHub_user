@@ -3,6 +3,7 @@ import {
   GET_ALL_SALON,
   GET_ALL_SALON_SUGGESTION,
   GET_SALON_OWNERID,
+  GET_SALON_OWNERID_IMAGES,
 } from "./action";
 
 const initialState = {
@@ -10,6 +11,7 @@ const initialState = {
   salonInformation: {},
   getSalonByOwnerId: "",
   getAllSalon: [],
+  getSalonByOwnerIdForImages: ''
 };
 
 const reducer = (state = initialState, action) => {
@@ -25,7 +27,11 @@ const reducer = (state = initialState, action) => {
         ...state,
         getSalonByOwnerId: action.payload,
       };
-
+    case GET_SALON_OWNERID_IMAGES:
+      return {
+        ...state,
+        getSalonByOwnerIdForImages: action.payload,
+      };
     case GET_ALL_SALON:
       return {
         ...state,

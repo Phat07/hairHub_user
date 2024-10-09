@@ -32,19 +32,23 @@ export const getFeedbackByCustomerId = (list) => {
 
 export function actGetAllFeedbackBySalonId(id, page, size, rating) {
   return async (dispatch) => {
-    const result = RatingService.GetFeedbackBySalonId(id, page, size, rating);
-    await result
-      .then((response) => {
-        if (response.status === 200 || response.status === 201) {
-          dispatch(getAllFeedbackBySalonId(response.data));
-        } else {
-          message.error("No feedback for salon!!!!");
-        }
-      })
-      .catch((error) => {
-        // Xử lý lỗi nếu có
-        console.error("feedback:", error);
-      });
+    try {
+      const response = await RatingService.GetFeedbackBySalonId(
+        id,
+        page,
+        size,
+        rating
+      );
+      if (response.status === 200 || response.status === 201) {
+        dispatch(getAllFeedbackBySalonId(response.data));
+        return response; // Return the successful response
+      } else {
+        message.error("No feedback for salon!!!!");
+        return response; // Optionally return the non-200/201 response as well
+      }
+    } catch (error) {
+      return { error }; // Return the error object if an error occurs
+    }
   };
 }
 

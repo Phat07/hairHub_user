@@ -85,8 +85,8 @@ export function actPutSalonEmployeeById(id, data) {
       dispatch(actGetSalonEmployeeById(id));
       return res;
     } catch (err) {
-      console.log(err, "errors");
-      throw err; // Ném lỗi để xử lý ở bên ngoài nếu cần
+      // console.log(err, "errors");
+      // throw err; // Ném lỗi để xử lý ở bên ngoài nếu cần
     }
   };
 }
@@ -113,7 +113,7 @@ export function actGetAllServicesBySalonId(
         return res; // return the response to allow chaining
       })
       .catch((err) => {
-        console.log(err, "errors");
+        // console.log(err, "errors");
         throw err; // re-throw the error to propagate it to the caller
       });
   };
@@ -125,7 +125,9 @@ export function actGetAllServicesBySalonIdNoPaging(id) {
       .then((res) => {
         dispatch(getAllServiceList(res?.data));
       })
-      .catch((err) => console.log(err, "errors"));
+      .catch((err) =>{
+        // console.log(err, "errors")
+      });
   };
 }
 export function actPostCreateSalonService(data, id) {
@@ -168,12 +170,12 @@ export function actGetAllEmployees(
         if (res && res.data) {
           dispatch(getAllEmployee(res.data.items, res.data.total));
         } else {
-          console.error("No data received:", res);
+          // console.error("No data received:", res);
         }
         return res; // Trả về phản hồi để có thể sử dụng .then()
       })
       .catch((err) => {
-        console.error("Error fetching employees:", err);
+        // console.error("Error fetching employees:", err);
         // Có thể hiển thị thông báo lỗi nếu cần
         // message.error("Nhân viên chưa được thêm!");
         throw err; // Ném lỗi để có thể xử lý bên ngoài nếu cần
