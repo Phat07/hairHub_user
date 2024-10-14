@@ -1099,7 +1099,6 @@ function SalonDetail(props) {
       const response = await SalonInformationServices.getGetAvailableTime(
         postData
       );
-      console.log("respon", response);
 
       // Update the time slots state with the received data
       if (response && response.data) {

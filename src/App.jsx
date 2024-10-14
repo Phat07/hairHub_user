@@ -23,8 +23,12 @@ import FooterMobile from "./components/FooterMobile";
 import FooterMobileAuth from "./components/FooterMobileAuth";
 import FooterMobileUnAuth from "./components/FooterMobileUnAuth";
 import audioVer1 from "../public/audio/warm-tech-logo-21474.mp3";
+const tele =window.Telegram.WebApp
 function App() {
   useDocumentTitle();
+  useEffect(()=>{
+    tele.ready()
+  })
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const token = localStorage.getItem("accessToken");
