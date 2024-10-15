@@ -1,11 +1,9 @@
 import { UploadOutlined } from "@ant-design/icons";
 import {
+  Autocomplete,
   GoogleMap,
   LoadScript,
-  StandaloneSearchBox,
-  Marker,
-  Autocomplete,
-  MarkerF,
+  MarkerF
 } from "@react-google-maps/api";
 import {
   Button,
@@ -17,14 +15,14 @@ import {
   Image,
   Input,
   message,
+  Modal,
   Popconfirm,
   Row,
+  Select,
   Spin,
   TimePicker,
   Typography,
   Upload,
-  Modal,
-  Select,
 } from "antd";
 import axios from "axios";
 import dayjs from "dayjs";
@@ -77,6 +75,14 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
     lat: 10.762622,
     lng: 106.660172,
   };
+  const salonDetail = useSelector(
+    (state) => state.SALONINFORMATION.getSalonByOwnerId
+  );
+  useEffect(() => {
+    if (salonDetail) {
+      navigate("/list_shop");
+    }
+  }, [salonDetail]);
 
   // Tạo state để lưu vị trí được chọn
   const [selectedPosition, setSelectedPosition] = useState(defaultCenter);
@@ -173,9 +179,6 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
   };
   const ownerId = useSelector((state) => state.ACCOUNT.idOwner);
   const uid = useSelector((state) => state.ACCOUNT.uid);
-  const salonDetail = useSelector(
-    (state) => state.SALONINFORMATION.getSalonByOwnerId
-  );
   useEffect(() => {
     if (ownerId) {
       dispatch(actGetSalonInformationByOwnerId(ownerId));
