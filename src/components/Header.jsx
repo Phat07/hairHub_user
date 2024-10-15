@@ -440,7 +440,7 @@ function Header(props) {
           )} */}
           {account && (
             <div className={style.avatarContaint}>
-              {isNotificationVisible ? (
+              {/* {isNotificationVisible ? (
                 <Badge count={5} onClick={toggleNotification}>
                   <BellOutlined className={style.iconHeaderActive} />
                 </Badge>
@@ -448,7 +448,7 @@ function Header(props) {
                 <Badge count={5} onClick={toggleNotification}>
                   <BellOutlined className={style.iconHeader} />
                 </Badge>
-              )}
+              )} */}
               <Dropdown overlay={accountMenu} trigger={["click"]}>
                 <a onClick={(e) => e.preventDefault()}>
                   <Avatar
@@ -580,11 +580,11 @@ function Header(props) {
             <button onClick={toggleNotification}>Đóng</button>
           </div>
         </div> */}
-        <NotificationComponent
+        {/* <NotificationComponent
           isVisible={isNotificationVisible}
           toggleNotification={toggleNotification}
           notificationRef={notificationRef}
-        />
+        /> */}
       </header>
       <QRScannerModal
         isVisible={isModalVisibleQr}

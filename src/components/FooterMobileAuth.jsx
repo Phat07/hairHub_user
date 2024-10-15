@@ -7,6 +7,7 @@ import {
   AreaChartOutlined,
   WarningOutlined,
   QrcodeOutlined,
+  RadarChartOutlined,
 } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import style from "../css/footer-mobile.module.css";
@@ -138,7 +139,7 @@ function FooterMobileAuth() {
               >
                 <Link to={handleEmptySalon()} onClick={scrollToTop}>
                   <ShopOutlined className={style.icon} />
-                  <span>Quản lý Salon</span>
+                  <span>Salon</span>
                 </Link>
               </li>
               <li
@@ -177,7 +178,7 @@ function FooterMobileAuth() {
                 }`}
               >
                 <Link to="/reviewEmployee">
-                  <AreaChartOutlined className={style.icon} />
+                  <RadarChartOutlined className={style.icon} />
                   <span>Nhân viên</span>
                 </Link>
               </li>
