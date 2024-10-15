@@ -43,8 +43,6 @@ function LoginGoogle(props) {
 
     try {
       const res = await AccountServices.loginGoogle(data);
-      console.log("res", res);
-
       // Storing tokens and role in localStorage
       localStorage.setItem("refreshToken", res.data.refreshToken);
       localStorage.setItem("accessToken", res.data.accessToken);
@@ -72,11 +70,6 @@ function LoginGoogle(props) {
           setLoading(false);
         });
     } catch (err) {
-      // Lưu gmail từ response khi có lỗi
-      // gmail = response?.clientId;
-      console.log("Gmail error:", err);
-
-      // Handle the error by showing the modal and error message
       setIsModalVisible(true);
       // message.error(err?.response?.data?.message);
     }

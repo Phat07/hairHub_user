@@ -507,19 +507,17 @@ function ListSalonVer2(props) {
       const distance = await validateDistance();
       if (!distance) {
         return Promise.reject(); // Trả về Promise.reject() để ngăn việc đóng modal
-      }         
+      }
 
       if ("geolocation" in navigator) {
         setLoading(true);
         navigator.geolocation.getCurrentPosition(
-          async (pos) => {     
-            console.log("ss",pos);
-                   
+          async (pos) => {
             const { latitude, longitude } = pos.coords;
             console.log("loca", latitude);
             console.log("loca2", longitude);
             try {
-              // await fetchSalonDataNear(latitude, longitude, distance);
+              await fetchSalonDataNear(latitude, longitude, distance);
               // message.success("Cảm ơn bạn đã kích hoạt dịch vụ định vị.");
               document.body.style.overflow = "";
             } catch (error) {
@@ -656,49 +654,53 @@ function ListSalonVer2(props) {
                 whileTap={{ scale: 0.95 }} // Giảm nhẹ kích thước khi nhấn
                 transition={{ duration: 0.3 }} // Thời gian chuyển đổi
               >
-                <Input
-                  className={styles["ant-input"]}
-                  placeholder="Tìm kiếm dịch vụ"
-                  prefix={<SearchOutlined />}
-                  suffix={
-                    servicesName && (
-                      <CloseCircleOutlined
-                        style={{ fontSize: "20px" }}
-                        onClick={handleClick}
-                      />
-                    )
-                  }
-                  value={servicesName}
-                  onChange={handleServiceNameChange}
-                  onKeyUp={handleKeyPress}
-                />
+                <Spin spinning={loading} size="small">
+                  <Input
+                    className={styles["ant-input"]}
+                    placeholder="Tìm kiếm dịch vụ"
+                    prefix={<SearchOutlined />}
+                    suffix={
+                      servicesName && (
+                        <CloseCircleOutlined
+                          style={{ fontSize: "20px" }}
+                          onClick={handleClick}
+                        />
+                      )
+                    }
+                    value={servicesName}
+                    onChange={handleServiceNameChange}
+                    onKeyUp={handleKeyPress}
+                  />
+                </Spin>
               </MotionDiv>
               {/* </Popover> */}
             </Col>
             <Col span={12}>
               <MotionDiv
-                // whileHover={{ scale: 0.6 }} 
+                // whileHover={{ scale: 0.6 }}
                 whileTap={{ scale: 0.95 }} // Giảm nhẹ kích thước khi nhấn
                 transition={{ duration: 0.3 }} // Thời gian chuyển đổi
               >
-                <Input
-                  className={styles["ant-input"]}
-                  // allowClear
-                  suffix={
-                    salonName && (
-                      <CloseCircleOutlined
-                        style={{ fontSize: "1.5rem" }}
-                        onClick={() => setSalonName("")}
-                      />
-                    )
-                  }
-                  placeholder="Tìm kiếm salon"
-                  prefix={<SearchOutlined />}
-                  onChange={handleSalonNameChange}
-                  onKeyDown={handleKeyPress}
-                  value={salonName}
-                  onSubmit={handSubmitSalonName}
-                />
+                <Spin spinning={loading} size="small">
+                  <Input
+                    className={styles["ant-input"]}
+                    // allowClear
+                    suffix={
+                      salonName && (
+                        <CloseCircleOutlined
+                          style={{ fontSize: "1.5rem" }}
+                          onClick={() => setSalonName("")}
+                        />
+                      )
+                    }
+                    placeholder="Tìm kiếm salon"
+                    prefix={<SearchOutlined />}
+                    onChange={handleSalonNameChange}
+                    onKeyDown={handleKeyPress}
+                    value={salonName}
+                    onSubmit={handSubmitSalonName}
+                  />
+                </Spin>
               </MotionDiv>
             </Col>
 
@@ -746,6 +748,7 @@ function ListSalonVer2(props) {
                 Cạo râu
               </div>
             </div> */}
+            {/* <Spin spinning={loading}> */}
             <div className={styles["list-salon-service"]}>
               {[
                 "Cắt tóc",
@@ -765,6 +768,7 @@ function ListSalonVer2(props) {
                 </div>
               ))}
             </div>
+            {/* </Spin> */}
           </Row>
         </div>
       </div>
