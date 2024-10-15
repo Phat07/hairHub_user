@@ -14,6 +14,7 @@ import configReducer from "./config/reducer";
 import salonTransactionReducer from "./salonTransaction/reducer";
 import accountReducer from "./account/reducer";
 import employeeReducer from "./employee/reducer";
+import notificationReducer from "./notification/reducer";
 const rootReducer = combineReducers({
   SALONINFORMATION: salonInformationReducer,
   SALONEMPLOYEES: salonEmployeesReducer,
@@ -28,6 +29,7 @@ const rootReducer = combineReducers({
   SALONTRANSACTION: salonTransactionReducer,
   ACCOUNT: accountReducer,
   EMPLOYEE: employeeReducer,
+  NOTIFICATION: notificationReducer,
 });
 const store = createStore(rootReducer, applyMiddleware(thunk));
 export default store;

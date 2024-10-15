@@ -174,15 +174,18 @@
   position: fixed; /* Đặt ở vị trí cố định */
   margin-top: 80px;
   top: -100%; /* Bắt đầu từ bên ngoài màn hình ở phía trên */
-  right: 0; /* Đặt modal sát cạnh phải */
-  width: 20%; /* Chiều rộng 1/5 chiều rộng màn hình */
-  height: 91vh; /* Chiều cao toàn màn hình */
+  right: 2%; /* Đặt modal sát cạnh phải */
+  width: 30%; /* Chiều rộng 1/5 chiều rộng màn hình */
+  height: 85vh; /* Chiều cao toàn màn hình */
   background-color: white; /* Màu nền */
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2); /* Đổ bóng */
   z-index: 900; /* Đặt z-index cao hơn để hiển thị trên các thành phần khác */
   overflow-y: auto; /* Cho phép cuộn dọc */
   transition: top 0.5s ease; /* Thêm hiệu ứng chuyển động */
   min-width: 300px;
+  border-end-start-radius: 1rem;
+  border-end-end-radius: 1rem;
+  scrollbar-width: none;
 }
 
 .customNotification.show {
@@ -253,6 +256,27 @@
   background-color: #b6b3b3;
 }
 
+.notificationFilter {
+  display: flex;
+  justify-content: start;
+  margin-left: 10px;
+}
+
+.notificationFilter div {
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 10px;
+  margin-right: 5px;
+  font-size: 1rem;
+}
+
+.activeButton {
+  background-color: #bf9456;
+  color: white;
+}
+
+
 @media (max-width: 768px) {
   .header {
     padding: 1rem;
@@ -285,5 +309,8 @@
   } */
   .customNotification {
     width: 100%;
+    height: 90vh;
+    right: 0;
+    border-radius: 0;
   }
 }
