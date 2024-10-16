@@ -68,6 +68,7 @@ import { DragCards } from "@/components/DragCards";
 import { HoverImageLinks } from "@/components/HoverImageLinks";
 import AnimatedList from "@/components/AnimatedList";
 import { SmoothScrollHero } from "@/components/SmoothScrollHero";
+import { actCreateNotificationList } from "@/store/notification/action";
 const { Panel } = Collapse;
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -1085,7 +1086,6 @@ function SalonDetail(props) {
       });
   };
   const fetchAvailable = async (currentDate) => {
-    console.log("Inside fetchAvailable with dateAppointment:", currentDate);
     const postData = {
       day: currentDate,
       salonId: id,
@@ -1107,7 +1107,6 @@ function SalonDetail(props) {
         setTimeSlots([]); // Handle empty or null response data
       }
     } catch (error) {
-      console.error("Error posting data:", error);
       setTimeSlots([]); // Clear time slots in case of an error
     }
   };
@@ -1178,6 +1177,21 @@ function SalonDetail(props) {
     };
     initiateConnection();
   }, []);
+  const formatTimeSlot = (time) => {
+    if (typeof time !== "number" || isNaN(time)) {
+      // throw new Error("Input must be a valid number");
+      return;
+    }
+
+    const hour = Math.floor(time);
+    const minutes = Math.round((time - hour) * 60);
+
+    const paddedMinutes = minutes.toString().padStart(2, "0");
+    return `${hour}h${paddedMinutes}`;
+  };
+  console.log("uid", uid);
+  console.log("se", selectedDate);
+  console.log("de", formatTimeSlot(selectedTimeSlot));
 
   const handleConfirmBooking = async () => {
     if (additionalServices.length === 0) {
@@ -1215,21 +1229,40 @@ function SalonDetail(props) {
           // Listen for appointment creation events
           // await sendMessage(data.date,data.serviceHairIds);
           await AppointmentService.broadcastMessage(mappingData);
+          const date = new Date(selectedDate);
+
+          const options = { month: "long", day: "numeric" };
+          const formattedDate = date.toLocaleDateString("vi-VN", options);
+          const time = formatTimeSlot(selectedTimeSlot);
+          const mapDataNotifi = {
+            appointmentId: res?.data?.appointmentDetails,
+            title: "Đã có đơn đặt lịch mới",
+            message: `Khách hàng ${userName} đã đặt lịch ở cửa tiệm ${salonDetail?.name} vào lúc ${time} ngày ${formattedDate}`,
+            type: "newAppointment",
+          };
+          await dispatch(actCreateNotificationList(mapDataNotifi, id));
           setIsLoading(false);
           message.success("Tạo lịch cắt tóc thành công");
           setAdditionalServices([]);
           setVoucherSelected([]);
         })
         .catch((err) => {
-          message.error("Tạo lịch cắt tóc không thành công!!");
+          message.error(
+            err?.response?.data?.message || "Tạo lịch không thành công"
+          );
           setIsLoading(false);
         })
         .finally((err) => {
+          setIsLoading(false);
           stopConnection();
         });
     } catch (err) {
-      message.warning("Tạo lịch không thành công");
+      message.warning(
+        err?.response?.data?.message || "Tạo lịch không thành công"
+      );
       setIsLoading(false);
+      setAdditionalServices([]);
+      setVoucherSelected([]);
       console.error(err);
     }
   };
