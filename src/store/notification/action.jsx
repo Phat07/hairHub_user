@@ -48,9 +48,9 @@ export function actCreateNotificationList(data, id, page, size) {
   };
 }
 
-export function actUpdateNotificationList(dataUpdate, id, page, size) {
+export function actUpdateNotificationList(idNoti, id, page, size) {
   return async (dispatch) => {
-    const result = notificationService.updateNotification(dataUpdate);
+    const result = notificationService.updateNotification(idNoti);
     await result
       .then((response) => {
         if (response.status === 200 || response.status === 201) {

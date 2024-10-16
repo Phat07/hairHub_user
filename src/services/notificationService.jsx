@@ -12,7 +12,7 @@ export const notificationService = {
       },
     });
   },
-  updateNotification(id, data) {
-    return API.put(`/feedbacks/GetFeedBackByCustomerId/${id}`, data);
+  updateNotification(id) {
+    return API.put(`/notifications/ReadedNotification/${id}`);
   },
 };
