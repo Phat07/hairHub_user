@@ -197,6 +197,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  background-color: #f4f2eb;
 }
 .notificationHeader p{
   margin: 0;
@@ -214,10 +215,10 @@
 } */
 
 .notificationContent {
-  max-height: fit-content;
+  max-height: 100vh;
   overflow-y: auto;
   padding: 10px;
-
+  background-color: #f4f2eb;
   /* Ẩn thanh cuộn trên Webkit (Chrome, Safari) */
   ::-webkit-scrollbar {
     width: 0px; /* Đặt kích thước của scrollbar là 0 để ẩn */
@@ -230,11 +231,20 @@
 .notificationItem {
   padding: 10px;
   border-bottom: 1px solid #f0f0f0;
-  background-color: #cccccc;
   /* border-width: 5px;
   border-color: #bf9456; */
   border-radius: 0.5rem;
-  margin-block: 5px;
+}
+.unread {
+  margin-block: 10px;
+  background-color: #e0e0e0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  transition: box-shadow 0.3s ease;
+}
+
+/* Thông báo đã đọc */
+.read {
+  background-color: #f4f2eb;
 }
 
 /* .notificationItem:last-child {
@@ -253,7 +263,7 @@
 }
 
 .notificationItem:hover {
-  background-color: #b6b3b3;
+  background-color: #d8d8d8;
 }
 
 .notificationFilter {

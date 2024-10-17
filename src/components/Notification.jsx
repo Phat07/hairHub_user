@@ -26,9 +26,29 @@ const NotificationComponent = ({
   const idOwner = useSelector((state) => state.ACCOUNT.idOwner);
   const idEmployee = useSelector((state) => state.ACCOUNT.idEmployee);
   const uid = useSelector((state) => state.ACCOUNT.uid);
-  console.log("uid", uid);
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
+
+  const containerRef = useRef(null); // Ref để theo dõi container
+
+  const handleScroll = () => {
+    const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
+
+    // Kiểm tra nếu đã cuộn tới cuối danh sách
+    if (scrollTop + clientHeight >= scrollHeight) {
+      if (notificationList?.total > notificationList?.size) {
+        setSize((prevSize) => prevSize + 5); // Tăng kích thước mỗi lần thêm
+      }
+    }
+  };
+
+  useEffect(() => {
+    const container = containerRef.current;
+    container.addEventListener("scroll", handleScroll);
+
+    // Cleanup để tránh leak event listeners
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, [notificationList?.size, notificationList?.total]);
 
   useEffect(() => {
     let connection;
@@ -76,7 +96,7 @@ const NotificationComponent = ({
       dispatch(actGetNotificationList(uid, page, size));
     }
     // dispatch(actGetSalonEmployeeServiceById(employeeId))
-  }, [uid]);
+  }, [uid, page, size]);
 
   const notifications = [
     {
@@ -108,18 +128,19 @@ const NotificationComponent = ({
     },
   ];
   const [filter, setFilter] = useState("All");
-  const handleReaded = async (id, idAppointment) => {
-    if (id) {
+  const handleReaded = async (id, idAppointment, Isread) => {
+    if (!Isread && id) {
+      // Nếu chưa đọc và có ID, thực hiện cập nhật thông báo
       await dispatch(actUpdateNotificationList(id, uid, page, size));
+    }
 
-      // Điều hướng dựa trên sự tồn tại của các ID
-      if (idCustomer) {
-        navigate("/customer_appointment");
-      } else if (idEmployee) {
-        navigate("/employee_appointment");
-      } else if (idOwner) {
-        navigate("/salon_appointment");
-      }
+    // Điều hướng dựa trên role
+    if (idCustomer) {
+      navigate("/customer_appointment");
+    } else if (idEmployee) {
+      navigate("/employee_appointment");
+    } else if (idOwner) {
+      navigate("/salon_appointment");
     }
   };
 
@@ -148,7 +169,7 @@ const NotificationComponent = ({
           Chưa đọc
         </div>
       </div> */}
-      <div className={style.notificationContent}>
+      <div ref={containerRef} className={style.notificationContent}>
         {/* {notifications.map((notification, index) => (
           <div
             key={index}
@@ -161,23 +182,28 @@ const NotificationComponent = ({
             </p>
           </div>
         ))} */}
-        {notifications?.items?.length > 0 ? (
-          notifications?.items?.map((notificationObj, index) => {
+        {notificationList?.items?.length > 0 ? (
+          notificationList?.items?.map((notificationObj, index) => {
             const { notification, appointment } = notificationObj;
-
             // Nếu `idCustomer` tồn tại, thay đổi thông điệp
             const message =
               notification.type === "newAppointment" && idCustomer
-                ? `Bạn đã đặt lịch ở cửa tiệm của bạn vào lúc ${
-                    notification.message.split("lúc ")[1]
-                  }`
+                ? `Bạn đã đặt lịch ở ${notification.message.split("ở ")[1]}`
                 : notification.message;
 
             return (
               <div
                 key={index}
-                className={style.notificationItem}
-                onClick={() => handleReaded(notification.id, appointment.id)}
+                className={`${style.notificationItem} ${
+                  notification.isRead ? style.read : style.unread
+                }`}
+                onClick={() =>
+                  handleReaded(
+                    notificationObj.id,
+                    appointment.id,
+                    notification.isRead
+                  )
+                }
               >
                 <h4 className={style.notificationTitle}>
                   {notification.title}
