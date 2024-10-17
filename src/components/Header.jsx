@@ -43,6 +43,10 @@ function Header(props) {
   const showModalQr = () => {
     setIsModalVisibleQr(true);
   };
+  const notificationList = useSelector(
+    (state) => state.NOTIFICATION.notificationList
+  );
+
 
   // Hàm đóng modal
   const closeModal = () => {
@@ -433,11 +437,12 @@ function Header(props) {
           {account && (
             <div className={style.avatarContaint}>
               {isNotificationVisible ? (
-                <Badge count={5} onClick={toggleNotification}>
+                <Badge count={notificationList?.total} overflowCount={99} onClick={toggleNotification}>
                   <BellOutlined className={style.iconHeaderActive} />
                 </Badge>
               ) : (
-                <Badge count={5} onClick={toggleNotification}>
+                // </Badge>
+                <Badge count={notificationList?.total} overflowCount={99} onClick={toggleNotification}>
                   <BellOutlined className={style.iconHeader} />
                 </Badge>
               )}

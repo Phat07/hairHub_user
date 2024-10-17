@@ -2,6 +2,7 @@ import { GET_NOTIFICATION } from "./action";
 
 const initialState = {
   notificationList: [],
+  newNoti: false,
 };
 
 const reducer = (state = initialState, action) => {
@@ -10,6 +11,7 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         notificationList: action.payload,
+        newNoti: true,
       };
     default:
       return state;

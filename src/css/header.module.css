@@ -276,6 +276,27 @@
   color: white;
 }
 
+.loadMoreButton,
+.backButton {
+  background-color: #bf9456;
+  color: white;
+  border: none; /* Remove default border */
+  padding: 10px 20px; /* Adjust padding for a better look */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Change cursor on hover */
+  transition: background-color 0.3s ease, color 0.3s ease; /* Transition for background and color */
+}
+
+/* Hover effect */
+.loadMoreButton:hover,
+.backButton:hover {
+  background-color: #a67944; /* Darker shade for hover */
+  color: #f5f5f5; /* Lighter text color on hover */
+}
+.backButton {
+  margin-right: 10px; /* Space between buttons */
+}
+
 
 @media (max-width: 768px) {
   .header {
