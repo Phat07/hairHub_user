@@ -1,8 +1,8 @@
 import { API } from "./api";
 
 export const notificationService = {
-  createNotification(data) {
-    return API.post("/notifications/CreateNotification", data);
+  createNotification(data, id) {
+    return API.post(`/notifications/CreateNotification/${id}`, data);
   },
   getNotification(id, page, size) {
     return API.get(`/notifications/GetNotification/${id}`, {

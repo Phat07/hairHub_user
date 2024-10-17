@@ -1,19 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
-import "../css/flaticon.min.css";
 import {
-  AreaChartOutlined,
-  AuditOutlined,
   BellOutlined,
-  CalendarOutlined,
-  DownOutlined,
-  HomeOutlined,
   LogoutOutlined,
   QrcodeOutlined,
-  ShopOutlined,
-  UserOutlined,
-  WarningOutlined,
+  UserOutlined
 } from "@ant-design/icons";
-import { Avatar, Badge, Button, Dropdown, Menu, message, Modal } from "antd";
+import { Avatar, Badge, Dropdown, Menu, message } from "antd";
+import { useEffect, useRef, useState } from "react";
 import { IoMenu } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -24,11 +16,11 @@ import {
   useParams,
 } from "react-router-dom";
 import hairHubLogo from "../assets/images/hairhubFinalLogo.png";
+import "../css/flaticon.min.css";
 import style from "../css/header.module.css";
 import { actGetSalonInformationByOwnerIdByCheck } from "../store/salonInformation/action";
-import HeaderUnAuth from "./HeaderUnAuth";
-import QRScannerModal from "./QRScannerModal";
 import NotificationComponent from "./Notification";
+import QRScannerModal from "./QRScannerModal";
 
 function Header(props) {
   const { id } = useParams();
@@ -51,6 +43,10 @@ function Header(props) {
   const showModalQr = () => {
     setIsModalVisibleQr(true);
   };
+  const notificationList = useSelector(
+    (state) => state.NOTIFICATION.notificationList
+  );
+
 
   // Hàm đóng modal
   const closeModal = () => {
@@ -441,12 +437,12 @@ function Header(props) {
           {account && (
             <div className={style.avatarContaint}>
               {isNotificationVisible ? (
-                <Badge dot onClick={toggleNotification}>
+                <Badge count={notificationList?.total} overflowCount={99} onClick={toggleNotification}>
                   <BellOutlined className={style.iconHeaderActive} />
                 </Badge>
               ) : (
                 // </Badge>
-                <Badge dot onClick={toggleNotification}>
+                <Badge count={notificationList?.total} overflowCount={99} onClick={toggleNotification}>
                   <BellOutlined className={style.iconHeader} />
                 </Badge>
               )}

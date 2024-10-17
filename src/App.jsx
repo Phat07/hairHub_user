@@ -23,6 +23,7 @@ import FooterMobile from "./components/FooterMobile";
 import FooterMobileAuth from "./components/FooterMobileAuth";
 import FooterMobileUnAuth from "./components/FooterMobileUnAuth";
 import audioVer1 from "../public/audio/warm-tech-logo-21474.mp3";
+import { actGetNotificationList } from "./store/notification/action";
 const tele =window.Telegram.WebApp
 function App() {
   useDocumentTitle();
@@ -37,7 +38,12 @@ function App() {
   );
   // const token = useSelector((state) => state.ACCOUNT.token);
   const idOwner = useSelector((state) => state.ACCOUNT.idOwner);
-
+  const uid = useSelector((state) => state.ACCOUNT.uid);
+  useEffect(() => {
+    if (uid) {
+      dispatch(actGetNotificationList(uid));
+    }
+  }, [uid]);
   const isTokenExpired = (token) => {
     try {
       const decodedToken = jwtDecode(token);

@@ -28,9 +28,7 @@ const NotificationComponent = ({
   const uid = useSelector((state) => state.ACCOUNT.uid);
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
-
   const containerRef = useRef(null); // Ref để theo dõi container
-
   const handleScroll = () => {
     const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
 
@@ -50,27 +48,83 @@ const NotificationComponent = ({
     return () => container.removeEventListener("scroll", handleScroll);
   }, [notificationList?.size, notificationList?.total]);
 
+  // useEffect(() => {
+  //   let connection;
+  //   const setupSignalR = async () => {
+  //     try {
+  //       // Tạo kết nối SignalR
+  //       connection = new signalR.HubConnectionBuilder()
+  //         .withUrl("https://hairhub.gahonghac.net/book-appointment-hub")
+  //         .withAutomaticReconnect()
+  //         .build();
+
+  //       // Bắt đầu kết nối
+  //       await connection.start();
+  //       // Lắng nghe sự kiện "ReceiveMessage"
+  //       connection.on(
+  //         "ReceiveNotification",
+  //         async (
+  //           Title,
+  //           Message,
+  //           AccountIds,
+  //           appointmentId,
+  //           customerName,
+  //           date
+  //         ) => {
+  //           console.log("title", Title);
+  //           console.log("AccountIds", AccountIds);
+
+  //           if (AccountIds?.includes(uid) && uid) {
+  //             console.log("UID exists in AccountIds:", uid);
+  //             dispatch(actGetNotificationList(uid, page, size));
+  //           } else {
+  //             console.error("lỗi rồi");
+  //           }
+  //         }
+  //       );
+  //     } catch (error) {
+  //       console.error("Lỗi khi thiết lập SignalR:", error);
+  //     }
+  //   };
+
+  //   setupSignalR();
+
+  //   // Dọn dẹp kết nối khi component bị hủy
+  //   return () => {
+  //     if (connection) {
+  //       connection.stop().then(() => {
+  //         console.log("Kết nối SignalR đã được dừng.");
+  //       });
+  //     }
+  //   };
+  // }, [uid]);
   useEffect(() => {
     let connection;
     const setupSignalR = async () => {
       try {
-        // Tạo kết nối SignalR
         connection = new signalR.HubConnectionBuilder()
           .withUrl("https://hairhub.gahonghac.net/book-appointment-hub")
           .withAutomaticReconnect()
           .build();
 
-        // Bắt đầu kết nối
         await connection.start();
-        // Lắng nghe sự kiện "ReceiveMessage"
+
         connection.on(
           "ReceiveNotification",
-          async (Title, Message, list, apps, customer, CreatedDate) => {
-            console.log("list", list);
-            if (list.includes(uid)) {
+          async (
+            Title,
+            Message,
+            AccountIds,
+            appointmentId,
+            customerName,
+            date
+          ) => {
+            if (AccountIds?.includes(uid) && uid) {
+              console.log("UID exists in AccountIds:", uid);
+              // Dispatch chỉ nên được gọi nếu `uid` có giá trị và khác với lần trước đó
               dispatch(actGetNotificationList(uid, page, size));
             } else {
-              console.error("Không trùng khớp idOwner với ownerId");
+              console.error("lỗi rồi");
             }
           }
         );
@@ -79,9 +133,10 @@ const NotificationComponent = ({
       }
     };
 
-    setupSignalR();
+    if (uid) {
+      setupSignalR();
+    }
 
-    // Dọn dẹp kết nối khi component bị hủy
     return () => {
       if (connection) {
         connection.stop().then(() => {
@@ -89,7 +144,7 @@ const NotificationComponent = ({
         });
       }
     };
-  }, [uid]);
+  }, [uid]); // Kiểm tra xem chỉ khi uid thay đổi, useEffect mới chạy lại
 
   useEffect(() => {
     if (uid) {
@@ -98,35 +153,6 @@ const NotificationComponent = ({
     // dispatch(actGetSalonEmployeeServiceById(employeeId))
   }, [uid, page, size]);
 
-  const notifications = [
-    {
-      title: "Cập nhật hệ thống",
-      subTitle: "Hệ thống sẽ bảo trì vào 10h tối nay.",
-    },
-    { title: "Khuyến mãi", subTitle: "Giảm giá 50% cho đơn hàng tiếp theo." },
-    {
-      title: "Thông báo bảo mật",
-      subTitle: "Vui lòng cập nhật mật khẩu của bạn.",
-    },
-    {
-      title: "Cập nhật hệ thống",
-      subTitle: "Hệ thống sẽ bảo trì vào 10h tối nay.",
-    },
-    { title: "Khuyến mãi", subTitle: "Giảm giá 50% cho đơn hàng tiếp theo." },
-    {
-      title: "Thông báo bảo mật",
-      subTitle: "Vui lòng cập nhật mật khẩu của bạn.",
-    },
-    {
-      title: "Cập nhật hệ thống",
-      subTitle: "Hệ thống sẽ bảo trì vào 10h tối nay.",
-    },
-    { title: "Khuyến mãi", subTitle: "Giảm giá 50% cho đơn hàng tiếp theo." },
-    {
-      title: "Thông báo bảo mật",
-      subTitle: "Vui lòng cập nhật mật khẩu của bạn.",
-    },
-  ];
   const [filter, setFilter] = useState("All");
   const handleReaded = async (id, idAppointment, Isread) => {
     if (!Isread && id) {
@@ -170,18 +196,6 @@ const NotificationComponent = ({
         </div>
       </div> */}
       <div ref={containerRef} className={style.notificationContent}>
-        {/* {notifications.map((notification, index) => (
-          <div
-            key={index}
-            className={style.notificationItem}
-            onClick={() => handleReaded(notification?.id)}
-          >
-            <h4 className={style.notificationTitle}>{notification.title}</h4>
-            <p className={style.notificationSubTitle}>
-              {notification.subTitle}
-            </p>
-          </div>
-        ))} */}
         {notificationList?.items?.length > 0 ? (
           notificationList?.items?.map((notificationObj, index) => {
             const { notification, appointment } = notificationObj;

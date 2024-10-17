@@ -30,13 +30,13 @@ export function actGetNotificationList(id, page, size) {
   };
 }
 
-export function actCreateNotificationList(data, id, page, size) {
+export function actCreateNotificationList(data, id) {
   return async (dispatch) => {
-    const result = notificationService.createNotification(data);
+    const result = notificationService.createNotification(data, id);
     await result
       .then((response) => {
         if (response.status === 200 || response.status === 201) {
-          dispatch(actGetNotificationList(id, page, size));
+          // dispatch(actGetNotificationList(id));
         } else {
           message.error("Lỗi lấy dữ liệu!!!!");
         }
