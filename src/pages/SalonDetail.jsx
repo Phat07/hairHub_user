@@ -1,12 +1,15 @@
 import {
   CloseOutlined,
+  CreditCardOutlined,
   HeartOutlined,
   LeftOutlined,
   PhoneOutlined,
   RightOutlined,
   ShareAltOutlined,
+  ShopOutlined,
   StarFilled,
   StarOutlined,
+  WalletOutlined,
 } from "@ant-design/icons";
 import * as signalR from "@microsoft/signalr";
 import RandomIcon from "@rsuite/icons/Random";
@@ -26,6 +29,7 @@ import {
   Modal,
   Pagination,
   Progress,
+  Radio,
   Row,
   Select,
   Space,
@@ -248,6 +252,8 @@ function SalonDetail(props) {
   const [loadingBook, setLoadingBook] = useState(false);
   const [isLoadingService, setIsLoadingService] = useState(false);
   const [filterRating, setFilterRating] = useState(null);
+  const [paymentMethod, setPaymentMethod] = useState("cash");
+  const [loadingPay, setLoadingPay] = useState(false);
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
@@ -1337,6 +1343,60 @@ function SalonDetail(props) {
       .filter((service) => service.bookingDetail?.salonEmployeeId)
       .map((service) => service.bookingDetail.salonEmployeeId);
   };
+
+  const handlePayment = async () => {
+    try {
+      setLoadingPay(true);
+      if (paymentMethod === "vnpay") {
+        // Xử lý logic thanh toán VNPay
+        // Gọi API để tạo URL thanh toán VNPay
+        // const response = await createVNPayPaymentUrl({
+        //   amount: totalAmount,
+        //   orderInfo: `Thanh toan don hang ${orderId}`,
+        //   returnUrl: `${window.location.origin}/payment/callback`
+        // });
+        // window.location.href = response.data.paymentUrl;
+      } else {
+        // Xử lý thanh toán tiền mặt
+        message.success("Đặt lịch thành công! Vui lòng thanh toán tại salon.");
+      }
+    } catch (error) {
+      message.error("Có lỗi xảy ra. Vui lòng thử lại!");
+    } finally {
+      setLoadingPay(false);
+    }
+  };
+
+  const paymentOptions = [
+    {
+      value: "cash",
+      label: (
+        <Space>
+          <ShopOutlined style={{ fontSize: "24px", color: "#BF9456" }} />
+          <div>
+            <div style={{ fontWeight: "bold" }}>Thanh toán tại salon</div>
+            <div style={{ fontSize: "12px", color: "#666" }}>
+              Thanh toán sau khi hoàn thành dịch vụ
+            </div>
+          </div>
+        </Space>
+      ),
+    },
+    {
+      value: "vnpay",
+      label: (
+        <Space>
+          <CreditCardOutlined style={{ fontSize: "24px", color: "#BF9456" }} />
+          <div>
+            <div style={{ fontWeight: "bold" }}>Thanh toán VNPay</div>
+            <div style={{ fontSize: "12px", color: "#666" }}>
+              Thanh toán trước qua VNPay
+            </div>
+          </div>
+        </Space>
+      ),
+    },
+  ];
 
   return (
     <div style={{ marginTop: "75px" }}>
@@ -2747,6 +2807,63 @@ function SalonDetail(props) {
                       </Text>
                     </Col>
                   </Row>
+                  <Card
+                    title="Phương thức thanh toán"
+                    style={{ maxWidth: 500, margin: "0 auto" }}
+                    headStyle={{ textAlign: "center", fontSize: "18px" }}
+                  >
+                    <Radio.Group
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                      value={paymentMethod}
+                      style={{ width: "100%" }}
+                    >
+                      <Space direction="vertical" style={{ width: "100%" }}>
+                        {paymentOptions.map((option) => (
+                          <Radio.Button
+                            key={option.value}
+                            value={option.value}
+                            style={{
+                              height: "auto",
+                              padding: "12px",
+                              width: "100%",
+                              marginBottom: "12px",
+                              borderColor: paymentMethod === option.value ? "#BF9456" : undefined,
+                              color: paymentMethod === option.value ? "#BF9456" : undefined,
+                            }}
+                            
+                          >
+                            {option.label}
+                          </Radio.Button>
+                        ))}
+                      </Space>
+                    </Radio.Group>
+
+                    {/* <div style={{ marginTop: 24 }}>
+                      <Button
+                        className="bg-[#BF9456] hover:!bg-[#a27c47] text-white"
+                        type="primary"
+                        block
+                        size="large"
+                        loading={loadingPay}
+                        onClick={handlePayment}
+                      >
+                        Tiếp tục thanh toán
+                      </Button>
+                    </div> */}
+
+                    <div
+                      style={{
+                        marginTop: 16,
+                        textAlign: "center",
+                        color: "#666",
+                        fontSize: "14px",
+                      }}
+                    >
+                      {paymentMethod === "vnpay"
+                        ? "Bạn sẽ được chuyển đến cổng thanh toán VNPay"
+                        : "Vui lòng thanh toán tại salon sau khi hoàn thành dịch vụ"}
+                    </div>
+                  </Card>
                 </Modal>
               </div>
             </Col>
