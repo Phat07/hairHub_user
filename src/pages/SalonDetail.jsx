@@ -2807,7 +2807,7 @@ function SalonDetail(props) {
                       </Text>
                     </Col>
                   </Row>
-                  <Card
+                  {/* <Card
                     title="Phương thức thanh toán"
                     style={{ maxWidth: 500, margin: "0 auto" }}
                     headStyle={{ textAlign: "center", fontSize: "18px" }}
@@ -2837,20 +2837,6 @@ function SalonDetail(props) {
                         ))}
                       </Space>
                     </Radio.Group>
-
-                    {/* <div style={{ marginTop: 24 }}>
-                      <Button
-                        className="bg-[#BF9456] hover:!bg-[#a27c47] text-white"
-                        type="primary"
-                        block
-                        size="large"
-                        loading={loadingPay}
-                        onClick={handlePayment}
-                      >
-                        Tiếp tục thanh toán
-                      </Button>
-                    </div> */}
-
                     <div
                       style={{
                         marginTop: 16,
@@ -2863,7 +2849,7 @@ function SalonDetail(props) {
                         ? "Bạn sẽ được chuyển đến cổng thanh toán VNPay"
                         : "Vui lòng thanh toán tại salon sau khi hoàn thành dịch vụ"}
                     </div>
-                  </Card>
+                  </Card> */}
                 </Modal>
               </div>
             </Col>
