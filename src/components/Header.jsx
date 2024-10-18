@@ -147,7 +147,8 @@ function Header(props) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
+  // console.log("noti", notificationList);
+  
   return (
     <div>
       <header className={style.headerContainer}>
@@ -435,7 +436,7 @@ function Header(props) {
             </Dropdown>
           )} */}
           {account && (
-            <div className={style.avatarContaint}>
+            <div style={{cursor:"pointer"}} className={style.avatarContaint}>
               {isNotificationVisible ? (
                 <Badge count={notificationList?.total} overflowCount={99} onClick={toggleNotification}>
                   <BellOutlined className={style.iconHeaderActive} />
