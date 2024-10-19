@@ -4,6 +4,7 @@ import style from "../css/header.module.css";
 import {
   actUpdateNotificationList,
   actGetNotificationList,
+  actGetNotificationListUnread,
 } from "@/store/notification/action";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -123,6 +124,7 @@ const NotificationComponent = ({
               console.log("UID exists in AccountIds:", uid);
               // Dispatch chỉ nên được gọi nếu `uid` có giá trị và khác với lần trước đó
               dispatch(actGetNotificationList(uid, page, size));
+              dispatch(actGetNotificationListUnread(uid))
             } else {
               console.error("lỗi rồi");
             }
@@ -149,6 +151,7 @@ const NotificationComponent = ({
   useEffect(() => {
     if (uid) {
       dispatch(actGetNotificationList(uid, page, size));
+      dispatch(actGetNotificationListUnread(uid))
     }
     // dispatch(actGetSalonEmployeeServiceById(employeeId))
   }, [uid, page, size]);

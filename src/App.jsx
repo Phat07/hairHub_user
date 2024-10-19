@@ -30,7 +30,7 @@ function App() {
   useDocumentTitle();
   useEffect(()=>{
     tele.ready()
-  })
+  },[])
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const token = localStorage.getItem("accessToken");

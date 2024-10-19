@@ -117,7 +117,7 @@ console.log("config", config);
   
   return (
     <div className="payment-commission-container">
-      <Spin spinning={loading}>
+      <Spin className="custom-spin" spinning={loading}>
         <div className="invoice-container">
           <div className="back-button">
             <Link to="/dashboardTransaction">

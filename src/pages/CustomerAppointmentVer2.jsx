@@ -777,7 +777,7 @@ function CustomerAppointmentVer2(props) {
         className={styles.appointmentTable}
         columns={columns}
         dataSource={customerAppointments}
-        loading={loading}
+        loading={loading} 
         rowKey="id"
         pagination={false}
       />

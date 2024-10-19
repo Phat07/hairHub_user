@@ -360,11 +360,12 @@
 }
 
 .feedback-image {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 4px;
+  width: 60px !important;
+  height: 60px !important;
+  object-fit: cover !important;
+  border-radius: 4px !important;
 }
+
 .infoContainer{
   display: flex;
   flex-direction: row;
@@ -485,8 +486,8 @@ font-size: large;
   }
 
   .feedback-image {
-    width: 60px;
-    height: 60px;
+    width: 60px !important;
+    height: 60px !important;
   }
 
   /* Additional adjustments for smaller screens */

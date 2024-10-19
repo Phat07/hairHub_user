@@ -770,7 +770,7 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
               </Flex>
             }
           >
-            <Spin spinning={loading}>
+            <Spin className="custom-spin" spinning={loading}>
               {fileList.map((file) => (
                 <div
                   key={file.uid}

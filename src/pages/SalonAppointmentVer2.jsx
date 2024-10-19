@@ -46,6 +46,8 @@ function SalonAppointmentVer2(props) {
   const [loading, setLoading] = useState(false);
   const [dateFilter, setDateFilter] = useState(null);
   const [nameFilter, setNameFilter] = useState(null);
+  const searchParams = new URLSearchParams(location.search);
+  const appoinmentIdUrl = searchParams.get("appointmentId");
   const pageSize = 4;
 
   const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
@@ -63,6 +65,23 @@ function SalonAppointmentVer2(props) {
   useEffect(() => {
     dispatch(actGetSalonInformationByOwnerIdAsync(ownerId));
   }, [ownerId]);
+  useEffect(() => {
+    if (appoinmentIdUrl) {
+      setLoading(true);
+      AppointmentService.getAppointmentById(appoinmentIdUrl)
+        .then((res) => {
+          console.log("res", res);
+          setIsModalVisible(true)
+          setCurrentAppointment(res.data);
+        })
+        .catch((err) => {
+          setLoading(false);
+        })
+        .finally((err) => {
+          setLoading(false);
+        });
+    }
+  }, [appoinmentIdUrl]);
   useEffect(() => {
     // Khi mở modal, đặt lại showCancelButton và thiết lập setTimeout
     if (isModalVisible) {
@@ -242,7 +261,10 @@ function SalonAppointmentVer2(props) {
 
   const handleCancel = () => {
     setIsModalVisible(false);
-    console.log("isModalVisible", isModalVisible);
+    setCurrentAppointment(null)
+    const url = new URL(window.location);
+    url.searchParams.delete("appointmentId");
+    navigate(`${url.pathname}${url.search}`);
   };
 
   const navigate = useNavigate();

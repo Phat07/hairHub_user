@@ -525,7 +525,7 @@ function SystemBarberPage(props) {
               Tìm kiếm baber
             </Button>
           </motion.div>
-          <Spin spinning={loading}>
+          <Spin className="custom-spin" spinning={loading}>
             <List
               itemLayout="horizontal"
               dataSource={salonList}

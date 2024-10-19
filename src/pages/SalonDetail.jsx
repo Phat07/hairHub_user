@@ -185,7 +185,8 @@ function SalonDetail(props) {
   const userIdCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
   const userId = useSelector((state) => state.ACCOUNT.idOwner);
   const uid = useSelector((state) => state.ACCOUNT.uid);
-
+  const searchParams = new URLSearchParams(location.search);
+  const serviceId = searchParams.get("service");
   // const userAuth = useAuthUser();
   // const userId = userAuth?.idOwner;
   // const userIdCustomer = userAuth?.idCustomer;
@@ -214,7 +215,6 @@ function SalonDetail(props) {
   //Services hair
   const [oneServiceData, setOneServiceData] = useState({});
   const [dataBooking, setDataBooking] = useState([]); //serviceHairId, employeeId
-  const [selectedReports, setSelectedReports] = useState([]);
   const [showAllWork, setShowAllWork] = useState(false);
   const [isBookingModalVisible, setIsBookingModalVisible] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
@@ -222,12 +222,10 @@ function SalonDetail(props) {
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
 
   const [selectedStaff, setSelectedStaff] = useState({});
-  const [visibleModals, setVisibleModals] = useState({});
   const [currentService, setCurrentService] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [additionalServices, setAdditionalServices] = useState([]);
   const [timeSlots, setTimeSlots] = useState([]);
-  const [scrollIndex, setScrollIndex] = useState(0);
   const [scrollIndex1, setScrollIndex1] = useState(0);
   const [showServiceList, setShowServiceList] = useState(false);
   const [data, setData] = useState([]); // Initialize as an empty array
@@ -1499,7 +1497,7 @@ function SalonDetail(props) {
                     }
                     key="1"
                   >
-                    <Spin spinning={isLoadingService}>
+                    <Spin className="custom-spin" spinning={isLoadingService}>
                       <List
                         itemLayout="horizontal"
                         // dataSource={services}
@@ -1571,7 +1569,7 @@ function SalonDetail(props) {
                 </Collapse>
               </div>
               <div>
-                <Spin spinning={loading}>
+                <Spin className="custom-spin" spinning={loading}>
                   <Modal
                     wrapClassName="my-custom-modal"
                     title={
@@ -1598,7 +1596,7 @@ function SalonDetail(props) {
                   >
                     {showServiceList ? (
                       <>
-                        <Spin spinning={loading}>
+                        <Spin className="custom-spin" spinning={loading}>
                           <div>
                             <Title level={3}>Thêm những dịch vụ khác</Title>
                             <List
@@ -1765,7 +1763,10 @@ function SalonDetail(props) {
 
                         {selectedDate && (
                           <>
-                            <Spin spinning={loadingTime}>
+                            <Spin
+                              className="custom-spin"
+                              spinning={loadingTime}
+                            >
                               <div className={style["time-picker"]}>
                                 <Divider />
                                 {timeSlots?.availableTimes?.length > 0 ? (
@@ -2478,11 +2479,12 @@ function SalonDetail(props) {
                             </p>
                             <div className={style["feedback-images"]}>
                               {feedback.fileFeedbacks?.map((e, index) => (
-                                <img
+                                <Image
                                   key={index}
                                   src={e.img}
                                   alt={`Feedback Image ${index}`}
                                   className={style["feedback-image"]}
+                                  preview={true} // Enable image preview
                                 />
                               ))}
                             </div>
@@ -2572,7 +2574,7 @@ function SalonDetail(props) {
                 </div>
                 <div>
                   {/* <Title level={4}>Nhân viên</Title> */}
-                  <Spin spinning={loadingEmployee}>
+                  <Spin className="custom-spin" spinning={loadingEmployee}>
                     <AnimatedList items={employees} />
                     {/* <List
                       dataSource={employees}

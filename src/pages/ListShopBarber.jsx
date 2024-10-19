@@ -1682,7 +1682,7 @@ function ListShopBarber(props) {
                         />
                       </div>
                       <div className={styles["table-container"]}>
-                        <Spin spinning={loadingEmployee} tip="Loading...">
+                        <Spin className="custom-spin" spinning={loadingEmployee} tip="Loading...">
                           <Table
                             dataSource={listEmployee}
                             columns={columnsEmployee}
@@ -1767,7 +1767,7 @@ function ListShopBarber(props) {
                         />
                       </div>
                       <div className={styles["table-container"]}>
-                        <Spin spinning={loadingService} tip="Loading...">
+                        <Spin className="custom-spin" spinning={loadingService} tip="Loading...">
                           <Table
                             dataSource={listTotalService}
                             columns={columnsService}
@@ -1855,7 +1855,7 @@ function ListShopBarber(props) {
                         />
                       </div>
                       <div className={styles["table-container"]}>
-                        <Spin spinning={loadingVoucher} tip="Loading...">
+                        <Spin className="custom-spin" spinning={loadingVoucher} tip="Loading...">
                           <Table
                             dataSource={voucherList}
                             columns={columnsVoucher}

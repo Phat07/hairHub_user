@@ -591,7 +591,7 @@ function AccountPage() {
   };
   return (
     <div>
-      <Spin spinning={loading}>
+      <Spin className="custom-spin" spinning={loading}>
         <div className={styles.containerAccount}>
           <Flex justify="center">
             <Card className="bg-slate-100 w-full md:w-[80%] lg:w-[60%] p-5">

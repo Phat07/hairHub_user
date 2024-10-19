@@ -120,7 +120,7 @@ const AddServiceForm = ({ salonInformationId, status, isOpen }) => {
   };
 
   return (
-    <Spin spinning={loading}>
+    <Spin className="custom-spin" spinning={loading}>
       <Form form={form} onFinish={onFinish} layout="vertical">
         <Form.Item
           name="serviceName"

@@ -66,4 +66,7 @@
   body {
     @apply bg-background text-foreground;
   }
+  .custom-spin .ant-spin-dot i {
+    @apply bg-[#BF9456];
+  }
 }
