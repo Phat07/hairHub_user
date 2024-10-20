@@ -124,7 +124,7 @@ const NotificationComponent = ({
               console.log("UID exists in AccountIds:", uid);
               // Dispatch chỉ nên được gọi nếu `uid` có giá trị và khác với lần trước đó
               dispatch(actGetNotificationList(uid, page, size));
-              dispatch(actGetNotificationListUnread(uid))
+              dispatch(actGetNotificationListUnread(uid));
             } else {
               console.error("lỗi rồi");
             }
@@ -151,7 +151,7 @@ const NotificationComponent = ({
   useEffect(() => {
     if (uid) {
       dispatch(actGetNotificationList(uid, page, size));
-      dispatch(actGetNotificationListUnread(uid))
+      dispatch(actGetNotificationListUnread(uid));
     }
     // dispatch(actGetSalonEmployeeServiceById(employeeId))
   }, [uid, page, size]);
@@ -162,7 +162,7 @@ const NotificationComponent = ({
       // Nếu chưa đọc và có ID, thực hiện cập nhật thông báo
       await dispatch(actUpdateNotificationList(id, uid, page, size));
     }
-
+    toggleNotification();
     // Điều hướng dựa trên role
     if (idCustomer) {
       navigate(`/customer_appointment?appointmentId=${idAppointment}`);

@@ -177,7 +177,7 @@
   right: 2%; /* Đặt modal sát cạnh phải */
   width: 30%; /* Chiều rộng 1/5 chiều rộng màn hình */
   height: 85vh; /* Chiều cao toàn màn hình */
-  background-color: white; /* Màu nền */
+  background-color: #f4f2eb; /* Màu nền */
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2); /* Đổ bóng */
   z-index: 900; /* Đặt z-index cao hơn để hiển thị trên các thành phần khác */
   overflow-y: auto; /* Cho phép cuộn dọc */
@@ -186,6 +186,11 @@
   border-end-start-radius: 1rem;
   border-end-end-radius: 1rem;
   scrollbar-width: none;
+  ::-webkit-scrollbar {
+    width: 0px; /* Đặt kích thước của scrollbar là 0 để ẩn */
+    background: transparent; /* Nền trong suốt để không hiển thị */
+    display: none;
+  }
 }
 
 .customNotification.show {
