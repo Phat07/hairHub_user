@@ -704,7 +704,6 @@ function CustomerAppointmentVer2(props) {
     });
   };
 
-
   return (
     <div className={styles.appointmentContainer}>
       <div className={styles.statusfilter}>
@@ -927,7 +926,9 @@ function CustomerAppointmentVer2(props) {
             listType="picture-card"
             beforeUpload={() => false}
           >
-            <Button loading={loading} icon={<UploadOutlined />}>Tải ảnh lên</Button>
+            <Button loading={loading} icon={<UploadOutlined />}>
+              Tải ảnh lên
+            </Button>
           </Upload>
         </div>
 

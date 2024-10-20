@@ -186,6 +186,11 @@
   border-end-start-radius: 1rem;
   border-end-end-radius: 1rem;
   scrollbar-width: none;
+  ::-webkit-scrollbar {
+    width: 0px; /* Đặt kích thước của scrollbar là 0 để ẩn */
+    background: transparent; /* Nền trong suốt để không hiển thị */
+    display: none;
+  }
 }
 
 .customNotification.show {
