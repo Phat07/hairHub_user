@@ -200,14 +200,12 @@ function SalonDetail(props) {
   const indexOfLastFeedback = currentPage * pageSize;
   const indexOfFirstFeedback = indexOfLastFeedback - pageSize;
 
-  const [isReportModalVisible, setIsReportModalVisible] = useState(false);
   const currentDate = new Date();
 
   const [salonEmployeeList, setSalonEmployeeList] = useState([]);
 
   //Voucher
   const [displayVoucherList, setDisplayVoucherList] = useState(false);
-  const [voucherList, setVoucherList] = useState([]);
   const [voucherSelected, setVoucherSelected] = useState([]);
 
   //Appointment
@@ -252,6 +250,7 @@ function SalonDetail(props) {
   const [filterRating, setFilterRating] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [loadingPay, setLoadingPay] = useState(false);
+  const [hasProcessedParams, setHasProcessedParams] = useState(false);
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
@@ -266,8 +265,85 @@ function SalonDetail(props) {
   const salonImages = useSelector(
     (state) => state.SALONINFORMATION.getSalonByOwnerIdForImages
   );
-
+  
   const totalPagesFeedback = useSelector((state) => state.RATING.totalPages);
+  // useEffect(() => {
+  //   const searchParams = new URLSearchParams(location.search);
+  //   const serviceId = searchParams.get("service");
+
+  //   if (serviceId && data?.length > 0) {
+  //     // Find the service by serviceId in listService
+  //     const selectedService = data.find(
+  //       (service) => service.id === serviceId
+  //     );
+
+  //     if (selectedService) {
+  //       // Add the service to additionalServices
+  //       setAdditionalServices([selectedService]);
+  //       // Open the booking modal
+  //       setIsBookingModalVisible(true);
+  //     }
+  //   }
+  // }, [location.search, data]);
+  useEffect(() => {
+    const serviceId = searchParams.get('service');
+    
+    // Chỉ xử lý nếu có serviceId trong URL và chưa được xử lý
+    if (serviceId && !hasProcessedParams && data) {
+      // Tìm service từ id trong URL
+      const service = data.find(s => s.id.toString() === serviceId);
+      
+      if (service) {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth' // Có thể dùng 'auto' nếu bạn muốn scroll ngay lập tức
+        });
+        // Nếu chưa có selectedDate, set ngày hôm nay
+        if (!selectedDate) {
+          const currentDate = new Date();
+          setSelectedDate(currentDate);
+          
+          const formatDate = (date) => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, "0");
+            const day = String(date.getDate()).padStart(2, "0");
+            return `${year}-${month}-${day}`;
+          };
+  
+          const formattedDate = formatDate(currentDate);
+          
+          // Gọi API lấy time slots
+          const postData = {
+            day: formattedDate,
+            salonId: id,
+            serviceHairId: service.id,
+            salonEmployeeId: null,
+            isAnyOne: true,
+          };
+  
+          SalonInformationServices.getGetAvailableTime(postData)
+            .then(response => {
+              if (response.status === 200 || response.status === 201) {
+                setTimeSlots(response?.data);
+              }
+            })
+            .catch(() => {
+              setTimeSlots([]);
+            });
+        }
+        
+        // Set service vào additionalServices
+        setAdditionalServices([service]);
+        
+        // Mở modal
+        setIsBookingModalVisible(true);
+        
+        // Đánh dấu đã xử lý params
+        setHasProcessedParams(true);
+
+      }
+    }
+  }, [searchParams, data, hasProcessedParams]);
   useEffect(() => {
     if (id || currentPage) {
       setLoadingFeedback(true);
@@ -1193,9 +1269,7 @@ function SalonDetail(props) {
     const paddedMinutes = minutes.toString().padStart(2, "0");
     return `${hour}h${paddedMinutes}`;
   };
-  console.log("uid", uid);
-  console.log("se", selectedDate);
-  console.log("de", formatTimeSlot(selectedTimeSlot));
+
 
   const handleConfirmBooking = async () => {
     if (additionalServices.length === 0) {
@@ -1310,12 +1384,6 @@ function SalonDetail(props) {
       total += e?.price;
     });
     setTotalPriceVoucher(total);
-
-    // const totalPriceMapping = listVoucherNotPaging?.filter(
-    //   (e) => e?.minimumOrderAmount <= total
-    // );
-    // setListVoucher(totalPriceMapping);
-    // setVoucherList(total);
   };
   const handleFilterChange = (rating) => {
     setCurrentPage(1);
@@ -1459,6 +1527,7 @@ function SalonDetail(props) {
                     target="_blank"
                     rel="noopener noreferrer"
                     className={style["link-address"]}
+                    style={{textDecoration:"none"}}
                   >
                     Chỉ đường
                   </a>
