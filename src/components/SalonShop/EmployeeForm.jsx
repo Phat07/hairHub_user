@@ -408,7 +408,7 @@ const AddEmployeeForm = ({
   };
 
   return (
-    <Spin spinning={loading}>
+    <Spin className="custom-spin" spinning={loading}>
       <Form form={form} onFinish={onFinish} layout="vertical">
         <Row
           className={styles.rowContainer}

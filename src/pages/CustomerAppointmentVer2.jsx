@@ -28,12 +28,16 @@ import { DownOutlined, UploadOutlined } from "@ant-design/icons";
 import { actCreateFeedbackCustomer } from "../store/ratingCutomer/action";
 import { actCreateReportCustomer } from "../store/report/action";
 import { useNavigate } from "react-router-dom";
+import { AppointmentService } from "@/services/appointmentServices";
 
 const { Text } = Typography;
 const { Option } = Select;
 
 function CustomerAppointmentVer2(props) {
   const dispatch = useDispatch();
+  const searchParams = new URLSearchParams(location.search);
+  const appoinmentIdUrl = searchParams.get("appointmentId");
+
   const [status, setStatus] = useState("BOOKING");
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -74,6 +78,23 @@ function CustomerAppointmentVer2(props) {
   const totalPages = useSelector(
     (state) => state.CUSTOMERAPPOINTMENTS.totalPages
   );
+  useEffect(() => {
+    if (appoinmentIdUrl) {
+      setLoading(true);
+      AppointmentService.getAppointmentById(appoinmentIdUrl)
+        .then((res) => {
+          console.log("res", res);
+
+          setSelectedAppointmentDetail(res.data);
+        })
+        .catch((err) => {
+          setLoading(false);
+        })
+        .finally((err) => {
+          setLoading(false);
+        });
+    }
+  }, [appoinmentIdUrl]);
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -144,6 +165,9 @@ function CustomerAppointmentVer2(props) {
 
   const handleModalClose = () => {
     setSelectedAppointmentDetail(null);
+    const url = new URL(window.location);
+    url.searchParams.delete("appointmentId");
+    navigate(`${url.pathname}${url.search}`);
   };
 
   const handleOk = async () => {
@@ -753,7 +777,7 @@ function CustomerAppointmentVer2(props) {
         className={styles.appointmentTable}
         columns={columns}
         dataSource={customerAppointments}
-        loading={loading}
+        loading={loading} 
         rowKey="id"
         pagination={false}
       />

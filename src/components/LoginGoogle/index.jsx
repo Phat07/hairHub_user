@@ -148,7 +148,7 @@ function LoginGoogle(props) {
   };
 
   return (
-    <Spin spinning={loading}>
+    <Spin  spinning={loading} className="custom-spin">
       <motion.div
         variants={{
           hidden: { y: "-100vh", opacity: 0 },

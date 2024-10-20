@@ -1,12 +1,15 @@
 import {
   CloseOutlined,
+  CreditCardOutlined,
   HeartOutlined,
   LeftOutlined,
   PhoneOutlined,
   RightOutlined,
   ShareAltOutlined,
+  ShopOutlined,
   StarFilled,
   StarOutlined,
+  WalletOutlined,
 } from "@ant-design/icons";
 import * as signalR from "@microsoft/signalr";
 import RandomIcon from "@rsuite/icons/Random";
@@ -26,6 +29,7 @@ import {
   Modal,
   Pagination,
   Progress,
+  Radio,
   Row,
   Select,
   Space,
@@ -181,7 +185,8 @@ function SalonDetail(props) {
   const userIdCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
   const userId = useSelector((state) => state.ACCOUNT.idOwner);
   const uid = useSelector((state) => state.ACCOUNT.uid);
-
+  const searchParams = new URLSearchParams(location.search);
+  const serviceId = searchParams.get("service");
   // const userAuth = useAuthUser();
   // const userId = userAuth?.idOwner;
   // const userIdCustomer = userAuth?.idCustomer;
@@ -210,7 +215,6 @@ function SalonDetail(props) {
   //Services hair
   const [oneServiceData, setOneServiceData] = useState({});
   const [dataBooking, setDataBooking] = useState([]); //serviceHairId, employeeId
-  const [selectedReports, setSelectedReports] = useState([]);
   const [showAllWork, setShowAllWork] = useState(false);
   const [isBookingModalVisible, setIsBookingModalVisible] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
@@ -218,12 +222,10 @@ function SalonDetail(props) {
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
 
   const [selectedStaff, setSelectedStaff] = useState({});
-  const [visibleModals, setVisibleModals] = useState({});
   const [currentService, setCurrentService] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [additionalServices, setAdditionalServices] = useState([]);
   const [timeSlots, setTimeSlots] = useState([]);
-  const [scrollIndex, setScrollIndex] = useState(0);
   const [scrollIndex1, setScrollIndex1] = useState(0);
   const [showServiceList, setShowServiceList] = useState(false);
   const [data, setData] = useState([]); // Initialize as an empty array
@@ -248,6 +250,8 @@ function SalonDetail(props) {
   const [loadingBook, setLoadingBook] = useState(false);
   const [isLoadingService, setIsLoadingService] = useState(false);
   const [filterRating, setFilterRating] = useState(null);
+  const [paymentMethod, setPaymentMethod] = useState("cash");
+  const [loadingPay, setLoadingPay] = useState(false);
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
@@ -1338,6 +1342,60 @@ function SalonDetail(props) {
       .map((service) => service.bookingDetail.salonEmployeeId);
   };
 
+  const handlePayment = async () => {
+    try {
+      setLoadingPay(true);
+      if (paymentMethod === "vnpay") {
+        // Xử lý logic thanh toán VNPay
+        // Gọi API để tạo URL thanh toán VNPay
+        // const response = await createVNPayPaymentUrl({
+        //   amount: totalAmount,
+        //   orderInfo: `Thanh toan don hang ${orderId}`,
+        //   returnUrl: `${window.location.origin}/payment/callback`
+        // });
+        // window.location.href = response.data.paymentUrl;
+      } else {
+        // Xử lý thanh toán tiền mặt
+        message.success("Đặt lịch thành công! Vui lòng thanh toán tại salon.");
+      }
+    } catch (error) {
+      message.error("Có lỗi xảy ra. Vui lòng thử lại!");
+    } finally {
+      setLoadingPay(false);
+    }
+  };
+
+  const paymentOptions = [
+    {
+      value: "cash",
+      label: (
+        <Space>
+          <ShopOutlined style={{ fontSize: "24px", color: "#BF9456" }} />
+          <div>
+            <div style={{ fontWeight: "bold" }}>Thanh toán tại salon</div>
+            <div style={{ fontSize: "12px", color: "#666" }}>
+              Thanh toán sau khi hoàn thành dịch vụ
+            </div>
+          </div>
+        </Space>
+      ),
+    },
+    {
+      value: "vnpay",
+      label: (
+        <Space>
+          <CreditCardOutlined style={{ fontSize: "24px", color: "#BF9456" }} />
+          <div>
+            <div style={{ fontWeight: "bold" }}>Thanh toán VNPay</div>
+            <div style={{ fontSize: "12px", color: "#666" }}>
+              Thanh toán trước qua VNPay
+            </div>
+          </div>
+        </Space>
+      ),
+    },
+  ];
+
   return (
     <div style={{ marginTop: "75px" }}>
       <Layout>
@@ -1439,7 +1497,7 @@ function SalonDetail(props) {
                     }
                     key="1"
                   >
-                    <Spin spinning={isLoadingService}>
+                    <Spin className="custom-spin" spinning={isLoadingService}>
                       <List
                         itemLayout="horizontal"
                         // dataSource={services}
@@ -1511,7 +1569,7 @@ function SalonDetail(props) {
                 </Collapse>
               </div>
               <div>
-                <Spin spinning={loading}>
+                <Spin className="custom-spin" spinning={loading}>
                   <Modal
                     wrapClassName="my-custom-modal"
                     title={
@@ -1538,7 +1596,7 @@ function SalonDetail(props) {
                   >
                     {showServiceList ? (
                       <>
-                        <Spin spinning={loading}>
+                        <Spin className="custom-spin" spinning={loading}>
                           <div>
                             <Title level={3}>Thêm những dịch vụ khác</Title>
                             <List
@@ -1705,7 +1763,10 @@ function SalonDetail(props) {
 
                         {selectedDate && (
                           <>
-                            <Spin spinning={loadingTime}>
+                            <Spin
+                              className="custom-spin"
+                              spinning={loadingTime}
+                            >
                               <div className={style["time-picker"]}>
                                 <Divider />
                                 {timeSlots?.availableTimes?.length > 0 ? (
@@ -2418,11 +2479,12 @@ function SalonDetail(props) {
                             </p>
                             <div className={style["feedback-images"]}>
                               {feedback.fileFeedbacks?.map((e, index) => (
-                                <img
+                                <Image
                                   key={index}
                                   src={e.img}
                                   alt={`Feedback Image ${index}`}
                                   className={style["feedback-image"]}
+                                  preview={true} // Enable image preview
                                 />
                               ))}
                             </div>
@@ -2512,7 +2574,7 @@ function SalonDetail(props) {
                 </div>
                 <div>
                   {/* <Title level={4}>Nhân viên</Title> */}
-                  <Spin spinning={loadingEmployee}>
+                  <Spin className="custom-spin" spinning={loadingEmployee}>
                     <AnimatedList items={employees} />
                     {/* <List
                       dataSource={employees}
@@ -2747,6 +2809,49 @@ function SalonDetail(props) {
                       </Text>
                     </Col>
                   </Row>
+                  {/* <Card
+                    title="Phương thức thanh toán"
+                    style={{ maxWidth: 500, margin: "0 auto" }}
+                    headStyle={{ textAlign: "center", fontSize: "18px" }}
+                  >
+                    <Radio.Group
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                      value={paymentMethod}
+                      style={{ width: "100%" }}
+                    >
+                      <Space direction="vertical" style={{ width: "100%" }}>
+                        {paymentOptions.map((option) => (
+                          <Radio.Button
+                            key={option.value}
+                            value={option.value}
+                            style={{
+                              height: "auto",
+                              padding: "12px",
+                              width: "100%",
+                              marginBottom: "12px",
+                              borderColor: paymentMethod === option.value ? "#BF9456" : undefined,
+                              color: paymentMethod === option.value ? "#BF9456" : undefined,
+                            }}
+                            
+                          >
+                            {option.label}
+                          </Radio.Button>
+                        ))}
+                      </Space>
+                    </Radio.Group>
+                    <div
+                      style={{
+                        marginTop: 16,
+                        textAlign: "center",
+                        color: "#666",
+                        fontSize: "14px",
+                      }}
+                    >
+                      {paymentMethod === "vnpay"
+                        ? "Bạn sẽ được chuyển đến cổng thanh toán VNPay"
+                        : "Vui lòng thanh toán tại salon sau khi hoàn thành dịch vụ"}
+                    </div>
+                  </Card> */}
                 </Modal>
               </div>
             </Col>

@@ -83,6 +83,9 @@ export const AppointmentService = {
   createAppointment(formData) {
     return API.post("/appointments/CreateAppointment", formData);
   },
+  getAppointmentById(id){
+    return API.get(`/appointments/GetAppointmentById/${id}`)
+  },
   getAllAppointmentsByCustomerId(id, page, size) {
     return API.get(`/appointments/GetBookingAppointmentCustomer/${id}`, {
       params: {

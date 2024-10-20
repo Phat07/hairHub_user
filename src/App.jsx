@@ -25,11 +25,12 @@ import FooterMobileUnAuth from "./components/FooterMobileUnAuth";
 import audioVer1 from "../public/audio/warm-tech-logo-21474.mp3";
 import { actGetNotificationList } from "./store/notification/action";
 const tele =window.Telegram.WebApp
+
 function App() {
   useDocumentTitle();
   useEffect(()=>{
     tele.ready()
-  })
+  },[])
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const token = localStorage.getItem("accessToken");
@@ -88,7 +89,7 @@ function App() {
         }
       }
     } catch (error) {
-      message.error("Lỗi xác thực người dùng");
+      // message.error("Lỗi xác thực người dùng");
     }
   };
 

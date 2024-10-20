@@ -571,7 +571,7 @@ function SalonEmployee(props) {
                       </div>
                       {/* {listServiceEmployee.items.length > 0 && ( */}
                       <div className={styles["table-container"]}>
-                        <Spin spinning={loading}>
+                        <Spin className="custom-spin" spinning={loading}>
                           <Table
                             dataSource={listServiceEmployee.items}
                             columns={columnsService}

@@ -1,0 +1,32 @@
+{
+  "app": {
+    "title": "hairHub",
+    "headerTitle": "hairHub",
+    "headerColor": "#1843EF",
+    "textColor": "white",
+    "statusBarColor": "#1843EF",
+    "leftButton": "back",
+    "statusBar": "normal",
+    "actionBarHidden": false,
+    "hideAndroidBottomNavigationBar": false,
+    "hideIOSSafeAreaBottom": false
+  },
+  "debug": false,
+  "listCSS": [],
+  "listSyncJS": ["assets/index.DQSLAjSR.module.js"],
+  "listAsyncJS": [],
+  "pages": [
+    {
+      "path": "/",
+      "component": "HomePage" 
+    },
+    {
+      "path": "/login",
+      "component": "LoginPage" 
+    },
+    {
+      "path": "/list_salon_ver2",
+      "component": "ListSalonVer2" 
+    }
+  ]
+}

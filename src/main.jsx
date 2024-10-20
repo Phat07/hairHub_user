@@ -58,6 +58,9 @@ import ImageForSalon from "./pages/ImageForSalon.jsx";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import LoginGoogle from "./components/LoginGoogle/index.jsx";
 
+const version = import.meta.env.VITE_APP_VERSION || 'default';
+const basePath = `/${version}/`; // Adjust the base path as needed
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -391,7 +394,7 @@ const customTheme = {
 };
 
 
-ReactDOM.createRoot(document.getElementById("root")).render(
+ReactDOM.createRoot(document.getElementById("app")).render(
   <React.StrictMode>
     <Provider store={store}>
     <GoogleOAuthProvider clientId="160573115812-l88je63eolr52ichb690e7i8g3f59r9t.apps.googleusercontent.com">

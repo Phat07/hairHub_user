@@ -49,7 +49,10 @@ const Button = ({ children, className, ...props }) => (
     whileHover={{ scale: 0.9, color: "black" }}
     whileTap={{ scale: 0.9 }}
     transition={{ duration: 0.3 }}
-    className={`${styles[className] || ""} ${className}`}
+    // className={`${styles[className] || ""} ${className}`}
+    className={`${
+      styles[className] || ""
+    } ${className} h-10 px-4 text-center whitespace-nowrap`}
     {...props} // Spread props để truyền tất cả các thuộc tính khác
   >
     {children}
@@ -654,7 +657,7 @@ function ListSalonVer2(props) {
                 whileTap={{ scale: 0.95 }} // Giảm nhẹ kích thước khi nhấn
                 transition={{ duration: 0.3 }} // Thời gian chuyển đổi
               >
-                <Spin spinning={loading} size="small">
+                <Spin spinning={loading} size="small" className="custom-spin">
                   <Input
                     className={styles["ant-input"]}
                     placeholder="Tìm kiếm dịch vụ"
@@ -681,7 +684,7 @@ function ListSalonVer2(props) {
                 whileTap={{ scale: 0.95 }} // Giảm nhẹ kích thước khi nhấn
                 transition={{ duration: 0.3 }} // Thời gian chuyển đổi
               >
-                <Spin spinning={loading} size="small">
+                <Spin className="custom-spin" spinning={loading} size="small">
                   <Input
                     className={styles["ant-input"]}
                     // allowClear
@@ -776,7 +779,7 @@ function ListSalonVer2(props) {
         {/* <Meteors number={30} /> */}
         <div className={styles["left-side"]}>
           <div className={styles["custom_spin"]}>
-            <Spin spinning={loading}>
+            <Spin className="custom-spin" spinning={loading}>
               <div className={styles["list-salon-center"]}>
                 <div>
                   <p className={styles["list-salon-result"]}>
@@ -1165,7 +1168,9 @@ function ListSalonVer2(props) {
                                   </div>
                                   <Button
                                     onClick={() =>
-                                      navigate(`/salon_detail/${salon?.id}`)
+                                      navigate(
+                                        `/salon_detail/${salon?.id}?service=${service.id}`
+                                      )
                                     }
                                     className={styles["book-button"]}
                                   >

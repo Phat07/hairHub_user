@@ -15,4 +15,7 @@ export const notificationService = {
   updateNotification(id) {
     return API.put(`/notifications/ReadedNotification/${id}`);
   },
+  getNotificationUnreadNumber(id){
+    return API.get(`/notifications/CountNumberUnreadNotification/${id}`);
+  }
 };

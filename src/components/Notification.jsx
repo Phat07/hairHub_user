@@ -4,6 +4,7 @@ import style from "../css/header.module.css";
 import {
   actUpdateNotificationList,
   actGetNotificationList,
+  actGetNotificationListUnread,
 } from "@/store/notification/action";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -123,6 +124,7 @@ const NotificationComponent = ({
               console.log("UID exists in AccountIds:", uid);
               // Dispatch chỉ nên được gọi nếu `uid` có giá trị và khác với lần trước đó
               dispatch(actGetNotificationList(uid, page, size));
+              dispatch(actGetNotificationListUnread(uid))
             } else {
               console.error("lỗi rồi");
             }
@@ -149,6 +151,7 @@ const NotificationComponent = ({
   useEffect(() => {
     if (uid) {
       dispatch(actGetNotificationList(uid, page, size));
+      dispatch(actGetNotificationListUnread(uid))
     }
     // dispatch(actGetSalonEmployeeServiceById(employeeId))
   }, [uid, page, size]);
@@ -162,11 +165,11 @@ const NotificationComponent = ({
 
     // Điều hướng dựa trên role
     if (idCustomer) {
-      navigate("/customer_appointment");
+      navigate(`/customer_appointment?appointmentId=${idAppointment}`);
     } else if (idEmployee) {
-      navigate("/employee_appointment");
+      navigate(`/employee_appointment?appointmentId=${idAppointment}`);
     } else if (idOwner) {
-      navigate("/salon_appointment");
+      navigate(`/salon_appointment?appointmentId=${idAppointment}`);
     }
   };
 
@@ -207,6 +210,7 @@ const NotificationComponent = ({
 
             return (
               <div
+                style={{ cursor: "pointer" }}
                 key={index}
                 className={`${style.notificationItem} ${
                   notification.isRead ? style.read : style.unread

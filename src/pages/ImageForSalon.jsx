@@ -157,7 +157,7 @@ function ImageForSalon(props) {
             {uploading ? "Đang tải..." : "Tải hình ảnh lên"}
           </Button>
         </div>
-        <Spin spinning={loading}>
+        <Spin className="custom-spin" spinning={loading}>
           <div className="w-full md:w-8/12 h-auto md:h-4/5 bg-[#ece8de] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4 rounded-lg shadow-lg mx-auto">
             {salonImages.items?.length > 0 ? (
               salonImages.items?.map((image, index) => (

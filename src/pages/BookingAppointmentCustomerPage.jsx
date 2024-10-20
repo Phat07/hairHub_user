@@ -483,7 +483,7 @@ function BookingAppointmentCustomerPage() {
           </Button>
         ))}
       </div>
-      <Spin spinning={loading}>
+      <Spin className="custom-spin" spinning={loading}>
         {listData?.length > 0 ? (
           <div className="cards-container">
             {listData.map((appointment) => {
