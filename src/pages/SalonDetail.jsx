@@ -73,6 +73,7 @@ import { HoverImageLinks } from "@/components/HoverImageLinks";
 import AnimatedList from "@/components/AnimatedList";
 import { SmoothScrollHero } from "@/components/SmoothScrollHero";
 import { actCreateNotificationList } from "@/store/notification/action";
+import EmployeeModal from "@/components/DetailPage/EmployeeModal";
 const { Panel } = Collapse;
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -120,6 +121,68 @@ function renderStars(stars) {
 
   // Thêm các sao đầy đủ
   for (let i = 0; i < filledStars; i++) {
+    starIcons.push(
+      <StarFilled key={i} style={{ color: "#FFD700", fontSize: "2rem" }} />
+    );
+  }
+
+  // Thêm sao một phần nếu có phần thập phân
+  if (fraction > 0) {
+    starIcons.push(
+      <span
+        key={`partial-${filledStars}`}
+        style={{
+          position: "relative",
+          display: "inline-block",
+          width: "2rem",
+          height: "2rem",
+          verticalAlign: "middle", // Giữ các sao cùng dòng
+        }}
+      >
+        <StarFilled
+          style={{
+            position: "absolute",
+            color: "#888", // Màu sao trống
+            fontSize: "2rem",
+            left: 0,
+            top: 0,
+          }}
+        />
+        <StarFilled
+          style={{
+            position: "absolute",
+            color: "#FFD700",
+            fontSize: "2rem",
+            clipPath: `inset(0 ${100 - fraction * 100}% 0 0)`, // Phần sao được tô vàng
+            left: 0,
+            top: 0,
+          }}
+        />
+      </span>
+    );
+  }
+
+  // Đảm bảo các sao luôn thẳng hàng bằng Flexbox
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center", // Căn giữa dọc
+        justifyContent: "center",
+      }}
+    >
+      {starIcons}
+    </div>
+  );
+}
+
+function renderStars2(stars) {
+  const filledStars = Math.floor(stars); // Số sao đầy đủ
+  const fraction = stars % 1; // Phần thập phân của số sao
+  const starIcons = [];
+
+  // Thêm các sao đầy đủ
+  for (let i = 0; i < filledStars; i++) {
     starIcons.push(<StarFilled key={i} style={{ color: "#FFD700" }} />);
   }
 
@@ -143,7 +206,7 @@ function renderStars(stars) {
             color: "#888", // màu sao trống
             zIndex: 1, // lớp dưới cùng
             left: 0,
-            top: 0,
+            top: 6,
           }}
         />
         <StarFilled
@@ -153,7 +216,7 @@ function renderStars(stars) {
             clipPath: `inset(0 ${100 - fraction * 100}% 0 0)`, // phần sao được tô vàng
             zIndex: 2, // lớp trên cùng
             left: 0,
-            top: 0,
+            top: 6,
           }}
         />
       </span>
@@ -252,6 +315,8 @@ function SalonDetail(props) {
   const [filterRating, setFilterRating] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [loadingPay, setLoadingPay] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
@@ -490,6 +555,16 @@ function SalonDetail(props) {
       // Hiển thị phần "Add Another Service"
       setIsBookingModalVisible(true);
     }
+  };
+
+  const handleEmployeeClick = (employee) => {
+    setSelectedEmployee(employee);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedEmployee(null);
   };
 
   //Set selected voucher
@@ -1525,14 +1600,7 @@ function SalonDetail(props) {
                                 avatar={
                                   <Avatar
                                     shape="square"
-                                    size={{
-                                      xs: 24,
-                                      sm: 32,
-                                      md: 40,
-                                      lg: 64,
-                                      xl: 50,
-                                      xxl: 50,
-                                    }}
+                                    size={50}
                                     src={service?.img}
                                   />
                                 }
@@ -1563,6 +1631,105 @@ function SalonDetail(props) {
                           pageSizeOptions: ["5", "10", "20"],
                           className: "paginationAppointment",
                         }}
+                      />
+                    </Spin>
+                  </Panel>
+                </Collapse>
+              </div>
+              <div>
+                <Collapse
+                  bordered={false}
+                  defaultActiveKey={["1"]}
+                  expandIconPosition="end"
+                  className="custom-collapse"
+                  style={{
+                    backgroundColor: "transparent",
+                  }}
+                >
+                  <Panel
+                    header={
+                      <span
+                        style={{
+                          fontSize: "1.4rem",
+                          fontWeight: "bold",
+                          textAlign: "center",
+                        }}
+                      >
+                        NHÂN{" "}
+                        <span
+                          style={{
+                            display: "inline-block",
+                            color: "#BF9456",
+                          }}
+                        >
+                          VIÊN
+                        </span>
+                      </span>
+                    }
+                    key="1"
+                  >
+                    <Spin className="custom-spin" spinning={loadingEmployee}>
+                      <List
+                        itemLayout="horizontal"
+                        // dataSource={services}
+                        dataSource={employees}
+                        renderItem={(employee) => (
+                          <motion.div
+                            variants={listItemVariants}
+                            initial="hidden"
+                            animate="visible"
+                            whileHover="hover"
+                          >
+                            <List.Item
+                              actions={[
+                                <Button
+                                  type="primary"
+                                  key="book"
+                                  onClick={() => handleEmployeeClick(employee)}
+                                  style={{ backgroundColor: "#bf9456" }}
+                                >
+                                  Chi tiết
+                                </Button>,
+                              ]}
+                            >
+                              <List.Item.Meta
+                                avatar={
+                                  <Avatar
+                                    shape="square"
+                                    size={50}
+                                    src={employee?.img}
+                                  />
+                                }
+                                title={
+                                  <span
+                                    style={{
+                                      fontSize: "1.1rem",
+                                      cursor: "pointer",
+                                    }}
+                                  >
+                                    {employee?.fullName}
+                                  </span>
+                                }
+                                description={employee?.gender}
+                              />
+                            </List.Item>
+                          </motion.div>
+                        )}
+                        // style={{ backgroundColor: "transparent" }}
+                        // pagination={{
+                        //   pageSize: 3,
+                        //   // showSizeChanger: true,
+                        //   pageSizeOptions: ["5", "10", "20"],
+                        //   className: "paginationAppointment",
+                        // }}
+                      />
+                      <Pagination
+                        style={{ textAlign: "center" }}
+                        current={page}
+                        pageSize={pageSizeEmployee}
+                        total={total}
+                        onChange={handlePageChangeEmployees}
+                        className="paginationAppointment"
                       />
                     </Spin>
                   </Panel>
@@ -2472,7 +2639,7 @@ function SalonDetail(props) {
                               </div>
                             </div>
                             <div className={style.ratingFeedback}>
-                              {renderStars(feedback?.rating)}
+                              {renderStars2(feedback?.rating)}
                             </div>
                             <p className={style.commentFeedback}>
                               {feedback.comment}
@@ -2537,7 +2704,7 @@ function SalonDetail(props) {
               <div
                 style={{
                   padding: "10px",
-                  background: "#E9E6D9",
+                  background: "#f4f2eb",
                   // borderLeft: "3px solid black",
                   // borderRight: "3px solid black",
                   // borderBottom: "3px solid black",
@@ -2572,25 +2739,9 @@ function SalonDetail(props) {
                   <Text>{salonDetail.description}</Text>
                   <Divider />
                 </div>
-                <div>
-                  {/* <Title level={4}>Nhân viên</Title> */}
+                {/* <div>
                   <Spin className="custom-spin" spinning={loadingEmployee}>
                     <AnimatedList items={employees} />
-                    {/* <List
-                      dataSource={employees}
-                      renderItem={(employee) => (
-                        <List.Item key={employee.id}>
-                          <List.Item.Meta
-                            avatar={<Avatar src={employee?.img} />}
-                            title={<Text>{employee?.fullName}</Text>}
-                          />
-                        </List.Item>
-                      )}
-                    /> */}
-                    {/* <DragCards data={employees} /> */}
-                    {/* <HoverImageLinks
-                      employees={employees}
-                    /> */}
                   </Spin>
 
                   <Pagination
@@ -2602,7 +2753,7 @@ function SalonDetail(props) {
                     className="paginationAppointment"
                   />
                   <Divider />
-                </div>
+                </div> */}
 
                 <div>
                   <Title level={4}>Liên hệ</Title>
@@ -2855,6 +3006,12 @@ function SalonDetail(props) {
                 </Modal>
               </div>
             </Col>
+            <EmployeeModal
+              isOpen={isModalOpen}
+              onClose={closeModal}
+              employee={selectedEmployee}
+              booking={handleBookClick}
+            />
           </Row>
         </Content>
       </Layout>
