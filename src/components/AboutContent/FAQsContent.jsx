@@ -58,7 +58,7 @@ function FAQsContent() {
           <p>
             Truy cập trang web và sử dụng tính năng chat trực tuyến để nhận hỗ
             trợ ngay lập tức.
-            <a href="https://hairhub.id.vn/">hairhub.id.vn</a>
+            <a href="https://hairhub.com.vn/">hairhub.id.vn</a>
           </p>
         </p>
         <p>

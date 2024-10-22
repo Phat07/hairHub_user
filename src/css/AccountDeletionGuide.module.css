@@ -1,0 +1,66 @@
+/* AccountDeletionGuide.module.css */
+.guideContainer {
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 2rem;
+    background-color: #f4f2eb;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .header {
+    color: #333333;
+    margin-bottom: 1rem;
+    border-width: 0;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 15px;
+    font-size: 2em;
+    color: #bf9456;
+  }
+  .Subheader{
+    color: #333333;
+    margin-bottom: 1rem;
+    border-width: 0;
+    font-weight: bold;
+    margin-bottom: 15px;
+    font-size: 1em;
+    color: #bf9456;
+  }
+  
+  .paragraph {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .list {
+    margin-left: 1.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+  }
+  
+  .listItem {
+    margin-bottom: 0.5rem;
+  }
+  
+  .buttonContainer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+  }
+  
+  button {
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+  }
+  .highlight {
+    color: #bf9456; /* Màu sắc bạn muốn */
+    font-weight: bold; /* Bạn có thể thêm đậm nếu muốn */
+  }
+  
+  @media (max-width: 768px) {
+    .guideContainer {
+        margin: 0;
+        padding-inline: 10px;
+      }
+  }

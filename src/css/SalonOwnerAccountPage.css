@@ -54,7 +54,7 @@
   align-items: center;
   min-height: 100vh;
   padding: 0 20px;
-  margin: 12rem 0;
+  margin-top: 6rem;
 }
 
 .salon-layout {
@@ -133,5 +133,8 @@
   .salon-right {
     flex: 1;
     width: 100%;
+  }
+  .salon-owner-account {
+    margin-top: 3rem;
   }
 }
