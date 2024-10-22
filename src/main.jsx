@@ -255,7 +255,7 @@ const router = createBrowserRouter([
       {
         path: "successPayment",
         element: (
-          <RequireAuth fallbackPath="/login">
+          <RequireAuth requiredRoles={["SalonOwner", "Customer"]} fallbackPath="/login">
             <SucessPayment />
           </RequireAuth>
         ),
@@ -263,7 +263,7 @@ const router = createBrowserRouter([
       {
         path: "failPayment",
         element: (
-          <RequireAuth fallbackPath="/login">
+          <RequireAuth requiredRoles={["SalonOwner", "Customer"]} fallbackPath="/login">
             <FailPayment />
           </RequireAuth>
         ),
@@ -271,7 +271,7 @@ const router = createBrowserRouter([
       {
         path: "listPackage",
         element: (
-          <RequireAuth fallbackPath="/login">
+          <RequireAuth requiredRoles={["SalonOwner", "Customer"]} fallbackPath="/login">
             <PackagePage />
           </RequireAuth>
         ),
@@ -279,7 +279,7 @@ const router = createBrowserRouter([
       {
         path: "listPayment",
         element: (
-          <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
+          <RequireAuth requiredRoles={["SalonOwner", "Customer"]} fallbackPath="/login">
             <PackageSuccessPage />
           </RequireAuth>
         ),

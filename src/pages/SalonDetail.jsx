@@ -3029,49 +3029,49 @@ function SalonDetail(props) {
                       </Text>
                     </Col>
                   </Row>
-                  {/* <Card
-                    title="Phương thức thanh toán"
-                    style={{ maxWidth: 500, margin: "0 auto" }}
-                    headStyle={{ textAlign: "center", fontSize: "18px" }}
-                  >
-                    <Radio.Group
-                      onChange={(e) => setPaymentMethod(e.target.value)}
-                      value={paymentMethod}
-                      style={{ width: "100%" }}
+                    {/* <Card
+                      title="Phương thức thanh toán"
+                      style={{ maxWidth: 500, margin: "0 auto" }}
+                      headStyle={{ textAlign: "center", fontSize: "18px" }}
                     >
-                      <Space direction="vertical" style={{ width: "100%" }}>
-                        {paymentOptions.map((option) => (
-                          <Radio.Button
-                            key={option.value}
-                            value={option.value}
-                            style={{
-                              height: "auto",
-                              padding: "12px",
-                              width: "100%",
-                              marginBottom: "12px",
-                              borderColor: paymentMethod === option.value ? "#BF9456" : undefined,
-                              color: paymentMethod === option.value ? "#BF9456" : undefined,
-                            }}
-                            
-                          >
-                            {option.label}
-                          </Radio.Button>
-                        ))}
-                      </Space>
-                    </Radio.Group>
-                    <div
-                      style={{
-                        marginTop: 16,
-                        textAlign: "center",
-                        color: "#666",
-                        fontSize: "14px",
-                      }}
-                    >
-                      {paymentMethod === "vnpay"
-                        ? "Bạn sẽ được chuyển đến cổng thanh toán VNPay"
-                        : "Vui lòng thanh toán tại salon sau khi hoàn thành dịch vụ"}
-                    </div>
-                  </Card> */}
+                      <Radio.Group
+                        onChange={(e) => setPaymentMethod(e.target.value)}
+                        value={paymentMethod}
+                        style={{ width: "100%" }}
+                      >
+                        <Space direction="vertical" style={{ width: "100%" }}>
+                          {paymentOptions.map((option) => (
+                            <Radio.Button
+                              key={option.value}
+                              value={option.value}
+                              style={{
+                                height: "auto",
+                                padding: "12px",
+                                width: "100%",
+                                marginBottom: "12px",
+                                borderColor: paymentMethod === option.value ? "#BF9456" : undefined,
+                                color: paymentMethod === option.value ? "#BF9456" : undefined,
+                              }}
+                              
+                            >
+                              {option.label}
+                            </Radio.Button>
+                          ))}
+                        </Space>
+                      </Radio.Group>
+                      <div
+                        style={{
+                          marginTop: 16,
+                          textAlign: "center",
+                          color: "#666",
+                          fontSize: "14px",
+                        }}
+                      >
+                        {paymentMethod === "vnpay"
+                          ? "Bạn sẽ được chuyển đến cổng thanh toán VNPay"
+                          : "Vui lòng thanh toán tại salon sau khi hoàn thành dịch vụ"}
+                      </div>
+                    </Card> */}
                 </Modal>
               </div>
             </Col>

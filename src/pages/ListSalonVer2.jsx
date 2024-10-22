@@ -247,6 +247,7 @@ function ListSalonVer2(props) {
 
     if (province) {
       setCurrentLocation({ lat: province.lat, lng: province.lng });
+      setIsSalonNear(false)
     } else {
       setCurrentLocation(defaultCenter);
     }
@@ -1099,10 +1100,14 @@ function ListSalonVer2(props) {
           </div>
           <div className={styles["showMap"]}>
             <LoadScriptMap
+            loading={loading}
+            serviceName={servicesName}
+              salonName={salonName}
               isSalonNear={isSalonNear}
               salonList={salonList}
               mapStyle={mapStyle}
               currentLocation={currentLocation}
+              handleSearch={fetchSalonDataNear}
             />
           </div>
         </div>
