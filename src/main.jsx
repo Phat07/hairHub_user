@@ -57,8 +57,9 @@ import SalonEmployee from "./pages/SalonEmployee.jsx";
 import ImageForSalon from "./pages/ImageForSalon.jsx";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import LoginGoogle from "./components/LoginGoogle/index.jsx";
+import AccountDeletionGuide from "./pages/AccountDeletionGuide.jsx";
 
-const version = import.meta.env.VITE_APP_VERSION || 'default';
+const version = import.meta.env.VITE_APP_VERSION || "default";
 const basePath = `/${version}/`; // Adjust the base path as needed
 
 const router = createBrowserRouter([
@@ -187,7 +188,7 @@ const router = createBrowserRouter([
       {
         path: "customer_report",
         element: (
-          <RequireAuth fallbackPath="/login">
+          <RequireAuth requiredRoles={["Customer"]} fallbackPath="/login">
             <CustomerReport />
           </RequireAuth>
         ),
@@ -352,6 +353,11 @@ const router = createBrowserRouter([
         element: <AboutPage />,
         errorElement: <ErrorPage />,
       },
+      {
+        path: `deleteAcountGuide`,
+        element: <AccountDeletionGuide />,
+        errorElement: <ErrorPage />,
+      },
     ],
   },
   {
@@ -393,16 +399,15 @@ const customTheme = {
   },
 };
 
-
 ReactDOM.createRoot(document.getElementById("app")).render(
   <React.StrictMode>
     <Provider store={store}>
-    <GoogleOAuthProvider clientId="160573115812-l88je63eolr52ichb690e7i8g3f59r9t.apps.googleusercontent.com">
-      <ConfigProvider locale={viVn} theme={customTheme}>
-        <App>
-          <RouterProvider router={router}>{/* <App /> */}</RouterProvider>
-        </App>
-      </ConfigProvider>
+      <GoogleOAuthProvider clientId="160573115812-l88je63eolr52ichb690e7i8g3f59r9t.apps.googleusercontent.com">
+        <ConfigProvider locale={viVn} theme={customTheme}>
+          <App>
+            <RouterProvider router={router}>{/* <App /> */}</RouterProvider>
+          </App>
+        </ConfigProvider>
       </GoogleOAuthProvider>
     </Provider>
   </React.StrictMode>

@@ -15,12 +15,8 @@ function CustomerReport(props) {
   const [selectedReport, setSelectedReport] = useState(null);
 
   // const auth = useAuthUser();
-  const idCustomer = useSelector(
-    (state) => state.ACCOUNT.idCustomer
-  );
-  const idOwner = useSelector(
-    (state) => state.ACCOUNT.idOwner
-  );
+  const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
+  const idOwner = useSelector((state) => state.ACCOUNT.idOwner);
 
   const customerReport = useSelector(
     (state) => state.REPORTREDUCER.getReportCustomer

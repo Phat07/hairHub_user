@@ -26,9 +26,9 @@
       flex-direction: column;
       text-align: center;
     }
-    .footer-container {
+    /* .footer-container {
       display: none;
-    }
+    } */
     .navbar-footer-list {
         list-style: none;
         padding: 0;

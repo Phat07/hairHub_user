@@ -28,22 +28,30 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { AccountServices } from "../services/accountServices";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import QrReader  from "react-qr-scanner";
+import QrReader from "react-qr-scanner";
 import "../css/SalonOwnerAccountPage.css";
 import dayjs from "dayjs";
 import Loader from "../components/Loader";
+import ConfirmDeleteModal from "@/components/DeleteAccount/ConfirmDeleteModal";
+import OTPModal from "@/components/DeleteAccount/OTPModal";
+import axios from "axios";
 
 const { Option } = Select;
 
 function SalonOwnerAccountPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
   const idOwner = useSelector((state) => state.ACCOUNT.idOwner);
   const uid = useSelector((state) => state.ACCOUNT.uid);
 
   const [salonData, setSalonData] = useState({});
+  const [optData, setOptData] = useState({
+    email: null,
+    fullName: null,
+  });
   const [showScanner, setShowScanner] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isNotified, setIsNotified] = useState(false);
@@ -51,14 +59,21 @@ function SalonOwnerAccountPage() {
   const [form] = Form.useForm();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [passwordForm] = Form.useForm();
-
   const [facingMode, setFacingMode] = useState("rear");
+  const [isModalVisibleDeleteComfirm, setIsModalVisibleDeleteComfirm] =
+    useState(false);
+  const [isOTPModalVisible, setIsOTPModalVisible] = useState(false);
+  const [otp, setOtp] = useState("");
   // Function to detect if the user is on a mobile device
   useEffect(() => {
     AccountServices.GetInformationAccount(id)
       .then((res) => {
         setSalonData(res.data);
         setAvatarUrl(res.data.img);
+        setOptData({
+          email: res.data.email,
+          fullName: res.data.fullName,
+        });
         form.setFieldsValue({
           fullName: res.data.fullName,
           phone: res.data.phone,
@@ -122,7 +137,7 @@ function SalonOwnerAccountPage() {
   const toggleFacingMode = () => {
     // Toggle between 'front' and 'rear'
     setFacingMode((prevMode) => {
-      const newMode = prevMode === 'rear' ? 'front' : 'rear';
+      const newMode = prevMode === "rear" ? "front" : "rear";
       console.log(`Switching to ${newMode} camera`); // Debug log
       return newMode;
     });
@@ -248,6 +263,10 @@ function SalonOwnerAccountPage() {
       .then((res) => {
         setSalonData(res.data);
         setAvatarUrl(res.data.img);
+        setOptData({
+          email: res.data.email,
+          fullName: res.data.fullName,
+        });
         form.setFieldsValue({
           fullName: res.data.fullName,
           phone: res.data.phone,
@@ -285,6 +304,10 @@ function SalonOwnerAccountPage() {
           .then((res) => {
             setSalonData(res.data);
             setAvatarUrl(res.data.img);
+            setOptData({
+              email: res.data.email,
+              fullName: res.data.fullName,
+            });
             form.setFieldsValue({
               fullName: res.data.fullName,
               phone: res.data.phone,
@@ -311,6 +334,101 @@ function SalonOwnerAccountPage() {
     ///api/v1/accounts/ChangePassword/{id}
   };
 
+  const DeleteAccount = () => {
+    setIsLoading(true);
+    const refreshToken = localStorage.getItem("refreshToken");
+    if (id && refreshToken) {
+      AccountServices.DeleteAccount(id)
+        .then(() => {
+          AccountServices.LogOut(refreshToken);
+          localStorage.removeItem("refreshToken");
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("role");
+          navigate("/");
+          message.success("Xóa tài khoản thành công!");
+        })
+        .catch((error) => {
+          message.error(error?.response?.data?.message);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
+  };
+
+  const sendOtp = async () => {
+    setIsLoading(true);
+    if (optData && optData.email && optData.fullName) {
+      try {
+        await axios
+          .post(
+            "https://hairhub.gahonghac.net/api/v1/otps/SendOTPToEmail",
+            optData
+          )
+          .then((res) => {
+            // setLoading(false);
+            message.success("Xác thực Email thành công! Vui lòng điền otp!");
+            setIsModalVisibleDeleteComfirm(false);
+            setIsOTPModalVisible(true);
+          })
+          .catch((err) => {
+            message.error("Gửi otp thất bại! Vui lòng thử lại!");
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
+      } catch (error) {
+        message.error("Gửi otp thất bại! Vui lòng chọn gửi lại!");
+      }
+    }
+  };
+
+  const verifyOtp = () => {
+    setIsLoading(true);
+    if (optData && optData.email && otp) {
+      axios
+        .post("https://hairhub.gahonghac.net/api/v1/otps/checkOtp", {
+          otpRequest: otp,
+          email: optData.email,
+        })
+        .then(() => {
+          setIsOTPModalVisible(false);
+          message.success("Otp xác thực thành công!");
+          DeleteAccount();
+        })
+        .catch((error) => {
+          message.error(error?.response?.data?.message);
+        })
+        .finally(() => {
+          setIsLoading(false);
+          setOtp("");
+        });
+    }
+  };
+
+  const handleCancelDeleteComfirm = () => {
+    setIsModalVisibleDeleteComfirm(false);
+  };
+
+  const handleConfirmDelete = () => {
+    sendOtp();
+  };
+
+  const handleCancelOTP = () => {
+    setOtp("");
+    setIsOTPModalVisible(false);
+  };
+
+  const handleOTPConfirm = () => {
+    console.log("OTP đã nhập:", otp);
+    if (!/^\d{6}$/.test(otp)) {
+      message.error("OTP phải là số và có đúng 6 chữ số!");
+      return;
+    }
+    verifyOtp();
+    // Thêm logic xử lý OTP và xóa tài khoản ở đây
+  };
+
   const menuFunction = (
     <Menu>
       {idOwner && (
@@ -326,11 +444,30 @@ function SalonOwnerAccountPage() {
       {idCustomer && (
         <>
           <Menu.Item>
-            <Link to="/customer_report">Danh sách báo cáo của bạn</Link>
+            <Button
+              style={{ backgroundColor: "#bf9456", borderColor: "#bf9456" }}
+            >
+              <Link to="/customer_report" style={{ color: "white" }}>
+                Danh sách báo cáo của bạn
+              </Link>
+            </Button>
           </Menu.Item>
           <Menu.Item>
-            <Button onClick={() => setShowScanner(true)} type="primary">
+            <Button
+              onClick={() => setShowScanner(true)}
+              type="primary"
+              style={{ backgroundColor: "#bf9456", borderColor: "#bf9456" }}
+            >
               Bật quét Qr
+            </Button>
+          </Menu.Item>
+          <Menu.Item>
+            <Button
+              type="primary"
+              style={{ backgroundColor: "red", borderColor: "#bf9456" }}
+              onClick={() => setIsModalVisibleDeleteComfirm(true)}
+            >
+              Xóa tài khoản
             </Button>
           </Menu.Item>
         </>
@@ -370,12 +507,16 @@ function SalonOwnerAccountPage() {
             </Dropdown>
             {showScanner && (
               <div>
-                <QrReader 
+                <QrReader
                   delay={300}
                   onError={handleError}
                   onScan={handleScan}
                   style={previewStyle}
-                  facingMode={facingMode === 'rear' ? { exact: 'environment' } : { exact: 'user' }} // Set facingMode correctly
+                  facingMode={
+                    facingMode === "rear"
+                      ? { exact: "environment" }
+                      : { exact: "user" }
+                  } // Set facingMode correctly
                 />
                 {/* {isMobile && ( */}
                 {/* <Button onClick={toggleFacingMode}>
@@ -653,6 +794,19 @@ function SalonOwnerAccountPage() {
           </Form.Item>
         </Form>
       </Modal>
+      <ConfirmDeleteModal
+        visible={isModalVisibleDeleteComfirm}
+        onCancel={handleCancelDeleteComfirm}
+        onConfirm={handleConfirmDelete}
+      />
+      <OTPModal
+        visible={isOTPModalVisible}
+        onCancel={handleCancelOTP}
+        otp={otp}
+        setOtp={setOtp}
+        onConfirm={handleOTPConfirm}
+        sendOTP={sendOtp}
+      />
     </div>
   );
 }

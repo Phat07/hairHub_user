@@ -2,7 +2,7 @@ import {
   BellOutlined,
   LogoutOutlined,
   QrcodeOutlined,
-  UserOutlined
+  UserOutlined,
 } from "@ant-design/icons";
 import { Avatar, Badge, Dropdown, Menu, message } from "antd";
 import { useEffect, useRef, useState } from "react";
@@ -21,6 +21,7 @@ import style from "../css/header.module.css";
 import { actGetSalonInformationByOwnerIdByCheck } from "../store/salonInformation/action";
 import NotificationComponent from "./Notification";
 import QRScannerModal from "./QRScannerModal";
+import { AccountServices } from "@/services/accountServices";
 
 function Header(props) {
   const { id } = useParams();
@@ -50,7 +51,6 @@ function Header(props) {
     (state) => state.NOTIFICATION.notificationListUnread
   );
 
-
   // Hàm đóng modal
   const closeModal = () => {
     setIsModalVisibleQr(false);
@@ -73,11 +73,21 @@ function Header(props) {
   }, [idOwner]);
 
   const handleSignOut = () => {
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("role");
-    message.success("Đăng xuất thành công");
-    navigate("/");
+    const refreshToken = localStorage.getItem("refreshToken");
+
+    if (refreshToken) {
+      AccountServices.LogOut(refreshToken)
+        .then(() => {
+          localStorage.removeItem("refreshToken");
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("role");
+          message.success("Đăng xuất thành công");
+          navigate("/");
+        })
+        .catch((error) => {
+          message.error(error?.response?.data?.message);
+        });
+    }
   };
 
   const handleEmptySalon = () => {
@@ -151,7 +161,7 @@ function Header(props) {
     };
   }, []);
   // console.log("noti", notificationList);
-  
+
   return (
     <div>
       <header className={style.headerContainer}>
@@ -439,14 +449,22 @@ function Header(props) {
             </Dropdown>
           )} */}
           {account && (
-            <div style={{cursor:"pointer"}} className={style.avatarContaint}>
+            <div style={{ cursor: "pointer" }} className={style.avatarContaint}>
               {isNotificationVisible ? (
-                <Badge count={notificationListUnread} overflowCount={99} onClick={toggleNotification}>
+                <Badge
+                  count={notificationListUnread}
+                  overflowCount={99}
+                  onClick={toggleNotification}
+                >
                   <BellOutlined className={style.iconHeaderActive} />
                 </Badge>
               ) : (
                 // </Badge>
-                <Badge count={notificationListUnread} overflowCount={99} onClick={toggleNotification}>
+                <Badge
+                  count={notificationListUnread}
+                  overflowCount={99}
+                  onClick={toggleNotification}
+                >
                   <BellOutlined className={style.iconHeader} />
                 </Badge>
               )}

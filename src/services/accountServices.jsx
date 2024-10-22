@@ -4,6 +4,16 @@ export const AccountServices = {
   loginUser(userData) {
     return API.post("/auth/Login", userData);
   },
+  LogOut(refreshToken) {
+    return API.delete("/auth/LogOut", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: {
+        refreshToken, // Chuyển refreshToken vào body nếu cần
+      },
+    });
+  },
   registerUser(userData) {
     return API.post("/accounts/RegisterAccount", userData);
   },
@@ -33,13 +43,16 @@ export const AccountServices = {
   updatePasswordUserById(id, data) {
     return API.put(`/accounts/ChangePassword/${id}`, data);
   },
-  forgotPassword(data){
-    return API.post("/accounts/ForgotPassword", data)
+  forgotPassword(data) {
+    return API.post("/accounts/ForgotPassword", data);
   },
-  loginGoogle(data){
-    return API.post("/accounts/GoogleLogin", data)
+  loginGoogle(data) {
+    return API.post("/accounts/GoogleLogin", data);
   },
-  createAccountByGoogle(data){
-    return API.post("/accounts/RegisterAccountLoginGoogle", data) 
-  }
+  createAccountByGoogle(data) {
+    return API.post("/accounts/RegisterAccountLoginGoogle", data);
+  },
+  DeleteAccount(id) {
+    return API.delete(`/accounts/DeleteAccount/${id}`);
+  },
 };
