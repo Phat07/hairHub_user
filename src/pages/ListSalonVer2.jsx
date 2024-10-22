@@ -22,13 +22,20 @@ import {
   Empty,
   message,
   Form,
+  Alert,
 } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import styles from "../css/ListSalonVer2.module.css";
 import { SalonInformationServices } from "../services/salonInformationServices";
 import { ServiceHairServices } from "../services/servicesHairServices";
 import { useNavigate } from "react-router-dom";
-import { LoadScript, StandaloneSearchBox } from "@react-google-maps/api";
+import {
+  Autocomplete,
+  GoogleMap,
+  LoadScript,
+  Marker,
+  StandaloneSearchBox,
+} from "@react-google-maps/api";
 import axios from "axios";
 import LoadScriptMap from "../components/LoadScriptMap";
 import { motion } from "framer-motion";
@@ -139,6 +146,7 @@ function ListSalonVer2(props) {
   const servicesNameUrl = searchParams.get("servicesName");
   const salonNameUrl = searchParams.get("salonName");
   const locationSalonUrl = searchParams.get("location");
+  const [selectedPosition, setSelectedPosition] = useState(defaultCenter);
 
   const [servicesName, setServicesName] = useState(servicesNameUrl || "");
   const [locationSalon, setLocationSalon] = useState(locationSalonUrl || "");
@@ -148,7 +156,7 @@ function ListSalonVer2(props) {
   const [distance, setDistance] = useState(10);
   const [loading, setLoading] = useState(false);
   const [currentLocation, setCurrentLocation] = useState(defaultCenter);
-
+  const [loadingError, setLoadingError] = useState(false);
   const scrollContainerRef = useRef(null);
 
   // const [locationVisible, setLocationVisible] = useState(false);
@@ -161,15 +169,21 @@ function ListSalonVer2(props) {
   const libraries = ["places"];
   const [selectedProvince, setSelectedProvince] = useState(locationSalon);
   const [selectedDistrict, setSelectedDistrict] = useState("");
-
-  const [searchBox, setSearchBox] = useState(null);
-  const [inputLocation, setInputLocation] = useState(""); // Lưu giá trị nhập vào của vị trí
-  const [locationOptions, setLocationOptions] = useState([]);
-  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [isSalonNear, setIsSalonNear] = useState(false);
   const [mapStyle, setMapStyle] = useState({
     height: "500px",
     width: "auto",
   });
+  const [scriptLoaded, setScriptLoaded] = useState(false);
+  // useEffect(() => {
+  //   const timeoutId = setTimeout(() => {
+  //     if (!scriptLoaded) {
+  //       window.location.reload();
+  //     }
+  //   }, 1000); // 5 seconds timeout
+
+  //   return () => clearTimeout(timeoutId);
+  // }, [scriptLoaded]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -494,86 +508,81 @@ function ListSalonVer2(props) {
     setModalVisible(false); // Close the modal
   };
   const [form] = Form.useForm();
-  const handleSearch = async () => {
-    const validateDistance = async () => {
-      try {
-        const values = await form.validateFields(["distance"]);
-        return values.distance;
-      } catch (error) {
-        document.body.style.overflow = "";
-        message.error("Vui lòng nhập khoảng cách hợp lệ.");
-        return null; // Trả về null để báo lỗi nhưng không đóng modal
-      }
-    };
+  // const handleSearch = async () => {
+  //   const validateDistance = async () => {
+  //     try {
+  //       const values = await form.validateFields(["distance"]);
+  //       return values.distance;
+  //     } catch (error) {
+  //       document.body.style.overflow = "";
+  //       message.error("Vui lòng nhập khoảng cách hợp lệ.");
+  //       return null; // Trả về null để báo lỗi nhưng không đóng modal
+  //     }
+  //   };
 
-    const handleOk = async () => {
-      const distance = await validateDistance();
-      if (!distance) {
-        return Promise.reject(); // Trả về Promise.reject() để ngăn việc đóng modal
-      }
+  //   const handleOk = async () => {
+  //     const distance = await validateDistance();
+  //     if (!distance) {
+  //       return Promise.reject(); // Trả về Promise.reject() để ngăn việc đóng modal
+  //     }
 
-      if ("geolocation" in navigator) {
-        setLoading(true);
-        navigator.geolocation.getCurrentPosition(
-          async (pos) => {
-            const { latitude, longitude } = pos.coords;
-            console.log("loca", latitude);
-            console.log("loca2", longitude);
-            try {
-              await fetchSalonDataNear(latitude, longitude, distance);
-              // message.success("Cảm ơn bạn đã kích hoạt dịch vụ định vị.");
-              document.body.style.overflow = "";
-            } catch (error) {
-              message.error("Có lỗi xảy ra khi tìm kiếm salon.");
-            } finally {
-              document.body.style.overflow = "";
+  //     if ("geolocation" in navigator) {
+  //       setLoading(true);
+  //       navigator.geolocation.getCurrentPosition(
+  //         async (pos) => {
+  //           const { latitude, longitude } = pos.coords;
+  //           try {
+  //             await fetchSalonDataNear(latitude, longitude, distance);
+  //             // message.success("Cảm ơn bạn đã kích hoạt dịch vụ định vị.");
+  //             document.body.style.overflow = "";
+  //           } catch (error) {
+  //             message.error("Có lỗi xảy ra khi tìm kiếm salon.");
+  //           } finally {
+  //             document.body.style.overflow = "";
 
-              setLoading(false);
-            }
-          },
-          (error) => {
-            setLoading(false);
-            document.body.style.overflow = "";
-            message.error("Bạn đã từ chối quyền truy cập vị trí!");
-          }
-        );
-      } else {
-        message.error("Định vị địa lý không được trình duyệt của bạn hỗ trợ.");
-      }
-    };
+  //             setLoading(false);
+  //           }
+  //         },
+  //         (error) => {
+  //           setLoading(false);
+  //           document.body.style.overflow = "";
+  //           message.error("Bạn đã từ chối quyền truy cập vị trí!");
+  //         }
+  //       );
+  //     } else {
+  //       message.error("Định vị địa lý không được trình duyệt của bạn hỗ trợ.");
+  //     }
+  //   };
 
-    document.body.style.overflow = "hidden";
-    Modal.confirm({
-      title: "Bật vị trí hiện tại",
-      content: (
-        <Form form={form} layout="vertical">
-          <Form.Item
-            label="Nhập khoảng cách bạn muốn tìm (km)"
-            name="distance"
-            rules={[
-              { required: true, message: "Vui lòng nhập khoảng cách!" },
-              { pattern: /^\d+$/, message: "Khoảng cách phải là số!" },
-            ]}
-          >
-            <Input placeholder="Nhập khoảng cách" />
-          </Form.Item>
-        </Form>
-      ),
-      async onOk() {
-        await handleOk(); // Chỉ đóng modal nếu handleOk không trả về Promise.reject()
-      },
-      onCancel() {
-        message.error("Bạn đã từ chối quyền truy cập vị trí.");
-        document.body.style.overflow = "";
-      },
-    });
-  };
+  //   document.body.style.overflow = "hidden";
+  //   Modal.confirm({
+  //     title: "Bật vị trí hiện tại",
+  //     content: (
+  //       <Form form={form} layout="vertical">
+  //         <Form.Item
+  //           label="Nhập khoảng cách bạn muốn tìm (km)"
+  //           name="distance"
+  //           rules={[
+  //             { required: true, message: "Vui lòng nhập khoảng cách!" },
+  //             { pattern: /^\d+$/, message: "Khoảng cách phải là số!" },
+  //           ]}
+  //         >
+  //           <Input placeholder="Nhập khoảng cách" />
+  //         </Form.Item>
+  //       </Form>
+  //     ),
+  //     async onOk() {
+  //       await handleOk(); // Chỉ đóng modal nếu handleOk không trả về Promise.reject()
+  //     },
+  //     onCancel() {
+  //       message.error("Bạn đã từ chối quyền truy cập vị trí.");
+  //       document.body.style.overflow = "";
+  //     },
+  //   });
+  // };
 
-  const onPlacesChanged = () => {
-    const places = searchBox.getPlaces();
-    if (places.length > 0) {
-      setInputLocation(places[0].formatted_address);
-    }
+  const handleSearch = () => {
+    setIsSalonNear(!isSalonNear);
   };
   function formatMoneyVND(amount) {
     return amount.toLocaleString("vi-VN");
@@ -593,14 +602,25 @@ function ListSalonVer2(props) {
             }}
           >
             <Button
-              // icon={<EnvironmentOutlined />}
               onClick={handleSearch}
-              className={"book-button"}
+              className="book-button flex items-center rounded-lg p-2 hover:bg-opacity-80 transition-colors duration-300"
+              style={{ backgroundColor: "#BF9456", color: "black" }} // Custom background color
             >
-              <EnvironmentOutlined
-                style={{ fontSize: "1rem", marginRight: "8px" }}
-              />
-              Nhấn vào đây để tìm salon gần bạn
+              {isSalonNear ? (
+                <>
+                  <CloseCircleOutlined
+                    style={{ fontSize: "1rem", marginRight: "8px" }}
+                  />
+                  Đóng
+                </>
+              ) : (
+                <>
+                  <EnvironmentOutlined
+                    style={{ fontSize: "1rem", marginRight: "8px" }}
+                  />
+                  Nhấn vào đây để tìm salon gần bạn
+                </>
+              )}
             </Button>
             <Modal
               title="Nhập vị trí hiện tại của bạn"
@@ -818,172 +838,6 @@ function ListSalonVer2(props) {
                 <div className={styles["list-salon-content"]}>
                   {salonList.length !== 0 ? (
                     salonList.map((salon) => (
-                      // <motion.div
-                      //   className={styles["list-salon-item"]}
-                      //   key={salon.id}
-                      //   whileHover={{
-                      //     scale: 1.05,
-                      //     border: "1px solid #bc8d4a",
-                      //     borderRadius: "0.5rem",
-                      //     padding: "0.5rem",
-                      //   }} // Scale effect on hover
-                      //   transition={{ duration: 0.3 }} // Transition duration
-                      //   initial={{ opacity: 0 }} // Initial opacity for scroll effect
-                      //   animate={{ opacity: 1 }} // Final opacity for scroll effect
-                      //   exit={{ opacity: 0 }} // Fade out on exit
-                      // >
-                      //   <div
-                      //     className={styles["list-salon-image"]}
-                      //     style={{ width: "30%" }}
-                      //   >
-                      //     <img
-                      //       src={salon.img}
-                      //       alt={salon.name}
-                      //       style={{ width: "100%" }}
-                      //     />
-                      //     <div
-                      //       style={{
-                      //         marginTop: "8px",
-                      //         fontSize: "1rem",
-                      //         textAlign: "center",
-                      //       }}
-                      //     >
-                      //       <motion.div
-                      //         key={salon.operatingStatus} // Ensures re-render when status changes
-                      //         initial={{
-                      //           opacity: 0,
-                      //           color:
-                      //             salon.operatingStatus === "Đang hoạt động"
-                      //               ? "#EF4444"
-                      //               : "#10B981",
-                      //         }}
-                      //         animate={{
-                      //           opacity: 1,
-                      //           color:
-                      //             salon.operatingStatus === "Đang hoạt động"
-                      //               ? "#EF4444"
-                      //               : "#10B981",
-                      //         }}
-                      //         transition={{ duration: 0.5 }} // Adjust the duration
-                      //         className="transform transition-transform duration-500"
-                      //       >
-                      //         <p
-                      //           className={`text-lg font-semibold ${
-                      //             salon.operatingStatus === "Đang hoạt động"
-                      //               ? "text-green-500"
-                      //               : "text-red-500"
-                      //           }`}
-                      //         >
-                      //           {salon.operatingStatus}
-                      //         </p>
-                      //       </motion.div>
-
-                      //       <div className="flex items-center space-x-2">
-                      //         {salon.distance === null ? (
-                      //           <div className="flex align-middle">
-                      //             <svg
-                      //               xmlns="http://www.w3.org/2000/svg"
-                      //               fill="none"
-                      //               viewBox="0 0 24 24"
-                      //               stroke="currentColor"
-                      //               className="w-6 h-6 text-gray-500"
-                      //             >
-                      //               <path
-                      //                 strokeLinecap="round"
-                      //                 strokeLinejoin="round"
-                      //                 strokeWidth={2}
-                      //                 d="M12 2a9 9 0 00-9 9c0 6 9 11 9 11s9-5 9-11a9 9 0 00-9-9zm0 13a3 3 0 100-6 3 3 0 000 6z"
-                      //               />
-                      //             </svg>
-                      //             <p className="text-gray-500 font-medium ml-2">
-                      //               ...
-                      //             </p>
-                      //           </div>
-                      //         ) : (
-                      //           <div className="flex align-middle">
-                      //             <svg
-                      //               xmlns="http://www.w3.org/2000/svg"
-                      //               fill="none"
-                      //               viewBox="0 0 24 24"
-                      //               stroke="currentColor"
-                      //               className="w-6 h-6 text-green-500"
-                      //             >
-                      //               <path
-                      //                 strokeLinecap="round"
-                      //                 strokeLinejoin="round"
-                      //                 strokeWidth={2}
-                      //                 d="M12 2a9 9 0 00-9 9c0 6 9 11 9 11s9-5 9-11a9 9 0 00-9-9zm0 13a3 3 0 100-6 3 3 0 000 6z"
-                      //               />
-                      //             </svg>
-                      //             <p className="text-green-500 font-medium">
-                      //               {salon.distance.toFixed(1)} km
-                      //             </p>
-                      //           </div>
-                      //         )}
-                      //       </div>
-                      //     </div>
-                      //   </div>
-                      //   <div
-                      //     className={styles["list-salon-info"]}
-                      //     style={{ width: "70%", paddingLeft: "16px" }}
-                      //   >
-                      //     <p style={{ fontSize: "1.5rem" }}>{salon.name}</p>
-                      //     <p style={{ fontSize: "1rem" }}>
-                      //       <strong>Mô tả:</strong> {salon.description}
-                      //     </p>
-                      //     <p style={{ fontSize: "1rem" }}>
-                      //       <strong>Địa chỉ:</strong> {salon.address}
-                      //     </p>
-                      //     <ul>
-                      //       {salon.services
-                      //         .slice(0, 3)
-                      //         .map((service, index) => (
-                      //           <motion.li
-                      //             key={index}
-                      //             className={styles["service-list-item"]}
-                      //             whileHover={{ scale: 1.03 }} // Scale effect on hover
-                      //             transition={{ duration: 0.2 }} // Transition duration for hover
-                      //             initial={{ opacity: 0.8 }} // Initial opacity for scroll effect
-                      //             animate={{ opacity: 1 }} // Final opacity for scroll effect
-                      //             exit={{ opacity: 0.8 }} // Fade out on exit
-                      //           >
-                      //             <div className={styles["service-details"]}>
-                      //               <span className={styles["service-name"]}>
-                      //                 {service.serviceName}:{" "}
-                      //               </span>
-                      //               <span
-                      //                 className={styles["service-description"]}
-                      //               >
-                      //                 {service.description} -{" "}
-                      //                 {formatMoneyVND(service.price)} vnđ
-                      //               </span>
-                      //             </div>
-                      //             <Button
-                      //               onClick={() =>
-                      //                 navigate(`/salon_detail/${salon?.id}`)
-                      //               }
-                      //               className={styles["book-button"]}
-                      //             >
-                      //               Đặt lịch
-                      //             </Button>
-                      //           </motion.li>
-                      //         ))}
-                      //     </ul>
-
-                      //     {salon.services.length > 3 && (
-                      //       <div style={{ marginTop: "8px" }}>
-                      //         <Button
-                      //           onClick={() =>
-                      //             navigate(`/salon_detail/${salon?.id}`)
-                      //           }
-                      //           className={styles["view-more-button"]}
-                      //         >
-                      //           Xem thêm ...
-                      //         </Button>
-                      //       </div>
-                      //     )}
-                      //   </div>
-                      // </motion.div>
                       <motion.div
                         className={styles["list-salon-item"]}
                         key={salon.id}
@@ -1134,14 +988,6 @@ function ListSalonVer2(props) {
                           <p style={{ fontSize: "1rem" }}>
                             <strong>Địa chỉ:</strong> {salon.address}
                           </p>
-                          {/* <Button
-                            onClick={() =>
-                              navigate(`/salon_detail/${salon?.id}`)
-                            }
-                            className={styles["book-button"]}
-                          >
-                            Đặt lịch
-                          </Button> */}
                           <ul>
                             {salon.services
                               .slice(0, 3)
@@ -1253,6 +1099,7 @@ function ListSalonVer2(props) {
           </div>
           <div className={styles["showMap"]}>
             <LoadScriptMap
+              isSalonNear={isSalonNear}
               salonList={salonList}
               mapStyle={mapStyle}
               currentLocation={currentLocation}

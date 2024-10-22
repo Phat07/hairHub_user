@@ -78,11 +78,13 @@ const SalonForm = ({ onAddSalon, salon, demo }) => {
   const salonDetail = useSelector(
     (state) => state.SALONINFORMATION.getSalonByOwnerId
   );
-  useEffect(() => {
-    if (salonDetail) {
-      navigate("/list_shop");
-    }
-  }, [salonDetail]);
+  // useEffect(() => {
+  //   if (salonDetail) {
+  //     navigate("/list_shop");
+  //   }else{
+  //     navigate(`/create_shop/${id}`)
+  //   }
+  // }, [salonDetail]);
 
   // Tạo state để lưu vị trí được chọn
   const [selectedPosition, setSelectedPosition] = useState(defaultCenter);

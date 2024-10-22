@@ -62,6 +62,7 @@
   border-color: #a38245 !important;
   color: white !important;
 }
+
 @media (max-width: 768px) {
   .list-salon-container {
     flex-direction: column;
