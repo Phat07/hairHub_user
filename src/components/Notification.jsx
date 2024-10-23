@@ -126,7 +126,7 @@ const NotificationComponent = ({
               dispatch(actGetNotificationList(uid, page, size));
               dispatch(actGetNotificationListUnread(uid));
             } else {
-              console.error("lỗi rồi");
+              // console.error("lỗi rồi");
             }
           }
         );

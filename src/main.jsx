@@ -4,6 +4,8 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import {
+  BrowserRouter,
+  MemoryRouter,
   Route,
   RouterProvider,
   Routes,
@@ -59,8 +61,8 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import LoginGoogle from "./components/LoginGoogle/index.jsx";
 import AccountDeletionGuide from "./pages/AccountDeletionGuide.jsx";
 
-const version = import.meta.env.VITE_APP_VERSION || "default";
-const basePath = `/${version}/`; // Adjust the base path as needed
+// const version = import.meta.env.APP_ID || "default";
+// const basePath = `/zapps/${version}`; 
 
 const router = createBrowserRouter([
   {
@@ -402,6 +404,7 @@ const customTheme = {
 ReactDOM.createRoot(document.getElementById("app")).render(
   <React.StrictMode>
     <Provider store={store}>
+      {/* <BrowserRouter basename={basePath}> */}
       <GoogleOAuthProvider clientId="160573115812-l88je63eolr52ichb690e7i8g3f59r9t.apps.googleusercontent.com">
         <ConfigProvider locale={viVn} theme={customTheme}>
           <App>
@@ -409,6 +412,7 @@ ReactDOM.createRoot(document.getElementById("app")).render(
           </App>
         </ConfigProvider>
       </GoogleOAuthProvider>
+      {/* </BrowserRouter> */}
     </Provider>
   </React.StrictMode>
 );

@@ -329,6 +329,7 @@ function LoadScriptMapModal({
     const lat = event.latLng.lat();
     const lng = event.latLng.lng();
     setTempLatLng({ lat, lng });
+    setLatLng({lat,lng})
     message.info("Vị trí đã được chọn");
     handleSearch(lat, lng, distance);
     setModalVisible(false);
@@ -403,30 +404,26 @@ function LoadScriptMapModal({
 
             {selectedSalon && (
               <InfoWindowF
-                position={{
-                  lat: parseFloat(selectedSalon.latitude),
-                  lng: parseFloat(selectedSalon.longitude),
-                }}
-                onCloseClick={() => setSelectedSalon(null)}
-              >
-                <div className="bg-white shadow-lg rounded-lg p-4 max-w-xs">
-                  <h3 className="font-bold text-xl text-gray-800">
-                    {selectedSalon.name}
-                  </h3>
-                  <p className="text-sm text-gray-600">
-                    {selectedSalon.address}
-                  </p>
-                  <a
-                    href={`https://www.google.com/maps/dir/?api=1&destination=${selectedSalon.latitude},${selectedSalon.longitude}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline mt-2 block"
-                    style={{ textDecoration: "none" }}
-                  >
-                    Chỉ đường
-                  </a>
-                </div>
-              </InfoWindowF>
+              position={{
+                lat: parseFloat(selectedSalon.latitude),
+                lng: parseFloat(selectedSalon.longitude),
+              }}
+              onCloseClick={() => setSelectedSalon(null)}
+            >
+              <div className="p-2">
+                <h3 className="text-lg md:text-xl">{selectedSalon.name}</h3>
+                <p className="text-sm md:text-base">{selectedSalon.address}</p>
+                <a
+                  href={`https://www.google.com/maps/dir//${selectedSalon.latitude},${selectedSalon.longitude},7z?entry=ttu`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 hover:underline"
+                >
+                  Chỉ đường
+                </a>
+              </div>
+            </InfoWindowF>
+            
             )}
           </GoogleMap>
 
