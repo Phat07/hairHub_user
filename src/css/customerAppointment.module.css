@@ -1,7 +1,7 @@
 .appointmentContainer {
   max-width: 1200px;
-  margin: 100px auto;
-  margin-top: 10rem;
+  margin-inline: auto;
+  margin-block: 7rem;
   padding: 20px;
   background-color: #f4f2eb;
   border: 1px solid #ddd;
@@ -123,8 +123,142 @@
   td {
     white-space: nowrap;
   }
+  .appointmentContainer {
+    margin-top: 5rem;
+  }
 }
 
 :global(.my-custom-modal .ant-modal-content) {
   background-color: #ece8de !important;
+}
+
+
+
+/* AppointmentsGrid.module.css */
+.container {
+  padding: 16px;
+  /* position: relative; */
+}
+
+.dateGroup {
+  margin-bottom: 24px;
+}
+
+.dateHeader {
+  font-size: 1rem;
+  margin-bottom: 8px;
+  color: #333;
+  font-weight: bold;
+  margin-right: 2rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 ô mỗi hàng */
+  gap: 16px;
+}
+
+.card {
+  background-color: #ece8de;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+  display: flex;
+  border-width: 1px;
+  border-color: #bf9456;
+  flex-direction: column;
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 8px #ece8de; /* Đổ bóng nhẹ */
+}
+
+.card:hover {
+  box-shadow: 0 8px 16px #bf9456; /* Tăng bóng khi hover */
+  transform: translateY(-2px); /* Nhẹ nhàng nâng thẻ lên */
+}
+
+
+.salonImage {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.salonImageDetail {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.employeeImage {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.cancelButton {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  margin-top: 8px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.loadmorebtn {
+  margin-top: 16px;
+  padding: 10px 20px;
+  background-color: #bf9456;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s; 
+}
+
+.loadmorebtn:hover {
+  background-color: #a37a46;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Màu nền bán trong suốt */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999; /* Đảm bảo overlay nằm trên cùng */
+}
+
+.loadingText {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr; /* 1 ô mỗi hàng trên mobile */
+  }
+  .dateHeader {
+    font-size: 1rem;
+    margin-right: 15px;
+    text-align: center;
+  }
+  .container {
+    padding: 0;
+    /* position: relative; */
+  }
 }

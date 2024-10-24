@@ -316,6 +316,7 @@ function SalonDetail(props) {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [hasProcessedParams, setHasProcessedParams] = useState(false);
+  const [isModalWarningVisible, setIsModalWarningVisible] = useState(false);
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
@@ -330,7 +331,7 @@ function SalonDetail(props) {
   const salonImages = useSelector(
     (state) => state.SALONINFORMATION.getSalonByOwnerIdForImages
   );
-  
+
   const totalPagesFeedback = useSelector((state) => state.RATING.totalPages);
   // useEffect(() => {
   //   const searchParams = new URLSearchParams(location.search);
@@ -350,33 +351,51 @@ function SalonDetail(props) {
   //     }
   //   }
   // }, [location.search, data]);
+
   useEffect(() => {
-    const serviceId = searchParams.get('service');
-    
+    if (
+      salonDetail &&
+      salonDetail.status &&
+      salonDetail.status !== "APPROVED"
+    ) {
+      console.log(salonDetail.status);
+
+      setIsModalWarningVisible(true); // Hiển thị modal nếu không được duyệt
+    }
+  }, [salonDetail]);
+
+  const handleBack = () => {
+    setIsModalWarningVisible(false);
+    navigate(-1); // Quay lại trang trước
+  };
+
+  useEffect(() => {
+    const serviceId = searchParams.get("service");
+
     // Chỉ xử lý nếu có serviceId trong URL và chưa được xử lý
     if (serviceId && !hasProcessedParams && data) {
       // Tìm service từ id trong URL
-      const service = data.find(s => s.id.toString() === serviceId);
-      
+      const service = data.find((s) => s.id.toString() === serviceId);
+
       if (service) {
         window.scrollTo({
           top: 0,
-          behavior: 'smooth' // Có thể dùng 'auto' nếu bạn muốn scroll ngay lập tức
+          behavior: "smooth", // Có thể dùng 'auto' nếu bạn muốn scroll ngay lập tức
         });
         // Nếu chưa có selectedDate, set ngày hôm nay
         if (!selectedDate) {
           const currentDate = new Date();
           setSelectedDate(currentDate);
-          
+
           const formatDate = (date) => {
             const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, "0");
             const day = String(date.getDate()).padStart(2, "0");
             return `${year}-${month}-${day}`;
           };
-  
+
           const formattedDate = formatDate(currentDate);
-          
+
           // Gọi API lấy time slots
           const postData = {
             day: formattedDate,
@@ -385,9 +404,9 @@ function SalonDetail(props) {
             salonEmployeeId: null,
             isAnyOne: true,
           };
-  
+
           SalonInformationServices.getGetAvailableTime(postData)
-            .then(response => {
+            .then((response) => {
               if (response.status === 200 || response.status === 201) {
                 setTimeSlots(response?.data);
               }
@@ -396,16 +415,15 @@ function SalonDetail(props) {
               setTimeSlots([]);
             });
         }
-        
+
         // Set service vào additionalServices
         setAdditionalServices([service]);
-        
+
         // Mở modal
         setIsBookingModalVisible(true);
-        
+
         // Đánh dấu đã xử lý params
         setHasProcessedParams(true);
-
       }
     }
   }, [searchParams, data, hasProcessedParams]);
@@ -1345,7 +1363,6 @@ function SalonDetail(props) {
     return `${hour}h${paddedMinutes}`;
   };
 
-
   const handleConfirmBooking = async () => {
     if (additionalServices.length === 0) {
       message.info("Vui lòng chọn dịch vụ!!!");
@@ -1602,7 +1619,7 @@ function SalonDetail(props) {
                     target="_blank"
                     rel="noopener noreferrer"
                     className={style["link-address"]}
-                    style={{textDecoration:"none"}}
+                    style={{ textDecoration: "none" }}
                   >
                     Chỉ đường
                   </a>
@@ -3029,7 +3046,7 @@ function SalonDetail(props) {
                       </Text>
                     </Col>
                   </Row>
-                    {/* <Card
+                  {/* <Card
                       title="Phương thức thanh toán"
                       style={{ maxWidth: 500, margin: "0 auto" }}
                       headStyle={{ textAlign: "center", fontSize: "18px" }}
@@ -3081,6 +3098,24 @@ function SalonDetail(props) {
               employee={selectedEmployee}
               booking={handleBookClick}
             />
+            <Modal
+              title="Thông báo"
+              visible={isModalWarningVisible}
+              // onCancel={handleBack}
+              footer={[
+                <Button
+                  style={{
+                    backgroundColor: "#bf9456",
+                  }}
+                  key="back"
+                  onClick={handleBack}
+                >
+                  Quay lại
+                </Button>,
+              ]}
+            >
+              <p>{salonDetail?.name} hiện không còn nhận đặt lịch.</p>
+            </Modal>
           </Row>
         </Content>
       </Layout>

@@ -7,6 +7,7 @@ import {
   DownOutlined,
   EditOutlined,
   LineOutlined,
+  LoadingOutlined,
   PlusOutlined,
   SearchOutlined,
   UploadOutlined,
@@ -51,6 +52,7 @@ import { isEmptyObject } from "../components/formatCheckValue/checkEmptyObject";
 import AddEmployeeForm from "../components/SalonShop/EmployeeForm";
 import AddServiceForm from "../components/SalonShop/ServiceForm";
 import styles from "../css/listShopBarber.module.css";
+import stylesCard from "../css/customerAppointment.module.css";
 import stylesModal from "../css/employeeForm.module.css";
 import { ServiceHairServices } from "../services/servicesHairServices";
 import { voucherServices } from "../services/voucherServices";
@@ -200,6 +202,7 @@ function ListShopBarber(props) {
   const [filterLabelVoucher, setFilterLabelVoucher] = useState("Lọc");
 
   const handleMenuClickEmpoyeeSort = (e) => {
+    setCurrentPageEmployee(1);
     setSortEmployee(e.key === "" ? null : e.key === "true");
     setSortLabelEmployee(
       e.key === ""
@@ -211,6 +214,7 @@ function ListShopBarber(props) {
   };
 
   const handleMenuClickEmpoyeeFillter = (e) => {
+    setCurrentPageEmployee(1);
     setFillterEmployee(e.key === "" ? null : e.key === "true");
     setFilterLabelEmployee(
       e.key === ""
@@ -222,11 +226,13 @@ function ListShopBarber(props) {
   };
 
   const handleMenuClickServiceSort = (e) => {
+    setCurrentPageService(1);
     setSortService(e.key);
     setSortLabelService(e.key === "" ? "Tất cả" : `Sắp xếp theo ${e.key}`);
   };
 
   const handleMenuClickServiceFillter = (e) => {
+    setCurrentPageService(1);
     setFillterService(e.key);
     setFilterLabelService(
       e.key === ""
@@ -1682,13 +1688,215 @@ function ListShopBarber(props) {
                         />
                       </div>
                       <div className={styles["table-container"]}>
-                        <Spin className="custom-spin" spinning={loadingEmployee} tip="Loading...">
-                          <Table
+                        <Spin
+                          className="custom-spin"
+                          spinning={loadingEmployee}
+                          // tip="Loading..."
+                        >
+                          {/* <Table
                             dataSource={listEmployee}
                             columns={columnsEmployee}
                             pagination={false}
                             // rowKey="phone"
-                          />
+                          /> */}
+                          <div className={stylesCard.container}>
+                            {/* {loadingEmployee && (
+                              <div className={stylesCard.overlay}>
+                                <LoadingOutlined style={{ fontSize: "2rem" }} />
+                              </div>
+                            )} */}
+
+                            {listEmployee?.length === 0 && (
+                              <h4
+                                style={{
+                                  fontWeight: "bold",
+                                  color: "#bf9456",
+                                  textAlign: "center",
+                                  fontSize: "1.2rem",
+                                }}
+                              >
+                                Không tìm thấy nhân viên nào!
+                              </h4>
+                            )}
+
+                            <div className={stylesCard.grid}>
+                              {listEmployee.map((employee) => (
+                                <div
+                                  key={employee.id}
+                                  className={stylesCard.card}
+                                >
+                                  <img
+                                    src={employee?.img}
+                                    alt="emplyee"
+                                    className={stylesCard.employeeImage}
+                                  />
+
+                                  <h4>
+                                    Tên đầy đủ:{" "}
+                                    <span
+                                      style={{
+                                        fontWeight: "bold",
+                                        color: "#bf9456",
+                                        textAlign: "center",
+                                        marginTop: "0.5rem",
+                                      }}
+                                    >
+                                      {employee.fullName}
+                                    </span>
+                                  </h4>
+                                  <h4>Giới tính: {employee.gender}</h4>
+                                  <h4>
+                                    Trạng thái:{" "}
+                                    {employee.isActive ? (
+                                      <Tag
+                                        icon={<CheckCircleOutlined />}
+                                        color="green"
+                                      >
+                                        Hoạt động
+                                      </Tag>
+                                    ) : (
+                                      <Tag
+                                        icon={<CloseCircleOutlined />}
+                                        color="red"
+                                      >
+                                        Không hoạt động
+                                      </Tag>
+                                    )}
+                                  </h4>
+
+                                  <Button
+                                    disabled={!employee.isActive}
+                                    style={{
+                                      backgroundColor: "#bf9456",
+                                      marginBottom: "0.5rem",
+                                      color: "white",
+                                    }}
+                                    onClick={() =>
+                                      navigate(
+                                        `account_details/${employee?.id}`
+                                      )
+                                    }
+                                    icon={<EditOutlined />}
+                                  >
+                                    Chỉnh sửa
+                                  </Button>
+
+                                  <Popconfirm
+                                    title="Bạn có chắc chắn muốn xóa nhân viên này không?"
+                                    onConfirm={() =>
+                                      handleDeleteEmployee(employee)
+                                    }
+                                    okText="Có"
+                                    cancelText="Không"
+                                  >
+                                    <Button
+                                      disabled={!employee.isActive}
+                                      danger
+                                      icon={<DeleteOutlined />}
+                                      style={{ marginBottom: "0.5rem" }}
+                                    >
+                                      Xóa
+                                    </Button>
+                                  </Popconfirm>
+
+                                  <Button
+                                    disabled={
+                                      !employee.isActive ||
+                                      employee.accountId !== null
+                                    }
+                                    onClick={() =>
+                                      setActiveEmployeeId(
+                                        activeEmployeeId === employee.id
+                                          ? null
+                                          : employee.id
+                                      )
+                                    }
+                                    className="activeButtonStyle"
+                                  >
+                                    {activeEmployeeId === employee.id
+                                      ? "Hủy"
+                                      : "Kích hoạt tài khoản"}
+                                  </Button>
+
+                                  {activeEmployeeId === employee.id && (
+                                    <div
+                                      style={{
+                                        textAlign: "center",
+                                        marginTop: "1rem",
+                                      }}
+                                    >
+                                      <Input
+                                        placeholder="Vui lòng nhập email"
+                                        value={isEmail}
+                                        readOnly={emailVerified || loading}
+                                        onChange={handleEmailChange}
+                                        style={{
+                                          marginBottom: "1rem",
+                                          width: "10rem",
+                                        }}
+                                      />
+                                      {errorMessage && (
+                                        <div
+                                          style={{
+                                            color: "red",
+                                            marginBottom: "1rem",
+                                          }}
+                                        >
+                                          {errorMessage}
+                                        </div>
+                                      )}
+                                      <Button
+                                        className={styles.customButton}
+                                        style={{ marginBottom: "1rem" }}
+                                        onClick={showOtpModal}
+                                        loading={loading}
+                                      >
+                                        Gửi OTP
+                                      </Button>
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+
+                            <Modal
+                              title="Enter OTP"
+                              visible={isOtpModalOpen}
+                              onOk={() => verifyOtp(activeEmployeeId)}
+                              onCancel={() => setIsOtpModalOpen(false)}
+                            >
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  marginBottom: "1rem",
+                                }}
+                              >
+                                <OTPInput
+                                  value={otp}
+                                  onChange={setOtp}
+                                  numInputs={6}
+                                  renderInput={renderInput}
+                                  separator={<span>-</span>}
+                                  isInputNum
+                                  inputStyle={{
+                                    borderRadius: "50%",
+                                    border: "2px solid #1119",
+                                    width: "4rem",
+                                    height: "4rem",
+                                    margin: "0 0.5rem",
+                                    fontSize: "2rem",
+                                    color: "black",
+                                    textAlign: "center",
+                                  }}
+                                />
+                              </div>
+                              <ResendCode
+                                isOtpModalOpen={isOtpModalOpen}
+                                form={form}
+                              />
+                            </Modal>
+                          </div>
                         </Spin>
                       </div>
 
@@ -1767,13 +1975,112 @@ function ListShopBarber(props) {
                         />
                       </div>
                       <div className={styles["table-container"]}>
-                        <Spin className="custom-spin" spinning={loadingService} tip="Loading...">
-                          <Table
+                        <Spin
+                          className="custom-spin"
+                          spinning={loadingService}
+                          // tip="Loading..."
+                        >
+                          {/* <Table
                             dataSource={listTotalService}
                             columns={columnsService}
                             pagination={false}
                             // rowKey="phone"
-                          />
+                          /> */}
+                          <div className={stylesCard.container}>
+                            {listTotalService?.length === 0 && (
+                              <h4
+                                style={{
+                                  fontWeight: "bold",
+                                  color: "#bf9456",
+                                  textAlign: "center",
+                                  fontSize: "1.2rem",
+                                }}
+                              >
+                                Không tìm thấy dịch vụ nào !!!
+                              </h4>
+                            )}
+
+                            <div className={stylesCard.grid}>
+                              {listTotalService.map((service) => (
+                                <div
+                                  key={service.id}
+                                  className={stylesCard.card}
+                                >
+                                  <img
+                                    src={service?.img}
+                                    alt="emplyee"
+                                    className={stylesCard.employeeImage}
+                                  />
+                                  <h4>
+                                    Tên:{" "}
+                                    <span
+                                      style={{
+                                        fontWeight: "bold",
+                                        color: "#bf9456",
+                                        textAlign: "center",
+                                        fontSize: "1rem",
+                                      }}
+                                    >
+                                      {service.serviceName}
+                                    </span>
+                                  </h4>
+                                  <h4 className={stylesCard.description}>
+                                    Mô tả: {service.description}
+                                  </h4>
+                                  <h4>
+                                    Giá tiền: {formatCurrency(service.price)}
+                                  </h4>
+                                  <h4>Thời gian: {formatTime(service.time)}</h4>
+                                  <h4>
+                                    Trạng thái:{" "}
+                                    <Tag
+                                      icon={
+                                        service.isActive ? (
+                                          <CheckCircleOutlined />
+                                        ) : (
+                                          <CloseCircleOutlined />
+                                        )
+                                      }
+                                      color={service.isActive ? "green" : "red"}
+                                      style={{ marginBottom: "0.5rem" }}
+                                    >
+                                      {service.isActive
+                                        ? "Hoạt động"
+                                        : "Không hoạt động"}
+                                    </Tag>
+                                  </h4>
+
+                                  <div className="service-actions">
+                                    <Button
+                                      onClick={() => handleUpdate(service)}
+                                      className="editButtonStyle"
+                                      icon={<EditOutlined />}
+                                      style={{ marginRight: "0.5rem" }}
+                                    >
+                                      Chỉnh sửa
+                                    </Button>
+
+                                    <Popconfirm
+                                      title="Bạn có chắc chắn muốn xóa dịch vụ này?"
+                                      onConfirm={() =>
+                                        handleDeleteService(service)
+                                      }
+                                      okText="Đồng ý"
+                                      cancelText="Hủy"
+                                    >
+                                      <Button
+                                        className="deleteButtonStyle"
+                                        icon={<DeleteOutlined />}
+                                        danger
+                                      >
+                                        Xóa
+                                      </Button>
+                                    </Popconfirm>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
                         </Spin>
                       </div>
 
@@ -1855,13 +2162,116 @@ function ListShopBarber(props) {
                         />
                       </div>
                       <div className={styles["table-container"]}>
-                        <Spin className="custom-spin" spinning={loadingVoucher} tip="Loading...">
-                          <Table
+                        <Spin
+                          className="custom-spin"
+                          spinning={loadingVoucher}
+                          tip="Loading..."
+                        >
+                          {/* <Table
                             dataSource={voucherList}
                             columns={columnsVoucher}
                             rowKey="code"
                             pagination={false} // Nếu bạn muốn thêm phân trang, có thể cấu hình tại đây
-                          />
+                          /> */}
+                          <div className={stylesCard.container}>
+                            {voucherList?.length === 0 && (
+                              <h4
+                                style={{
+                                  fontWeight: "bold",
+                                  color: "#bf9456",
+                                  textAlign: "center",
+                                  fontSize: "1.2rem",
+                                }}
+                              >
+                                Không tìm thấy khuyến mãi nào !!!
+                              </h4>
+                            )}
+
+                            <div className={stylesCard.grid}>
+                              {voucherList.map((voucher) => (
+                                <div
+                                  key={voucher.code}
+                                  className={stylesCard.card}
+                                >
+                                  <h4
+                                    style={{
+                                      fontWeight: "bold",
+                                      color: "#bf9456",
+                                      textAlign: "center",
+                                    }}
+                                  >
+                                    Mã giảm giá: {voucher.code}
+                                  </h4>
+                                  <p className={stylesCard.description}>
+                                    {voucher.description}
+                                  </p>
+                                  <h4>
+                                    Số tiền tối thiểu:{" "}
+                                    {formatCurrency(voucher.minimumOrderAmount)}
+                                  </h4>
+                                  <h4>
+                                    Giảm giá tối đa:{" "}
+                                    {formatCurrency(voucher.maximumDiscount)}
+                                  </h4>
+                                  <h4>
+                                    % giảm giá:{" "}
+                                    {formatDiscount(voucher.discountPercentage)}
+                                  </h4>
+                                  <h4>Số lượng: {voucher.quantity}</h4>
+                                  <h4>
+                                    Ngày bắt đầu:{" "}
+                                    {formatDateTime(voucher.startDate)}
+                                  </h4>
+                                  <h4>
+                                    Ngày hết hạn:{" "}
+                                    {formatDateTime(voucher.expiryDate)}
+                                  </h4>
+
+                                  <Tag
+                                    icon={
+                                      voucher.isActive ? (
+                                        <CheckCircleOutlined />
+                                      ) : (
+                                        <CloseCircleOutlined />
+                                      )
+                                    }
+                                    color={voucher.isActive ? "green" : "red"}
+                                    style={{ marginBottom: "0.5rem" }}
+                                  >
+                                    {voucher.isActive
+                                      ? "Hoạt động"
+                                      : "Không hoạt động"}
+                                  </Tag>
+
+                                  <div className="voucher-actions">
+                                    {voucher.isActive && (
+                                      <>
+                                        <Button
+                                          onClick={() =>
+                                            handleUpdateVoucher(voucher)
+                                          }
+                                          className="editButtonStyle"
+                                          icon={<EditOutlined />}
+                                          style={{ marginRight: "0.5rem" }}
+                                        >
+                                          Chỉnh sửa
+                                        </Button>
+
+                                        <Button
+                                          onClick={() => handleDelete(voucher)}
+                                          className="deleteButtonStyle"
+                                          icon={<DeleteOutlined />}
+                                          danger
+                                        >
+                                          Xóa
+                                        </Button>
+                                      </>
+                                    )}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
                         </Spin>
                       </div>
 

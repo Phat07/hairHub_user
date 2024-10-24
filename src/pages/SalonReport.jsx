@@ -5,10 +5,25 @@ import {
   actGetAllReportCustomerId,
   actGetAllReportSalonId,
 } from "../store/report/action";
-import { Button, Modal, Space, Table, Carousel, Descriptions } from "antd";
+import {
+  Button,
+  Modal,
+  Space,
+  Table,
+  Carousel,
+  Descriptions,
+  Spin,
+  Pagination,
+  Image,
+} from "antd";
 import { actGetSalonInformationByOwnerIdAsync } from "../store/salonAppointments/action";
-import { LeftOutlined, RightOutlined } from "@ant-design/icons";
+import {
+  LeftOutlined,
+  LoadingOutlined,
+  RightOutlined,
+} from "@ant-design/icons";
 import styles from "../css/salonAppointment.module.css";
+import stylesCard from "../css/customerAppointment.module.css";
 import moment from "moment";
 import classNames from "classnames";
 
@@ -134,41 +149,50 @@ function SalonReport(props) {
     ? salonReport.items
     : [];
 
+  const onPageChange = (page) => {
+    setCurrentPage(page);
+  };
+
   return (
     <div className={styles.appointmentContainer}>
-      <Space className="custom-status" style={{ marginBottom: "20px" }}>
-        <Button
-          // type={status === "PENDING" ? "primary" : "default"}
-          className={classNames({
-            "btn-primary": status === "PENDING", // Khi status là "PENDING", áp dụng lớp 'btn-primary'
-            "btn-default": status !== "PENDING", // Khi status không phải là "PENDING", áp dụng lớp 'btn-default'
-          })}
-          onClick={() => handleStatusChange("PENDING")}
-        >
-          Đang chờ
-        </Button>
-        <Button
-          // type={status === "APPROVED" ? "primary" : "default"}
-          className={classNames({
-            "btn-primary": status === "APPROVED", // Khi status là "PENDING", áp dụng lớp 'btn-primary'
-            "btn-default": status !== "APPROVED", // Khi status không phải là "PENDING", áp dụng lớp 'btn-default'
-          })}
-          onClick={() => handleStatusChange("APPROVED")}
-        >
-          Đã duyệt
-        </Button>
-        <Button
-          // type={status === "REJECTED" ? "primary" : "default"}
-          className={classNames({
-            "btn-primary": status === "REJECTED", // Khi status là "PENDING", áp dụng lớp 'btn-primary'
-            "btn-default": status !== "REJECTED", // Khi status không phải là "PENDING", áp dụng lớp 'btn-default'
-          })}
-          onClick={() => handleStatusChange("REJECTED")}
-        >
-          Đã từ chối
-        </Button>
-      </Space>
-      <Table
+      <Spin
+        className="custom-spin"
+        spinning={loading}
+        // tip="Loading..."
+      >
+        <Space className="custom-status" style={{ marginBottom: "20px" }}>
+          <Button
+            // type={status === "PENDING" ? "primary" : "default"}
+            className={classNames({
+              "btn-primary": status === "PENDING", // Khi status là "PENDING", áp dụng lớp 'btn-primary'
+              "btn-default": status !== "PENDING", // Khi status không phải là "PENDING", áp dụng lớp 'btn-default'
+            })}
+            onClick={() => handleStatusChange("PENDING")}
+          >
+            Đang chờ
+          </Button>
+          <Button
+            // type={status === "APPROVED" ? "primary" : "default"}
+            className={classNames({
+              "btn-primary": status === "APPROVED", // Khi status là "PENDING", áp dụng lớp 'btn-primary'
+              "btn-default": status !== "APPROVED", // Khi status không phải là "PENDING", áp dụng lớp 'btn-default'
+            })}
+            onClick={() => handleStatusChange("APPROVED")}
+          >
+            Đã duyệt
+          </Button>
+          <Button
+            // type={status === "REJECTED" ? "primary" : "default"}
+            className={classNames({
+              "btn-primary": status === "REJECTED", // Khi status là "PENDING", áp dụng lớp 'btn-primary'
+              "btn-default": status !== "REJECTED", // Khi status không phải là "PENDING", áp dụng lớp 'btn-default'
+            })}
+            onClick={() => handleStatusChange("REJECTED")}
+          >
+            Đã từ chối
+          </Button>
+        </Space>
+        {/* <Table
         loading={loading}
         dataSource={reportsArray}
         columns={columns}
@@ -181,10 +205,98 @@ function SalonReport(props) {
           position: ["bottomCenter"],
         }}
         onChange={handleTableChange}
-      />
+      /> */}
+
+        <div className={stylesCard.container}>
+          {/* {loading && (
+            <div className={stylesCard.overlay}>
+              <LoadingOutlined style={{ fontSize: "2rem" }} />
+            </div>
+          )} */}
+
+          {reportsArray?.length === 0 && (
+            <h4
+              style={{
+                fontWeight: "bold",
+                color: "#bf9456",
+                textAlign: "center",
+                fontSize: "1.2rem",
+              }}
+            >
+              Không tìm thấy báo cáo {status} nào !!!
+            </h4>
+          )}
+
+          <div className={stylesCard.grid}>
+            {reportsArray.map((report) => (
+              <div key={report.id} className={stylesCard.card}>
+                <h4>
+                  Tên Salon:{" "}
+                  <span
+                    style={{
+                      fontWeight: "bold",
+                      color: "#bf9456",
+                      textAlign: "center",
+                    }}
+                  >
+                    {report.salonInformation.name}
+                  </span>
+                </h4>
+                <h4>
+                  Tên Khách Hàng:{" "}
+                  <span
+                    style={{
+                      fontWeight: "bold",
+                      color: "#bf9456",
+                      textAlign: "center",
+                    }}
+                  >
+                    {report.customer.fullName}
+                  </span>
+                </h4>
+                <h4>
+                  Tên Chủ Salon:{" "}
+                  <span
+                    style={{
+                      fontWeight: "bold",
+                      color: "#bf9456",
+                      textAlign: "center",
+                    }}
+                  >
+                    {report.salonInformation.salonOwner.fullName}
+                  </span>
+                </h4>
+                <h4>Trạng Thái: {getStatusText(report.status)}</h4>
+
+                <div className="report-actions">
+                  <Button
+                    onClick={() => handleViewDetails(report)}
+                    style={{
+                      backgroundColor: "#bf9456",
+                      marginBottom: "0.5rem",
+                    }}
+                  >
+                    Xem chi tiết
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        {reportsArray.length > pageSize && (
+          <Pagination
+            current={currentPage}
+            pageSize={pageSize}
+            total={salonReport?.total || 0}
+            onChange={onPageChange}
+            className="paginationAppointment"
+            style={{ marginTop: "1rem", textAlign: "center" }}
+          />
+        )}
+      </Spin>
       <Modal
         title={
-          <div style={{ textAlign: "center", fontSize: "2.5rem" }}>
+          <div style={{ textAlign: "center", fontSize: "1.5rem" }}>
             Chi Tiết Report
           </div>
         }
@@ -248,7 +360,7 @@ function SalonReport(props) {
                 >
                   {selectedReport.fileReports.map((file) => (
                     <div key={file.id} style={{ padding: "0 10px" }}>
-                      <img
+                      <Image
                         src={file.img}
                         alt="Report Image"
                         style={{

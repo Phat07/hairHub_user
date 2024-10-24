@@ -25,8 +25,9 @@ import { actCreateReportSalon } from "../store/report/action";
 import { AppointmentService } from "../services/appointmentServices";
 import { EmptyComponent } from "../components/EmptySection/DisplayEmpty";
 import styles from "../css/salonAppointment.module.css";
+import stylesCard from "../css/customerAppointment.module.css";
 import { useNavigate } from "react-router-dom";
-import { DownOutlined } from "@ant-design/icons";
+import { DownOutlined, LoadingOutlined } from "@ant-design/icons";
 
 const { Text, Title } = Typography;
 const { Option } = Select;
@@ -48,7 +49,7 @@ function SalonAppointmentVer2(props) {
   const [nameFilter, setNameFilter] = useState(null);
   const searchParams = new URLSearchParams(location.search);
   const appoinmentIdUrl = searchParams.get("appointmentId");
-  const pageSize = 4;
+  const [pageSize, setPageSize] = useState(4);
 
   const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
   const ownerId = useSelector((state) => state.ACCOUNT.idOwner);
@@ -71,7 +72,7 @@ function SalonAppointmentVer2(props) {
       AppointmentService.getAppointmentById(appoinmentIdUrl)
         .then((res) => {
           console.log("res", res);
-          setIsModalVisible(true)
+          setIsModalVisible(true);
           setCurrentAppointment(res.data);
         })
         .catch((err) => {
@@ -115,7 +116,14 @@ function SalonAppointmentVer2(props) {
     };
 
     fetchAppointments();
-  }, [salonInformationByOwnerId, status, currentPage, dateFilter, nameFilter]);
+  }, [
+    salonInformationByOwnerId,
+    status,
+    currentPage,
+    dateFilter,
+    nameFilter,
+    pageSize,
+  ]);
 
   const statusDisplayNames = {
     BOOKING: "Đang đặt",
@@ -131,6 +139,7 @@ function SalonAppointmentVer2(props) {
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleDateChange = (date, dateString) => {
@@ -261,7 +270,7 @@ function SalonAppointmentVer2(props) {
 
   const handleCancel = () => {
     setIsModalVisible(false);
-    setCurrentAppointment(null)
+    setCurrentAppointment(null);
     const url = new URL(window.location);
     url.searchParams.delete("appointmentId");
     navigate(`${url.pathname}${url.search}`);
@@ -289,24 +298,54 @@ function SalonAppointmentVer2(props) {
             }
           >
             <Text strong style={{ fontSize: "16px" }}>
-              Thông tin Salon | Barber shop
+              Thông tin Khách hàng
             </Text>
             <div>
-              <Image
-                src={currentAppointment?.salonInformation.img}
+              {/* <Image
+                src={currentAppointment?.customer?.img}
                 preview={false}
                 style={{ marginBottom: "10px", marginTop: "10px" }}
                 width={300}
                 height={200}
+              /> */}
+              <img
+                src={currentAppointment?.customer?.img}
+                alt="Khách hàng"
+                className={stylesCard.salonImageDetail}
               />
               <p>
-                <Text strong>Tên tiệm: </Text>
-                <Text>{currentAppointment?.salonInformation.name}</Text>
+                <Text strong>Tên khách hàng: </Text>
+                <Text>{currentAppointment?.customer?.fullName}</Text>
               </p>
               <p>
+                <Text strong>Email: </Text>
+                <Text>{currentAppointment?.customer.email}</Text>
+              </p>
+              <p>
+                <Text strong>Giới tính: </Text>
+                <Text>
+                  {currentAppointment?.customer.gender
+                    ? currentAppointment.customer.gender
+                    : "Thông tin chưa được cập nhật"}
+                </Text>
+              </p>
+              <p>
+                <Text strong>Ngày sinh: </Text>
+                <Text>
+                  {currentAppointment?.customer.dayOfBirth
+                    ? currentAppointment.customer.dayOfBirth
+                    : "Thông tin chưa được cập nhật"}
+                </Text>
+              </p>
+
+              <p>
+                <Text strong>Số điện thoại: </Text>
+                <Text>{currentAppointment?.customer.phone}</Text>
+              </p>
+              {/* <p>
                 <Text strong>Địa chỉ: </Text>
                 <Text>{currentAppointment?.salonInformation.address}</Text>
-              </p>
+              </p> */}
             </div>
           </div>
 
@@ -315,7 +354,7 @@ function SalonAppointmentVer2(props) {
             className={styles.appointmentDetailB2}
             style={{ marginTop: "1rem" }}
           >
-            {currentAppointment?.status !== "CANCEL_BY_CUSTOMER" && (
+            {currentAppointment?.status === "BOOKING" && (
               <div style={{ padding: "10px", border: "1px solid #ccc" }}>
                 <Text strong>Mã QR xác nhận để thành công:</Text>
                 <Image
@@ -446,7 +485,7 @@ function SalonAppointmentVer2(props) {
                   {currentAppointment?.id}
                 </Text>
               </p>
-              <p>
+              {/* <p>
                 <Text strong>Khách Hàng: </Text>
                 <Text>{currentAppointment?.customer.fullName}</Text>
               </p>
@@ -474,7 +513,7 @@ function SalonAppointmentVer2(props) {
               <p>
                 <Text strong>Số điện thoại: </Text>
                 <Text>{currentAppointment?.customer.phone}</Text>
-              </p>
+              </p> */}
               <p>
                 <Text strong>Ngày hẹn: </Text>
                 <Text>
@@ -590,76 +629,213 @@ function SalonAppointmentVer2(props) {
     },
   ];
 
+  const groupedAppointmentsbyDate = salonAppointments.reduce(
+    (acc, appointment) => {
+      const date = moment(appointment.startDate).format("DD/MM/YYYY");
+      acc[date] = acc[date] || [];
+      acc[date].push(appointment);
+      return acc;
+    },
+    {}
+  );
+
+  const handleLoadMore = () => {
+    setPageSize((prevSize) => prevSize + 4); // Tăng thêm 5 mỗi khi nhấn Load More
+  };
+
+  const handlePageSizeChange = (current, size) => {
+    setPageSize(size); // Cập nhật pageSize
+    setCurrentPage(1); // Trở về trang 1 sau khi thay đổi kích thước trang
+  };
+
   return (
     <div className={styles.appointmentContainer}>
-      <div className={styles.statusfilter}>
-        {Object.keys(statusDisplayNames).map((statusKey, index) => (
-          <button
-            key={statusKey}
-            onClick={() => handleStatusChange(statusKey)}
-            style={{
-              flex: "1",
-              marginRight:
-                index !== Object.keys(statusDisplayNames).length - 1
-                  ? "1rem"
-                  : "0",
-              padding: "0.5rem 1rem",
-              backgroundColor:
-                status === statusKey
-                  ? status === "BOOKING"
-                    ? "#1677ff"
-                    : status === "CANCEL_BY_CUSTOMER"
-                    ? "#faa500"
-                    : status === "FAILED"
-                    ? "#ff0000"
-                    : status === "SUCCESSED"
-                    ? "#389e0d"
-                    : "gray"
-                  : "gray",
-              color: "white",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer",
-              textAlign: "center",
-            }}
-          >
-            {statusDisplayNames[statusKey]}
-          </button>
-        ))}
-      </div>
+      <Spin
+        className="custom-spin"
+        spinning={loading}
+        // tip="Loading..."
+      >
+        <div className={styles.statusfilter}>
+          {Object.keys(statusDisplayNames).map((statusKey, index) => (
+            <button
+              key={statusKey}
+              onClick={() => handleStatusChange(statusKey)}
+              style={{
+                flex: "1",
+                marginRight:
+                  index !== Object.keys(statusDisplayNames).length - 1
+                    ? "1rem"
+                    : "0",
+                padding: "0.5rem 1rem",
+                backgroundColor:
+                  status === statusKey
+                    ? status === "BOOKING"
+                      ? "#1677ff"
+                      : status === "CANCEL_BY_CUSTOMER"
+                      ? "#faa500"
+                      : status === "FAILED"
+                      ? "#ff0000"
+                      : status === "SUCCESSED"
+                      ? "#389e0d"
+                      : "gray"
+                    : "gray",
+                color: "white",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+                textAlign: "center",
+              }}
+            >
+              {statusDisplayNames[statusKey]}
+            </button>
+          ))}
+        </div>
 
-      <div className={styles.filterDate}>
-        <DatePicker
-          style={{ marginRight: "1rem" }}
-          onChange={handleDateChange}
-          placeholder="Lọc theo thời gian"
-        />
-        <Input
-          placeholder="Lọc theo tên"
-          value={nameFilter}
-          onChange={handleNameFilterChange}
-          allowClear
-          style={{ width: 200 }}
-        />
-      </div>
+        <div className={styles.filterDate}>
+          <DatePicker
+            style={{ marginRight: "1rem" }}
+            onChange={handleDateChange}
+            placeholder="Lọc theo thời gian"
+          />
+          <Input
+            placeholder="Lọc theo tên"
+            value={nameFilter}
+            onChange={handleNameFilterChange}
+            allowClear
+            style={{ width: 200 }}
+          />
+        </div>
 
-      <Table
+        {/* <Table
         className={styles.appointmentTable}
         columns={columns}
         dataSource={salonAppointments}
         loading={loading}
         rowKey="id"
         pagination={false}
-      />
+      /> */}
 
-      <Pagination
-        className="paginationAppointment"
-        current={currentPage}
-        total={totalPages * pageSize}
-        pageSize={pageSize}
-        onChange={handlePageChange}
-      />
+        <div className={stylesCard.container}>
+          {/* {loading && (
+          <div className={stylesCard.overlay}>
+            <LoadingOutlined style={{ fontSize: "2rem" }} />
+          </div>
+        )} */}
+          {salonAppointments?.length === 0 && status && (
+            <h4
+              style={{
+                fontWeight: "bold",
+                color: "#bf9456",
+                textAlign: "center",
+                fontSize: "1.2rem",
+              }}
+            >
+              Không tìm thấy lịch hẹn {statusDisplayNames[status] || status} nào
+              !!!
+            </h4>
+          )}
+          {/* {Object.entries(groupedAppointmentsbyDate).map(
+          ([date, appointments]) => (
+            <div key={date} className={stylesCard.dateGroup}>
+              <h3 className={stylesCard.dateHeader}>{date}</h3> */}
+          <div className={stylesCard.grid}>
+            {salonAppointments.map((appointment) => {
+              const startTime = moment(
+                appointment.appointmentDetails[0]?.startTime
+              );
+              const currentTime = moment();
 
+              // Kiểm tra xem ngày hiện tại có trùng với ngày hẹn hay không
+              const isSameDay = moment(appointment.startDate).isSame(
+                currentTime,
+                "day"
+              );
+
+              // Tính khoảng cách thời gian giữa startTime và thời gian hiện tại
+              const hoursDiff = currentTime.diff(startTime, "hours");
+
+              // Kiểm tra xem nút báo cáo có được hiển thị hay không
+              const isReportButtonVisible =
+                currentTime.isSameOrAfter(startTime);
+              const isReportExpired = hoursDiff >= 72;
+
+              return (
+                <div key={appointment.id} className={stylesCard.card}>
+                  <img
+                    src={appointment.customer.img}
+                    alt="Salon"
+                    className={stylesCard.salonImage}
+                  />
+                  <h4>
+                    Tên khách hàng:{" "}
+                    <span
+                      style={{
+                        fontWeight: "bold",
+                        color: "#bf9456",
+                        textAlign: "center",
+                      }}
+                    >
+                      {" "}
+                      {appointment.customer.fullName}
+                    </span>
+                  </h4>
+                  <h4>Ngày tạo: {formatDate(appointment.createdDate)}</h4>
+                  <h4>Ngày bắt đầu: {formatDate(startTime)}</h4>
+                  <h4>
+                    Giá tiền: {appointment.totalPrice.toLocaleString()} VND
+                  </h4>
+
+                  <Button
+                    style={{
+                      backgroundColor: "#bf9456",
+                      marginBottom: "0.5rem",
+                    }}
+                    onClick={() => showModal(appointment)}
+                  >
+                    Xem chi tiết
+                  </Button>
+
+                  {isReportButtonVisible && (
+                    <>
+                      {!isReportExpired ? (
+                        <Button
+                          danger
+                          onClick={() => handleReport(appointment)}
+                        >
+                          {appointment.isReportBySalon
+                            ? "Đã báo cáo cho admin"
+                            : "Báo cáo"}
+                        </Button>
+                      ) : (
+                        <Button disabled>Đã quá hạn báo cáo</Button>
+                      )}
+                    </>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          {/* </div>
+          )
+        )} */}
+        </div>
+
+        <Pagination
+          className="paginationAppointment"
+          current={currentPage}
+          total={totalPages * pageSize}
+          pageSize={pageSize}
+          onChange={handlePageChange}
+          pageSizeOptions={["4", "8", "12", "20"]} // Các tùy chọn kích thước trang
+          onShowSizeChange={handlePageSizeChange} // Hàm xử lý thay đổi kích thước
+        />
+        {/* {totalPages !== 1 && totalPages !== 0 && (
+        <button onClick={handleLoadMore} className={stylesCard.loadmorebtn}>
+          {loading && <LoadingOutlined style={{ marginRight: "5px" }} />}
+          Tải thêm
+        </button>
+      )} */}
+      </Spin>
       <Modal
         wrapClassName="my-custom-modal"
         title={
