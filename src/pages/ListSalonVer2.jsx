@@ -454,6 +454,11 @@ function ListSalonVer2(props) {
       setSalonList(salons);
       setTotalPages(salonRes.data.total);
       setTotal(salonRes.data.total);
+      setIsSalonNear(!isSalonNear)
+      setCurrentLocation({
+        lat:latitude,
+        lng: longtitude
+      })
       message.info(
         <>
           Có {salons.length || 0} salon gần bạn

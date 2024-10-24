@@ -13,20 +13,6 @@
   },
   "debug": false,
   "listCSS": [],
-  "listSyncJS": ["assets/index.DQSLAjSR.module.js"],
-  "listAsyncJS": [],
-  "pages": [
-    {
-      "path": "/",
-      "component": "HomePage" 
-    },
-    {
-      "path": "/login",
-      "component": "LoginPage" 
-    },
-    {
-      "path": "/list_salon_ver2",
-      "component": "ListSalonVer2" 
-    }
-  ]
+  "listSyncJS": ["assets/index.D39fhSrY.module.js"],
+  "listAsyncJS": []
 }

@@ -18,19 +18,12 @@ export default defineConfig({
     },
   },
   base: "/", // Base is "/" to use absolute paths after deployment
-  build: {
-    polyfillModulePreload: false,
+  build: { 
     rollupOptions: {
-      output: {
-        entryFileNames: "assets/[name].[hash].module.js", // JavaScript entry files with hash and .module.js extension
-        chunkFileNames: "assets/[name].[hash].module.js", // JavaScript chunk files with hash and .module.js extension
-        assetFileNames: ({ name }) => {
-          if (name && name.endsWith('.css')) {
-            return 'assets/[name].[hash].css'; // CSS files with hash and .css extension
-          }
-          return 'assets/[name].[hash][extname]'; // Other asset types
-        }
-      }
-    }
+    output: {
+        entryFileNames: 'assets/[name].[hash].module.js',
+        chunkFileNames: 'assets/[name].[hash].module.js',
+      },
+    },
   }
 });
