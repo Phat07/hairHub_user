@@ -37,6 +37,7 @@ import Loader from "../components/Loader";
 import ConfirmDeleteModal from "@/components/DeleteAccount/ConfirmDeleteModal";
 import OTPModal from "@/components/DeleteAccount/OTPModal";
 import axios from "axios";
+import Wallet from "@/components/Wallet";
 
 const { Option } = Select;
 
@@ -532,6 +533,7 @@ function SalonOwnerAccountPage() {
               </div>
             )}
           </div>
+          {/* <Wallet/> */}
           <div>
             <Typography.Text strong style={{ fontSize: "2rem" }}>
               Thông tin người dùng

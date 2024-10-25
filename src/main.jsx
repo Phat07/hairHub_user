@@ -61,6 +61,7 @@ import ImageForSalon from "./pages/ImageForSalon.jsx";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import LoginGoogle from "./components/LoginGoogle/index.jsx";
 import AccountDeletionGuide from "./pages/AccountDeletionGuide.jsx";
+import WalletPage from "./pages/WalletPage.jsx";
 
 const version = import.meta.env.APP_ID || "default";
 const basePath = `/zapps/2685475901677367467`;
@@ -300,6 +301,17 @@ const router = createBrowserRouter(
               fallbackPath="/login"
             >
               <PackageSuccessPage />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "payment",
+          element: (
+            <RequireAuth
+              requiredRoles={["SalonOwner", "Customer"]}
+              fallbackPath="/login"
+            >
+              <WalletPage />
             </RequireAuth>
           ),
         },

@@ -329,7 +329,7 @@ function LoadScriptMapModal({
     const lat = event.latLng.lat();
     const lng = event.latLng.lng();
     setTempLatLng({ lat, lng });
-    setLatLng({lat,lng})
+    setLatLng({ lat, lng });
     message.info("Vị trí đã được chọn");
     handleSearch(lat, lng, distance);
     setModalVisible(false);
@@ -372,6 +372,57 @@ function LoadScriptMapModal({
         }}
       >
         <div className="relative h-[500px]">
+          {isSalonNear && (
+            <motion.div
+              className="relative z-10 bottom-4 p-4 rounded-lg shadow-lg flex items-center space-x-4 w-auto overflow-hidden"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              {/* Expanding Circle Animation */}
+              <div className="absolute inset-0 flex justify-center items-center -z-10">
+                <div className="animate-expand-circle bg-blue-200 rounded-full w-10 h-10" />
+              </div>
+
+              <div className="flex-none w-3/12">
+                <input
+                  type="number"
+                  placeholder="Nhập (km)"
+                  value={distance}
+                  onChange={(e) => {
+                    setDistance(e.target.value);
+                    if (e.target.value >= 1) {
+                      setErrorMessage("");
+                    } else {
+                      setErrorMessage(
+                        "Vui lòng nhập khoảng cách tối thiểu là 1 km"
+                      );
+                    }
+                  }}
+                  className="relative border border-gray-300 rounded p-2 focus:outline-none w-full"
+                />
+              </div>
+
+              <div className="flex-grow w-7/12">
+                <Autocomplete
+                  onLoad={(autocomplete) =>
+                    (autocompleteRef.current = autocomplete)
+                  }
+                  onPlaceChanged={handlePlaceChanged}
+                >
+                  <input
+                    type="text"
+                    placeholder="Tìm kiếm địa điểm..."
+                    className="border border-gray-300 rounded p-2 focus:outline-none w-full"
+                    disabled={!distance || distance < 1}
+                  />
+                </Autocomplete>
+                {errorMessage && (
+                  <p className="text-red-500 text-sm mt-2">{errorMessage}</p>
+                )}
+              </div>
+            </motion.div>
+          )}
           <GoogleMap
             mapContainerStyle={mapStyle}
             center={latLng.lat ? latLng : currentLocation}
@@ -406,31 +457,32 @@ function LoadScriptMapModal({
 
             {selectedSalon && (
               <InfoWindowF
-              position={{
-                lat: parseFloat(selectedSalon.latitude),
-                lng: parseFloat(selectedSalon.longitude),
-              }}
-              onCloseClick={() => setSelectedSalon(null)}
-            >
-              <div className="p-2">
-                <h3 className="text-lg md:text-xl">{selectedSalon.name}</h3>
-                <p className="text-sm md:text-base">{selectedSalon.address}</p>
-                <a
-                  href={`https://www.google.com/maps/dir//${selectedSalon.latitude},${selectedSalon.longitude},7z?entry=ttu`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-500 hover:underline"
-                >
-                  Chỉ đường
-                </a>
-              </div>
-            </InfoWindowF>
-            
+                position={{
+                  lat: parseFloat(selectedSalon.latitude),
+                  lng: parseFloat(selectedSalon.longitude),
+                }}
+                onCloseClick={() => setSelectedSalon(null)}
+              >
+                <div className="p-2">
+                  <h3 className="text-lg md:text-xl">{selectedSalon.name}</h3>
+                  <p className="text-sm md:text-base">
+                    {selectedSalon.address}
+                  </p>
+                  <a
+                    href={`https://www.google.com/maps/dir//${selectedSalon.latitude},${selectedSalon.longitude},7z?entry=ttu`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 hover:underline"
+                  >
+                    Chỉ đường
+                  </a>
+                </div>
+              </InfoWindowF>
             )}
           </GoogleMap>
 
           {/* Autocomplete input */}
-          {isSalonNear && (
+          {/* {isSalonNear && (
             <motion.div
               className="absolute top-4 left-4 z-10 bg-white bg-opacity-30 p-4 rounded-lg shadow-lg flex items-center space-x-4 w-auto overflow-hidden"
               initial={{ opacity: 0, y: -20 }} // Initial state
@@ -484,7 +536,7 @@ function LoadScriptMapModal({
                 )}
               </div>
             </motion.div>
-          )}
+          )} */}
         </div>
         <Modal
           title={null}
