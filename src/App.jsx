@@ -1,7 +1,7 @@
 import jwtDecode from "jwt-decode"; // Ensure jwtDecode is imported
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./App.css";
 import Header from "./components/Header";
 import HeaderUnAuth from "./components/HeaderUnAuth";
@@ -24,13 +24,13 @@ import FooterMobileAuth from "./components/FooterMobileAuth";
 import FooterMobileUnAuth from "./components/FooterMobileUnAuth";
 import audioVer1 from "../public/audio/warm-tech-logo-21474.mp3";
 import { actGetNotificationList } from "./store/notification/action";
-const tele =window.Telegram.WebApp
+const tele = window.Telegram.WebApp;
 
 function App() {
   useDocumentTitle();
-  useEffect(()=>{
-    tele.ready()
-  },[])
+  useEffect(() => {
+    tele.ready();
+  }, []);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const token = localStorage.getItem("accessToken");
@@ -165,6 +165,25 @@ function App() {
       // dispatch(actGetAllServicesBySalonId(salonDetail.id, localStorage.getItem("currentPage"),localStorage.getItem("pageSize")));
     }
   }, [salonDetail, dispatch]);
+
+  useEffect(() => {
+    const handleScrollToTop = () => {
+      window.scrollTo(0, 0);
+    };
+
+    window.addEventListener("popstate", handleScrollToTop);
+
+    // Clean up the event listener on component unmount
+    return () => {
+      window.removeEventListener("popstate", handleScrollToTop);
+    };
+  }, []);
+
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   return (
     <>

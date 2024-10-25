@@ -144,9 +144,6 @@ margin-inline: 2rem;
     margin-bottom: 5px;
     width: 100%;
   }
-  .table-container {
-    padding: 10px; /* Optional: Add padding for better UX on small screens */
-  }
 }
 @media (min-width: 769px) {
   .dropdown-icon {

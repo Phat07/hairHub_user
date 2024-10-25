@@ -1,7 +1,7 @@
 .appointmentContainer {
   max-width: 1200px;
-  margin: 100px auto;
-  margin-top: 10rem;
+  margin-inline: auto;
+  margin-block: 7rem;
   padding: 20px;
   background-color: #f4f2eb;
   border: 1px solid #ddd;
@@ -134,6 +134,9 @@
   th,
   td {
     white-space: nowrap;
+  }
+  .appointmentContainer {
+    margin-top: 5rem;
   }
 }
 
