@@ -1,4 +1,5 @@
-import { App, ConfigProvider, Table } from "antd";
+import { ConfigProvider, Table } from "antd";
+import { App, SnackbarProvider } from "zmp-ui";
 import viVn from "antd/lib/locale/vi_VN";
 import React from "react";
 import ReactDOM from "react-dom/client";
@@ -61,322 +62,349 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import LoginGoogle from "./components/LoginGoogle/index.jsx";
 import AccountDeletionGuide from "./pages/AccountDeletionGuide.jsx";
 
-// const version = import.meta.env.APP_ID || "default";
-// const basePath = `/zapps/${version}`; 
+const version = import.meta.env.APP_ID || "default";
+const basePath = `/zapps/2685475901677367467`;
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <App1 />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        path: "/",
-        element: <HomePage />,
-      },
-      {
-        path: "barber",
-        element: <BarberPage />,
-      },
-      {
-        path: "create_shop",
-        element: (
-          <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
-            <SalonForm />
-          </RequireAuth>
-        ),
-      },
-      {
-        path: "create_shop/:id",
-        element: (
-          <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
-            <SalonForm />
-          </RequireAuth>
-        ),
-      },
-      {
-        path: "list_barber_employees/:id/*",
-        element: (
-          <RequireAuth fallbackPath="/login">
-            <Routes>
-              <Route path="/" element={<ListBarberEmployees />} />
-              <Route
-                path="account_details/:employeeId"
-                element={<AccountPage />}
-              />
-            </Routes>
-          </RequireAuth>
-        ),
-      },
-      {
-        path: "list_shop/*",
-        element: (
-          <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
-            <Routes>
-              <Route path="/" element={<ListShopBarber />} />
-              <Route
-                path="account_details/:employeeId"
-                element={<AccountPage />}
-              />
-            </Routes>
-          </RequireAuth>
-        ),
-      },
-      {
-        path: "list_service/:id",
-        element: <ListServices />,
-        errorElement: <ErrorPage />,
-      },
-      {
-        path: "footer",
-        element: <Footer />,
-      },
-      {
-        path: "salonOwner",
-        element: (
-          <RequireAuth fallbackPath="/login">
-            <SalonOwnerPage />
-          </RequireAuth>
-        ),
-      },
-      {
-        path: "list_voucher/:id",
-        element: (
-          <RequireAuth fallbackPath="/login">
-            <ManageVoucher />
-          </RequireAuth>
-        ),
-      },
-      {
-        path: "manage_appointment",
-        element: (
-          <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
-            <SalonAppointment />
-          </RequireAuth>
-        ),
-      },
-      {
-        path: "customer_appointment",
-        element: (
-          <RequireAuth requiredRoles={["Customer"]} fallbackPath="/login">
-            <CustomerAppointmentVer2 />
-          </RequireAuth>
-        ),
-      },
-      {
-        path: "salon_appointment",
-        element: (
-          <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
-            <SalonAppointmentVer2 />
-          </RequireAuth>
-        ),
-      },
-      {
-        path: "employee_appointment",
-        element: (
-          <RequireAuth requiredRoles={["SalonEmployee"]} fallbackPath="/login">
-            <EmployeeAppointment />
-          </RequireAuth>
-        ),
-      },
-      {
-        path: "list_favorite",
-        element: (
-          <RequireAuth fallbackPath="/login">
-            <FavoriteList />
-          </RequireAuth>
-        ),
-      },
-      {
-        path: "customer_report",
-        element: (
-          <RequireAuth requiredRoles={["Customer"]} fallbackPath="/login">
-            <CustomerReport />
-          </RequireAuth>
-        ),
-      },
-      {
-        path: "salon_report",
-        element: (
-          <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
-            <SalonReport />
-          </RequireAuth>
-        ),
-      },
-      {
-        path: "salon_iamges/:id",
-        element: (
-          <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
-            <ImageForSalon />
-          </RequireAuth>
-        ),
-      },
-      {
-        path: "salon_feedback",
-        element: (
-          <RequireAuth fallbackPath="/login">
-            <SalonFeedback />
-          </RequireAuth>
-        ),
-      },
-      {
-        path: "customer_feedback",
-        element: (
-          <RequireAuth fallbackPath="/login">
-            <CustomerFeedback />
-          </RequireAuth>
-        ),
-      },
-      {
-        path: "salon_payment",
-        element: (
-          <RequireAuth fallbackPath="/login">
-            <SalonPayment />
-          </RequireAuth>
-        ),
-      },
-      {
-        path: "Account/:id",
-        element: (
-          <RequireAuth
-            requiredRoles={["SalonOwner", "Customer", "SalonEmployee"]}
-            fallbackPath="/login"
-          >
-            <SalonOwnerAccountPage />
-          </RequireAuth>
-        ),
-      },
-      {
-        path: "booking_appointment/customer",
-        element: (
-          <RequireAuth fallbackPath="/login">
-            <BookingAppointmentCustomerPage />
-          </RequireAuth>
-        ),
-      },
-      {
-        path: "successPayment",
-        element: (
-          <RequireAuth requiredRoles={["SalonOwner", "Customer"]} fallbackPath="/login">
-            <SucessPayment />
-          </RequireAuth>
-        ),
-      },
-      {
-        path: "failPayment",
-        element: (
-          <RequireAuth requiredRoles={["SalonOwner", "Customer"]} fallbackPath="/login">
-            <FailPayment />
-          </RequireAuth>
-        ),
-      },
-      {
-        path: "listPackage",
-        element: (
-          <RequireAuth requiredRoles={["SalonOwner", "Customer"]} fallbackPath="/login">
-            <PackagePage />
-          </RequireAuth>
-        ),
-      },
-      {
-        path: "listPayment",
-        element: (
-          <RequireAuth requiredRoles={["SalonOwner", "Customer"]} fallbackPath="/login">
-            <PackageSuccessPage />
-          </RequireAuth>
-        ),
-      },
-      {
-        path: "dashboardTransaction",
-        element: (
-          <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
-            <DashboardTransactionPage />
-          </RequireAuth>
-        ),
-      },
-      {
-        path: "EmployeeSchedule",
-        element: (
-          <RequireAuth requiredRoles={["SalonEmployee"]} fallbackPath="/login">
-            <EmployeeSchedule />
-          </RequireAuth>
-        ),
-      },
-      {
-        path: "EmployeeStatistics",
-        element: (
-          <RequireAuth requiredRoles={["SalonEmployee"]} fallbackPath="/login">
-            <EmployeeStatistics />
-          </RequireAuth>
-        ),
-      },
-      {
-        path: "SalonEmployee",
-        element: (
-          <RequireAuth requiredRoles={["SalonEmployee"]} fallbackPath="/login">
-            <SalonEmployee />
-          </RequireAuth>
-        ),
-      },
-      {
-        path: "reviewEmployee",
-        element: (
-          <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
-            <ReviewEmployee />
-          </RequireAuth>
-        ),
-      },
-      {
-        path: `payment_commission`,
-        element: <PaymentCommissionPage />,
-        errorElement: <ErrorPage />,
-      },
-      {
-        path: "system_shop",
-        element: <SystemBarberPage />,
-      },
-      {
-        path: `salon_detail/:id`,
-        element: <SalonDetail />,
-        errorElement: <ErrorPage />,
-      },
-      {
-        path: "list_salon",
-        element: <ListSalon />,
-        errorElement: <ErrorPage />,
-      },
-      {
-        path: "list_salon_ver2",
-        element: <ListSalonVer2 />,
-        errorElement: <ErrorPage />,
-      },
-      {
-        path: `about`,
-        element: <AboutPage />,
-        errorElement: <ErrorPage />,
-      },
-      {
-        path: `deleteAcountGuide`,
-        element: <AccountDeletionGuide />,
-        errorElement: <ErrorPage />,
-      },
-    ],
-  },
-  {
-    path: "login",
-    element: <LoginPage />,
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "404",
-    element: <ErrorPage />,
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "*",
-    element: <ErrorPage />,
-  },
-]);
+const router = createBrowserRouter(
+  [
+    {
+      path: "/",
+      element: <App1 />,
+      errorElement: <ErrorPage />,
+      children: [
+        {
+          path: "/",
+          element: <HomePage />,
+        },
+        {
+          path: "barber",
+          element: <BarberPage />,
+        },
+        {
+          path: "create_shop",
+          element: (
+            <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
+              <SalonForm />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "create_shop/:id",
+          element: (
+            <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
+              <SalonForm />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "list_barber_employees/:id/*",
+          element: (
+            <RequireAuth fallbackPath="/login">
+              <Routes>
+                <Route path="/" element={<ListBarberEmployees />} />
+                <Route
+                  path="account_details/:employeeId"
+                  element={<AccountPage />}
+                />
+              </Routes>
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "list_shop/*",
+          element: (
+            <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
+              <Routes>
+                <Route path="/" element={<ListShopBarber />} />
+                <Route
+                  path="account_details/:employeeId"
+                  element={<AccountPage />}
+                />
+              </Routes>
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "list_service/:id",
+          element: <ListServices />,
+          errorElement: <ErrorPage />,
+        },
+        {
+          path: "footer",
+          element: <Footer />,
+        },
+        {
+          path: "salonOwner",
+          element: (
+            <RequireAuth fallbackPath="/login">
+              <SalonOwnerPage />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "list_voucher/:id",
+          element: (
+            <RequireAuth fallbackPath="/login">
+              <ManageVoucher />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "manage_appointment",
+          element: (
+            <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
+              <SalonAppointment />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "customer_appointment",
+          element: (
+            <RequireAuth requiredRoles={["Customer"]} fallbackPath="/login">
+              <CustomerAppointmentVer2 />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "salon_appointment",
+          element: (
+            <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
+              <SalonAppointmentVer2 />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "employee_appointment",
+          element: (
+            <RequireAuth
+              requiredRoles={["SalonEmployee"]}
+              fallbackPath="/login"
+            >
+              <EmployeeAppointment />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "list_favorite",
+          element: (
+            <RequireAuth fallbackPath="/login">
+              <FavoriteList />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "customer_report",
+          element: (
+            <RequireAuth requiredRoles={["Customer"]} fallbackPath="/login">
+              <CustomerReport />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "salon_report",
+          element: (
+            <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
+              <SalonReport />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "salon_iamges/:id",
+          element: (
+            <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
+              <ImageForSalon />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "salon_feedback",
+          element: (
+            <RequireAuth fallbackPath="/login">
+              <SalonFeedback />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "customer_feedback",
+          element: (
+            <RequireAuth fallbackPath="/login">
+              <CustomerFeedback />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "salon_payment",
+          element: (
+            <RequireAuth fallbackPath="/login">
+              <SalonPayment />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "Account/:id",
+          element: (
+            <RequireAuth
+              requiredRoles={["SalonOwner", "Customer", "SalonEmployee"]}
+              fallbackPath="/login"
+            >
+              <SalonOwnerAccountPage />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "booking_appointment/customer",
+          element: (
+            <RequireAuth fallbackPath="/login">
+              <BookingAppointmentCustomerPage />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "successPayment",
+          element: (
+            <RequireAuth
+              requiredRoles={["SalonOwner", "Customer"]}
+              fallbackPath="/login"
+            >
+              <SucessPayment />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "failPayment",
+          element: (
+            <RequireAuth
+              requiredRoles={["SalonOwner", "Customer"]}
+              fallbackPath="/login"
+            >
+              <FailPayment />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "listPackage",
+          element: (
+            <RequireAuth
+              requiredRoles={["SalonOwner", "Customer"]}
+              fallbackPath="/login"
+            >
+              <PackagePage />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "listPayment",
+          element: (
+            <RequireAuth
+              requiredRoles={["SalonOwner", "Customer"]}
+              fallbackPath="/login"
+            >
+              <PackageSuccessPage />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "dashboardTransaction",
+          element: (
+            <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
+              <DashboardTransactionPage />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "EmployeeSchedule",
+          element: (
+            <RequireAuth
+              requiredRoles={["SalonEmployee"]}
+              fallbackPath="/login"
+            >
+              <EmployeeSchedule />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "EmployeeStatistics",
+          element: (
+            <RequireAuth
+              requiredRoles={["SalonEmployee"]}
+              fallbackPath="/login"
+            >
+              <EmployeeStatistics />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "SalonEmployee",
+          element: (
+            <RequireAuth
+              requiredRoles={["SalonEmployee"]}
+              fallbackPath="/login"
+            >
+              <SalonEmployee />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "reviewEmployee",
+          element: (
+            <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
+              <ReviewEmployee />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: `payment_commission`,
+          element: <PaymentCommissionPage />,
+          errorElement: <ErrorPage />,
+        },
+        {
+          path: "system_shop",
+          element: <SystemBarberPage />,
+        },
+        {
+          path: `salon_detail/:id`,
+          element: <SalonDetail />,
+          errorElement: <ErrorPage />,
+        },
+        {
+          path: "list_salon",
+          element: <ListSalon />,
+          errorElement: <ErrorPage />,
+        },
+        {
+          path: "list_salon_ver2",
+          element: <ListSalonVer2 />,
+          errorElement: <ErrorPage />,
+        },
+        {
+          path: `about`,
+          element: <AboutPage />,
+          errorElement: <ErrorPage />,
+        },
+        {
+          path: `deleteAcountGuide`,
+          element: <AccountDeletionGuide />,
+          errorElement: <ErrorPage />,
+        },
+      ],
+    },
+    {
+      path: "login",
+      element: <LoginPage />,
+      errorElement: <ErrorPage />,
+    },
+    {
+      path: "404",
+      element: <ErrorPage />,
+      errorElement: <ErrorPage />,
+    },
+    {
+      path: "*",
+      element: <ErrorPage />,
+    },
+  ],
+  // { basename: basePath }
+);
 
 // const customTheme = {
 //   token: {
@@ -404,12 +432,12 @@ const customTheme = {
 ReactDOM.createRoot(document.getElementById("app")).render(
   <React.StrictMode>
     <Provider store={store}>
-      {/* <BrowserRouter basename={basePath}> */}
+      {/* <BrowserRouter> */}
       <GoogleOAuthProvider clientId="160573115812-l88je63eolr52ichb690e7i8g3f59r9t.apps.googleusercontent.com">
         <ConfigProvider locale={viVn} theme={customTheme}>
-          <App>
-            <RouterProvider router={router}>{/* <App /> */}</RouterProvider>
-          </App>
+          {/* <App> */}
+            <RouterProvider router={router} />
+          {/* </App> */}
         </ConfigProvider>
       </GoogleOAuthProvider>
       {/* </BrowserRouter> */}

@@ -361,7 +361,9 @@ function LoadScriptMapModal({
       {/* Main map with salonList and Autocomplete */}
       <LoadScript
         libraries={["places"]}
-        googleMapsApiKey={import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY}
+        googleMapsApiKey={`${
+          import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY
+        }&loading=async`}
         onLoad={() => {
           if (scriptLoaded) {
             console.clear(); // Clear console to remove previous logs

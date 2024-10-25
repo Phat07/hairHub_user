@@ -825,7 +825,7 @@ function HomePage(props) {
                           display: "block",
                         }}
                       >
-                        Dễ dàng tìm kiếm, đặt lịch ở các sanlon, barber shop gần
+                        Dễ dàng tìm kiếm, đặt lịch ở các salon, barber shop gần
                         bạn bằng cách bật chức năng vị trí
                       </Text>
                       <div

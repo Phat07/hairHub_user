@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 import { cn } from "@/lib/utils";
+import { ShopOutlined } from "@ant-design/icons";
 
 const SparklesText = ({
   text,
@@ -61,7 +62,7 @@ const SparklesText = ({
         {sparkles.map((sparkle) => (
           <Sparkle key={sparkle.id} {...sparkle} />
         ))}
-        <strong>{text}</strong>
+        <span><ShopOutlined /> {text}</span>
       </span>
     </div>)
   );

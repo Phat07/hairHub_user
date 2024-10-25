@@ -21,7 +21,7 @@ const NotificationComponent = ({
     (state) => state.NOTIFICATION.notificationList
   );
 
-  console.log("notificationList", notificationList);
+
 
   const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
   const idOwner = useSelector((state) => state.ACCOUNT.idOwner);

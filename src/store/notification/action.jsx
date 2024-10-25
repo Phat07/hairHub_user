@@ -40,9 +40,7 @@ export function actGetNotificationListUnread(id) {
   return async (dispatch) => {
     const result = notificationService.getNotificationUnreadNumber(id);
     await result
-      .then((response) => {
-        console.log("res",response);
-        
+      .then((response) => {        
         if (response.status === 200 || response.status === 201) {
           dispatch(getNotificationUnreadList(response.data));
         } else {

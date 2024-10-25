@@ -7,9 +7,9 @@ const QRScannerModal = ({ isVisible, onClose, idCustomer }) => {
   const [qrData, setQrData] = useState(null);
   const [scanError, setScanError] = useState(null);
   const [isNotified, setIsNotified] = useState(false);
+  const [key, setKey] = useState(0); // Để reset QR Reader component
   const qrReaderRef = useRef(null); // Ref để quản lý QR Reader
 
-  // Dừng camera stream từ QrReader
   const stopCamera = () => {
     if (qrReaderRef.current && qrReaderRef.current.videoElement) {
       const videoElement = qrReaderRef.current.videoElement;
@@ -20,12 +20,6 @@ const QRScannerModal = ({ isVisible, onClose, idCustomer }) => {
       }
     }
   };
-
-  useEffect(() => {
-    if (!isVisible) {
-      stopCamera(); // Dừng camera khi modal không hiển thị
-    }
-  }, [isVisible]);
 
   const handleScan = (data) => {
     if (data && !isNotified) {
@@ -52,8 +46,24 @@ const QRScannerModal = ({ isVisible, onClose, idCustomer }) => {
   };
 
   const handleError = (err) => {
-    setScanError(err.message);
+    if (err.name === "NotAllowedError") {
+      // Nếu quyền bị từ chối, đặt lỗi và reset component để yêu cầu quyền lại
+      setScanError('Bạn đã từ chối quyền truy cập camera. Vui lòng thử lại hoặc cấp quyền trong cài đặt trình duyệt.');
+      setKey((prevKey) => prevKey + 1); // Reset component QR Reader
+    } else {
+      setScanError('Đã xảy ra lỗi với camera: ' + err.message);
+    }
+    stopCamera(); // Dừng camera khi có lỗi
   };
+
+  useEffect(() => {
+    if (!isVisible) {
+      stopCamera();
+      setScanError(null); // Reset lỗi khi modal đóng
+      setIsNotified(false);
+      setQrData(null);
+    }
+  }, [isVisible]);
 
   return (
     <Modal
@@ -66,8 +76,9 @@ const QRScannerModal = ({ isVisible, onClose, idCustomer }) => {
       footer={null} // Không cần footer
       destroyOnClose={true} // Hủy component khi modal đóng để giải phóng bộ nhớ
     >
-      {isVisible && (
+      {isVisible && !scanError && (
         <QrReader
+          key={key} // Thêm key để reset component khi cần yêu cầu lại quyền
           ref={qrReaderRef} // Gắn ref vào QrReader
           delay={300}
           style={{ width: "100%" }}
@@ -76,7 +87,12 @@ const QRScannerModal = ({ isVisible, onClose, idCustomer }) => {
         />
       )}
       {qrData && <p>Kết quả QR: {qrData}</p>}
-      {scanError && <p style={{ color: "red" }}>Lỗi: {scanError}</p>}
+      {scanError && (
+        <div style={{ color: "red" }}>
+          {/* <p>{scanError}</p> */}
+          <p>Vui lòng vào cài đặt trình duyệt và cấp quyền truy cập camera để tiếp tục quét.</p>
+        </div>
+      )}
     </Modal>
   );
 };
