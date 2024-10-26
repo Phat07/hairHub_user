@@ -19,7 +19,17 @@ export const SalonPayment = {
       },
     });
   },
-  getInforPaymetOwnerId(id){
+  getInforPaymetOwnerId(id) {
     return API.get(`/payment/GetInformationPaymentOfSalonOwner/${id}`);
-  }
+  },
+  createPaymentLink(id, data) {
+    return API.post(`/payment/SendPaymentLink/${id}`, data, {
+      params: {
+        accountid: id,
+      },
+    });
+  },
+  checkPaymentStatus() {
+    return API.get("/payment/PaymentConfirm");
+  },
 };

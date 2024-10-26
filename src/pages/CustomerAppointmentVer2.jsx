@@ -37,7 +37,12 @@ import { AppointmentService } from "@/services/appointmentServices";
 
 const { Text } = Typography;
 const { Option } = Select;
-
+const formatCurrency = (value) => {
+  return new Intl.NumberFormat('vi-VN', {
+    style: 'currency',
+    currency: 'VND',
+  }).format(value);
+};
 function CustomerAppointmentVer2(props) {
   const dispatch = useDispatch();
   const searchParams = new URLSearchParams(location.search);
@@ -878,7 +883,7 @@ function CustomerAppointmentVer2(props) {
                   Ngày bắt đầu:{" "}
                   {formatDate(appointment?.appointmentDetails[0]?.startTime)}
                 </h4>
-                <h4>Tổng giá tiền: {appointment.totalPrice} VND</h4>
+                <h4>Tổng giá tiền: {formatCurrency(appointment.totalPrice)}</h4>
                 <Button
                   style={{
                     backgroundColor: "#bf9456",

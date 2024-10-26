@@ -87,7 +87,7 @@ export function fetchUserByTokenApi(data, navigate) {
   return async (dispatch) => {
     try {
       const response = await AccountServices.fetchUserByToken(data);
-      if (response.status === 200 || response.status === 201) {
+      if (response.status === 200 || response.status === 201) {        
         dispatch(fetchUser(response.data));
         return response; // Return the response so that .then can be used
       } else {

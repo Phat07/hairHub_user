@@ -29,7 +29,7 @@ function Header(props) {
   const location = useLocation(); // Lấy đường dẫn hiện tại
   const dispatch = useDispatch();
   const [newAppointments, setNewAppointments] = useState(0);
-  const userName = useSelector((state) => state.ACCOUNT.userName);
+  // const userName = useSelector((state) => state.ACCOUNT.userName);
   const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
   const idOwner = useSelector((state) => state.ACCOUNT.idOwner);
   const idEmployee = useSelector((state) => state.ACCOUNT.idEmployee);
@@ -61,6 +61,7 @@ function Header(props) {
   );
 
   const account = useSelector((state) => state.ACCOUNT.username);
+  const email = useSelector((state) => state.ACCOUNT.email);
   const avatar = useSelector((state) => state.ACCOUNT.avatar);
   useEffect(() => {
     if (idOwner) {
@@ -98,16 +99,73 @@ function Header(props) {
     }
   };
 
+  // const accountMenu = (
+  //   <Menu>
+  //     <Menu.Item key="username" disabled>
+  //       {account}
+  //     </Menu.Item>
+  //     <Menu.Item key="profile">
+  //       <Link to={`/Account/${uid}`}>
+  //         <UserOutlined /> Thông tin cá nhân
+  //       </Link>
+  //     </Menu.Item>
+  //     <Menu.Item key="logout" onClick={handleSignOut}>
+  //       <LogoutOutlined /> Đăng xuất
+  //     </Menu.Item>
+  //   </Menu>
+  // );
+  
+  
   const accountMenu = (
-    <Menu>
-      <Menu.Item key="username" disabled>
-        {account}
+    <Menu className="w-[240px]">
+      <Menu.Item key="profile-header" disabled className="profile-header">
+        <div className="flex flex-col items-center">
+          <div className="w-10 h-10 rounded-full bg-[#BF9456] flex items-center justify-center text-white font-bold">
+            <UserOutlined />
+          </div>
+          <div className="mt-2 font-bold">{account}</div>
+          <div className="text-sm">{email}</div>
+        </div>
       </Menu.Item>
+
+      <Menu.Item key="wallet">
+        <div className="flex justify-center">
+          <span>Số tiền trong ví : 0</span>
+        </div>
+        <div className="flex justify-center mt-2">
+          <Link to="/payment">
+            <button className="px-6 py-2 text-white bg-[#BF9456] hover:bg-[#d0ac79] rounded-md transition-all">
+              Nạp tiền vào ví
+            </button>
+          </Link>
+        </div>
+      </Menu.Item>
+
+      <Menu.Divider />
+
       <Menu.Item key="profile">
         <Link to={`/Account/${uid}`}>
-          <UserOutlined /> Thông tin cá nhân
+          <UserOutlined /> Trang cá nhân
         </Link>
       </Menu.Item>
+      <Menu.Item key="report">
+        <Link to="/report-history">
+          <UserOutlined /> Lịch sử báo cáo
+        </Link>
+      </Menu.Item>
+      <Menu.Item key="appointment-history">
+        <Link to="/appointment-history">
+          <UserOutlined /> Lịch sử lịch hẹn
+        </Link>
+      </Menu.Item>
+      <Menu.Item key="transaction-history">
+        <Link to="/transaction-history">
+          <UserOutlined /> Lịch sử giao dịch
+        </Link>
+      </Menu.Item>
+
+      <Menu.Divider />
+
       <Menu.Item key="logout" onClick={handleSignOut}>
         <LogoutOutlined /> Đăng xuất
       </Menu.Item>

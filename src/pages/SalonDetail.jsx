@@ -74,6 +74,8 @@ import AnimatedList from "@/components/AnimatedList";
 import { SmoothScrollHero } from "@/components/SmoothScrollHero";
 import { actCreateNotificationList } from "@/store/notification/action";
 import EmployeeModal from "@/components/DetailPage/EmployeeModal";
+import QrPayment from "@/components/DetailPage/QrPayment";
+import { SalonPayment } from "@/services/salonPayment";
 const { Panel } = Collapse;
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -311,12 +313,14 @@ function SalonDetail(props) {
   const [loadingBook, setLoadingBook] = useState(false);
   const [isLoadingService, setIsLoadingService] = useState(false);
   const [filterRating, setFilterRating] = useState(null);
-  const [paymentMethod, setPaymentMethod] = useState("cash");
+  const [paymentMethod, setPaymentMethod] = useState(null);
+  const [paymentMethodDetail, setPaymentMethodDetail] = useState(null);
   const [loadingPay, setLoadingPay] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [hasProcessedParams, setHasProcessedParams] = useState(false);
   const [isModalWarningVisible, setIsModalWarningVisible] = useState(false);
+  const [isModalPaymentVisible, setIsModalPaymentVisible] = useState(false);
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
@@ -659,6 +663,10 @@ function SalonDetail(props) {
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedEmployee(null);
+  };
+  const closeModalPayment = () => {
+    setIsModalPaymentVisible(false);
+    // setSelectedEmployee(null);
   };
 
   //Set selected voucher
@@ -1375,66 +1383,85 @@ function SalonDetail(props) {
       setIsPriceModalVisible(false);
       return;
     }
-
-    try {
-      setIsLoading(true);
-      setIsPriceModalVisible(false);
-      setIsBookingModalVisible(false);
-
-      // Create the appointment
-      const res = await AppointmentService.createAppointment(appointmentData)
-        .then(async (res) => {
-          await startConnection();
-          const serviceHairIds =
-            appointmentData?.appointmentDetails?.map(
-              (detail) => detail.serviceHairId // Convert each ID to a string
-            ) || [];
-          let mappingData = {
-            message: "send serviceId",
-            dateAppointment: appointmentData?.startDate,
-            salonId: salonDetail?.id,
-            serviceId: serviceHairIds,
-            ownerId: salonDetail?.ownerId,
-          };
-          // Listen for appointment creation events
-          // await sendMessage(data.date,data.serviceHairIds);
-          await AppointmentService.broadcastMessage(mappingData);
-          const date = new Date(selectedDate);
-
-          const options = { month: "long", day: "numeric" };
-          const formattedDate = date.toLocaleDateString("vi-VN", options);
-          const time = formatTimeSlot(selectedTimeSlot);
-          const mapDataNotifi = {
-            appointmentId: res?.data?.appointmentDetails,
-            title: "Đã có đơn đặt lịch mới",
-            message: `Khách hàng ${userName} đã đặt lịch ở cửa tiệm ${salonDetail?.name} vào lúc ${time} ngày ${formattedDate}`,
-            type: "newAppointment",
-          };
-          await dispatch(actCreateNotificationList(mapDataNotifi, id));
-          setIsLoading(false);
-          message.success("Tạo lịch cắt tóc thành công");
-          setAdditionalServices([]);
-          setVoucherSelected([]);
-        })
-        .catch((err) => {
-          message.error(
-            err?.response?.data?.message || "Tạo lịch không thành công"
-          );
-          setIsLoading(false);
-        })
-        .finally((err) => {
-          setIsLoading(false);
-          stopConnection();
-        });
-    } catch (err) {
-      message.warning(
-        err?.response?.data?.message || "Tạo lịch không thành công"
-      );
-      setIsLoading(false);
-      setAdditionalServices([]);
-      setVoucherSelected([]);
-      console.error(err);
+    if (paymentMethod === null) {
+      message.info("Vui lòng chọn phương thức thanh toán");
+      // setIsPriceModalVisible(false);
+      return;
     }
+    if (paymentMethod === "payos") {
+      setIsModalPaymentVisible(true);
+      const data = {
+        configId: null,
+        appointmentId: null,
+        price: appointmentData?.totalPrice,
+        description: "Thanh toán dịch vụ",
+      };
+      setIsLoading(true);
+      const response = await SalonPayment.createPaymentLink(uid, data).then((res)=>{
+        setPaymentMethodDetail(res.data)
+      }).catch((err)=>{
+        console.log(err);
+        
+      });
+    } else {
+      setIsModalPaymentVisible(false);
+    }
+    // try {
+    //   setIsLoading(true);
+    //   setIsPriceModalVisible(false);
+    //   setIsBookingModalVisible(false);
+
+    //   const res = await AppointmentService.createAppointment(appointmentData)
+    //     .then(async (res) => {
+    //       await startConnection();
+    //       const serviceHairIds =
+    //         appointmentData?.appointmentDetails?.map(
+    //           (detail) => detail.serviceHairId
+    //         ) || [];
+    //       let mappingData = {
+    //         message: "send serviceId",
+    //         dateAppointment: appointmentData?.startDate,
+    //         salonId: salonDetail?.id,
+    //         serviceId: serviceHairIds,
+    //         ownerId: salonDetail?.ownerId,
+    //       };
+    //       await AppointmentService.broadcastMessage(mappingData);
+    //       const date = new Date(selectedDate);
+
+    //       const options = { month: "long", day: "numeric" };
+    //       const formattedDate = date.toLocaleDateString("vi-VN", options);
+    //       const time = formatTimeSlot(selectedTimeSlot);
+    //       const mapDataNotifi = {
+    //         appointmentId: res?.data?.appointmentDetails,
+    //         title: "Đã có đơn đặt lịch mới",
+    //         message: `Khách hàng ${userName} đã đặt lịch ở cửa tiệm ${salonDetail?.name} vào lúc ${time} ngày ${formattedDate}`,
+    //         type: "newAppointment",
+    //       };
+    //       await dispatch(actCreateNotificationList(mapDataNotifi, id));
+    //       setIsLoading(false);
+    //       message.success("Tạo lịch cắt tóc thành công");
+    //       setAdditionalServices([]);
+    //       setVoucherSelected([]);
+    //     })
+    //     .catch((err) => {
+    //       message.error(
+    //         err?.response?.data?.message || "Tạo lịch không thành công"
+    //       );
+    //       setIsLoading(false);
+    //     })
+    //     .finally((err) => {
+    //       setIsLoading(false);
+    //       stopConnection();
+    //     });
+    // } catch (err) {
+    //   message.warning(
+    //     err?.response?.data?.message || "Tạo lịch không thành công"
+    //   );
+    //   setIsLoading(false);
+    //   setAdditionalServices([]);
+    //   setVoucherSelected([]);
+    //   console.error(err);
+    // }
   };
 
   const handleAddServiceClick = () => {
@@ -1502,29 +1529,6 @@ function SalonDetail(props) {
       .map((service) => service.bookingDetail.salonEmployeeId);
   };
 
-  const handlePayment = async () => {
-    try {
-      setLoadingPay(true);
-      if (paymentMethod === "vnpay") {
-        // Xử lý logic thanh toán VNPay
-        // Gọi API để tạo URL thanh toán VNPay
-        // const response = await createVNPayPaymentUrl({
-        //   amount: totalAmount,
-        //   orderInfo: `Thanh toan don hang ${orderId}`,
-        //   returnUrl: `${window.location.origin}/payment/callback`
-        // });
-        // window.location.href = response.data.paymentUrl;
-      } else {
-        // Xử lý thanh toán tiền mặt
-        message.success("Đặt lịch thành công! Vui lòng thanh toán tại salon.");
-      }
-    } catch (error) {
-      message.error("Có lỗi xảy ra. Vui lòng thử lại!");
-    } finally {
-      setLoadingPay(false);
-    }
-  };
-
   const paymentOptions = [
     {
       value: "cash",
@@ -1541,20 +1545,39 @@ function SalonDetail(props) {
       ),
     },
     {
-      value: "vnpay",
+      value: "payos",
       label: (
         <Space>
           <CreditCardOutlined style={{ fontSize: "24px", color: "#BF9456" }} />
           <div>
-            <div style={{ fontWeight: "bold" }}>Thanh toán VNPay</div>
+            <div style={{ fontWeight: "bold" }}>Thanh toán PayOs</div>
             <div style={{ fontSize: "12px", color: "#666" }}>
-              Thanh toán trước qua VNPay
+              Thanh toán trước qua PayOs
+            </div>
+          </div>
+        </Space>
+      ),
+    },
+    {
+      value: "wallet",
+      label: (
+        <Space>
+          <CreditCardOutlined style={{ fontSize: "24px", color: "#BF9456" }} />
+          <div>
+            <div style={{ fontWeight: "bold" }}>Thanh toán ví</div>
+            <div style={{ fontSize: "12px", color: "#666" }}>
+              Thanh toán tiền trong ví của bạn
             </div>
           </div>
         </Space>
       ),
     },
   ];
+  const handlePaymentChange = (e) => {
+    const selectedMethod = e.target.value;
+    setPaymentMethod(selectedMethod);
+    // Set modal visibility based on payment method
+  };
 
   return (
     <div style={{ marginTop: "75px" }}>
@@ -3046,49 +3069,60 @@ function SalonDetail(props) {
                       </Text>
                     </Col>
                   </Row>
-                  {/* <Card
-                      title="Phương thức thanh toán"
-                      style={{ maxWidth: 500, margin: "0 auto" }}
-                      headStyle={{ textAlign: "center", fontSize: "18px" }}
+                  <Card
+                    title="Phương thức thanh toán"
+                    style={{ maxWidth: 500, margin: "0 auto" }}
+                    headStyle={{ textAlign: "center", fontSize: "18px" }}
+                  >
+                    <Radio.Group
+                      onChange={handlePaymentChange}
+                      value={paymentMethod}
+                      style={{ width: "100%" }}
                     >
-                      <Radio.Group
-                        onChange={(e) => setPaymentMethod(e.target.value)}
-                        value={paymentMethod}
-                        style={{ width: "100%" }}
-                      >
-                        <Space direction="vertical" style={{ width: "100%" }}>
-                          {paymentOptions.map((option) => (
-                            <Radio.Button
-                              key={option.value}
-                              value={option.value}
-                              style={{
-                                height: "auto",
-                                padding: "12px",
-                                width: "100%",
-                                marginBottom: "12px",
-                                borderColor: paymentMethod === option.value ? "#BF9456" : undefined,
-                                color: paymentMethod === option.value ? "#BF9456" : undefined,
-                              }}
-                              
-                            >
-                              {option.label}
-                            </Radio.Button>
-                          ))}
-                        </Space>
-                      </Radio.Group>
-                      <div
-                        style={{
-                          marginTop: 16,
-                          textAlign: "center",
-                          color: "#666",
-                          fontSize: "14px",
-                        }}
-                      >
-                        {paymentMethod === "vnpay"
-                          ? "Bạn sẽ được chuyển đến cổng thanh toán VNPay"
-                          : "Vui lòng thanh toán tại salon sau khi hoàn thành dịch vụ"}
-                      </div>
-                    </Card> */}
+                      <Space direction="vertical" style={{ width: "100%" }}>
+                        {paymentOptions.map((option) => (
+                          <Radio.Button
+                            key={option.value}
+                            value={option.value}
+                            style={{
+                              height: "auto",
+                              padding: "12px",
+                              width: "100%",
+                              marginBottom: "12px",
+                              borderColor:
+                                paymentMethod === option.value
+                                  ? "#BF9456"
+                                  : undefined,
+                              color:
+                                paymentMethod === option.value
+                                  ? "#BF9456"
+                                  : "#333",
+                              fontWeight:
+                                paymentMethod === option.value
+                                  ? "bold"
+                                  : "normal",
+                            }}
+                          >
+                            {option.label}
+                          </Radio.Button>
+                        ))}
+                      </Space>
+                    </Radio.Group>
+                    <div
+                      style={{
+                        marginTop: 16,
+                        textAlign: "center",
+                        color: "#666",
+                        fontSize: "14px",
+                      }}
+                    >
+                      {paymentMethod === "payos"
+                        ? "Bạn sẽ được chuyển đến cổng thanh toán PayOs"
+                        : paymentMethod === "wallet"
+                        ? "Thanh toán bằng ví của bạn"
+                        : "Vui lòng thanh toán tại salon sau khi hoàn thành dịch vụ"}
+                    </div>
+                  </Card>
                 </Modal>
               </div>
             </Col>
@@ -3097,6 +3131,14 @@ function SalonDetail(props) {
               onClose={closeModal}
               employee={selectedEmployee}
               booking={handleBookClick}
+            />
+            <QrPayment
+              isOpen={isModalPaymentVisible}
+              onClose={closeModalPayment}
+              // employee={selectedEmployee}
+              // booking={handleBookClick}
+              // price={appointmentData?.totalPrice}
+              data={paymentMethodDetail}
             />
             <Modal
               title="Thông báo"

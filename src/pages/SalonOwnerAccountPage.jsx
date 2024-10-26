@@ -38,6 +38,7 @@ import ConfirmDeleteModal from "@/components/DeleteAccount/ConfirmDeleteModal";
 import OTPModal from "@/components/DeleteAccount/OTPModal";
 import axios from "axios";
 import Wallet from "@/components/Wallet";
+import RequestWithdrawal from "@/components/RequestWithdrawal/RequestWithdrawal";
 
 const { Option } = Select;
 
@@ -64,6 +65,7 @@ function SalonOwnerAccountPage() {
   const [isModalVisibleDeleteComfirm, setIsModalVisibleDeleteComfirm] =
     useState(false);
   const [isOTPModalVisible, setIsOTPModalVisible] = useState(false);
+  const [isRequestModalVisible, setIsRequestModalVisible] = useState(false);
   const [otp, setOtp] = useState("");
   // Function to detect if the user is on a mobile device
   useEffect(() => {
@@ -414,6 +416,13 @@ function SalonOwnerAccountPage() {
   const handleConfirmDelete = () => {
     sendOtp();
   };
+  const handleCancelRequest = ()=>{
+    setIsRequestModalVisible(false)
+  }
+  const handleConfirmRequest = ()=>{
+
+  }
+
 
   const handleCancelOTP = () => {
     setOtp("");
@@ -421,7 +430,6 @@ function SalonOwnerAccountPage() {
   };
 
   const handleOTPConfirm = () => {
-    console.log("OTP đã nhập:", otp);
     if (!/^\d{6}$/.test(otp)) {
       message.error("OTP phải là số và có đúng 6 chữ số!");
       return;
@@ -469,6 +477,15 @@ function SalonOwnerAccountPage() {
               onClick={() => setIsModalVisibleDeleteComfirm(true)}
             >
               Xóa tài khoản
+            </Button>
+          </Menu.Item>
+          <Menu.Item>
+            <Button
+              type="primary"
+              style={{ backgroundColor: "green", borderColor: "#bf9456" }}
+              onClick={() => setIsRequestModalVisible(true)}
+            >
+              Yêu cầu rút tiền
             </Button>
           </Menu.Item>
         </>
@@ -800,6 +817,11 @@ function SalonOwnerAccountPage() {
         visible={isModalVisibleDeleteComfirm}
         onCancel={handleCancelDeleteComfirm}
         onConfirm={handleConfirmDelete}
+      />
+      <RequestWithdrawal
+        visible={isRequestModalVisible}
+        onCancel={handleCancelRequest}
+        onConfirm={handleConfirmRequest}
       />
       <OTPModal
         visible={isOTPModalVisible}
