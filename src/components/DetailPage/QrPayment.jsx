@@ -258,35 +258,22 @@
 // export default QrPayment;
 
 import React, { useEffect, useState } from "react";
-import { Modal, Typography, Spin, message, Card, Space, Button } from "antd";
-import { InfoCircleOutlined } from "@ant-design/icons";
+import { message } from "antd";
 import { SalonPayment } from "@/services/salonPayment";
 import { useSelector } from "react-redux";
-const { Text, Title } = Typography;
 
-const QrPayment = ({
-  isOpen,
-  onClose,
-  price,
-  configId,
-  appointmentId,
-  description,
-}) => {
+const QrPayment = ({ isOpen, price, configId, appointmentId, description }) => {
   const [paymentDetail, setPaymentDetail] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [paymentStatus, setPaymentStatus] = useState(null);
   const uid = useSelector((state) => state.ACCOUNT.uid);
 
   const openPayOSCheckout = (checkoutUrl) => {
-    // Xác định kích thước popup dựa trên kích thước màn hình
     let width, height;
 
     if (window.innerWidth <= 768) {
-      // Thiết lập kích thước nhỏ hơn cho mobile
       width = window.innerWidth * 0.9;  // 90% chiều rộng màn hình
       height = window.innerHeight * 0.9; // 90% chiều cao màn hình
     } else {
-      // Kích thước cho các màn hình lớn hơn (desktop)
       width = 450;
       height = 600;
     }
@@ -294,43 +281,17 @@ const QrPayment = ({
     const left = window.innerWidth / 2 - width / 2;
     const top = window.innerHeight / 2 - height / 2;
 
-    const popup = window.open(
+    window.open(
       checkoutUrl,
       "PayOS Checkout",
       `width=${width},height=${height},left=${left},top=${top}`
     );
-
-    // Lắng nghe sự kiện message từ popup
-    const messageHandler = (event) => {
-      if (event.origin === "https://checkout.payos.vn") {
-        const { status } = event.data;
-        if (status === "PAID") {
-          message.success("Thanh toán thành công!");
-          setPaymentStatus("SUCCESS");
-          onClose();
-          popup.close();
-        } else if (status === "CANCELLED") {
-          message.error("Thanh toán đã bị hủy");
-          setPaymentStatus("CANCELLED");
-          popup.close();
-        }
-      }
-    };
-
-    window.addEventListener("message", messageHandler);
-
-    // Cleanup function
-    return () => {
-      window.removeEventListener("message", messageHandler);
-      if (popup) popup.close();
-    };
   };
 
   const fetchPaymentLink = async () => {
     try {
       if (!price) {
         message.info("Vui lòng nhập số tiền");
-        onClose();
         return;
       }
       const data = {
@@ -350,123 +311,20 @@ const QrPayment = ({
       }
     } catch (error) {
       message.error("Không thể tạo link thanh toán. Vui lòng thử lại.");
-      onClose();
     } finally {
       setIsLoading(false);
     }
   };
 
-  const checkPaymentStatus = async () => {
-    if (!paymentDetail?.orderCode) return;
-
-    try {
-      const response = await SalonPayment.checkPaymentStatus(
-        paymentDetail.orderCode
-      );
-
-      if (response.data === true) {
-        setPaymentStatus("SUCCESS");
-        message.success("Thanh toán thành công!");
-        onClose();
-      } else if (response.data === false && paymentStatus !== "CANCELLED") {
-        setPaymentStatus("PENDING");
-      }
-    } catch (error) {
-      console.error("Error checking payment status:", error);
-    }
-  };
-
   useEffect(() => {
-    let statusCheckInterval;
-
-    if (isOpen) {
+    if (isOpen && price) {
       fetchPaymentLink();
-
-      // Start polling for payment status every 5 seconds
-      statusCheckInterval = setInterval(() => {
-        checkPaymentStatus();
-      }, 5000);
     }
+  }, [isOpen, price]); // Theo dõi cả isOpen và price
 
-    return () => {
-      if (statusCheckInterval) {
-        clearInterval(statusCheckInterval);
-      }
-      setPaymentDetail(null);
-      setPaymentStatus(null);
-      setIsLoading(false);
-    };
-  }, [isOpen]);
-
-  const handlePayment = () => {
-    if (paymentDetail?.checkoutUrl) {
-      openPayOSCheckout(paymentDetail.checkoutUrl);
-    }
-  };
-
-  if (!isOpen) return null;
-
-  return (
-    <Modal
-      title={<Title level={4}>Thanh toán đơn hàng</Title>}
-      open={isOpen}
-      onCancel={onClose}
-      footer={null}
-      destroyOnClose
-      width={400}
-    >
-      {isLoading ? (
-        <div style={{ textAlign: "center", padding: "20px" }}>
-          <Spin size="large" />
-          <Text style={{ display: "block", marginTop: "10px" }}>
-            Đang tạo link thanh toán...
-          </Text>
-        </div>
-      ) : paymentDetail ? (
-        <Card>
-          <Space direction="vertical" size="large" style={{ width: "100%" }}>
-            <div style={{ textAlign: "center" }}>
-              <Space direction="vertical" size="small">
-                <Text strong style={{ fontSize: 16 }}>
-                  <InfoCircleOutlined style={{ marginRight: 8 }} />
-                  Số tiền:{" "}
-                  {new Intl.NumberFormat("vi-VN", {
-                    style: "currency",
-                    currency: "VND",
-                  }).format(paymentDetail.amount)}
-                </Text>
-                <Text>Mã đơn hàng: {paymentDetail.orderCode}</Text>
-                {paymentDetail?.description && (
-                  <Text type="secondary">{paymentDetail?.description}</Text>
-                )}
-              </Space>
-            </div>
-
-            <Button
-              type="primary"
-              block
-              onClick={handlePayment}
-              disabled={paymentStatus === "SUCCESS"}
-            >
-              {paymentStatus === "SUCCESS"
-                ? "Đã thanh toán"
-                : "Thanh toán ngay"}
-            </Button>
-          </Space>
-        </Card>
-      ) : (
-        <div style={{ textAlign: "center", padding: "20px" }}>
-          <Text type="danger">Không thể tải thông tin thanh toán</Text>
-          <Button
-            onClick={() => fetchPaymentLink()}
-            style={{ marginTop: "10px" }}
-          >
-            Thử lại
-          </Button>
-        </div>
-      )}
-    </Modal>
-  );
+  return null; // Không render gì cả
 };
 
 export default QrPayment;
+
+

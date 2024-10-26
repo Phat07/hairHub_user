@@ -1,8 +1,9 @@
 import RetroGrid from "@/components/ui/retro-grid";
-import { Input } from "antd";
+import { Input, Spin } from "antd"; // Import Spin for loading indicator
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import QrPayment from "@/components/DetailPage/QrPayment";
+import { SalonPayment } from "@/services/salonPayment";
+import { useSelector } from "react-redux";
 
 // Helper function to format currency as VND
 const formatCurrency = (value) => {
@@ -14,7 +15,10 @@ const formatCurrency = (value) => {
 
 function WalletPage(props) {
   const [amount, setAmount] = useState(""); // State for storing input value
-  const [isModalPayment, setIsModalPayment] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // Loading state
+  const [paymentMethodDetail, setPaymentMethodDetail] = useState(null); // Store payment details
+  const uid = useSelector((state) => state.ACCOUNT.uid);
+
   // Handle input change
   const handleAmountChange = (e) => {
     let value = parseFloat(e.target.value);
@@ -26,12 +30,31 @@ function WalletPage(props) {
 
     setAmount(value);
   };
-  const handleSubmit = () => {
-    setIsModalPayment(true);
+
+  const handleSubmit = async () => {
+    const data = {
+      configId: null,
+      appointmentId: null,
+      price: amount,
+      description: "Thanh toán dịch vụ",
+    };
+
+    try {
+      setIsLoading(true); // Start loading state
+      const response = await SalonPayment.createPaymentLink(uid, data);
+      // Assuming the payment URL is in the response, navigate to it
+      const paymentUrl = response.data.checkoutUrl; // Adjust this based on your actual response structure
+
+      if (paymentUrl) {
+        window.location.href = paymentUrl; // Redirect to the payment page
+      }
+    } catch (err) {
+      console.log(err); // Log the error
+      // Optionally show a message or alert to the user on error
+    } finally {
+      setIsLoading(false); // Stop loading state
+    }
   };
-  const hanleCancel=()=>{
-    setIsModalPayment(false)
-  }
 
   return (
     <motion.div
@@ -56,7 +79,7 @@ function WalletPage(props) {
         <Input
           className="mb-4"
           type="number"
-          placeholder={"Vui lòng nhập số tiề cần nạp"}
+          placeholder={"Vui lòng nhập số tiền cần nạp"}
           value={amount}
           onChange={handleAmountChange}
           min={0}
@@ -70,13 +93,14 @@ function WalletPage(props) {
         <button
           onClick={handleSubmit}
           className="px-6 py-2 text-white rounded-md bg-[#ad7424] hover:bg-[#967546] hover:text-black transition-all duration-300"
+          disabled={isLoading} // Disable button during loading
         >
-          Nạp tiền ngay
+          {isLoading ? <Spin className="custom-spin" /> : "Nạp tiền ngay"}{" "}
+          {/* Show spinner during loading */}
         </button>
       </motion.div>
 
       <RetroGrid />
-      <QrPayment isOpen={isModalPayment} onClose={hanleCancel} price={amount}/>
     </motion.div>
   );
 }
