@@ -18,7 +18,10 @@ import useDocumentTitle from "../src/components/useDocumentTitle";
 import ChatBox from "./components/ChatBox";
 import Footer2 from "./components/Footer2";
 import { AccountServices } from "./services/accountServices";
-import { fetchUserByTokenApi } from "./store/account/action";
+import {
+  fetchUserByTokenApi,
+  GetInformationAccount,
+} from "./store/account/action";
 import FooterMobile from "./components/FooterMobile";
 import FooterMobileAuth from "./components/FooterMobileAuth";
 import FooterMobileUnAuth from "./components/FooterMobileUnAuth";
@@ -40,6 +43,11 @@ function App() {
   // const token = useSelector((state) => state.ACCOUNT.token);
   const idOwner = useSelector((state) => state.ACCOUNT.idOwner);
   const uid = useSelector((state) => state.ACCOUNT.uid);
+  useEffect(() => {
+    if (uid) {
+      dispatch(GetInformationAccount(uid));
+    }
+  }, [uid]);
   useEffect(() => {
     if (uid) {
       dispatch(actGetNotificationList(uid));

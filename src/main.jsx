@@ -63,6 +63,7 @@ import LoginGoogle from "./components/LoginGoogle/index.jsx";
 import AccountDeletionGuide from "./pages/AccountDeletionGuide.jsx";
 import WalletPage from "./pages/WalletPage.jsx";
 import ManagementPaymentPge from "./pages/ManagementPaymentPge.jsx";
+import WithdrawRequest from "./pages/WithdrawRequest.jsx";
 
 const version = import.meta.env.APP_ID || "default";
 const basePath = `/zapps/2685475901677367467`;
@@ -410,6 +411,12 @@ const router = createBrowserRouter(
           element: <AccountDeletionGuide />,
           errorElement: <ErrorPage />,
         },
+        //WithdrawRequest
+        {
+          path: `WithdrawRequest`,
+          element: <WithdrawRequest />,
+          errorElement: <ErrorPage />,
+        },
       ],
     },
     {
@@ -426,7 +433,7 @@ const router = createBrowserRouter(
       path: "*",
       element: <ErrorPage />,
     },
-  ],
+  ]
   // { basename: basePath }
 );
 
@@ -460,7 +467,7 @@ ReactDOM.createRoot(document.getElementById("app")).render(
       <GoogleOAuthProvider clientId="160573115812-l88je63eolr52ichb690e7i8g3f59r9t.apps.googleusercontent.com">
         <ConfigProvider locale={viVn} theme={customTheme}>
           {/* <App> */}
-            <RouterProvider router={router} />
+          <RouterProvider router={router} />
           {/* </App> */}
         </ConfigProvider>
       </GoogleOAuthProvider>

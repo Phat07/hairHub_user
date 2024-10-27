@@ -1,4 +1,4 @@
-import { FETCH_USER, LOGIN_ACCOUNT } from "./action";
+import { FETCH_USER, LOGIN_ACCOUNT, FETCH_USER_BY_ID } from "./action";
 
 const initialState = {
   idCustomer: "",
@@ -10,6 +10,7 @@ const initialState = {
   idEmployee: "",
   refreshToken: "",
   email: "",
+  userInfo: [],
 };
 
 const reducer = (state = initialState, action) => {
@@ -55,6 +56,11 @@ const reducer = (state = initialState, action) => {
         idCustomer: action.payload?.customerResponse?.id,
         idEmployee: action.payload?.salonEmployeeResponse?.id,
         // refreshToken: action.payload.refreshToken,
+      };
+    case FETCH_USER_BY_ID:
+      return {
+        ...state,
+        userInfo: action.payload,
       };
 
     default:

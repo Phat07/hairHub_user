@@ -126,6 +126,9 @@
   .appointmentContainer {
     margin-top: 5rem;
   }
+  .appointmentTable {
+    display: none;
+  }
 }
 
 :global(.my-custom-modal .ant-modal-content) {
@@ -137,6 +140,7 @@
 /* AppointmentsGrid.module.css */
 .container {
   padding: 16px;
+  display: none;
   /* position: relative; */
 }
 
@@ -259,6 +263,7 @@
   }
   .container {
     padding: 0;
+    display: block;
     /* position: relative; */
   }
 }

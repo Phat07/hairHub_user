@@ -4,6 +4,7 @@ import { AccountServices } from "../../services/accountServices";
 
 export const LOGIN_ACCOUNT = "LOGIN_ACCOUNT";
 export const FETCH_USER = "FETCH_USER";
+export const FETCH_USER_BY_ID = "FETCH_USER_BY_ID";
 export const LOGIN = (list) => {
   return {
     type: LOGIN_ACCOUNT,
@@ -13,6 +14,12 @@ export const LOGIN = (list) => {
 export const fetchUser = (list) => {
   return {
     type: FETCH_USER,
+    payload: list,
+  };
+};
+export const fetchUserById = (list) => {
+  return {
+    type: FETCH_USER_BY_ID,
     payload: list,
   };
 };
@@ -87,7 +94,7 @@ export function fetchUserByTokenApi(data, navigate) {
   return async (dispatch) => {
     try {
       const response = await AccountServices.fetchUserByToken(data);
-      if (response.status === 200 || response.status === 201) {        
+      if (response.status === 200 || response.status === 201) {
         dispatch(fetchUser(response.data));
         return response; // Return the response so that .then can be used
       } else {
@@ -102,3 +109,19 @@ export function fetchUserByTokenApi(data, navigate) {
   };
 }
 
+export function GetInformationAccount(id) {
+  return async (dispatch) => {
+    try {
+      const response = await AccountServices.GetInformationAccount(id);
+      if (response.status === 200 || response.status === 201) {
+        dispatch(fetchUserById(response.data));
+        return response; // Return the response so that .then can be used
+      } else {
+        message.error("lỗi lấy dữ liệu người dùng");
+      }
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || error.message;
+      message.warning(errorMessage);
+    }
+  };
+}
