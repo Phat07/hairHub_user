@@ -1,24 +1,38 @@
-import RetroGrid from "@/components/ui/retro-grid";
-import { Input, Spin } from "antd";
 import React, { useState, useEffect } from "react";
+import { usePayOS } from "@payos/payos-checkout";
 import { motion } from "framer-motion";
-import { SalonPayment } from "@/services/salonPayment";
 import { useSelector } from "react-redux";
-import { usePayOS } from "payos-checkout";
-
+import { Input, Spin } from "antd";
+import RetroGrid from "@/components/ui/retro-grid";
+import { SalonPayment } from "@/services/salonPayment";
 const formatCurrency = (value) => {
   return new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
   }).format(value);
 };
-
-function WalletPage(props) {
-  const [amount, setAmount] = useState("");
+export default function WalletPage({}) {
+  const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [payOSConfig, setPayOSConfig] = useState(null);
+  const [message, setMessage] = useState("");
+  const [isCreatingLink, setIsCreatingLink] = useState(false);
   const uid = useSelector((state) => state.ACCOUNT.uid);
+  const [amount, setAmount] = useState("");
+  // Khởi tạo cấu hình payOS
+  const [payOSConfig, setPayOSConfig] = useState({
+    RETURN_URL: window.location.origin, // required
+    ELEMENT_ID: "payos-checkout", // required
+    CHECKOUT_URL: null, // required
+    embedded: true, // Nếu dùng giao diện nhúng
+    onSuccess: (event) => {
+      //TODO: Hành động sau khi người dùng thanh toán đơn hàng thành công
+      setIsOpen(false);
+      setMessage("Thanh toán thành công");
+    },
+  });
 
+  // Lấy hàm `open` và `exit` từ usePayOS
+  const { open, exit } = usePayOS(payOSConfig);
   const handleAmountChange = (e) => {
     let value = parseFloat(e.target.value);
     if (isNaN(value) || value <= 0) {
@@ -27,70 +41,59 @@ function WalletPage(props) {
     setAmount(value);
   };
 
+  // Hàm tạo link thanh toán
   const handleSubmit = async () => {
-    if (!amount || amount <= 0) {
-      alert('Please enter a valid amount');
-      return;
-    }
-
-    const paymentData = {
-      configId: null,
-      appointmentId: null,
-      price: amount,
-      description: "Thanh toán dịch vụ",
-    };
+    setIsCreatingLink(true);
+    exit(); // Đóng iframe hiện tại (nếu có)
 
     try {
-      setIsLoading(true);
-
-      const response = await SalonPayment.createPaymentLink(uid, paymentData);
-      console.log("s",response.data);
-      
-      if (!response?.data?.checkoutUrl) {
-        throw new Error('Invalid checkout URL received from server');
-      }
-
-      const newPayOSConfig = {
-        RETURN_URL: window.location.origin,
-        ELEMENT_ID: "payos-checkout",
-        CHECKOUT_URL: response.data.checkoutUrl,
-        embedded: true,
-        onSuccess: (event) => {
-          console.log("Payment Successful:", event);
-          alert("Payment completed successfully!");
-        },
-        onCancel: (event) => {
-          console.log("Payment Cancelled:", event);
-          alert("Payment was cancelled.");
-        },
-        onExit: (event) => {
-          console.log("Payment Popup Closed:", event);
-          alert("Payment popup was closed.");
-        },
+      const data = {
+        configId: null,
+        appointmentId: null,
+        price: amount,
+        description: "Thanh toán dịch vụ",
       };
 
-      console.log('PayOS Configuration:', newPayOSConfig);
-      setPayOSConfig(newPayOSConfig); // Store configuration in state
+      setIsLoading(true);
+
+      // Gọi API tạo link thanh toán
+      const response = await SalonPayment.createPaymentLink(uid, data);
+
+      // Kiểm tra nếu response và response.data hợp lệ
+      if (response && response.data && response.data.checkoutUrl) {
+        const result = response.data;
+
+        // Cập nhật config cho PayOS
+        setPayOSConfig((oldConfig) => ({
+          ...oldConfig,
+          CHECKOUT_URL: result.checkoutUrl,
+        }));
+
+        setIsOpen(true); // Mở giao diện thanh toán
+      } else {
+        throw new Error("Không tìm thấy URL thanh toán hợp lệ trong response");
+      }
     } catch (error) {
-      console.error('Payment creation failed:', error);
-      alert('Unable to initiate payment. Please try again.');
+      console.error(error);
+      setMessage("Không thể tạo link thanh toán");
     } finally {
       setIsLoading(false);
+      setIsCreatingLink(false); // Ngừng trạng thái tạo link
     }
   };
 
-  // Initialize PayOS only when payOSConfig is set
-  const payOS = payOSConfig ? usePayOS(payOSConfig) : null;
-
+  // Mở thanh toán khi CHECKOUT_URL được cập nhật
   useEffect(() => {
-    if (payOS) {
-      payOS.open();
+    if (payOSConfig.CHECKOUT_URL != null) {
+      open();
     }
-  }, [payOS]); // Run when payOSConfig changes
+  }, [payOSConfig]);
 
-  return (
+  return message ? (
+    <Message message={message} />
+  ) : (
     <motion.div
-      className="relative flex h-[700px] w-full flex-col items-center justify-center overflow-hidden rounded-lg border bg-background md:shadow-xl"
+      className="relative flex mt-32 h-[500px] w-full flex-col items-center justify-center overflow-hidden rounded-lg border bg-background md:shadow-xl"
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
@@ -129,6 +132,7 @@ function WalletPage(props) {
           {isLoading ? <Spin className="custom-spin" /> : "Nạp tiền ngay"}
         </button>
       </motion.div>
+
       <div
         id="payos-checkout"
         className="w-80 h-80 mx-auto mt-1 flex items-center justify-center"
@@ -139,4 +143,17 @@ function WalletPage(props) {
   );
 }
 
-export default WalletPage;
+const Message = ({ message }) => (
+  <div className="main-box">
+    <div className="checkout">
+      <div class="product" style={{ textAlign: "center", fontWeight: "500" }}>
+        <p>{message}</p>
+      </div>
+      <form action="/">
+        <button type="submit" id="create-payment-link-btn">
+          Quay lại trang thanh toán
+        </button>
+      </form>
+    </div>
+  </div>
+);
