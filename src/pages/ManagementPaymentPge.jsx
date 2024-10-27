@@ -1,7 +1,11 @@
 import { Table, Button, Tag, Pagination } from "antd";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../css/customerAppointmentTable.css";
+import { useDispatch, useSelector } from "react-redux";
+import { GetPaymentHistory } from "@/store/salonPayment/action";
+import dayjs from "dayjs";
+import { useNavigate } from "react-router-dom";
 const formatCurrency = (value) => {
   return new Intl.NumberFormat("vi-VN", {
     style: "currency",
@@ -19,68 +23,85 @@ const descriptionVariants = {
   visible: { opacity: 1, y: 0 },
 };
 
-const transactionData = [
-  {
-    key: "1",
-    type: "Nạp tiền",
-    date: "25/10/2024",
-    amount: 5000,
-    status: "Thất bại",
-    method: "PayOS",
-  },
-  {
-    key: "2",
-    type: "Yêu cầu rút tiền",
-    date: "24/10/2024",
-    amount: 3000,
-    status: "Thành công",
-    method: "Bank Transfer",
-  },
-  {
-    key: "3",
-    type: "Tiền rút",
-    date: "23/10/2024",
-    amount: 1000,
-    status: "Đang duyệt",
-    method: "PayPal",
-  },
-];
-
 const columns = [
   {
-    title: "Hình thức",
-    dataIndex: "type",
-    key: "type",
+    title: "Email",
+    dataIndex: "email",
+    key: "email",
   },
   {
-    title: "Ngày",
-    dataIndex: "date",
-    key: "date",
-  },
-  {
-    title: "Số tiền (VNĐ)",
-    dataIndex: "amount",
-    key: "amount",
-    render: (amount) => formatCurrency(amount),
+    title: "Vai trò",
+    dataIndex: "roleName",
+    key: "roleName",
   },
   {
     title: "Trạng thái",
     dataIndex: "status",
     key: "status",
     render: (status) => {
+      let vietnameseStatus = "";
       let color = "green";
-      if (status === "Thất bại") {
-        color = "red";
-      } else if (status === "Đang duyệt") {
-        color = "orange";
+
+      switch (status) {
+        case "PAID":
+          vietnameseStatus = "Đã thanh toán";
+          break;
+        case "PENDING":
+          vietnameseStatus = "Đang xử lý";
+          color = "orange";
+          break;
+        case "CANCEL":
+          vietnameseStatus = "Thất bại";
+          color = "red";
+          break;
+        case "PROMOTION":
+          vietnameseStatus = "Promotion";
+          break;
+        default:
+          vietnameseStatus = "Không xác định";
       }
-      return <Tag color={color}>{status}</Tag>;
+
+      return <Tag color={color}>{vietnameseStatus}</Tag>;
     },
   },
   {
-    title: "Phương thức thanh toán",
-    dataIndex: "method",
-    key: "method",
+    title: "Phương thức",
+    dataIndex: "paymentType",
+    key: "paymentType",
+    render: (paymentType) => {
+      let vietnameseStatus = "";
+      let color = "green";
+      switch (paymentType) {
+        case "DEPOSIT":
+          vietnameseStatus = "Nạp";
+          break;
+        case "WITHDRAW":
+          vietnameseStatus = "Rút";
+          color = "orange";
+          break;
+        default:
+          vietnameseStatus = "Không xác định";
+          color = "red";
+      }
+      return <Tag color={color}>{vietnameseStatus}</Tag>;
+    },
+  },
+  {
+    title: "Mô tả",
+    dataIndex: "description",
+    key: "description",
+  },
+  {
+    title: "Số tiền (VNĐ)",
+    dataIndex: "totalAmount",
+    key: "totalAmount",
+    render: (amount) => formatCurrency(amount),
+  },
+  {
+    title: "Ngày thanh toán",
+    dataIndex: "paymentDate",
+    key: "paymentDate",
+    render: (date) => dayjs(date).format("DD/MM/YYYY HH:mm:ss"),
   },
   {
     title: "Hành động",
@@ -88,7 +109,7 @@ const columns = [
     render: () => (
       <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
         <Button
-          className="text-black border-none hover:!bg-[#A37F4A] hover:!text-white   "
+          className="text-black border-none hover:!bg-[#A37F4A] hover:!text-white"
           style={{ backgroundColor: "#BF9456" }}
         >
           Hỗ trợ
@@ -99,6 +120,87 @@ const columns = [
 ];
 
 const ManagementPaymentPge = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const paymentHistory = useSelector(
+    (state) => state.PAYMENTREDUCER.paymentHistory
+  );
+  const uid = useSelector((state) => state.ACCOUNT.uid);
+  const [currentPagePayment, setCurrentPagePayment] = useState(1);
+  const [itemsPerPagePayment, setItemsPerPagePayment] = useState(10);
+  const [loading, setLoading] = useState(false);
+  const [searchEmail, setSearchEmail] = useState("");
+  const [paymentType, setPaymentType] = useState(null);
+  const [statusPayment, setstatusPayment] = useState("PAID");
+  const [paymentDate, setPaymentDate] = useState(null);
+  const fetchData = async () => {
+    setLoading(true); // Bật loading
+    await dispatch(
+      GetPaymentHistory(
+        currentPagePayment,
+        itemsPerPagePayment,
+        searchEmail,
+        paymentType,
+        statusPayment,
+        paymentDate,
+        uid
+      )
+    );
+    setLoading(false); // Tắt loading sau khi gọi API xong
+  };
+  useEffect(() => {
+    fetchData();
+  }, [
+    dispatch,
+    currentPagePayment,
+    itemsPerPagePayment,
+    searchEmail,
+    paymentType,
+    statusPayment,
+    paymentDate,
+    uid,
+  ]);
+
+  const handleSearchDate = (e) => {
+    e.preventDefault();
+    setPaymentDate(paymentDate);
+    setCurrentPagePayment(1);
+  };
+
+  const handlePayment = (type) => {
+    if (type === "Tất cả") {
+      setPaymentType(null);
+    } else if (type === "Nạp") {
+      setPaymentType("DEPOSIT");
+    } else if (type === "Rút") {
+      setPaymentType("WITHDRAW");
+    } else {
+      setPaymentType(null);
+    }
+    setCurrentPagePayment(1);
+  };
+
+  const handleStatus = (type) => {
+    if (type === "Tất cả") {
+      setstatusPayment(null);
+    } else if (type === "Đã trả") {
+      setstatusPayment("PAID");
+    } else if (type === "Đang xử lý") {
+      setstatusPayment("PENDING");
+    } else if (type === "Đã hủy") {
+      setstatusPayment("CANCEL");
+    } else if (type === "Promotion") {
+      setstatusPayment("PROMOTION");
+    } else {
+      setstatusPayment(null);
+    }
+    setCurrentPagePayment(1);
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPagePayment(page);
+  };
+
   return (
     <motion.div
       className="relative flex h-[700px] w-full flex-col items-center justify-center overflow-hidden rounded-lg border md:shadow-xl"
@@ -128,49 +230,105 @@ const ManagementPaymentPge = () => {
         Xem chi tiết lịch sử nạp tiền của bạn và kiểm tra lại các giao dịch bạn
         nhé
       </motion.p>
-      <div className="flex justify-end mt-4 space-x-2 mb-4">
-        <motion.div whileHover={{ scale: 1.05 }}>
-          <Button type="default">Reset</Button>
-        </motion.div>
-        <motion.div whileHover={{ scale: 1.05 }}>
-          <Button type="primary">Nạp thêm tiền</Button>
-        </motion.div>
-        <motion.div whileHover={{ scale: 1.05 }}>
-          <Button
-            type="primary"
-            style={{ background: "#52c41a", borderColor: "#52c41a" }}
-          >
-            Thanh toán thành công
-          </Button>
-        </motion.div>
-        <motion.div whileHover={{ scale: 1.05 }}>
-          <Button
-            type="primary"
-            style={{ background: "#faad14", borderColor: "#faad14" }}
-          >
-            Đang chờ xử lý
-          </Button>
-        </motion.div>
-        <motion.div whileHover={{ scale: 1.05 }}>
-          <Button type="primary" danger>
-            Thanh toán thất bại
-          </Button>
-        </motion.div>
+      <div className="space-y-4 mt-4 mb-4">
+        {/* Phần trên cùng chứa nút Reset và Nạp thêm tiền */}
+        <div className="flex flex-wrap justify-end space-x-2">
+          <motion.div whileHover={{ scale: 1.05 }}>
+            <Button type="default" onClick={() => fetchData()}>
+              Reset
+            </Button>
+          </motion.div>
+          <motion.div whileHover={{ scale: 1.05 }}>
+            <Button
+              type="primary"
+              onClick={() => {
+                navigate("/payment");
+              }}
+            >
+              Nạp thêm tiền
+            </Button>
+          </motion.div>
+        </div>
+
+        {/* Phần dưới chứa các nút trạng thái thanh toán */}
+        <div className="flex flex-wrap justify-end gap-2">
+          <motion.div whileHover={{ scale: 1.05 }}>
+            <Button
+              type="text"
+              style={
+                statusPayment === "PAID" && {
+                  background: "#52c41a",
+                  borderColor: "#52c41a",
+                }
+              }
+              onClick={() => handleStatus("Đã trả")}
+            >
+              Thanh toán thành công
+            </Button>
+          </motion.div>
+
+          <motion.div whileHover={{ scale: 1.05 }}>
+            <Button
+              type="text"
+              style={
+                statusPayment === "PENDING" && {
+                  background: "#faad14",
+                  borderColor: "#faad14",
+                }
+              }
+              onClick={() => handleStatus("Đang xử lý")}
+            >
+              Đang chờ xử lý
+            </Button>
+          </motion.div>
+
+          <motion.div whileHover={{ scale: 1.05 }}>
+            <Button
+              type="text"
+              style={
+                statusPayment === "CANCEL" && {
+                  background: "#EE0000",
+                  borderColor: "#faad14",
+                }
+              }
+              onClick={() => handleStatus("Đã hủy")}
+            >
+              Thanh toán thất bại
+            </Button>
+          </motion.div>
+
+          <motion.div whileHover={{ scale: 1.05 }}>
+            <Button
+              type="text"
+              style={
+                statusPayment === "PROMOTION" && {
+                  background: "#FF66CC",
+                  borderColor: "#faad14",
+                }
+              }
+              onClick={() => handleStatus("Promotion")}
+            >
+              Thanh toán hoa hồng
+            </Button>
+          </motion.div>
+        </div>
       </div>
+
       {/* Transaction Table */}
       <Table
+        loading={loading}
         columns={columns}
-        dataSource={transactionData}
+        dataSource={paymentHistory?.items}
         pagination={false}
         bordered
       />
       <Pagination
         className="paginationAppointment"
-        //   current={currentPage}
-        //   pageSize={pageSize}
-        //   total={totalPages * pageSize}
-        //   onChange={handlePageChange}
-        //   showSizeChanger={false}
+        current={currentPagePayment}
+        pageSize={itemsPerPagePayment}
+        total={paymentHistory?.total}
+        onChange={handlePageChange}
+        showSizeChanger={false}
       />
 
       {/* Transaction Status Filters */}

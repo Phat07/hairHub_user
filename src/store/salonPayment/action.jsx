@@ -3,6 +3,9 @@ import { SalonPayment } from "../../services/salonPayment";
 import { actGetAllPaymentList } from "../config/action";
 
 export const GET_ALL_PAYMENT_SALON = "GET_ALL_PAYMENT_SALON";
+export const ACT_ALL_PAYMENTP_HISTORY = "ACT_ALL_PAYMENTP_HISTORY";
+export const ACT_ALL_PAYMENTP_REPORT = "ACT_ALL_PAYMENTP_REPORT";
+export const ACT_ALL_PAYMENTP_REPORT_ID = "ACT_ALL_PAYMENTP_REPORT_ID";
 
 export const getAllPaymentSalon = (list) => {
   return {
@@ -10,6 +13,24 @@ export const getAllPaymentSalon = (list) => {
     payload: list,
   };
 };
+export function actGetAllPaymentsHistory(list) {
+  return {
+    type: ACT_ALL_PAYMENTP_HISTORY,
+    payload: list,
+  };
+}
+export function actGetAllPaymentsReport(list) {
+  return {
+    type: ACT_ALL_PAYMENTP_REPORT,
+    payload: list,
+  };
+}
+export function actGetAllPaymentsReportById(list) {
+  return {
+    type: ACT_ALL_PAYMENTP_REPORT_ID,
+    payload: list,
+  };
+}
 
 export function actGetAllPaymentByOwnerId(id, page, size) {
   return async (dispatch) => {
@@ -70,5 +91,57 @@ export function actCreatePaymentPackageByOwnerId(data) {
         // Xử lý lỗi nếu có
         // console.error("Error while fetching all config money:", error);
       });
+  };
+}
+export function GetPaymentHistory(
+  page,
+  size,
+  email,
+  paymentType,
+  status,
+  payDate,
+  accountId
+) {
+  return async (dispatch) => {
+    try {
+      const response = await SalonPayment.GetPaymentHistory(
+        accountId,
+        page,
+        size,
+        paymentType,
+        status,
+        payDate,
+        email
+      );
+      dispatch(actGetAllPaymentsHistory(response.data));
+    } catch (error) {
+      console.error("Failed to GetPaymentHistory:", error);
+    }
+  };
+}
+export function GetPaymentReport(accountId, page, size, createDate, status) {
+  return async (dispatch) => {
+    try {
+      const response = await SalonPayment.GetPaymentReport(
+        accountId,
+        page,
+        size,
+        createDate,
+        status
+      );
+      dispatch(actGetAllPaymentsReport(response.data));
+    } catch (error) {
+      console.error("Failed to GetPaymentReport:", error);
+    }
+  };
+}
+export function GetPaymentReportById(id) {
+  return async (dispatch) => {
+    try {
+      const response = await SalonPayment.GetPaymentReportById(id);
+      dispatch(actGetAllPaymentsReportById(response.data));
+    } catch (error) {
+      console.error("Failed to actGetAllPaymentsReportById:", error);
+    }
   };
 }

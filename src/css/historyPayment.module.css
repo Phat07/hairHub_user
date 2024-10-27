@@ -1,0 +1,47 @@
+.statusContainer {
+    display: flex;
+    overflow-x: auto;
+    gap: 16px;
+    padding: 10px;
+    scroll-snap-type: x mandatory;
+  }
+  
+  .button {
+    flex: 0 0 auto; /* Prevent buttons from shrinking */
+    min-width: 180px; /* Adjust width as needed */
+    text-align: center;
+    padding: 10px;
+    border-radius: 8px;
+    transition: background-color 0.3s, transform 0.3s;
+    scroll-snap-align: start;
+  }
+  
+  /* Styles for active buttons */
+  .paid {
+    background-color: #52c41a;
+    border-color: #52c41a;
+  }
+  
+  .pending {
+    background-color: #faad14;
+    border-color: #faad14;
+  }
+  
+  .cancel {
+    background-color: #EE0000;
+    border-color: #faad14;
+  }
+  
+  .promotion {
+    background-color: #FF66CC;
+    border-color: #faad14;
+  }
+  
+  /* Add horizontal scrolling for smaller screens */
+  @media (max-width: 768px) {
+    .header {
+      gap: 8px;
+      padding: 5px;
+    }
+  }
+  

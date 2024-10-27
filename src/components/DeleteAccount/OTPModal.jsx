@@ -70,12 +70,12 @@ const OTPModal = ({ visible, onCancel, otp, setOtp, onConfirm, sendOTP }) => {
         <Button key="cancel" onClick={handleCancel}>
           Hủy
         </Button>,
-        <Button key="confirm" type="primary" danger onClick={onConfirm}>
-          Xác nhận xóa
+        <Button key="confirm" type="primary" success onClick={onConfirm}>
+          Xác nhận
         </Button>,
       ]}
     >
-      <h3>Vui lòng nhập mã OTP để xác nhận xóa tài khoản:</h3>
+      <h3>Vui lòng nhập mã OTP để xác nhận tài khoản:</h3>
       <OTPInput
         value={otp}
         onChange={setOtp}

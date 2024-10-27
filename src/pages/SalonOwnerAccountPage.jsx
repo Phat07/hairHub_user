@@ -39,6 +39,7 @@ import OTPModal from "@/components/DeleteAccount/OTPModal";
 import axios from "axios";
 import Wallet from "@/components/Wallet";
 import RequestWithdrawal from "@/components/RequestWithdrawal/RequestWithdrawal";
+import { SalonPayment } from "@/services/salonPayment";
 
 const { Option } = Select;
 
@@ -416,13 +417,23 @@ function SalonOwnerAccountPage() {
   const handleConfirmDelete = () => {
     sendOtp();
   };
-  const handleCancelRequest = ()=>{
-    setIsRequestModalVisible(false)
-  }
-  const handleConfirmRequest = ()=>{
-
-  }
-
+  const handleCancelRequest = () => {
+    setIsRequestModalVisible(false);
+  };
+  const handleConfirmRequest = async (formData) => {
+    try {
+      setIsLoading(true);
+      const response = await SalonPayment.CreateWithdrawPayment(formData);
+      if (response.status === 200) {
+        message.success("Tạo đơn thành công");
+      }
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || error.message;
+      message.warning(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleCancelOTP = () => {
     setOtp("");
@@ -818,11 +829,6 @@ function SalonOwnerAccountPage() {
         onCancel={handleCancelDeleteComfirm}
         onConfirm={handleConfirmDelete}
       />
-      <RequestWithdrawal
-        visible={isRequestModalVisible}
-        onCancel={handleCancelRequest}
-        onConfirm={handleConfirmRequest}
-      />
       <OTPModal
         visible={isOTPModalVisible}
         onCancel={handleCancelOTP}
@@ -830,6 +836,12 @@ function SalonOwnerAccountPage() {
         setOtp={setOtp}
         onConfirm={handleOTPConfirm}
         sendOTP={sendOtp}
+      />
+      <RequestWithdrawal
+        visible={isRequestModalVisible}
+        onCancel={handleCancelRequest}
+        onConfirm={handleConfirmRequest}
+        email={optData.email}
       />
     </div>
   );

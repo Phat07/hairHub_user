@@ -38,9 +38,9 @@ import { AppointmentService } from "@/services/appointmentServices";
 const { Text } = Typography;
 const { Option } = Select;
 const formatCurrency = (value) => {
-  return new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
-    currency: 'VND',
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
   }).format(value);
 };
 function CustomerAppointmentVer2(props) {
@@ -826,14 +826,14 @@ function CustomerAppointmentVer2(props) {
           <DatePicker onChange={handleDateChange} />
         </div>
 
-        {/* <Table
-        className={styles.appointmentTable}
-        columns={columns}
-        dataSource={customerAppointments}
-        loading={loading}
-        rowKey="id"
-        pagination={false}
-      /> */}
+        <Table
+          className={styles.appointmentTable}
+          columns={columns}
+          dataSource={customerAppointments}
+          // loading={loading}
+          rowKey="id"
+          pagination={false}
+        />
         <div className={styles.container}>
           {/* {loading && (
             <div className={styles.overlay}>

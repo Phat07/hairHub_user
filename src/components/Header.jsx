@@ -62,6 +62,7 @@ function Header(props) {
 
   const account = useSelector((state) => state.ACCOUNT.username);
   const email = useSelector((state) => state.ACCOUNT.email);
+  const userInfo = useSelector((state) => state.ACCOUNT.userInfo);
   const avatar = useSelector((state) => state.ACCOUNT.avatar);
   useEffect(() => {
     if (idOwner) {
@@ -114,23 +115,32 @@ function Header(props) {
   //     </Menu.Item>
   //   </Menu>
   // );
-  
-  
+
   const accountMenu = (
     <Menu className="w-[240px]">
       <Menu.Item key="profile-header" disabled className="profile-header">
         <div className="flex flex-col items-center">
-          <div className="w-10 h-10 rounded-full bg-[#BF9456] flex items-center justify-center text-white font-bold">
+          {/* <div className="w-10 h-10 rounded-full bg-[#BF9456] flex items-center justify-center text-white font-bold">
             <UserOutlined />
-          </div>
-          <div className="mt-2 font-bold">{account}</div>
-          <div className="text-sm">{email}</div>
+          </div> */}
+          <Avatar
+            className={style.avatarLinkModal}
+            src={userInfo?.img || <UserOutlined />}
+          />
+          <div className="mt-2 font-bold">{userInfo?.fullName}</div>
+          <div className="text-sm">{userInfo?.email}</div>
         </div>
       </Menu.Item>
 
       <Menu.Item key="wallet">
         <div className="flex justify-center">
-          <span>Số tiền trong ví : 0</span>
+          <span>
+            Số tiền trong ví :{" "}
+            {new Intl.NumberFormat("vi-VN", {
+              style: "currency",
+              currency: "VND",
+            }).format(userInfo?.balance)}
+          </span>
         </div>
         <div className="flex justify-center mt-2">
           <Link to="/payment">
@@ -148,18 +158,18 @@ function Header(props) {
           <UserOutlined /> Trang cá nhân
         </Link>
       </Menu.Item>
-      <Menu.Item key="report">
-        <Link to="/report-history">
+      {/* <Menu.Item key="report">
+        <Link to="/customer_report">
           <UserOutlined /> Lịch sử báo cáo
         </Link>
-      </Menu.Item>
+      </Menu.Item> */}
       <Menu.Item key="appointment-history">
-        <Link to="/appointment-history">
-          <UserOutlined /> Lịch sử lịch hẹn
+        <Link to="/WithdrawRequest">
+          <UserOutlined /> Đơn rút tiền
         </Link>
       </Menu.Item>
       <Menu.Item key="transaction-history">
-        <Link to="/transaction-history">
+        <Link to="/managerPayment">
           <UserOutlined /> Lịch sử giao dịch
         </Link>
       </Menu.Item>
