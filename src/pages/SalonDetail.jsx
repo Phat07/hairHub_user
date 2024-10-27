@@ -3132,14 +3132,14 @@ function SalonDetail(props) {
               employee={selectedEmployee}
               booking={handleBookClick}
             />
-            <QrPayment
+            {/* <QrPayment
               isOpen={isModalPaymentVisible}
               onClose={closeModalPayment}
               // employee={selectedEmployee}
               // booking={handleBookClick}
               // price={appointmentData?.totalPrice}
               data={paymentMethodDetail}
-            />
+            /> */}
             <Modal
               title="Thông báo"
               visible={isModalWarningVisible}
