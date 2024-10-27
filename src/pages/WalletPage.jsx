@@ -1,11 +1,11 @@
 import RetroGrid from "@/components/ui/retro-grid";
-import { Input, Spin } from "antd"; // Import Spin for loading indicator
-import React, { useState } from "react";
+import { Input, Spin } from "antd";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { SalonPayment } from "@/services/salonPayment";
 import { useSelector } from "react-redux";
+import { usePayOS } from "payos-checkout";
 
-// Helper function to format currency as VND
 const formatCurrency = (value) => {
   return new Intl.NumberFormat("vi-VN", {
     style: "currency",
@@ -14,25 +14,26 @@ const formatCurrency = (value) => {
 };
 
 function WalletPage(props) {
-  const [amount, setAmount] = useState(""); // State for storing input value
-  const [isLoading, setIsLoading] = useState(false); // Loading state
-  const [paymentMethodDetail, setPaymentMethodDetail] = useState(null); // Store payment details
+  const [amount, setAmount] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [payOSConfig, setPayOSConfig] = useState(null);
   const uid = useSelector((state) => state.ACCOUNT.uid);
 
-  // Handle input change
   const handleAmountChange = (e) => {
     let value = parseFloat(e.target.value);
-
-    // Ensure value is greater than 0 and not a negative number
     if (isNaN(value) || value <= 0) {
-      value = 0; // Reset to 0 if invalid
+      value = 0;
     }
-
     setAmount(value);
   };
 
   const handleSubmit = async () => {
-    const data = {
+    if (!amount || amount <= 0) {
+      alert('Please enter a valid amount');
+      return;
+    }
+
+    const paymentData = {
       configId: null,
       appointmentId: null,
       price: amount,
@@ -40,21 +41,52 @@ function WalletPage(props) {
     };
 
     try {
-      setIsLoading(true); // Start loading state
-      const response = await SalonPayment.createPaymentLink(uid, data);
-      // Assuming the payment URL is in the response, navigate to it
-      const paymentUrl = response.data.checkoutUrl; // Adjust this based on your actual response structure
+      setIsLoading(true);
 
-      if (paymentUrl) {
-        window.location.href = paymentUrl; // Redirect to the payment page
+      const response = await SalonPayment.createPaymentLink(uid, paymentData);
+      console.log("s",response.data);
+      
+      if (!response?.data?.checkoutUrl) {
+        throw new Error('Invalid checkout URL received from server');
       }
-    } catch (err) {
-      console.log(err); // Log the error
-      // Optionally show a message or alert to the user on error
+
+      const newPayOSConfig = {
+        RETURN_URL: window.location.origin,
+        ELEMENT_ID: "payos-checkout",
+        CHECKOUT_URL: response.data.checkoutUrl,
+        embedded: true,
+        onSuccess: (event) => {
+          console.log("Payment Successful:", event);
+          alert("Payment completed successfully!");
+        },
+        onCancel: (event) => {
+          console.log("Payment Cancelled:", event);
+          alert("Payment was cancelled.");
+        },
+        onExit: (event) => {
+          console.log("Payment Popup Closed:", event);
+          alert("Payment popup was closed.");
+        },
+      };
+
+      console.log('PayOS Configuration:', newPayOSConfig);
+      setPayOSConfig(newPayOSConfig); // Store configuration in state
+    } catch (error) {
+      console.error('Payment creation failed:', error);
+      alert('Unable to initiate payment. Please try again.');
     } finally {
-      setIsLoading(false); // Stop loading state
+      setIsLoading(false);
     }
   };
+
+  // Initialize PayOS only when payOSConfig is set
+  const payOS = payOSConfig ? usePayOS(payOSConfig) : null;
+
+  useEffect(() => {
+    if (payOS) {
+      payOS.open();
+    }
+  }, [payOS]); // Run when payOSConfig changes
 
   return (
     <motion.div
@@ -89,16 +121,18 @@ function WalletPage(props) {
           Số tiền đã nhập: {formatCurrency(amount || 0)}
         </div>
 
-        {/* Button for "Nạp tiền ngay" */}
         <button
           onClick={handleSubmit}
           className="px-6 py-2 text-white rounded-md bg-[#ad7424] hover:bg-[#967546] hover:text-black transition-all duration-300"
-          disabled={isLoading} // Disable button during loading
+          disabled={isLoading || !amount || amount <= 0}
         >
-          {isLoading ? <Spin className="custom-spin" /> : "Nạp tiền ngay"}{" "}
-          {/* Show spinner during loading */}
+          {isLoading ? <Spin className="custom-spin" /> : "Nạp tiền ngay"}
         </button>
       </motion.div>
+      <div
+        id="payos-checkout"
+        className="w-80 h-80 mx-auto mt-1 flex items-center justify-center"
+      ></div>
 
       <RetroGrid />
     </motion.div>
