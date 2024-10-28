@@ -1,15 +1,11 @@
 import {
   CloseOutlined,
   CreditCardOutlined,
-  HeartOutlined,
   LeftOutlined,
   PhoneOutlined,
   RightOutlined,
-  ShareAltOutlined,
   ShopOutlined,
   StarFilled,
-  StarOutlined,
-  WalletOutlined,
 } from "@ant-design/icons";
 import * as signalR from "@microsoft/signalr";
 import RandomIcon from "@rsuite/icons/Random";
@@ -37,7 +33,10 @@ import {
   Typography,
 } from "antd";
 // import { ButtonMode } from "@/components/ui/button";
+import EmployeeModal from "@/components/DetailPage/EmployeeModal";
 import { CoolMode } from "@/components/magicui/cool-mode";
+import TitleCard from "@/components/TitleCard";
+import { SalonPayment } from "@/services/salonPayment";
 import { Content } from "antd/es/layout/layout";
 import axios from "axios";
 import dayjs from "dayjs";
@@ -46,7 +45,7 @@ import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { motion } from "framer-motion";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import Loader from "../components/Loader";
@@ -55,27 +54,14 @@ import { AppointmentService } from "../services/appointmentServices";
 import { SalonEmployeesServices } from "../services/salonEmployeesServices";
 import { SalonInformationServices } from "../services/salonInformationServices";
 import { ServiceHairServices } from "../services/servicesHairServices";
-import {
-  onBookAppointmentMessage,
-  sendMessage,
-  startConnection,
-  stopConnection,
-} from "../services/signalRService";
+import { startConnection, stopConnection } from "../services/signalRService";
 import { actGetVoucherBySalonIdNotPaging } from "../store/manageVoucher/action";
 import { actGetAllFeedbackBySalonId } from "../store/ratingCutomer/action";
 import {
   actGetAllSalonInformation,
   actGetSalonInformationByOwnerIdForImages,
 } from "../store/salonInformation/action";
-import TitleCard from "@/components/TitleCard";
-import { DragCards } from "@/components/DragCards";
-import { HoverImageLinks } from "@/components/HoverImageLinks";
-import AnimatedList from "@/components/AnimatedList";
-import { SmoothScrollHero } from "@/components/SmoothScrollHero";
 import { actCreateNotificationList } from "@/store/notification/action";
-import EmployeeModal from "@/components/DetailPage/EmployeeModal";
-import QrPayment from "@/components/DetailPage/QrPayment";
-import { SalonPayment } from "@/services/salonPayment";
 const { Panel } = Collapse;
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -1383,85 +1369,91 @@ function SalonDetail(props) {
       setIsPriceModalVisible(false);
       return;
     }
-    if (paymentMethod === null) {
-      message.info("Vui lòng chọn phương thức thanh toán");
-      // setIsPriceModalVisible(false);
-      return;
-    }
-    if (paymentMethod === "payos") {
-      setIsModalPaymentVisible(true);
-      const data = {
-        configId: null,
-        appointmentId: null,
-        price: appointmentData?.totalPrice,
-        description: "Thanh toán dịch vụ",
-      };
-      setIsLoading(true);
-      const response = await SalonPayment.createPaymentLink(uid, data).then((res)=>{
-        setPaymentMethodDetail(res.data)
-      }).catch((err)=>{
-        console.log(err);
-        
-      });
-    } else {
-      setIsModalPaymentVisible(false);
-    }
-    // try {
+    // if (paymentMethod === null) {
+    //   message.info("Vui lòng chọn phương thức thanh toán");
+    //   // setIsPriceModalVisible(false);
+    //   return;
+    // }
+    // if (paymentMethod === "payos") {
+    //   setIsModalPaymentVisible(true);
+    //   const data = {
+    //     configId: null,
+    //     appointmentId: null,
+    //     price: appointmentData?.totalPrice,
+    //     description: "Thanh toán dịch vụ",
+    //   };
     //   setIsLoading(true);
-    //   setIsPriceModalVisible(false);
-    //   setIsBookingModalVisible(false);
+    //   const response = await SalonPayment.createPaymentLink(uid, data)
+    //     .then((res) => {
+    //       const paymentUrl = res.data.checkoutUrl; // Adjust this based on your actual response structure
 
-    //   const res = await AppointmentService.createAppointment(appointmentData)
-    //     .then(async (res) => {
-    //       await startConnection();
-    //       const serviceHairIds =
-    //         appointmentData?.appointmentDetails?.map(
-    //           (detail) => detail.serviceHairId
-    //         ) || [];
-    //       let mappingData = {
-    //         message: "send serviceId",
-    //         dateAppointment: appointmentData?.startDate,
-    //         salonId: salonDetail?.id,
-    //         serviceId: serviceHairIds,
-    //         ownerId: salonDetail?.ownerId,
-    //       };
-    //       await AppointmentService.broadcastMessage(mappingData);
-    //       const date = new Date(selectedDate);
-
-    //       const options = { month: "long", day: "numeric" };
-    //       const formattedDate = date.toLocaleDateString("vi-VN", options);
-    //       const time = formatTimeSlot(selectedTimeSlot);
-    //       const mapDataNotifi = {
-    //         appointmentId: res?.data?.appointmentDetails,
-    //         title: "Đã có đơn đặt lịch mới",
-    //         message: `Khách hàng ${userName} đã đặt lịch ở cửa tiệm ${salonDetail?.name} vào lúc ${time} ngày ${formattedDate}`,
-    //         type: "newAppointment",
-    //       };
-    //       await dispatch(actCreateNotificationList(mapDataNotifi, id));
-    //       setIsLoading(false);
-    //       message.success("Tạo lịch cắt tóc thành công");
-    //       setAdditionalServices([]);
-    //       setVoucherSelected([]);
+    //       if (paymentUrl) {
+    //         window.location.href = paymentUrl; // Redirect to the payment page
+    //       }
+    //       setPaymentMethodDetail(res.data);
     //     })
     //     .catch((err) => {
-    //       message.error(
-    //         err?.response?.data?.message || "Tạo lịch không thành công"
-    //       );
-    //       setIsLoading(false);
-    //     })
-    //     .finally((err) => {
-    //       setIsLoading(false);
-    //       stopConnection();
+    //       console.log(err);
     //     });
-    // } catch (err) {
-    //   message.warning(
-    //     err?.response?.data?.message || "Tạo lịch không thành công"
-    //   );
-    //   setIsLoading(false);
-    //   setAdditionalServices([]);
-    //   setVoucherSelected([]);
-    //   console.error(err);
+    // } else {
+    //   setIsModalPaymentVisible(false);
     // }
+    try {
+      setIsLoading(true);
+      setIsPriceModalVisible(false);
+      setIsBookingModalVisible(false);
+
+      const res = await AppointmentService.createAppointment(appointmentData)
+        .then(async (res) => {
+          await startConnection();
+          const serviceHairIds =
+            appointmentData?.appointmentDetails?.map(
+              (detail) => detail.serviceHairId
+            ) || [];
+          let mappingData = {
+            message: "send serviceId",
+            dateAppointment: appointmentData?.startDate,
+            salonId: salonDetail?.id,
+            serviceId: serviceHairIds,
+            ownerId: salonDetail?.ownerId,
+          };
+          await AppointmentService.broadcastMessage(mappingData);
+          const date = new Date(selectedDate);
+
+          const options = { month: "long", day: "numeric" };
+          const formattedDate = date.toLocaleDateString("vi-VN", options);
+          const time = formatTimeSlot(selectedTimeSlot);
+          const mapDataNotifi = {
+            appointmentId: res?.data?.appointmentDetails,
+            title: "Đã có đơn đặt lịch mới",
+            message: `Khách hàng ${userName} đã đặt lịch ở cửa tiệm ${salonDetail?.name} vào lúc ${time} ngày ${formattedDate}`,
+            type: "newAppointment",
+          };
+          await dispatch(actCreateNotificationList(mapDataNotifi, id));
+          setIsLoading(false);
+          message.success("Tạo lịch cắt tóc thành công");
+          setAdditionalServices([]);
+          setVoucherSelected([]);
+        })
+        .catch((err) => {
+          message.error(
+            err?.response?.data?.message || "Tạo lịch không thành công"
+          );
+          setIsLoading(false);
+        })
+        .finally((err) => {
+          setIsLoading(false);
+          stopConnection();
+        });
+    } catch (err) {
+      message.warning(
+        err?.response?.data?.message || "Tạo lịch không thành công"
+      );
+      setIsLoading(false);
+      setAdditionalServices([]);
+      setVoucherSelected([]);
+      console.error(err);
+    }
   };
 
   const handleAddServiceClick = () => {
@@ -3069,7 +3061,7 @@ function SalonDetail(props) {
                       </Text>
                     </Col>
                   </Row>
-                  <Card
+                  {/* <Card
                     title="Phương thức thanh toán"
                     style={{ maxWidth: 500, margin: "0 auto" }}
                     headStyle={{ textAlign: "center", fontSize: "18px" }}
@@ -3122,7 +3114,7 @@ function SalonDetail(props) {
                         ? "Thanh toán bằng ví của bạn"
                         : "Vui lòng thanh toán tại salon sau khi hoàn thành dịch vụ"}
                     </div>
-                  </Card>
+                  </Card> */}
                 </Modal>
               </div>
             </Col>

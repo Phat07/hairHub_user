@@ -1,7 +1,7 @@
 import { Avatar } from "antd";
 import React, { useState } from "react";
 import { FaComments } from "react-icons/fa";
-import iconZalo from "../../src/assets/images/policyImg/zalo.png";
+import iconZalo from "../../src/assets/images/policyImg/zalo1.jpg";
 import iconMes from "../../src/assets/images/policyImg/messager.png";
 import "../css/chatMesZalo.css";
 const ChatButton = () => {
@@ -46,7 +46,7 @@ const ChatButton = () => {
           rel="noopener noreferrer"
         >
           <div className="icon zalo">
-            <Avatar src={iconZalo} size={60} />
+            <Avatar src={iconZalo} size={50} />
           </div>
         </a>
       </div>
