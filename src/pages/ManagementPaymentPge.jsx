@@ -216,7 +216,7 @@ const ManagementPaymentPge = () => {
         animate="visible"
         transition={{ duration: 0.6 }}
       >
-        Lịch sử nạp tiền
+        Lịch sử giao dịch qua ví
       </motion.h1>
 
       {/* Animated Description */}
@@ -227,8 +227,8 @@ const ManagementPaymentPge = () => {
         animate="visible"
         transition={{ delay: 0.2, duration: 0.6 }}
       >
-        Xem chi tiết lịch sử nạp tiền của bạn và kiểm tra lại các giao dịch bạn
-        nhé
+        Xem chi tiết lịch sử nạp tiền của bạn và kiểm tra lại các giao dịch qua
+        ví bạn nhé
       </motion.p>
       <div className="space-y-4 mt-4 mb-4">
         {/* Phần trên cùng chứa nút Reset và Nạp thêm tiền */}

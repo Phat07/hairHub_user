@@ -679,7 +679,7 @@ function ListShopBarber(props) {
 
               <Button
                 className={styles.customButton}
-                style={{ marginBottom: "1rem", marginLeft:"1rem" }}
+                style={{ marginBottom: "1rem", marginLeft: "1rem" }}
                 onClick={showOtpModal}
                 loading={loading}
               >
@@ -1693,12 +1693,13 @@ function ListShopBarber(props) {
                           spinning={loadingEmployee}
                           // tip="Loading..."
                         >
-                          {/* <Table
+                          <Table
+                            className={stylesCard.appointmentTable}
                             dataSource={listEmployee}
                             columns={columnsEmployee}
                             pagination={false}
                             // rowKey="phone"
-                          /> */}
+                          />
                           <div className={stylesCard.container}>
                             {/* {loadingEmployee && (
                               <div className={stylesCard.overlay}>
@@ -1732,9 +1733,10 @@ function ListShopBarber(props) {
                                   />
 
                                   <h4>
-                                    Tên đầy đủ:{" "}
+                                    Tên đầy đủ:
                                     <span
                                       style={{
+                                        display: "block",
                                         fontWeight: "bold",
                                         color: "#bf9456",
                                         textAlign: "center",
@@ -1980,12 +1982,13 @@ function ListShopBarber(props) {
                           spinning={loadingService}
                           // tip="Loading..."
                         >
-                          {/* <Table
+                          <Table
+                            className={stylesCard.appointmentTable}
                             dataSource={listTotalService}
                             columns={columnsService}
                             pagination={false}
                             // rowKey="phone"
-                          /> */}
+                          />
                           <div className={stylesCard.container}>
                             {listTotalService?.length === 0 && (
                               <h4
@@ -2012,9 +2015,10 @@ function ListShopBarber(props) {
                                     className={stylesCard.employeeImage}
                                   />
                                   <h4>
-                                    Tên:{" "}
+                                    Tên:
                                     <span
                                       style={{
+                                        display: "block",
                                         fontWeight: "bold",
                                         color: "#bf9456",
                                         textAlign: "center",
@@ -2167,12 +2171,13 @@ function ListShopBarber(props) {
                           spinning={loadingVoucher}
                           tip="Loading..."
                         >
-                          {/* <Table
+                          <Table
+                            className={stylesCard.appointmentTable}
                             dataSource={voucherList}
                             columns={columnsVoucher}
                             rowKey="code"
                             pagination={false} // Nếu bạn muốn thêm phân trang, có thể cấu hình tại đây
-                          /> */}
+                          />
                           <div className={stylesCard.container}>
                             {voucherList?.length === 0 && (
                               <h4

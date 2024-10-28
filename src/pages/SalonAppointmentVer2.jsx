@@ -706,14 +706,14 @@ function SalonAppointmentVer2(props) {
           />
         </div>
 
-        {/* <Table
-        className={styles.appointmentTable}
-        columns={columns}
-        dataSource={salonAppointments}
-        loading={loading}
-        rowKey="id"
-        pagination={false}
-      /> */}
+        <Table
+          className={stylesCard.appointmentTable}
+          columns={columns}
+          dataSource={salonAppointments}
+          loading={loading}
+          rowKey="id"
+          pagination={false}
+        />
 
         <div className={stylesCard.container}>
           {/* {loading && (
@@ -767,18 +767,19 @@ function SalonAppointmentVer2(props) {
                     className={stylesCard.salonImage}
                   />
                   <h4>
-                    Tên khách hàng:{" "}
+                    Tên khách hàng:
                     <span
                       style={{
+                        display: "block", // Đảm bảo xuống dòng
                         fontWeight: "bold",
                         color: "#bf9456",
                         textAlign: "center",
                       }}
                     >
-                      {" "}
                       {appointment.customer.fullName}
                     </span>
                   </h4>
+
                   <h4>Ngày tạo: {formatDate(appointment.createdDate)}</h4>
                   <h4>Ngày bắt đầu: {formatDate(startTime)}</h4>
                   <h4>
