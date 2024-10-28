@@ -459,6 +459,15 @@ function SalonOwnerAccountPage() {
           <Menu.Item icon={<BarChartOutlined />}>
             <Link to="/dashboardTransaction">Thống kê doanh thu</Link>
           </Menu.Item>
+          <Menu.Item>
+            <Button
+              type="primary"
+              style={{ backgroundColor: "green", borderColor: "#bf9456" }}
+              onClick={() => setIsRequestModalVisible(true)}
+            >
+              Yêu cầu rút tiền
+            </Button>
+          </Menu.Item>
         </>
       )}
       {idCustomer && (

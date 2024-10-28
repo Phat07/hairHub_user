@@ -63,6 +63,8 @@ function Header(props) {
   const account = useSelector((state) => state.ACCOUNT.username);
   const email = useSelector((state) => state.ACCOUNT.email);
   const userInfo = useSelector((state) => state.ACCOUNT.userInfo);
+
+  
   const avatar = useSelector((state) => state.ACCOUNT.avatar);
   useEffect(() => {
     if (idOwner) {
