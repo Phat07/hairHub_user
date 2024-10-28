@@ -192,20 +192,21 @@ function SalonReport(props) {
             Đã từ chối
           </Button>
         </Space>
-        {/* <Table
-        loading={loading}
-        dataSource={reportsArray}
-        columns={columns}
-        rowKey="id"
-        pagination={{
-          className: "paginationAppointment",
-          current: currentPage,
-          pageSize: pageSize,
-          total: salonReport?.total || 0,
-          position: ["bottomCenter"],
-        }}
-        onChange={handleTableChange}
-      /> */}
+        <Table
+          className={stylesCard.appointmentTable}
+          loading={loading}
+          dataSource={reportsArray}
+          columns={columns}
+          rowKey="id"
+          pagination={{
+            className: "paginationAppointment",
+            current: currentPage,
+            pageSize: pageSize,
+            total: salonReport?.total || 0,
+            position: ["bottomCenter"],
+          }}
+          onChange={handleTableChange}
+        />
 
         <div className={stylesCard.container}>
           {/* {loading && (
