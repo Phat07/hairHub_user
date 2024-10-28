@@ -93,7 +93,7 @@ export function actCreatePaymentPackageByOwnerId(data) {
       });
   };
 }
-export function GetPaymentHistory(
+export function GetPaymentHistoryTest(
   page,
   size,
   email,
@@ -113,7 +113,10 @@ export function GetPaymentHistory(
         payDate,
         email
       );
+      console.log("ss",response?.data);
+      
       dispatch(actGetAllPaymentsHistory(response.data));
+      // return response
     } catch (error) {
       console.error("Failed to GetPaymentHistory:", error);
     }

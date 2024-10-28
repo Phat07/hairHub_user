@@ -1,7 +1,9 @@
 import React from 'react';
 
 
-function QrPayment(props) {
+function QrPayment(
+    
+) {
     return (
         <div>
             

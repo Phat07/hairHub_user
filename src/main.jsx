@@ -329,6 +329,17 @@ const router = createBrowserRouter(
           ),
         },
         {
+          path: "managerPayment/:id",
+          element: (
+            <RequireAuth
+              requiredRoles={["SalonOwner", "Customer"]}
+              fallbackPath="/login"
+            >
+              <ManagementPaymentPge />
+            </RequireAuth>
+          ),
+        },
+        {
           path: "dashboardTransaction",
           element: (
             <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">

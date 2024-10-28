@@ -62,6 +62,7 @@ import {
   actGetSalonInformationByOwnerIdForImages,
 } from "../store/salonInformation/action";
 import { actCreateNotificationList } from "@/store/notification/action";
+import { GetInformationAccount } from "@/store/account/action";
 const { Panel } = Collapse;
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -248,6 +249,9 @@ function SalonDetail(props) {
   const [pageSizeEmployee, setPageSizeEmployee] = useState(3);
   const [total, setTotal] = useState(0);
   const [totalPriceVoucher, setTotalPriceVoucher] = useState(0);
+  const [isAppointmentId, setIsAppointmentId] = useState("");
+  const [loadingCheck, setLoadingCheck] = useState(false);
+
   const indexOfLastFeedback = currentPage * pageSize;
   const indexOfFirstFeedback = indexOfLastFeedback - pageSize;
 
@@ -859,24 +863,6 @@ function SalonDetail(props) {
       });
   };
 
-  // const handleChangeStaffSecond = (service, value) => {
-  //   setAdditionalServices((prevServices) =>
-  //     prevServices.map((s) =>
-  //       s.id === service.id
-  //         ? {
-  //             ...s,
-  //             bookingDetail: {
-  //               ...s.bookingDetail,
-  //               salonEmployeeId: value,
-  //               serviceHairId: service.id,
-  //               isAnyOne: true,
-  //             },
-  //           }
-  //         : s
-  //     )
-  //   );
-  //   setIsModalVisible(false);
-  // };
   const handleChangeStaffSecond = (service, value) => {
     setAdditionalServices((prevServices) => {
       const updatedServices = prevServices.map((s) =>
@@ -901,25 +887,6 @@ function SalonDetail(props) {
     // Close the modal after updating the state
     setIsModalVisible(false);
   };
-
-  // const handleChangeRandomEmployee = () => {
-  //   setAdditionalServices((prevServices) =>
-  //     prevServices.map((s) =>
-  //       s.id === currentService.id
-  //         ? {
-  //             ...s,
-  //             bookingDetail: {
-  //               ...s.bookingDetail,
-  //               salonEmployeeId: null,
-  //               serviceHairId: currentService.id,
-  //               isAnyOne: true,
-  //             },
-  //           }
-  //         : s
-  //     )
-  //   );
-  //   setIsModalVisible(false);
-  // };
   const handleChangeRandomEmployee = () => {
     // Update additionalServices and then set currentService to null
     setAdditionalServices((prevServices) => {
@@ -1252,6 +1219,9 @@ function SalonDetail(props) {
         setLoadingBook(false);
       });
   };
+  console.log("1", paymentMethod);
+  console.log("2", selectedTimeSlot);
+
   const fetchAvailable = async (currentDate) => {
     const postData = {
       day: currentDate,
@@ -1344,6 +1314,7 @@ function SalonDetail(props) {
     };
     initiateConnection();
   }, []);
+
   const formatTimeSlot = (time) => {
     if (typeof time !== "number" || isNaN(time)) {
       // throw new Error("Input must be a valid number");
@@ -1356,7 +1327,104 @@ function SalonDetail(props) {
     const paddedMinutes = minutes.toString().padStart(2, "0");
     return `${hour}h${paddedMinutes}`;
   };
+  // const handleConfirmBooking = async () => {
+  //   if (additionalServices.length === 0) {
+  //     message.info("Vui lòng chọn dịch vụ!!!");
+  //     setIsPriceModalVisible(false);
+  //     return;
+  //   }
 
+  //   if (selectedTimeSlot === null) {
+  //     message.warning("Vui lòng chọn giờ để đặt lịch");
+  //     setIsPriceModalVisible(false);
+  //     return;
+  //   }
+  //   if (paymentMethod === null) {
+  //     message.info("Vui lòng chọn phương thức thanh toán");
+  //     // setIsPriceModalVisible(false);
+  //     return;
+  //   }
+  //   if (paymentMethod === "PAYBYBANK") {
+  //     setIsModalPaymentVisible(true);
+  //     const data = {
+  //       configId: null,
+  //       appointmentId: null,
+  //       price: appointmentData?.totalPrice,
+  //       description: "Thanh toán dịch vụ",
+  //     };
+  //     setIsLoading(true);
+  //     const response = await SalonPayment.createPaymentLink(uid, data)
+  //       .then((res) => {
+  //         const paymentUrl = res.data.checkoutUrl; // Adjust this based on your actual response structure
+
+  //         if (paymentUrl) {
+  //           window.location.href = paymentUrl; // Redirect to the payment page
+  //         }
+  //         setPaymentMethodDetail(res.data);
+  //       })
+  //       .catch((err) => {
+  //         console.log(err);
+  //       });
+  //   } else {
+  //     setIsModalPaymentVisible(false);
+  //   }
+  //   try {
+  //     setIsLoading(true);
+  //     setIsPriceModalVisible(false);
+  //     setIsBookingModalVisible(false);
+
+  //     const res = await AppointmentService.createAppointment(appointmentData)
+  //       .then(async (res) => {
+  //         await startConnection();
+  //         const serviceHairIds =
+  //           appointmentData?.appointmentDetails?.map(
+  //             (detail) => detail.serviceHairId
+  //           ) || [];
+  //         let mappingData = {
+  //           message: "send serviceId",
+  //           dateAppointment: appointmentData?.startDate,
+  //           salonId: salonDetail?.id,
+  //           serviceId: serviceHairIds,
+  //           ownerId: salonDetail?.ownerId,
+  //         };
+  //         await AppointmentService.broadcastMessage(mappingData);
+  //         const date = new Date(selectedDate);
+
+  //         const options = { month: "long", day: "numeric" };
+  //         const formattedDate = date.toLocaleDateString("vi-VN", options);
+  //         const time = formatTimeSlot(selectedTimeSlot);
+  //         const mapDataNotifi = {
+  //           appointmentId: res?.data?.appointmentDetails,
+  //           title: "Đã có đơn đặt lịch mới",
+  //           message: `Khách hàng ${userName} đã đặt lịch ở cửa tiệm ${salonDetail?.name} vào lúc ${time} ngày ${formattedDate}`,
+  //           type: "newAppointment",
+  //         };
+  //         await dispatch(actCreateNotificationList(mapDataNotifi, id));
+  //         setIsLoading(false);
+  //         message.success("Tạo lịch cắt tóc thành công");
+  //         setAdditionalServices([]);
+  //         setVoucherSelected([]);
+  //       })
+  //       .catch((err) => {
+  //         message.error(
+  //           err?.response?.data?.message || "Tạo lịch không thành công"
+  //         );
+  //         setIsLoading(false);
+  //       })
+  //       .finally((err) => {
+  //         setIsLoading(false);
+  //         stopConnection();
+  //       });
+  //   } catch (err) {
+  //     message.warning(
+  //       err?.response?.data?.message || "Tạo lịch không thành công"
+  //     );
+  //     setIsLoading(false);
+  //     setAdditionalServices([]);
+  //     setVoucherSelected([]);
+  //     console.error(err);
+  //   }
+  // };
   const handleConfirmBooking = async () => {
     if (additionalServices.length === 0) {
       message.info("Vui lòng chọn dịch vụ!!!");
@@ -1369,42 +1437,32 @@ function SalonDetail(props) {
       setIsPriceModalVisible(false);
       return;
     }
-    // if (paymentMethod === null) {
-    //   message.info("Vui lòng chọn phương thức thanh toán");
-    //   // setIsPriceModalVisible(false);
-    //   return;
-    // }
-    // if (paymentMethod === "payos") {
-    //   setIsModalPaymentVisible(true);
-    //   const data = {
-    //     configId: null,
-    //     appointmentId: null,
-    //     price: appointmentData?.totalPrice,
-    //     description: "Thanh toán dịch vụ",
-    //   };
-    //   setIsLoading(true);
-    //   const response = await SalonPayment.createPaymentLink(uid, data)
-    //     .then((res) => {
-    //       const paymentUrl = res.data.checkoutUrl; // Adjust this based on your actual response structure
 
-    //       if (paymentUrl) {
-    //         window.location.href = paymentUrl; // Redirect to the payment page
-    //       }
-    //       setPaymentMethodDetail(res.data);
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //     });
-    // } else {
-    //   setIsModalPaymentVisible(false);
-    // }
+    if (paymentMethod === null) {
+      message.info("Vui lòng chọn phương thức thanh toán");
+      return;
+    }
+
     try {
-      setIsLoading(true);
-      setIsPriceModalVisible(false);
-      setIsBookingModalVisible(false);
+      setLoadingCheck(true);
+      // setIsLoading(true);
 
-      const res = await AppointmentService.createAppointment(appointmentData)
-        .then(async (res) => {
+      // setIsPriceModalVisible(false);
+      // setIsBookingModalVisible(false);
+
+      // Step 1: Create the appointment
+      let mappingData = { ...appointmentData, paymentMethod: paymentMethod };
+      const appointmentResponse = await AppointmentService.createAppointment(
+        mappingData
+      );
+      console.log("ss", appointmentResponse?.data);
+
+      const appointmentId = appointmentResponse?.data?.appointmentDetails;
+      setIsAppointmentId(appointmentId);
+
+      if (appointmentId) {
+        // Step 2: Only send broadcast message and notification if paymentMethod is not "PAYBYBANK"
+        if (paymentMethod !== "PAYBYBANK") {
           await startConnection();
           const serviceHairIds =
             appointmentData?.appointmentDetails?.map(
@@ -1418,42 +1476,89 @@ function SalonDetail(props) {
             ownerId: salonDetail?.ownerId,
           };
           await AppointmentService.broadcastMessage(mappingData);
-          const date = new Date(selectedDate);
 
+          // Send notification
+          const date = new Date(selectedDate);
           const options = { month: "long", day: "numeric" };
           const formattedDate = date.toLocaleDateString("vi-VN", options);
           const time = formatTimeSlot(selectedTimeSlot);
           const mapDataNotifi = {
-            appointmentId: res?.data?.appointmentDetails,
+            appointmentId: appointmentResponse.data.appointmentDetails,
             title: "Đã có đơn đặt lịch mới",
             message: `Khách hàng ${userName} đã đặt lịch ở cửa tiệm ${salonDetail?.name} vào lúc ${time} ngày ${formattedDate}`,
             type: "newAppointment",
           };
           await dispatch(actCreateNotificationList(mapDataNotifi, id));
-          setIsLoading(false);
+          dispatch(GetInformationAccount(uid));
+
           message.success("Tạo lịch cắt tóc thành công");
-          setAdditionalServices([]);
-          setVoucherSelected([]);
-        })
-        .catch((err) => {
-          message.error(
-            err?.response?.data?.message || "Tạo lịch không thành công"
+        }
+
+        setAdditionalServices([]);
+        setVoucherSelected([]);
+
+        // Step 3: Generate the payment link if payment method is PAYBYBANK
+        if (paymentMethod === "PAYBYBANK") {
+          setIsModalPaymentVisible(true);
+          const data = {
+            configId: null,
+            appointmentId: appointmentId,
+            price: appointmentData?.totalPrice,
+            description: "Thanh toán dịch vụ",
+          };
+          const paymentResponse = await SalonPayment.createPaymentLink(
+            uid,
+            data
           );
-          setIsLoading(false);
-        })
-        .finally((err) => {
-          setIsLoading(false);
-          stopConnection();
-        });
+          const paymentUrl = paymentResponse.data.checkoutUrl;
+
+          setPaymentMethodDetail(paymentUrl);
+        } else {
+          setIsModalPaymentVisible(false);
+        }
+      }
     } catch (err) {
-      message.warning(
+      message.error(
         err?.response?.data?.message || "Tạo lịch không thành công"
       );
-      setIsLoading(false);
-      setAdditionalServices([]);
-      setVoucherSelected([]);
       console.error(err);
+    } finally {
+      setIsPriceModalVisible(false);
+      setIsBookingModalVisible(false);
+      setLoadingCheck(false);
+      // setIsLoading(false);
+      stopConnection();
     }
+  };
+  const handleReloadMoney = async () => {
+    await startConnection();
+    const serviceHairIds =
+      appointmentData?.appointmentDetails?.map(
+        (detail) => detail.serviceHairId
+      ) || [];
+    let mappingData = {
+      message: "send serviceId",
+      dateAppointment: appointmentData?.startDate,
+      salonId: salonDetail?.id,
+      serviceId: serviceHairIds,
+      ownerId: salonDetail?.ownerId,
+    };
+    await AppointmentService.broadcastMessage(mappingData);
+
+    // Send notification
+    const date = new Date(selectedDate);
+    const options = { month: "long", day: "numeric" };
+    const formattedDate = date.toLocaleDateString("vi-VN", options);
+    const time = formatTimeSlot(selectedTimeSlot);
+    const mapDataNotifi = {
+      appointmentId: isAppointmentId,
+      title: "Đã có đơn đặt lịch mới",
+      message: `Khách hàng ${userName} đã đặt lịch ở cửa tiệm ${salonDetail?.name} vào lúc ${time} ngày ${formattedDate}`,
+      type: "newAppointment",
+    };
+    await dispatch(actCreateNotificationList(mapDataNotifi, id));
+    setIsModalPaymentVisible(false);
+    await stopConnection();
   };
 
   const handleAddServiceClick = () => {
@@ -1523,7 +1628,7 @@ function SalonDetail(props) {
 
   const paymentOptions = [
     {
-      value: "cash",
+      value: "PAYINSALON",
       label: (
         <Space>
           <ShopOutlined style={{ fontSize: "24px", color: "#BF9456" }} />
@@ -1537,7 +1642,7 @@ function SalonDetail(props) {
       ),
     },
     {
-      value: "payos",
+      value: "PAYBYBANK",
       label: (
         <Space>
           <CreditCardOutlined style={{ fontSize: "24px", color: "#BF9456" }} />
@@ -1551,7 +1656,7 @@ function SalonDetail(props) {
       ),
     },
     {
-      value: "wallet",
+      value: "PAYBYWALLET",
       label: (
         <Space>
           <CreditCardOutlined style={{ fontSize: "24px", color: "#BF9456" }} />
@@ -2840,22 +2945,6 @@ function SalonDetail(props) {
                   <Text>{salonDetail.description}</Text>
                   <Divider />
                 </div>
-                {/* <div>
-                  <Spin className="custom-spin" spinning={loadingEmployee}>
-                    <AnimatedList items={employees} />
-                  </Spin>
-
-                  <Pagination
-                    style={{ textAlign: "center" }}
-                    current={page}
-                    pageSize={pageSizeEmployee}
-                    total={total}
-                    onChange={handlePageChangeEmployees}
-                    className="paginationAppointment"
-                  />
-                  <Divider />
-                </div> */}
-
                 <div>
                   <Title level={4}>Liên hệ</Title>
                   <Row justify="space-between" align="middle">
@@ -3061,60 +3150,74 @@ function SalonDetail(props) {
                       </Text>
                     </Col>
                   </Row>
-                  {/* <Card
-                    title="Phương thức thanh toán"
-                    style={{ maxWidth: 500, margin: "0 auto" }}
-                    headStyle={{ textAlign: "center", fontSize: "18px" }}
-                  >
-                    <Radio.Group
-                      onChange={handlePaymentChange}
-                      value={paymentMethod}
-                      style={{ width: "100%" }}
+                  <Spin className="custom-spin" spinning={loadingCheck}>
+                    <Card
+                      title="Phương thức thanh toán"
+                      style={{ maxWidth: 500, margin: "0 auto" }}
+                      headStyle={{ textAlign: "center", fontSize: "18px" }}
                     >
-                      <Space direction="vertical" style={{ width: "100%" }}>
-                        {paymentOptions.map((option) => (
-                          <Radio.Button
-                            key={option.value}
-                            value={option.value}
-                            style={{
-                              height: "auto",
-                              padding: "12px",
-                              width: "100%",
-                              marginBottom: "12px",
-                              borderColor:
-                                paymentMethod === option.value
-                                  ? "#BF9456"
-                                  : undefined,
-                              color:
-                                paymentMethod === option.value
-                                  ? "#BF9456"
-                                  : "#333",
-                              fontWeight:
-                                paymentMethod === option.value
-                                  ? "bold"
-                                  : "normal",
-                            }}
-                          >
-                            {option.label}
-                          </Radio.Button>
-                        ))}
-                      </Space>
-                    </Radio.Group>
-                    <div
-                      style={{
-                        marginTop: 16,
-                        textAlign: "center",
-                        color: "#666",
-                        fontSize: "14px",
-                      }}
-                    >
-                      {paymentMethod === "payos"
-                        ? "Bạn sẽ được chuyển đến cổng thanh toán PayOs"
-                        : paymentMethod === "wallet"
-                        ? "Thanh toán bằng ví của bạn"
-                        : "Vui lòng thanh toán tại salon sau khi hoàn thành dịch vụ"}
-                    </div>
-                  </Card> */}
+                      <Radio.Group
+                        onChange={handlePaymentChange}
+                        value={paymentMethod}
+                        style={{ width: "100%" }}
+                      >
+                        <Space direction="vertical" style={{ width: "100%" }}>
+                          {paymentOptions.map((option) => (
+                            <Radio.Button
+                              key={option.value}
+                              value={option.value}
+                              style={{
+                                height: "auto",
+                                padding: "12px",
+                                width: "100%",
+                                marginBottom: "12px",
+                                borderColor:
+                                  paymentMethod === option.value
+                                    ? "#BF9456"
+                                    : undefined,
+                                color:
+                                  paymentMethod === option.value
+                                    ? "#BF9456"
+                                    : "#333",
+                                fontWeight:
+                                  paymentMethod === option.value
+                                    ? "bold"
+                                    : "normal",
+                              }}
+                            >
+                              {option.label}
+                            </Radio.Button>
+                          ))}
+                        </Space>
+                      </Radio.Group>
+                      <div
+                        style={{
+                          marginTop: 16,
+                          textAlign: "center",
+                          color: "#666",
+                          fontSize: "14px",
+                        }}
+                      >
+                        {paymentMethod === "PAYBYBANK"
+                          ? "Bạn sẽ được chuyển đến cổng thanh toán PayOs"
+                          : paymentMethod === "PAYBYWALLET"
+                          ? "Thanh toán bằng ví của bạn"
+                          : "Vui lòng thanh toán tại salon sau khi hoàn thành dịch vụ"}
+                      </div>
+                    </Card>
+                  </Spin>
+                </Modal>
+                <Modal
+                  visible={isModalPaymentVisible}
+                  onCancel={handleReloadMoney}
+                  footer={null}
+                  width="70%"
+                >
+                  <iframe
+                    src={paymentMethodDetail}
+                    title="PayOS Payment"
+                    className="w-full h-[500px] rounded-lg"
+                  ></iframe>
                 </Modal>
               </div>
             </Col>

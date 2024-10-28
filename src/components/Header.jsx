@@ -171,7 +171,7 @@ function Header(props) {
         </Link>
       </Menu.Item>
       <Menu.Item key="transaction-history">
-        <Link to="/managerPayment">
+        <Link to={'/managerPayment'}>
           <UserOutlined /> Lịch sử giao dịch
         </Link>
       </Menu.Item>

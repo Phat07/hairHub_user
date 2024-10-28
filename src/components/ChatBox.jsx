@@ -13,7 +13,7 @@ const ChatButton = () => {
     <button
       style={{
         position: "fixed",
-        bottom: "100px",
+        bottom: "120px",
         right: "5px",
         zIndex: 1000,
         // backgroundColor: "#bf9456",
