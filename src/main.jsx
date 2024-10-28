@@ -64,6 +64,7 @@ import AccountDeletionGuide from "./pages/AccountDeletionGuide.jsx";
 import WalletPage from "./pages/WalletPage.jsx";
 import ManagementPaymentPge from "./pages/ManagementPaymentPge.jsx";
 import WithdrawRequest from "./pages/WithdrawRequest.jsx";
+import ManagementPaymentPage from "./pages/ManagementPaymentPage.jsx";
 
 const version = import.meta.env.APP_ID || "default";
 const basePath = `/zapps/2685475901677367467`;
@@ -324,7 +325,8 @@ const router = createBrowserRouter(
               requiredRoles={["SalonOwner", "Customer"]}
               fallbackPath="/login"
             >
-              <ManagementPaymentPge />
+              {/* <ManagementPaymentPge /> */}
+              <ManagementPaymentPage />
             </RequireAuth>
           ),
         },
