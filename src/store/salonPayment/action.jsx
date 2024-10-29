@@ -93,7 +93,7 @@ export function actCreatePaymentPackageByOwnerId(data) {
       });
   };
 }
-export function GetPaymentHistoryTest(
+export function GetPaymentHistory(
   page,
   size,
   email,

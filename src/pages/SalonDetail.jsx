@@ -362,7 +362,7 @@ function SalonDetail(props) {
     setIsModalWarningVisible(false);
     navigate(-1); // Quay lại trang trước
   };
-
+  console.log("id", salonDetail);
   useEffect(() => {
     const serviceId = searchParams.get("service");
 
@@ -1455,7 +1455,6 @@ function SalonDetail(props) {
       const appointmentResponse = await AppointmentService.createAppointment(
         mappingData
       );
-      console.log("ss", appointmentResponse?.data);
 
       const appointmentId = appointmentResponse?.data?.appointmentDetails;
       setIsAppointmentId(appointmentId);
@@ -1503,6 +1502,7 @@ function SalonDetail(props) {
           const data = {
             configId: null,
             appointmentId: appointmentId,
+            salonId: id,
             price: appointmentData?.totalPrice,
             description: "Thanh toán dịch vụ",
           };
@@ -1531,32 +1531,32 @@ function SalonDetail(props) {
     }
   };
   const handleReloadMoney = async () => {
-    await startConnection();
-    const serviceHairIds =
-      appointmentData?.appointmentDetails?.map(
-        (detail) => detail.serviceHairId
-      ) || [];
-    let mappingData = {
-      message: "send serviceId",
-      dateAppointment: appointmentData?.startDate,
-      salonId: salonDetail?.id,
-      serviceId: serviceHairIds,
-      ownerId: salonDetail?.ownerId,
-    };
-    await AppointmentService.broadcastMessage(mappingData);
+    // await startConnection();
+    // const serviceHairIds =
+    //   appointmentData?.appointmentDetails?.map(
+    //     (detail) => detail.serviceHairId
+    //   ) || [];
+    // let mappingData = {
+    //   message: "send serviceId",
+    //   dateAppointment: appointmentData?.startDate,
+    //   salonId: salonDetail?.id,
+    //   serviceId: serviceHairIds,
+    //   ownerId: salonDetail?.ownerId,
+    // };
+    // await AppointmentService.broadcastMessage(mappingData);
 
-    // Send notification
-    const date = new Date(selectedDate);
-    const options = { month: "long", day: "numeric" };
-    const formattedDate = date.toLocaleDateString("vi-VN", options);
-    const time = formatTimeSlot(selectedTimeSlot);
-    const mapDataNotifi = {
-      appointmentId: isAppointmentId,
-      title: "Đã có đơn đặt lịch mới",
-      message: `Khách hàng ${userName} đã đặt lịch ở cửa tiệm ${salonDetail?.name} vào lúc ${time} ngày ${formattedDate}`,
-      type: "newAppointment",
-    };
-    await dispatch(actCreateNotificationList(mapDataNotifi, id));
+    // // Send notification
+    // const date = new Date(selectedDate);
+    // const options = { month: "long", day: "numeric" };
+    // const formattedDate = date.toLocaleDateString("vi-VN", options);
+    // const time = formatTimeSlot(selectedTimeSlot);
+    // const mapDataNotifi = {
+    //   appointmentId: isAppointmentId,
+    //   title: "Đã có đơn đặt lịch mới",
+    //   message: `Khách hàng ${userName} đã đặt lịch ở cửa tiệm ${salonDetail?.name} vào lúc ${time} ngày ${formattedDate}`,
+    //   type: "newAppointment",
+    // };
+    // await dispatch(actCreateNotificationList(mapDataNotifi, id));
     setIsModalPaymentVisible(false);
     await stopConnection();
   };

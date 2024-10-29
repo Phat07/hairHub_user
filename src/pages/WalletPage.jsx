@@ -328,6 +328,7 @@ export default function WalletPage() {
   const handleReloadMoney = () => {
     setIsOpen(false);
     dispatch(GetInformationAccount(uid));
+    setAmount("0");
   };
 
   return (

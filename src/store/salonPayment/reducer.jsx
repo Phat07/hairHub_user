@@ -8,6 +8,7 @@ import {
 const initialState = {
   getPaymentSalon: [],
   paymentHistoryItems: [],
+  paymentHistory:[],
   paymentHistoryTotal:1,
   paymentReport: [],
   paymentReportById: [],
@@ -23,9 +24,9 @@ const reducer = (state = initialState, action) => {
     case ACT_ALL_PAYMENTP_HISTORY:
       return {
         ...state,
-        // paymentHistory: action.payload,
-        paymentHistoryItems: action.payload.items,
-        paymentHistoryTotal: action.payload.total
+        paymentHistory: action.payload,
+        // paymentHistoryItems: action.payload.items,
+        // paymentHistoryTotal: action.payload.total
 
       };
     case ACT_ALL_PAYMENTP_REPORT:

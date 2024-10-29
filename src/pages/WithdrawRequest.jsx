@@ -66,9 +66,11 @@ function WithdrawRequest(props) {
     const fetchData = async () => {
       setLoading(true);
       try {
-        await dispatch(
-          GetPaymentReport(uid, currentPage, itemsPerPage, date, activeTab)
-        );
+        if (uid) {
+          await dispatch(
+            GetPaymentReport(uid, currentPage, itemsPerPage, date, activeTab)
+          );
+        }
       } finally {
         setLoading(false);
       }
@@ -330,7 +332,7 @@ function WithdrawRequest(props) {
   return (
     <div className={styles.appointmentContainer}>
       <h1 className="text-2xl font-bold mb-3" style={{ textAlign: "center" }}>
-        Đơn rút tiền
+        Đơn rút tiền từ ví
       </h1>
       <Spin
         className="custom-spin"
@@ -387,13 +389,7 @@ function WithdrawRequest(props) {
           pagination={false}
         />
         <div className={styles.container}>
-          {/* {loading && (
-    <div className={styles.overlay}>
-      <LoadingOutlined style={{ fontSize: "2rem" }} />
-    </div>
-  )} */}
-
-          {paymentReport?.items?.length === 0 && status && (
+          {paymentReport?.items?.length === 0 && activeTab && (
             <h4
               style={{
                 fontWeight: "bold",
@@ -402,7 +398,7 @@ function WithdrawRequest(props) {
                 fontSize: "1.2rem",
               }}
             >
-              Không tìm thấy lịch hẹn {statusDisplayNames[status] || status}{" "}
+              Không tìm thấy đơn {statusDisplayNames[activeTab] || activeTab}{" "}
               nào!!!
             </h4>
           )}
@@ -493,7 +489,7 @@ function WithdrawRequest(props) {
               backgroundColor: "#ece8de",
             }}
           >
-            Chi tiết cuộc hẹn
+            Chi tiết đơn
           </div>
         }
         visible={modal}

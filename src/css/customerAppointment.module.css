@@ -177,8 +177,8 @@
 }
 
 .card:hover {
-  box-shadow: 0 8px 16px #bf9456; /* Tăng bóng khi hover */
-  transform: translateY(-2px); /* Nhẹ nhàng nâng thẻ lên */
+  box-shadow: 0 8px 16px #bf9456; 
+  transform: translateY(-2px); 
 }
 
 
@@ -253,13 +253,13 @@
 
 
 @media (max-width: 768px) {
-  /* .grid {
-    grid-template-columns: 1fr; 
-  } */
   .grid {
-    grid-template-columns: repeat(2, 1fr); /* 2 ô mỗi hàng trên mobile */
-    gap: 12px; /* Điều chỉnh khoảng cách giữa các ô nếu cần */
+    grid-template-columns: 1fr; 
   }
+  /* .grid {
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 12px; 
+  } */
   .dateHeader {
     font-size: 1rem;
     margin-right: 15px;

@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import "../css/customerAppointmentTable.css";
 import { useDispatch, useSelector } from "react-redux";
-import { GetPaymentHistoryTest } from "@/store/salonPayment/action";
+import { GetPaymentHistory } from "@/store/salonPayment/action";
 import dayjs from "dayjs";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 const formatCurrency = (value) => {
@@ -151,7 +151,7 @@ const ManagementPaymentPge = () => {
   useEffect(() => {
     if (uid) {
       dispatch(
-        GetPaymentHistoryTest(
+        GetPaymentHistory(
           currentPagePayment,
           itemsPerPagePayment,
           searchEmail,
@@ -168,7 +168,7 @@ const ManagementPaymentPge = () => {
   useEffect(() => {
     if (uid && (statusPayment !== null || currentPagePayment > 1)) {
       dispatch(
-        GetPaymentHistoryTest(
+        GetPaymentHistory(
           currentPagePayment,
           itemsPerPagePayment,
           searchEmail,
