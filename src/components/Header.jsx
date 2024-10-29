@@ -64,7 +64,6 @@ function Header(props) {
   const email = useSelector((state) => state.ACCOUNT.email);
   const userInfo = useSelector((state) => state.ACCOUNT.userInfo);
 
-  
   const avatar = useSelector((state) => state.ACCOUNT.avatar);
   useEffect(() => {
     if (idOwner) {
@@ -129,7 +128,9 @@ function Header(props) {
             className={style.avatarLinkModal}
             src={userInfo?.img || <UserOutlined />}
           />
-          <div className="mt-2 font-bold">{userInfo?.fullName}</div>
+          <div className="mt-2 font-bold" style={{ textAlign: "center" }}>
+            {userInfo?.fullName}
+          </div>
           <div className="text-sm">{userInfo?.email}</div>
         </div>
       </Menu.Item>

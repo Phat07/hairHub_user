@@ -1,70 +1,79 @@
 .footerMobile {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background-color: #bf9456;
-    box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);
-    z-index: 99;
-    display: none; /* Mặc định ẩn */
-    max-height: 3.5rem;
-  }
-  
-  .footerNav {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /* padding: 5px 0; */
-  }
+  position: fixed;
+  bottom: 0;
+  width: 96%;
+  background-color: #bf9456;
+  box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);
+  z-index: 99;
+  display: none; /* Mặc định ẩn */
+  max-height: 3.5rem;
+  border-radius: 10px;
+  margin-inline: 0.5rem;
+  margin-bottom: 5px;
+}
 
-  .footerList {
-    list-style: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 3.5rem;
-    /* height: 8vh; */
-    /* padding: 10px 0; */
-  }
-  
-  .footerItem {
-    text-align: center;
-    flex: 1;
-  }
+.footerNav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* padding: 5px 0; */
+}
 
-  .footerItem .icon {
-    color: #000; /* Màu mặc định của icon */
-  }
-  
-  .footerItem.active .icon {
-    color: #ece8de; /* Màu icon khi active */
-  }
+.footerList {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 3.5rem;
+  /* height: 8vh; */
+  /* padding: 10px 0; */
+}
 
-  .footerItem.active span {
-    color: #ece8de; /* Màu icon khi active */
-  }
-  
-  .footerItem a {
-    display: block;
-    color: #333;
-    text-decoration: none;
-  }
-  
-  .footerItem a span {
-    display: block;
-    margin-top: 5px;
-    font-size: 13px;
-  }
+.footerItem {
+  text-align: center;
+  flex: 1;
+}
+.footerItemQR {
+  text-align: center;
+  background-color: #f4f2eb;
+  flex-direction: column;
+  padding: 10px;
+  border-radius: 10px;
+  margin-inline: 5px;
+}
 
-  .footerItem a svg {
-    font-size: 1.5rem; /* Tăng kích thước của icon */
+.footerItem .icon {
+  color: #000; /* Màu mặc định của icon */
+}
+
+.footerItem.active .icon {
+  color: #ece8de; /* Màu icon khi active */
+}
+
+.footerItem.active span {
+  color: #ece8de; /* Màu icon khi active */
+}
+
+.footerItem a {
+  display: block;
+  color: #333;
+  text-decoration: none;
+}
+
+.footerItem a span {
+  display: block;
+  margin-top: 5px;
+  font-size: 13px;
+}
+
+.footerItem a svg {
+  font-size: 1.5rem; /* Tăng kích thước của icon */
+}
+
+/* Chỉ hiển thị trên các thiết bị có chiều rộng tối đa là 768px */
+@media screen and (max-width: 768px) {
+  .footerMobile {
+    display: block; /* Chỉ hiển thị trên điện thoại hoặc tablet */
   }
-  
-  
-  /* Chỉ hiển thị trên các thiết bị có chiều rộng tối đa là 768px */
-  @media screen and (max-width: 768px) {
-    .footerMobile {
-      display: block; /* Chỉ hiển thị trên điện thoại hoặc tablet */
-    }
-  }
-  
+}
