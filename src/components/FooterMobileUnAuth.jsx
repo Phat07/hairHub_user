@@ -26,7 +26,7 @@ function FooterMobileUnAuth() {
           >
             <Link to="/" onClick={scrollToTop}>
               <HomeOutlined className={style.icon} />
-              <span>Trang chủ</span>
+              {isActive("/") && <span>Trang chủ</span>}
             </Link>
           </li>
           <li
@@ -36,7 +36,7 @@ function FooterMobileUnAuth() {
           >
             <Link to="/about" onClick={scrollToTop}>
               <SnippetsOutlined className={style.icon} />
-              <span>Giới thiệu</span>
+              {isActive("/about") && <span>Giới thiệu</span>}
             </Link>
           </li>
           <li
@@ -46,7 +46,7 @@ function FooterMobileUnAuth() {
           >
             <Link to="/list_salon_ver2" onClick={scrollToTop}>
               <ShopOutlined className={style.icon} />
-              <span>Hệ thống</span>
+              {isActive("/list_salon_ver2") && <span>Hệ thống</span>}
             </Link>
           </li>
           {/* <li

@@ -1,12 +1,15 @@
 .footerMobile {
     position: fixed;
     bottom: 0;
-    width: 100%;
+    width: 96%;
     background-color: #bf9456;
     box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);
     z-index: 99;
     display: none; /* Mặc định ẩn */
     max-height: 3.5rem;
+    border-radius: 10px;
+    margin-inline: 0.5rem;
+    margin-bottom: 5px;
   }
   
   .footerNav {
@@ -30,6 +33,14 @@
   .footerItem {
     text-align: center;
     flex: 1;
+  }
+  .footerItemQR {
+    text-align: center;
+    background-color: #f4f2eb;
+    flex-direction: column;
+    padding: 10px;
+    border-radius: 10px;
+    margin-inline: 5px;
   }
 
   .footerItem .icon {

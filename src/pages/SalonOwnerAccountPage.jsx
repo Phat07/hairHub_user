@@ -70,7 +70,7 @@ function SalonOwnerAccountPage() {
   const [otp, setOtp] = useState("");
   // Function to detect if the user is on a mobile device
   useEffect(() => {
-    AccountServices.GetInformationAccount(id)
+    AccountServices.GetInformationAccount(uid)
       .then((res) => {
         setSalonData(res.data);
         setAvatarUrl(res.data.img);
@@ -92,7 +92,7 @@ function SalonOwnerAccountPage() {
       .catch((err) => {
         message.warning("Loading!!!");
       });
-  }, [id]);
+  }, [uid]);
 
   const handleReload = () => {
     window?.location?.reload();
@@ -259,10 +259,10 @@ function SalonOwnerAccountPage() {
       }
     }
 
-    AccountServices.updateUserById(id, formData)
+    AccountServices.updateUserById(uid, formData)
       .then((res) => {
         message.success("Cập nhật tài khoản thành công");
-        return AccountServices.GetInformationAccount(id);
+        return AccountServices.GetInformationAccount(uid);
       })
       .then((res) => {
         setSalonData(res.data);
@@ -301,10 +301,10 @@ function SalonOwnerAccountPage() {
 
   const handleChangePassword = (values) => {
     console.log("Change Password Form Values:", values);
-    AccountServices.updatePasswordUserById(id, values)
+    AccountServices.updatePasswordUserById(uid, values)
       .then((res) => {
         message.success("Thay đổi mật khẩu thành công");
-        AccountServices.GetInformationAccount(id)
+        AccountServices.GetInformationAccount(uid)
           .then((res) => {
             setSalonData(res.data);
             setAvatarUrl(res.data.img);
@@ -341,8 +341,8 @@ function SalonOwnerAccountPage() {
   const DeleteAccount = () => {
     setIsLoading(true);
     const refreshToken = localStorage.getItem("refreshToken");
-    if (id && refreshToken) {
-      AccountServices.DeleteAccount(id)
+    if (uid && refreshToken) {
+      AccountServices.DeleteAccount(uid)
         .then(() => {
           AccountServices.LogOut(refreshToken);
           localStorage.removeItem("refreshToken");

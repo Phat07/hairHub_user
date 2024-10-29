@@ -8,6 +8,7 @@ import {
   WarningOutlined,
   QrcodeOutlined,
   RadarChartOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import style from "../css/footer-mobile.module.css";
@@ -18,7 +19,7 @@ function FooterMobileAuth() {
   const idOwner = useSelector((state) => state.ACCOUNT.idOwner);
   const idEmployee = useSelector((state) => state.ACCOUNT.idEmployee);
   const [isModalVisibleQr, setIsModalVisibleQr] = useState(false);
-
+  const uid = useSelector((state) => state.ACCOUNT.uid);
   const location = useLocation(); // Lấy đường dẫn hiện tại
 
   const showModalQr = () => {
@@ -51,7 +52,7 @@ function FooterMobileAuth() {
               >
                 <Link to="/" onClick={scrollToTop}>
                   <HomeOutlined className={style.icon} />
-                  <span>Trang chủ</span>
+                  {isActive("/") && <span>Trang chủ</span>}
                 </Link>
               </li>
               <li
@@ -61,7 +62,20 @@ function FooterMobileAuth() {
               >
                 <Link to="/list_salon_ver2" onClick={scrollToTop}>
                   <ShopOutlined className={style.icon} />
-                  <span>Hệ thống</span>
+                  {isActive("/list_salon_ver2") && <span>Hệ thống</span>}
+                </Link>
+              </li>
+              <li
+                style={{ cursor: "pointer" }}
+                className={`${style.footerItemQR}`}
+                onClick={showModalQr}
+              >
+                <Link>
+                  <QrcodeOutlined
+                    className={style.icon}
+                    style={{ fontSize: "28px" }}
+                  />
+                  {/* <span>Quét Qr </span> */}
                 </Link>
               </li>
               <li
@@ -71,17 +85,17 @@ function FooterMobileAuth() {
               >
                 <Link to="/customer_appointment" onClick={scrollToTop}>
                   <CalendarOutlined className={style.icon} />
-                  <span>Cuộc hẹn</span>
+                  {isActive("/customer_appointment") && <span>Cuộc hẹn</span>}
                 </Link>
               </li>
               <li
-                style={{ cursor: "pointer" }}
-                className={`${style.footerItem}`}
-                onClick={showModalQr}
+                className={`${style.footerItem} ${
+                  isActive(`/Account/${uid}`) ? style.active : ""
+                }`}
               >
-                <Link>
-                  <QrcodeOutlined className={style.icon} />
-                  <span>Quét Qr </span>
+                <Link to={`/Account/${uid}`} onClick={scrollToTop}>
+                  <UserOutlined className={style.icon} />
+                  {isActive(`/Account/${uid}`) && <span>Người dùng</span>}
                 </Link>
               </li>
             </>
@@ -95,7 +109,9 @@ function FooterMobileAuth() {
               >
                 <Link to="/SalonEmployee" onClick={scrollToTop}>
                   <ShopOutlined className={style.icon} />
-                  <span>Thông tin cửa hàng</span>
+                  {isActive("/SalonEmployee") && (
+                    <span>Thông tin cửa hàng</span>
+                  )}
                 </Link>
               </li>
               <li
@@ -105,7 +121,7 @@ function FooterMobileAuth() {
               >
                 <Link to="/employee_appointment" onClick={scrollToTop}>
                   <CalendarOutlined />
-                  <span>Cuộc hẹn</span>
+                  {isActive("/employee_appointment") && <span>Cuộc hẹn</span>}
                 </Link>
               </li>
               {/* <li
@@ -125,7 +141,9 @@ function FooterMobileAuth() {
               >
                 <Link to="/EmployeeStatistics" onClick={scrollToTop}>
                   <AreaChartOutlined className={style.icon} />
-                  <span>Thống kê cá nhân</span>
+                  {isActive("/EmployeeStatistics") && (
+                    <span>Thống kê cá nhân</span>
+                  )}
                 </Link>
               </li>
             </>
@@ -139,7 +157,7 @@ function FooterMobileAuth() {
               >
                 <Link to={handleEmptySalon()} onClick={scrollToTop}>
                   <ShopOutlined className={style.icon} />
-                  <span>Salon</span>
+                  {isActive(handleEmptySalon()) && <span>Salon</span>}
                 </Link>
               </li>
               <li
@@ -149,7 +167,7 @@ function FooterMobileAuth() {
               >
                 <Link to="/salon_appointment" onClick={scrollToTop}>
                   <CalendarOutlined className={style.icon} />
-                  <span>Cuộc hẹn</span>
+                  {isActive("/salon_appointment") && <span>Cuộc hẹn</span>}
                 </Link>
               </li>
               <li
@@ -159,7 +177,7 @@ function FooterMobileAuth() {
               >
                 <Link to="/salon_report" onClick={scrollToTop}>
                   <WarningOutlined className={style.icon} />
-                  <span>Báo cáo</span>
+                  {isActive("/salon_report") && <span>Báo cáo</span>}
                 </Link>
               </li>
               <li
@@ -169,7 +187,7 @@ function FooterMobileAuth() {
               >
                 <Link to="/dashboardTransaction" onClick={scrollToTop}>
                   <AreaChartOutlined className={style.icon} />
-                  <span>Doanh thu</span>
+                  {isActive("/dashboardTransaction") && <span>Doanh thu</span>}
                 </Link>
               </li>
               <li
@@ -179,7 +197,7 @@ function FooterMobileAuth() {
               >
                 <Link to="/reviewEmployee">
                   <RadarChartOutlined className={style.icon} />
-                  <span>Nhân viên</span>
+                  {isActive("/reviewEmployee") && <span>Nhân viên</span>}
                 </Link>
               </li>
             </>
