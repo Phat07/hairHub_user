@@ -71,6 +71,8 @@ function App() {
           localStorage.setItem("accessToken", res.data.accessToken);
           localStorage.setItem("refreshToken", res.data.refreshToken);
           return res.data.accessToken;
+        } else if (refreshToken == null) {
+          return;
         } else {
           message.warning("Đăng nhập lại!!, quá phiên đăng nhập");
           navigate("/login");
@@ -94,6 +96,8 @@ function App() {
         accessToken = await refreshToken();
         if (accessToken) {
           await dispatch(fetchUserByTokenApi(accessToken, navigate));
+        } else if (accessToken == null) {
+          return;
         }
       }
     } catch (error) {
