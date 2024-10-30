@@ -50,8 +50,6 @@ const ManagementPaymentPge = () => {
   });
 
   const location = useLocation();
-  console.log("io", uid);
-  console.log("ss2", paymentHistoryItems);
   const columns = [
     {
       title: "Email",

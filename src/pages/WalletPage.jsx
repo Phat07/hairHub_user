@@ -331,7 +331,6 @@ export default function WalletPage() {
     dispatch(GetInformationAccount(uid));
     setAmount("0");
   };
-  console.log("uid", uid);
   useEffect(() => {
     if (iframeError && isOpen) {
       setIsOpen(false);

@@ -70,7 +70,7 @@ function Header(props) {
       try {
         dispatch(actGetSalonInformationByOwnerIdByCheck(idOwner, navigate));
       } catch (err) {
-        console.log(err, "errors");
+        // console.log(err, "errors");
       }
     }
   }, [idOwner]);

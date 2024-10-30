@@ -334,8 +334,6 @@ const AddEmployeeForm = ({
             email,
           })
           .then((res) => {
-            console.log(22);
-
             // setLoading(false);
             message.success("Xác thực Email thành công! Vui lòng điền otp!");
             // call api gửi otp

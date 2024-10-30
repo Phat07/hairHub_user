@@ -142,7 +142,6 @@ function SalonOwnerAccountPage() {
     // Toggle between 'front' and 'rear'
     setFacingMode((prevMode) => {
       const newMode = prevMode === "rear" ? "front" : "rear";
-      console.log(`Switching to ${newMode} camera`); // Debug log
       return newMode;
     });
   };
@@ -173,7 +172,7 @@ function SalonOwnerAccountPage() {
       setAvatarUrl(url);
       form.setFieldsValue({ avatar: url });
     } else {
-      console.log("No file selected or invalid file");
+      // console.log("No file selected or invalid file");
     }
   };
   async function addFileFromUrlToFormData(url) {
@@ -300,7 +299,6 @@ function SalonOwnerAccountPage() {
   };
 
   const handleChangePassword = (values) => {
-    console.log("Change Password Form Values:", values);
     AccountServices.updatePasswordUserById(uid, values)
       .then((res) => {
         message.success("Thay đổi mật khẩu thành công");

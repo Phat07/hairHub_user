@@ -127,20 +127,20 @@ function ListServices() {
     for (let i = 0; i < 10; i++) {
       //chọn khoảng thời gian cho phép làm tóc 10 = 10 tiếng :))
       if (serviceTimeString + 0.1 === i + 0.25) {
-        console.log(`rounded15: ${rounded15}, expected: ${i + 0.25}`);
+        // console.log(`rounded15: ${rounded15}, expected: ${i + 0.25}`);
         setServiceTime(rounded15);
         return rounded15;
       } else if (serviceTimeString + 0.2 === i + 0.5) {
         // < 0.0001
-        console.log(`rounded30: ${rounded30}, expected: ${i + 0.5}`);
+        // console.log(`rounded30: ${rounded30}, expected: ${i + 0.5}`);
         setServiceTime(rounded30);
         return rounded30;
       } else if (serviceTimeString + 0.3 === i + 0.75) {
-        console.log(`rounded45: ${rounded45}, expected: ${i + 0.75}`);
+        // console.log(`rounded45: ${rounded45}, expected: ${i + 0.75}`);
         setServiceTime(rounded45);
         return rounded45;
       } else if (Number.isInteger(serviceTimeString)) {
-        console.log(`rounded00: ${rounded1}, expected: ${i}`);
+        // console.log(`rounded00: ${rounded1}, expected: ${i}`);
         setServiceTime(rounded1);
         return rounded1;
       }
@@ -162,11 +162,11 @@ function ListServices() {
   const handleUpdate = (service) => {
     setServiceUpdate(service);
     setisUpdateModalService(true);
-    console.log(service.time, "service time update");
-    console.log(
-      convertServiceTimeFromBe(service.time),
-      "Converted Service Time"
-    );
+    // console.log(service.time, "service time update");
+    // console.log(
+    //   convertServiceTimeFromBe(service.time),
+    //   "Converted Service Time"
+    // );
     form.setFieldsValue({
       serviceName: service.serviceName,
       description: service.description,
@@ -206,7 +206,7 @@ function ListServices() {
           dispatch(actGetAllServicesBySalonId(salonDetail.id, 1, 4));
         })
         .catch((err) => {
-          console.log(err, "errors");
+          // console.log(err, "errors");
         });
     } else {
       await formDataUpdate.append("ServiceName", serviceName);
@@ -227,7 +227,7 @@ function ListServices() {
           dispatch(actGetAllServicesBySalonId(salonDetail.id, 1, 4));
         })
         .catch((err) => {
-          console.log(err, "errors");
+          // console.log(err, "errors");
         });
     }
   };
@@ -243,10 +243,10 @@ function ListServices() {
       setOpen(false);
       setConfirmLoading(false);
     }, 2000);
-    console.log(servicesList, "Service List");
+    // console.log(servicesList, "Service List");
   };
   const handleCancel = () => {
-    console.log("Clicked cancel button");
+    // console.log("Clicked cancel button");
     setOpen(false);
   };
   const handleChange = () => {
@@ -299,7 +299,6 @@ function ListServices() {
   };
 
   const handleImageChange = (info) => {
-    console.log("infor", info);
     setImageFile(info.file);
 
     getBase64(info.file, (imageUrl) => {

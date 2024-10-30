@@ -32,7 +32,6 @@ function PackageSuccessPage(props) {
   const ownerId = useSelector(
     (state) => state.ACCOUNT.idOwner
   );
-  console.log(ownerId, "ownerId");
 
   const pageSize = 10;
   const listPayment = useSelector(
@@ -80,7 +79,7 @@ function PackageSuccessPage(props) {
     return formattedDay;
   };
 
-  console.log(getDayMonthYear("2024-07-12T20:31:11.2798109"));
+
   return (
     <div>
       <Header />

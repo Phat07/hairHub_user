@@ -39,10 +39,8 @@ function SalonOwnerPage() {
     axios.get(SALONOWNER_URL + `?page=${page}&size=${limit}`).then((res) => {
       setEmployeesList(res.data.items);
       setIsLoading(false);
-      console.log(res.data.items, "EmployeeList");
     });
   }, [concatList]); //New employee added, useEffect will be re-render to show data
-  console.log(employeesList, "moreeee");
   const onLoadMore = () => {
     const nextPage = page + 1;
     setTimeout(() => {
@@ -92,19 +90,15 @@ function SalonOwnerPage() {
       setOpen(false);
       setConfirmLoading(false);
     }, 2000);
-    console.log(employeesList, "Employee List");
   };
   const handleCancel = () => {
-    console.log("Clicked cancel button");
     setOpen(false);
   };
 
   const confirm = (e) => {
-    console.log(e);
     message.success("Click on Yes");
   };
   const cancel = (e) => {
-    console.log(e);
     message.error("Click on No");
   };
 

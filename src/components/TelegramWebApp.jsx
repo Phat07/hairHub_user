@@ -31,7 +31,6 @@ const TelegramWebApp = () => {
       // Access user data if needed
       const user = tg.initDataUnsafe?.user;
       if (user) {
-        console.log('Telegram User:', user);
         // You can store user data in your app's state management here
       }
     };

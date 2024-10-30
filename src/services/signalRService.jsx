@@ -33,11 +33,11 @@ const connection = new signalR.HubConnectionBuilder()
         });
   
         connection.onreconnected(() => {
-          console.log('Reconnected to SignalR Hub');
+          // console.log('Reconnected to SignalR Hub');
         });
   
         connection.onreconnecting((error) => {
-          console.log('Reconnecting to SignalR Hub, error:', error);
+          // console.log('Reconnecting to SignalR Hub, error:');
         });
   
         await connection.start();
@@ -60,17 +60,15 @@ const connection = new signalR.HubConnectionBuilder()
 export const stopConnection = async () => {
   try {
     await connection.stop();
-    console.log('Disconnected from SignalR Hub');
+    // console.log('Disconnected from SignalR Hub');
   } catch (err) {
-    console.error('Disconnection error: ', err);
+    // console.error('Disconnection error: ', err);
   }
 };
 
 
 export const onBookAppointmentMessage = (callback) => {
-  console.log('Setting up event listener for AppointmentCreated');
   connection.on('ReceiveMessage', (message) => {
-    console.log('ReceiveMessage event received:', message);
 
     // Assuming message is structured like the example: ["id has join","2024-09-02T22:54:39.1099985+07:00"]
     const messageData = JSON.parse(message);
@@ -78,7 +76,6 @@ export const onBookAppointmentMessage = (callback) => {
       const dateStr = messageData.arguments[1];
       const date = new Date(dateStr);
 
-      console.log('Extracted date:', date);
 
       // Call the callback with the parsed date
       callback(date);
@@ -92,11 +89,10 @@ export const sendMessage = async (date,serviceHairIds) => {
   try {
     // Kiểm tra trạng thái kết nối
     if (connection.state === signalR.HubConnectionState.Connected) {
-      console.log("demo");
       
       await connection.invoke('SendMessage', date,serviceHairIds);
     } else {
-      console.log('Kết nối không ở trạng thái Connected. Không thể gửi dữ liệu.');
+      // console.log('Kết nối không ở trạng thái Connected. Không thể gửi dữ liệu.');
     }
   } catch (err) {
     console.error('Lỗi gửi tin nhắn:', err);

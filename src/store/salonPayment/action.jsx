@@ -73,7 +73,6 @@ export function actCreatePaymentPackageByOwnerId(data) {
     const result = SalonPayment.createPaymentPackageByOwnerId(data);
     await result
       .then((response) => {
-        console.log("resPayment", response);
         if (response.status === 200 || response.status === 201) {
           message.info("Vui lòng đợi trong giây lát...");
           const paymentLink = response.data.checkoutUrl;
@@ -112,9 +111,7 @@ export function GetPaymentHistory(
         status,
         payDate,
         email
-      );
-      console.log("ss",response?.data);
-      
+      );      
       dispatch(actGetAllPaymentsHistory(response.data));
       // return response
     } catch (error) {

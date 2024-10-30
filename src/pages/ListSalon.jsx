@@ -63,7 +63,7 @@ const ListSalon = () => {
           setTotalPages(res.data.totalPages);
         })
         .catch((err) => {
-          console.log(err, "errors");
+          // console.log(err, "errors");
         });
     }
     SalonInformationServices.getAllSalonInformationByAddressOrSalonName(
@@ -87,7 +87,7 @@ const ListSalon = () => {
         setTotalPages(res.data.totalPages);
       })
       .catch((err) => {
-        console.log(err, "errors");
+        // console.log(err, "errors");
       });
   }, []);
   const navigate = useNavigate();

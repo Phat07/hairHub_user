@@ -11,15 +11,12 @@ function CustomerFeedback(props) {
   const [pageSize, setPageSize] = useState(10);
 
   const auth = useAuthUser();
-  console.log("auth", auth);
 
   const customerFeedback = useSelector(
     (state) => state.RATING.getFeedbackbyCustomerId
   );
-  console.log("customerFeedback", customerFeedback);
 
   const totalPages = useSelector((state) => state.RATING.totalPages);
-  console.log("totalPages", totalPages);
 
   useEffect(() => {
     dispatch(

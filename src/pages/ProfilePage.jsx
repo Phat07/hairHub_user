@@ -17,7 +17,7 @@ const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
 
   const handleEditAvatar = () => {
-    console.log("Chỉnh sửa ảnh đại diện");
+    // console.log("Chỉnh sửa ảnh đại diện");
   };
 
   const handleEditInfo = () => {
@@ -26,7 +26,6 @@ const ProfilePage = () => {
 
   const handleSaveInfo = () => {
     setIsEditing(false);
-    console.log("Lưu thông tin đã chỉnh sửa");
   };
 
   return (

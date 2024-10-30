@@ -101,8 +101,6 @@ const EmployeeSchedule = () => {
   // );
   // Cập nhật sự kiện khi người dùng chọn một ngày mới
   const handleDateChange = (date) => {
-    console.log("date", date);
-
     setSelectedDate(date); // Chuyển đổi từ moment về Date
   };
 

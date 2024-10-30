@@ -51,8 +51,6 @@ function ManageVoucher(props) {
     (state) => state.SALONVOUCHERS.getVoucherBySalonId
   );
   const totalPages = useSelector((state) => state.SALONVOUCHERS.totalPages);
-  console.log("totalPages", totalPages);
-  console.log("voucher", voucherList);
 
   const formatDiscount = (value) => {
     const result = value * 100;
@@ -129,10 +127,8 @@ function ManageVoucher(props) {
 
   const reloadData = () => {
     setStatus(!status);
-    console.log(status);
   };
   const onFinish = (values) => {
-    console.log("Voucher Values", values);
     const { description, minimumOrderAmount, discountPercentage, expiryDate } =
       values;
     const configDiscountPercentage = discountPercentage / 100;
@@ -150,8 +146,8 @@ function ManageVoucher(props) {
       currentDate1.setDate(newCurrentDate);
       return currentDate1;
     };
-    console.log(configExpiryDate(), "config ExpiryDate"); //config + 1 day :v, because New Date get system timezone so it deducted 1 day compare to my timezone
-    console.log(configCurrentDate(), "config CurrentDate"); //config + 1 day :v
+    // console.log(configExpiryDate(), "config ExpiryDate"); 
+    // console.log(configCurrentDate(), "config CurrentDate"); 
 
     const formVoucherData = {
       salonInformationId: id, //salonInformationId
@@ -167,9 +163,9 @@ function ManageVoucher(props) {
     voucherServices
       .createNewVoucher(formVoucherData)
       .then((res) => {
-        console.log(formVoucherData);
+        // console.log(formVoucherData);
         message.success("Voucher is created!");
-        console.log(res.data, "Voucher is created");
+        // console.log(res.data, "Voucher is created");
         setStatus(!status);
         setIsModalVisible(!isModalVisible);
       })
@@ -220,11 +216,9 @@ function ManageVoucher(props) {
 
   //-----------------------------------------------------------
   const handleDelete = (voucher) => {
-    console.log(voucher.id);
     voucherServices
       .deleteVoucherById(voucher.id)
       .then((res) => {
-        console.log(res, "res");
         setStatus(!status);
         message.success(`Delete ${voucher.description} voucher sucessfully!`);
       })
@@ -233,8 +227,6 @@ function ManageVoucher(props) {
   };
 
   const handleUpdate = (voucher) => {
-    console.log("Update voucher", voucher);
-
     if (voucher) {
       setVoucherUpdate(voucher);
       setIsUpdateModalVisible(!isUpdateModalVisible);
@@ -373,7 +365,6 @@ function ManageVoucher(props) {
     setIsUpdateModalVisible(true);
   };
 
-  console.log(voucherUpdate, "voucherUpdateee");
   useEffect(() => {
     const { description, minimumOrderAmount, discountPercentage, expiryDate } =
       voucherUpdate;
@@ -417,7 +408,6 @@ function ManageVoucher(props) {
         voucherServices
           .updateVoucherById(voucherUpdate?.id, updatedVoucher)
           .then((res) => {
-            console.log(res, "res");
             message.success(
               `Update voucher ${voucherUpdate.description} sucessfully!`
             );

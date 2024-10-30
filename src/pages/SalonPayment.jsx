@@ -22,7 +22,6 @@ function SalonPayment(props) {
     dispatch(actGetAllPaymentByOwnerId(currentPage, pageSize, idOwner));
   }, [dispatch, currentPage, pageSize]);
 
-  console.log("salonPayment", salonPayment);
 
   const handleTableChange = (pagination) => {
     setCurrentPage(pagination.current);
@@ -81,7 +80,6 @@ function SalonPayment(props) {
         (a, b) => new Date(b.paymentDate) - new Date(a.paymentDate)
       )
     : [];
-  console.log("paymentsArray", paymentArrays);
 
   return (
     <div style={{ padding: "20px", marginTop: "25rem" }}>

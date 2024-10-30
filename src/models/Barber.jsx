@@ -15,7 +15,6 @@ export default function Barber(props) {
   const { nodes, materials, animations } = useGLTF('../../public/model/Barber/scene.gltf')
   const { actions } = useAnimations(animations, group)
   useEffect(() => {
-    console.log(actions);
     // if(previousAction){
     //   actions[previousAction].stop()
     // }

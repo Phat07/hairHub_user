@@ -74,7 +74,6 @@ function PaymentCommissionPage() {
         );
       });
   }, [idOwner]);
-console.log("config", config);
 
   const handleNextClick = () => {
     const foundPackage = config.find(config => config.pakageName === "Phí hoa hồng hairhub");
@@ -88,14 +87,13 @@ console.log("config", config);
   
     SalonPayment.createPaymentPackageByOwnerId(data)
       .then((response) => {
-        console.log("Response:", response);
         if (response.status === 200 || response.status === 201) {
           setLoading(true);
           message.info("Vui lòng đợi trong giây lát...");
           const paymentLink = response.data.checkoutUrl;
   
           if (paymentLink) {
-            console.log("Redirecting to:", paymentLink);
+
             window.location.href = paymentLink; // Chuyển hướng đến trang thanh toán
           } else {
             message.error("Không thể thanh toán");

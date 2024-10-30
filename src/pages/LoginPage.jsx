@@ -642,7 +642,7 @@ const LoginPage = () => {
         setIsPasswordModalOpen(false);
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
       });
   };
 

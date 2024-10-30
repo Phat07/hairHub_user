@@ -47,7 +47,6 @@ function SalonAppointment(props) {
   const { Text, Title } = Typography;
 
   const auth = useAuthUser();
-  console.log("auth", auth);
 
   const ownerId = auth?.idOwner;
 
@@ -58,9 +57,6 @@ function SalonAppointment(props) {
   const salonAppointments = useSelector(
     (state) => state.SALONAPPOINTMENTS.appointment
   );
-
-  console.log("Detail: ", salonInformationByOwnerId);
-  console.log("Appointments: ", salonAppointments);
   useEffect(() => {
     if (salonInformationByOwnerId) {
       try {
@@ -84,7 +80,6 @@ function SalonAppointment(props) {
       const filtered = salonAppointments?.filter(
         (appointment) => appointment.status === selectedStatus
       );
-      console.log("salonAppointments new", salonAppointments);
       setFilteredAppointments(filtered);
     } catch (err) {
       message.error("Không thể lấy dữ liệu");
@@ -106,7 +101,6 @@ function SalonAppointment(props) {
 
   const showModal = (appointment) => {
     setCurrentAppointment(appointment);
-    console.log(appointment);
     setIsModalVisible(true);
   };
 
@@ -146,12 +140,10 @@ function SalonAppointment(props) {
 
   const handleFilterChange = (status) => {
     setSelectedStatus(status);
-    console.log("status", status);
     dispatch(GetAppointmentSalonByStatus(1, 10, salonInformationByOwnerId?.id));
     const filtered = salonAppointments.filter(
       (appointment) => appointment.status === status
     );
-    console.log("list update", filtered);
     //  gọi api khi nhấn button
     setFilteredAppointments(filtered);
     setCurrentPage(1); // Reset lại trang hiện tại
@@ -162,10 +154,7 @@ function SalonAppointment(props) {
     startIndex,
     startIndex + itemsPerPage
   );
-  console.log(currentAppointment);
-  console.log(
-    paginatedAppointments.map((appointment) => appointment.customer.fullName)
-  );
+
   const statusDisplayNames = {
     BOOKING: "Đang đặt",
     // CANCEL_BY_SALON: "Hủy bởi Salon",
@@ -198,13 +187,11 @@ function SalonAppointment(props) {
   }
 
   const handleReport = (appointmentId) => {
-    console.log("Report appointment with ID:", appointmentId);
     setSelectedAppointmentId(appointmentId);
     setIsReportModalVisible(true);
   };
   const handleReportOk = (item) => {
     const formData = new FormData();
-    console.log("data", item);
     formData.append("SalonId", item?.salonInformation?.id); // Replace with actual value
     formData.append("CustomerId", item?.customer?.id);
     formData.append(

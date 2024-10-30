@@ -349,12 +349,8 @@ function SystemBarberPage(props) {
               try {
                 const res = await fetch(url);
                 const data = await res.json();
-
                 if (data.status === "OK") {
-                  console.log("data", data);
-
                   const address = data.results[0].formatted_address;
-                  console.log("addre", address);
 
                   setCurrentLocationUser(address);
                   message.success("Cảm ơn bạn đã kích hoạt dịch vụ định vị.");
@@ -456,7 +452,6 @@ function SystemBarberPage(props) {
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-  console.log("direc", directions);
 
   return (
     <div className="system-salon__container">

@@ -352,8 +352,6 @@ function SalonDetail(props) {
       salonDetail.status &&
       salonDetail.status !== "APPROVED"
     ) {
-      console.log(salonDetail.status);
-
       setIsModalWarningVisible(true); // Hiển thị modal nếu không được duyệt
     }
   }, [salonDetail]);
@@ -362,7 +360,6 @@ function SalonDetail(props) {
     setIsModalWarningVisible(false);
     navigate(-1); // Quay lại trang trước
   };
-  console.log("id", salonDetail);
   useEffect(() => {
     const serviceId = searchParams.get("service");
 
@@ -1219,8 +1216,7 @@ function SalonDetail(props) {
         setLoadingBook(false);
       });
   };
-  console.log("1", paymentMethod);
-  console.log("2", selectedTimeSlot);
+
 
   const fetchAvailable = async (currentDate) => {
     const postData = {

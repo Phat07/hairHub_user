@@ -18,7 +18,6 @@ export default  function ButterFlies(props) {
   const { actions } = useAnimations(animations, group)
   const previousAction = usePrevious(action);
   useEffect(() => {
-    console.log(actions);
     // if(previousAction){
     //   actions[previousAction].stop()
     // }

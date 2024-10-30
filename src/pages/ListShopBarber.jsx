@@ -458,8 +458,6 @@ function ListShopBarber(props) {
       quantity,
       startDate,
     } = voucherUpdate;
-    console.log("vouvher", voucherUpdate);
-
     const configDiscountPercentage = discountPercentage * 100;
     if (isUpdateModalVisible && voucherUpdate) {
       form.setFieldsValue({

@@ -21,7 +21,6 @@ function SalonFeedback(props) {
   const salonInformationByOwnerId = useSelector(
     (state) => state.SALONAPPOINTMENTS.salonInformationByOwnerId
   );
-  console.log("salonInformationByOwnerId", salonInformationByOwnerId);
 
   useEffect(() => {
     dispatch(actGetSalonInformationByOwnerIdAsync(idOwner));
@@ -30,10 +29,8 @@ function SalonFeedback(props) {
   const salonFeedback = useSelector(
     (state) => state.RATING.getAllFeedbackbySalonId
   );
-  console.log("salonFeedback", salonFeedback);
 
   const totalPages = useSelector((state) => state.RATING.totalPages);
-  console.log("totalPages", totalPages);
 
   useEffect(() => {
     if (salonInformationByOwnerId) {

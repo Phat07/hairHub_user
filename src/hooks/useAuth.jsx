@@ -61,7 +61,7 @@ const useAuth = () => {
         throw new Error("Failed to fetch user data");
       }
     } catch (err) {
-      console.log("Error fetching user by token:", err);
+      // console.log("Error fetching user by token:", err);
       navigate("/login");
     }
   };

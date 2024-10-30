@@ -251,9 +251,6 @@ function CustomerAppointmentVer2(props) {
         const employeeRating = ratings[employeeId] || 0; // Get the rating for the employee
 
         // Debugging output for each appointment
-        console.log(
-          `Appointment ID: ${appointment?.appointmentId}, Employee ID: ${employeeId}, Rating: ${employeeRating}`
-        );
 
         // Create a feedback detail object for each appointment
         formData.append(

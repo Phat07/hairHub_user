@@ -39,7 +39,6 @@ function LoginGoogle(props) {
     let data = {
       idToken: token,
     };
-    console.log("re", response);
 
     try {
       const res = await AccountServices.loginGoogle(data);
@@ -174,7 +173,8 @@ function LoginGoogle(props) {
           <GoogleLogin
             onSuccess={handleLoginSuccess}
             onError={() => {
-              console.log("Login Failed");
+              // console.log("Login Failed");
+              message.warning("Vui lòng thử lại")
             }}
           />
         </Space>

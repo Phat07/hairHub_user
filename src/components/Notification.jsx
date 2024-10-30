@@ -121,7 +121,6 @@ const NotificationComponent = ({
             date
           ) => {
             if (AccountIds?.includes(uid) && uid) {
-              console.log("UID exists in AccountIds:", uid);
               // Dispatch chỉ nên được gọi nếu `uid` có giá trị và khác với lần trước đó
               dispatch(actGetNotificationList(uid, page, size));
               dispatch(actGetNotificationListUnread(uid));

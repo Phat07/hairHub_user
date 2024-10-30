@@ -34,7 +34,6 @@ export function actGetAllConfig(page, size) {
     const result = ConfigService.GetAllConfig(page, size);
     await result
       .then((response) => {
-        console.log("responeFeedback", response.data);
         if (response.status === 200 || response.status === 201) {
           dispatch(getAllConfigPayment(response.data));
         } else {
@@ -74,7 +73,7 @@ export function getConfigId(data) {
         if (response.status === 200 || response.status === 201) {
           dispatch(configId(response.data));
         } else {
-          console.log("không nhận được gói");
+          // console.log("không nhận được gói");
         }
       })
       .catch((error) => {

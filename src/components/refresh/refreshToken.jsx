@@ -29,7 +29,7 @@ const refresh = createRefresh({
             headers: { Authorization: `Bearer ${param.authToken}` },
           }
         );
-        console.log('Sau khi gọi API để refresh token', response);
+        // console.log('Sau khi gọi API để refresh token', response);
 
         if (response.data) {
           // Store the new tokens in session storage
