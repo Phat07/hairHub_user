@@ -273,7 +273,7 @@
 // }
 
 // export default WalletPage;
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import { Input, Spin, Modal } from "antd";
@@ -296,6 +296,7 @@ export default function WalletPage() {
   const uid = useSelector((state) => state.ACCOUNT.uid);
   const [amount, setAmount] = useState("");
   const dispatch = useDispatch();
+  const [iframeError, setIframeError] = useState(false);
   const handleAmountChange = (e) => {
     let value = parseFloat(e.target.value);
     setAmount(isNaN(value) || value <= 0 ? 0 : value);
@@ -330,6 +331,16 @@ export default function WalletPage() {
     dispatch(GetInformationAccount(uid));
     setAmount("0");
   };
+  console.log("uid", uid);
+  useEffect(() => {
+    if (iframeError && isOpen) {
+      setIsOpen(false);
+      setMessage("Liên kết thanh toán đã hết hạn hoặc không còn tồn tại");
+    }
+  }, [iframeError, isOpen]);
+  const handleIframeError = () => {
+    setIframeError(true);
+  };
 
   return (
     <>
@@ -349,7 +360,7 @@ export default function WalletPage() {
           <span>Quét mã QR để nạp tiền ngay</span>
 
           <motion.div
-            className="flex flex-col items-center justify-center h-1/2 w-1/2 bg-gray-400 rounded-lg border bg-background md:shadow-xl p-4 mt-4"
+            className="flex flex-col items-center justify-center h-1/2 w-1/2 bg-gray-200 rounded-lg border bg-background md:shadow-xl p-4 mt-4"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -385,10 +396,15 @@ export default function WalletPage() {
       <Modal
         visible={isOpen}
         onCancel={handleReloadMoney}
+        afterClose={() => {
+          dispatch(GetInformationAccount(uid));
+          setAmount("0");
+        }}
         footer={null}
         width="60%"
       >
         <iframe
+          onError={handleIframeError}
           src={paymentLink}
           title="PayOS Payment"
           className="w-full h-[500px] rounded-lg"

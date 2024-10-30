@@ -103,6 +103,7 @@ const LoginPage = () => {
   const [otpSent, setOtpSent] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
   const [otpForgot, setOtpForgot] = useState("");
+  const [loadingLoad, setLoadingLoad] = useState(false);
 
   const renderInput = (props) => (
     <input
@@ -115,6 +116,19 @@ const LoginPage = () => {
       }}
     />
   );
+  const getInputStyle = () => {
+    const isSmallScreen = window.innerWidth <= 768;
+    return {
+      borderRadius: "10%",
+      border: "2px solid #1119",
+      width: isSmallScreen ? "2.5rem" : "4rem",
+      height: isSmallScreen ? "2.5rem" : "4rem",
+      margin: "0 0.5rem",
+      fontSize: isSmallScreen ? "1.5rem" : "2rem",
+      color: "black",
+      textAlign: "center",
+    };
+  };
 
   const sendOtp = async () => {
     setLoading(true);
@@ -313,14 +327,22 @@ const LoginPage = () => {
       password: values?.password,
       fullname: values?.fullname,
     };
+    setLoadingLoad(true);
     if (newValues) {
       AccountServices.registerUser(data)
         .then((res) => {
           message.success("Thông tin của bạn đã đúng");
-          setCurrent(current + 1);
+          setCurrent(0);
+          setSelected(false);
+          form.resetFields();
           setUser(res.data);
+          setEmailVerified(false)
+          setAccessType("login");
         })
-        .catch((err) => console.log(err, "error"));
+        .catch((err) => setLoadingLoad(false))
+        .finally((err) => {
+          setLoadingLoad(false);
+        });
     }
   };
   const onFinishFailed = (errorInfo) => {
@@ -481,6 +503,7 @@ const LoginPage = () => {
                   style={{ width: "100%" }}
                   type="primary"
                   htmlType="submit"
+                  loading={loadingLoad}
                 >
                   Tạo
                 </Button>
@@ -767,11 +790,11 @@ const LoginPage = () => {
           onCancel={() => setIsOtpModalOpen(false)}
         >
           <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              marginBottom: "1rem",
-            }}
+            // style={{
+            //   display: "flex",
+            //   justifyContent: "center",
+            //   marginBottom: "1rem",
+            // }}
           >
             <OTPInput
               value={otp}
@@ -780,16 +803,7 @@ const LoginPage = () => {
               renderInput={renderInput}
               separator={<span>-</span>}
               isInputNum
-              inputStyle={{
-                borderRadius: "50%",
-                border: "2px solid #1119",
-                width: "4rem",
-                height: "4rem",
-                margin: "0 0.5rem",
-                fontSize: "2rem",
-                color: "black",
-                textAlign: "center",
-              }}
+              inputStyle={getInputStyle()}
             />
           </div>
           <ResendCode isOtpModalOpen={isOtpModalOpen} form={form} />

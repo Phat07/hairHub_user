@@ -1,7 +1,11 @@
 import React from "react";
 import Header from "../components/Header";
 import { Card, Typography, Button } from "antd";
-import { CheckCircleFilled, CheckCircleOutlined } from "@ant-design/icons";
+import {
+  CheckCircleFilled,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+} from "@ant-design/icons";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import { useDispatch, useSelector } from "react-redux";
 import { actGetStatusPayment } from "../store/salonPayment/action";
@@ -18,9 +22,8 @@ function SucessPayment(props) {
   const ownerId = useSelector((state) => state.ACCOUNT.idOwner);
 
   // Lấy giá trị của tham số orderCode
-  const orderCode = url.searchParams.get("orderCode");
+  const code = url.searchParams.get("code");
   const amount = url.searchParams.get("amount");
-  const configId = url.searchParams.get("configId");
   const id = url.searchParams.get("id");
 
   // Hiển thị orderCode
@@ -32,21 +35,6 @@ function SucessPayment(props) {
     let formattedString = numberString?.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     return formattedString + " VND";
   }
-
-  const handleClick = () => {
-    const dataMapping = {
-      ordercode: orderCode,
-      configId: configId,
-      salonOWnerID: ownerId,
-    };
-    dispatch(actGetStatusPayment(dataMapping, orderCode, ownerId))
-      .then((res) => {        
-        navigate("/listPayment");
-      })
-      .catch((e) => {
-        console.log("Lỗi không lưu được trạng thái thanh toán xuống database");
-      });
-  };
 
   return (
     <div>
@@ -70,19 +58,34 @@ function SucessPayment(props) {
             borderRadius: "20px",
           }}
         >
+          {code == "00" ? (
+            <>
+              <CheckCircleFilled
+                style={{
+                  fontSize: "40px",
+                  color: "#23A26D",
+                  backgroundColor: "rgba(179, 230, 194, 0.5)",
+                  padding: "2rem",
+                  borderRadius: "50px",
+                }}
+              />
+              <Title level={3} style={{ marginTop: "16px" }}>
+                THANH TOÁN THÀNH CÔNG!
+              </Title>
+            </>
+          ) : (
+            <>
+              <CloseCircleOutlined
+                style={{ fontSize: "64px", color: "#ff4d4f" }}
+              />
+              <Title level={2} style={{ color: "#ff4d4f", marginTop: "16px" }}>
+                GIAO DỊCH THẤT BẠI
+              </Title>
+            </>
+          )}
+
           {/* <CheckCircleOutlined style={{ fontSize: "64px", color: "#52c41a" }} /> */}
-          <CheckCircleFilled
-            style={{
-              fontSize: "40px",
-              color: "#23A26D",
-              backgroundColor: "rgba(179, 230, 194, 0.5)",
-              padding: "2rem",
-              borderRadius: "50px",
-            }}
-          />
-          <Title level={3} style={{ marginTop: "16px" }}>
-            THANH TOÁN THÀNH CÔNG!
-          </Title>
+
           <Text style={{ fontSize: "30px" }} strong>
             {amount ? formatVND(amount) : "1.000.000 VND"}
           </Text>
@@ -97,13 +100,13 @@ function SucessPayment(props) {
           <Text style={{ display: "block", marginTop: "8px" }}>
             Kiểu thanh toán: Online
           </Text>
-          <Button
+          {/* <Button
             type="primary"
             style={{ marginTop: "24px" }}
             onClick={handleClick}
           >
             Vui lòng nhấn vào đây để xác nhận thành công
-          </Button>
+          </Button> */}
         </Card>
       </div>
     </div>

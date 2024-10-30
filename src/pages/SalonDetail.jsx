@@ -1641,20 +1641,20 @@ function SalonDetail(props) {
         </Space>
       ),
     },
-    {
-      value: "PAYBYBANK",
-      label: (
-        <Space>
-          <CreditCardOutlined style={{ fontSize: "24px", color: "#BF9456" }} />
-          <div>
-            <div style={{ fontWeight: "bold" }}>Thanh toán PayOs</div>
-            <div style={{ fontSize: "12px", color: "#666" }}>
-              Thanh toán trước qua PayOs
-            </div>
-          </div>
-        </Space>
-      ),
-    },
+    // {
+    //   value: "PAYBYBANK",
+    //   label: (
+    //     <Space>
+    //       <CreditCardOutlined style={{ fontSize: "24px", color: "#BF9456" }} />
+    //       <div>
+    //         <div style={{ fontWeight: "bold" }}>Thanh toán PayOs</div>
+    //         <div style={{ fontSize: "12px", color: "#666" }}>
+    //           Thanh toán trước qua PayOs
+    //         </div>
+    //       </div>
+    //     </Space>
+    //   ),
+    // },
     {
       value: "PAYBYWALLET",
       label: (
