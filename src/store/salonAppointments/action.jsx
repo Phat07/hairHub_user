@@ -36,7 +36,6 @@ export const GetAppointmentSalonByStatus =
       dispatch({ type: APPOINTMENT_SUCCESS, payload: response.data });
     } catch (error) {
       dispatch({ type: APPOINTMENT_FAILURE, payload: error.message });
-      console.log("error GetAppointmentSalonByStatus", error);
     }
   };
 
@@ -124,7 +123,7 @@ export function actGetSalonInformationByOwnerIdAsync(ownerId) {
           dispatch(allSalonByOwnerId(response.data));
         } else {
           // toast.error("get all syllabus to fail");
-          console.log("fail");
+          // console.log("fail");
         }
       })
       .catch((error) => {

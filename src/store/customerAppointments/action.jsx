@@ -42,7 +42,6 @@ export function actGetAllAppointmentByCustomerId(id, page, size) {
     await result
       .then((response) => {
         if (response.status === 200 || response.status === 201) {
-          console.log("ressData", response);
           dispatch(
             getAllAppointmentByCustomerId(
               response.data.items,
@@ -104,7 +103,6 @@ export function actGetAllAppointmentHistoryByCustomerId(id, page, size) {
     await result
       .then((response) => {
         if (response.status === 200 || response.status === 201) {
-          console.log("resHistory", response);
           dispatch(getAllAppointmentHistoryByCustomerId(response.data.items));
         } else {
           message.error("No create salon information!!!!");
@@ -127,7 +125,6 @@ export function actDeleteAppointmentByCustomerId(id, customerId, reasonCancel) {
     await result
       .then(async (response) => {
         if (response.status === 200 || response.status === 201) {
-          console.log("ressData", response);
           await dispatch(actGetAllAppointmentByCustomerId(customerId, 1, 5));
           await dispatch(
             actGetAllAppointmentHistoryByCustomerId(customerId, 1, 5)

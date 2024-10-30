@@ -59,8 +59,6 @@ export function actCreateNotificationList(data, id) {
     const result = notificationService.createNotification(data, id);
     await result
       .then((response) => {
-        console.log('22',response);
-        
         if (response.status === 200 || response.status === 201) {
           // dispatch(actGetNotificationList(id));
         } else {

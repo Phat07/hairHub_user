@@ -130,7 +130,6 @@ function EmployeeAppointment(props) {
 
   const handleCancel = () => {
     setIsModalVisible(false);
-    console.log("isModalVisible", isModalVisible);
   };
 
   const columns = [

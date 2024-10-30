@@ -57,7 +57,6 @@ export function actGetFeedBackByCustomerId(id, page, size) {
     const result = RatingService.GetFeedBackByCustomerId(id, page, size);
     await result
       .then((response) => {
-        console.log("responeFeedback", response.data);
         if (response.status === 200 || response.status === 201) {
           dispatch(getFeedbackByCustomerId(response.data));
         } else {
