@@ -49,6 +49,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { isEmptyObject } from "../components/formatCheckValue/checkEmptyObject";
 import styles from "../css/listShopBarber.module.css";
+import stylesCard from "../css/customerAppointment.module.css";
 import {
   actGetSalonByEmployeeId,
   actGetScheduleByEmployeeId,
@@ -423,7 +424,7 @@ function SalonEmployee(props) {
                     bordered
                   >
                     {salonDetailEmployee?.schedules &&
-                      sortSchedules(salonDetailEmployee?.schedules).map(
+                      sortSchedules(salonDetailEmployee?.schedules)?.map(
                         (schedule, index) => (
                           <Descriptions.Item
                             key={index}
@@ -476,7 +477,7 @@ function SalonEmployee(props) {
                     bordered
                   >
                     {listScheduleEmployee &&
-                      sortSchedules(listScheduleEmployee).map(
+                      sortSchedules(listScheduleEmployee)?.map(
                         (schedule, index) => (
                           <Descriptions.Item
                             key={index}
@@ -554,35 +555,115 @@ function SalonEmployee(props) {
                             {filterLabelService} <DownOutlined />
                           </Button>
                         </Dropdown>
-                        <Input
-                          placeholder="Tìm kiếm theo tên dịch vụ"
-                          className={styles["table-fillter-item"]}
-                          style={{ maxWidth: "25rem" }}
-                          suffix={
-                            <SearchOutlined
-                              style={{ cursor: "pointer" }}
-                              onClick={handleSearchService} // Trigger search on icon click
-                            />
-                          }
-                          value={searchService} // Liên kết state với giá trị input
-                          onChange={(e) => setSearchService(e.target.value)} // Cập nhật state khi người dùng nhập
-                          onPressEnter={handleSearchService} // Trigger search on Enter key press
-                        />
+                        <div
+                        // className="datePickerCustome"
+                        // className={styles["date-picker-custome"]}
+                        >
+                          <Input
+                            placeholder="Tìm kiếm theo tên dịch vụ"
+                            className={styles["table-fillter-item"]}
+                            // style={{ maxWidth: "25rem" }}
+                            suffix={
+                              <SearchOutlined
+                                style={{
+                                  cursor: "pointer",
+                                  // padding: "5px",
+                                  // backgroundColor: "#bf9456",
+                                  // borderRadius: "5px",
+                                }}
+                                onClick={handleSearchService} // Trigger search on icon click
+                              />
+                            }
+                            value={searchService} // Liên kết state với giá trị input
+                            onChange={(e) => setSearchService(e.target.value)} // Cập nhật state khi người dùng nhập
+                            onPressEnter={handleSearchService} // Trigger search on Enter key press
+                          />
+                        </div>
                       </div>
                       {/* {listServiceEmployee.items.length > 0 && ( */}
                       <div className={styles["table-container"]}>
                         <Spin className="custom-spin" spinning={loading}>
                           <Table
+                            className={stylesCard.appointmentTable}
                             dataSource={listServiceEmployee.items}
                             columns={columnsService}
                             pagination={false}
                             rowKey="phone"
                           />
+                          <div className={stylesCard.container}>
+                            {listServiceEmployee?.items?.length === 0 && (
+                              <h4
+                                style={{
+                                  fontWeight: "bold",
+                                  color: "#bf9456",
+                                  textAlign: "center",
+                                  fontSize: "1.2rem",
+                                }}
+                              >
+                                Không tìm thấy dịch vụ nào !!!
+                              </h4>
+                            )}
+
+                            <div className={stylesCard.grid}>
+                              {listServiceEmployee?.items?.map((service) => (
+                                <div
+                                  key={service.id}
+                                  className={stylesCard.card}
+                                >
+                                  <img
+                                    src={service?.img}
+                                    alt="emplyee"
+                                    className={stylesCard.employeeImage}
+                                  />
+                                  <h4>
+                                    Tên:
+                                    <span
+                                      style={{
+                                        display: "block",
+                                        fontWeight: "bold",
+                                        color: "#bf9456",
+                                        textAlign: "center",
+                                        fontSize: "1rem",
+                                      }}
+                                    >
+                                      {service.serviceName}
+                                    </span>
+                                  </h4>
+                                  <h4 className={stylesCard.description}>
+                                    Mô tả: {service.description}
+                                  </h4>
+                                  <h4>
+                                    Giá tiền: {formatCurrency(service.price)}
+                                  </h4>
+                                  <h4>Thời gian: {formatTime(service.time)}</h4>
+                                  <h4>
+                                    Trạng thái:{" "}
+                                    <Tag
+                                      icon={
+                                        service.isActive ? (
+                                          <CheckCircleOutlined />
+                                        ) : (
+                                          <CloseCircleOutlined />
+                                        )
+                                      }
+                                      color={service.isActive ? "green" : "red"}
+                                      style={{ marginBottom: "0.5rem" }}
+                                    >
+                                      {service.isActive
+                                        ? "Hoạt động"
+                                        : "Không hoạt động"}
+                                    </Tag>
+                                  </h4>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
                         </Spin>
                       </div>
                       {/* )} */}
 
                       <Pagination
+                        className="paginationAppointment"
                         current={currentPageService}
                         pageSize={pageSizeService}
                         total={listServiceEmployee.totalPages}

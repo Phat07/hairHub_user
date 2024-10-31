@@ -1,13 +1,28 @@
 .datePickerCustome {
     margin-bottom: 20px;
     display: flex;
-    justify-content: center;
+    justify-content: start;
     gap: 10px;
   }
 
   .datePickerCustome .ant-picker {
     padding: 10px;
     background-color: #ece8de;
+    border-width: 0px;
+    border-color: #bf9456;
+  }
+  /* .datePickerCustome .ant-input {
+    padding: 10px;
+    background-color: #ece8de;
+    border-color: #bf9456;
+    border-width: 0px;
+  } */
+  .datePickerCustome .ant-input-outlined {
+    padding: 10px;
+    background-color: #ece8de;
+    border-color: #bf9456;
+    border-width: 0px;
+    width: 100%;
   }
   .datePickerCustome .ant-btn {
     padding: 10px;

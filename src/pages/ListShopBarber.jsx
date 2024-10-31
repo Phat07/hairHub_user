@@ -1433,7 +1433,11 @@ function ListShopBarber(props) {
         {!isEmptyObject(salonDetail) ? (
           <>
             <Card
-              title="Thông tin Salon"
+              title={
+                <span style={{ fontSize: "1.3rem", color: "#bf9456" }}>
+                  Thông tin Salon
+                </span>
+              }
               className={styles["responsive-card"]}
               bodyStyle={{ padding: "10px" }}
 

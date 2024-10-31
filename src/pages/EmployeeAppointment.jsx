@@ -1,7 +1,9 @@
 import { actGetAppointmentByEmployeeId } from "@/store/employeeAppointments/action";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styles from "../css/employeeAppointment.module.css";
+import stylesCard from "../css/customerAppointment.module.css";
+import { debounce } from "lodash";
 import {
   Button,
   Divider,
@@ -29,6 +31,7 @@ function EmployeeAppointment(props) {
   const [currentPage, setCurrentPage] = useState(1);
   const [dateFilter, setDateFilter] = useState(null);
   const [nameFilter, setNameFilter] = useState(null);
+  const [nameFilterInput, setNameFilterInput] = useState(null);
   const [currentAppointment, setCurrentAppointment] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const pageSize = 4;
@@ -85,8 +88,16 @@ function EmployeeAppointment(props) {
     setDateFilter(dateString);
   };
 
+  const debouncedSetNameFilter = useCallback(
+    debounce((value) => {
+      setNameFilter(value);
+    }, 300), // 300ms debounce time
+    []
+  );
+
   const handleNameFilterChange = (e) => {
-    setNameFilter(e.target.value);
+    debouncedSetNameFilter(e.target.value);
+    setNameFilterInput(e.target.value);
   };
 
   const formatDate = (dateString) => {
@@ -140,10 +151,21 @@ function EmployeeAppointment(props) {
       render: (customer) => customer?.fullName,
     },
     {
-      title: "Ngày tạo",
-      dataIndex: "createdDate",
-      key: "createdDate",
-      render: (createdDate) => formatDate(createdDate),
+      title: "Phương thức thanh toán",
+      dataIndex: "paymentMethod",
+      key: "paymentMethod",
+      render: (paymentMethod) => {
+        switch (paymentMethod) {
+          case "PAYBYWALLET":
+            return "Thanh toán qua ví";
+          case "PAYINSALON":
+            return "Thanh toán tại salon";
+          case "PAYBYBANK":
+            return "Thanh toán qua ngân hàng";
+          default:
+            return paymentMethod;
+        }
+      },
     },
     {
       title: "Ngày hẹn",
@@ -200,23 +222,42 @@ function EmployeeAppointment(props) {
             }
           >
             <Text strong style={{ fontSize: "16px" }}>
-              Thông tin Salon | Barber shop
+              Thông tin Khách hàng
             </Text>
             <div>
-              <Image
-                src={currentAppointment?.salonInformation.img}
-                preview={false}
-                style={{ marginBottom: "10px", marginTop: "10px" }}
-                width={300}
-                height={200}
+              <img
+                src={currentAppointment?.customer?.img}
+                alt="Khách hàng"
+                className={stylesCard.salonImageDetail}
               />
               <p>
-                <Text strong>Tên tiệm: </Text>
-                <Text>{currentAppointment?.salonInformation.name}</Text>
+                <Text strong>Tên khách hàng: </Text>
+                <Text>{currentAppointment?.customer?.fullName}</Text>
               </p>
               <p>
-                <Text strong>Địa chỉ: </Text>
-                <Text>{currentAppointment?.salonInformation.address}</Text>
+                <Text strong>Email: </Text>
+                <Text>{currentAppointment?.customer.email}</Text>
+              </p>
+              <p>
+                <Text strong>Giới tính: </Text>
+                <Text>
+                  {currentAppointment?.customer.gender
+                    ? currentAppointment.customer.gender
+                    : "Thông tin chưa được cập nhật"}
+                </Text>
+              </p>
+              <p>
+                <Text strong>Ngày sinh: </Text>
+                <Text>
+                  {currentAppointment?.customer.dayOfBirth
+                    ? currentAppointment.customer.dayOfBirth
+                    : "Thông tin chưa được cập nhật"}
+                </Text>
+              </p>
+
+              <p>
+                <Text strong>Số điện thoại: </Text>
+                <Text>{currentAppointment?.customer.phone}</Text>
               </p>
             </div>
           </div>
@@ -226,7 +267,15 @@ function EmployeeAppointment(props) {
             className={styles.appointmentDetailB2}
             style={{ marginTop: "1rem" }}
           >
-            {currentAppointment?.status === "" && <div></div>}
+            {currentAppointment?.status === "BOOKING" && (
+              <div style={{ padding: "10px", border: "1px solid #ccc" }}>
+                <Text strong>Mã QR xác nhận để thành công:</Text>
+                <Image
+                  src={currentAppointment?.qrCodeImg}
+                  style={{ width: "100%", marginTop: "10px" }}
+                />
+              </div>
+            )}
           </div>
         </div>
 
@@ -349,7 +398,7 @@ function EmployeeAppointment(props) {
                   {currentAppointment?.id}
                 </Text>
               </p>
-              <p>
+              {/* <p>
                 <Text strong>Khách Hàng: </Text>
                 <Text>{currentAppointment?.customer.fullName}</Text>
               </p>
@@ -377,7 +426,7 @@ function EmployeeAppointment(props) {
               <p>
                 <Text strong>Số điện thoại: </Text>
                 <Text>{currentAppointment?.customer.phone}</Text>
-              </p>
+              </p> */}
               <p>
                 <Text strong>Ngày hẹn: </Text>
                 <Text>
@@ -435,74 +484,202 @@ function EmployeeAppointment(props) {
 
   return (
     <div className={styles.appointmentContainer}>
-      <div className={styles.statusfilter}>
-        {Object.keys(statusDisplayNames).map((statusKey, index) => (
-          <button
-            key={statusKey}
-            onClick={() => handleStatusChange(statusKey)}
-            style={{
-              flex: "1",
-              marginRight:
-                index !== Object.keys(statusDisplayNames).length - 1
-                  ? "1rem"
-                  : "0",
-              padding: "0.5rem 1rem",
-              backgroundColor:
-                status === statusKey
-                  ? status === "BOOKING"
-                    ? "#1677ff"
-                    : status === "CANCEL_BY_CUSTOMER"
-                    ? "#faa500"
-                    : status === "FAILED"
-                    ? "#ff0000"
-                    : status === "SUCCESSED"
-                    ? "#389e0d"
-                    : "gray"
-                  : "gray",
-              color: "white",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer",
-              textAlign: "center",
-            }}
+      <Spin
+        className="custom-spin"
+        spinning={loading}
+        // tip="Loading..."
+      >
+        <div className={styles.statusfilter}>
+          {Object.keys(statusDisplayNames).map((statusKey, index) => (
+            <button
+              key={statusKey}
+              onClick={() => handleStatusChange(statusKey)}
+              style={{
+                flex: "1",
+                marginRight:
+                  index !== Object.keys(statusDisplayNames).length - 1
+                    ? "1rem"
+                    : "0",
+                padding: "0.5rem 1rem",
+                backgroundColor:
+                  status === statusKey
+                    ? status === "BOOKING"
+                      ? "#1677ff"
+                      : status === "CANCEL_BY_CUSTOMER"
+                      ? "#faa500"
+                      : status === "FAILED"
+                      ? "#ff0000"
+                      : status === "SUCCESSED"
+                      ? "#389e0d"
+                      : "gray"
+                    : "gray",
+                color: "white",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+                textAlign: "center",
+              }}
+            >
+              {statusDisplayNames[statusKey]}
+            </button>
+          ))}
+        </div>
+
+        <div className={styles.filterDate}>
+          <div
+            className="datePickerCustome"
+            // className={styles["date-picker-custome"]}
           >
-            {statusDisplayNames[statusKey]}
-          </button>
-        ))}
-      </div>
+            <DatePicker
+              style={{ marginRight: "1rem" }}
+              onChange={handleDateChange}
+              placeholder="Lọc theo thời gian"
+            />
+            <Input
+              placeholder="Lọc theo tên"
+              value={nameFilterInput}
+              onChange={handleNameFilterChange}
+              allowClear
+              style={{
+                width: 200,
+              }}
+            />
+          </div>
+        </div>
 
-      <div className={styles.filterDate}>
-        <DatePicker
-          style={{ marginRight: "1rem" }}
-          onChange={handleDateChange}
-          placeholder="Lọc theo thời gian"
+        <Table
+          className={stylesCard.appointmentTable}
+          columns={columns}
+          dataSource={employeeAppointments}
+          // loading={loading}
+          rowKey="id"
+          pagination={false}
         />
-        <Input
-          placeholder="Lọc theo tên"
-          value={nameFilter}
-          onChange={handleNameFilterChange}
-          allowClear
-          style={{ width: 200 }}
+
+        <div className={stylesCard.container}>
+          {/* {loading && (
+          <div className={stylesCard.overlay}>
+            <LoadingOutlined style={{ fontSize: "2rem" }} />
+          </div>
+        )} */}
+          {employeeAppointments?.length === 0 && status && (
+            <h4
+              style={{
+                fontWeight: "bold",
+                color: "#bf9456",
+                textAlign: "center",
+                fontSize: "1.2rem",
+              }}
+            >
+              Không tìm thấy lịch hẹn {statusDisplayNames[status] || status} nào
+              !!!
+            </h4>
+          )}
+          {/* {Object.entries(groupedAppointmentsbyDate).map(
+          ([date, appointments]) => (
+            <div key={date} className={stylesCard.dateGroup}>
+              <h3 className={stylesCard.dateHeader}>{date}</h3> */}
+          <div className={stylesCard.grid}>
+            {employeeAppointments.map((appointment) => {
+              const startTime = moment(
+                appointment.appointmentDetails[0]?.startTime
+              );
+              const currentTime = moment();
+
+              // Kiểm tra xem ngày hiện tại có trùng với ngày hẹn hay không
+              const isSameDay = moment(appointment.startDate).isSame(
+                currentTime,
+                "day"
+              );
+
+              // Tính khoảng cách thời gian giữa startTime và thời gian hiện tại
+              const hoursDiff = currentTime.diff(startTime, "hours");
+
+              // Kiểm tra xem nút báo cáo có được hiển thị hay không
+              const isReportButtonVisible =
+                currentTime.isSameOrAfter(startTime);
+              const isReportExpired = hoursDiff >= 72;
+
+              return (
+                <div key={appointment.id} className={stylesCard.card}>
+                  <img
+                    src={appointment.customer.img}
+                    alt="Salon"
+                    className={stylesCard.salonImage}
+                  />
+                  <h4>
+                    Tên khách hàng:
+                    <span
+                      style={{
+                        display: "block", // Đảm bảo xuống dòng
+                        fontWeight: "bold",
+                        color: "#bf9456",
+                        textAlign: "center",
+                      }}
+                    >
+                      {appointment.customer.fullName}
+                    </span>
+                  </h4>
+
+                  <h4>
+                    Phương thức thanh toán:{" "}
+                    {appointment?.paymentMethod === "PAYBYWALLET"
+                      ? "Thanh toán qua ví"
+                      : appointment?.paymentMethod === "PAYINSALON"
+                      ? "Thanh toán tại salon"
+                      : appointment?.paymentMethod === "PAYBYBANK"
+                      ? "Thanh toán qua ngân hàng"
+                      : appointment?.paymentMethod}
+                  </h4>
+
+                  <h4>Ngày bắt đầu: {formatDate(startTime)}</h4>
+                  <h4>
+                    Giá tiền: {appointment.totalPrice.toLocaleString()} VND
+                  </h4>
+
+                  <Button
+                    style={{
+                      backgroundColor: "#bf9456",
+                      marginBottom: "0.5rem",
+                    }}
+                    onClick={() => showModal(appointment)}
+                  >
+                    Xem chi tiết
+                  </Button>
+                  {/* 
+                  {isReportButtonVisible && (
+                    <>
+                      {!isReportExpired ? (
+                        <Button
+                          danger
+                          onClick={() => handleReport(appointment)}
+                        >
+                          {appointment.isReportBySalon
+                            ? "Đã báo cáo cho admin"
+                            : "Báo cáo"}
+                        </Button>
+                      ) : (
+                        <Button disabled>Đã quá hạn báo cáo</Button>
+                      )}
+                    </>
+                  )} */}
+                </div>
+              );
+            })}
+          </div>
+          {/* </div>
+          )
+        )} */}
+        </div>
+
+        <Pagination
+          className="paginationAppointment"
+          current={currentPage}
+          total={totalPages * pageSize}
+          pageSize={pageSize}
+          onChange={handlePageChange}
         />
-      </div>
-
-      <Table
-        className={styles.appointmentTable}
-        columns={columns}
-        dataSource={employeeAppointments}
-        loading={loading}
-        rowKey="id"
-        pagination={false}
-      />
-
-      <Pagination
-        className="paginationAppointment"
-        current={currentPage}
-        total={totalPages * pageSize}
-        pageSize={pageSize}
-        onChange={handlePageChange}
-      />
-
+      </Spin>
       <Modal
         wrapClassName="my-custom-modal"
         title={
@@ -520,6 +697,7 @@ function EmployeeAppointment(props) {
         visible={isModalVisible}
         onCancel={handleCancel}
         width={1100}
+        footer={null}
       >
         {renderAppointmentDetail()}
       </Modal>
