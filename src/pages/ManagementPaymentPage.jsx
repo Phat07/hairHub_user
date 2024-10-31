@@ -99,7 +99,6 @@ function ManagementPaymentPage(props) {
   }
 
   const navigate = useNavigate();
-
   const columns = [
     {
       title: "Email",

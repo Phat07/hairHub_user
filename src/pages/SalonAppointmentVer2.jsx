@@ -64,14 +64,15 @@ function SalonAppointmentVer2(props) {
   const totalPages = useSelector((state) => state.SALONAPPOINTMENTS.totalPages);
 
   useEffect(() => {
-    dispatch(actGetSalonInformationByOwnerIdAsync(ownerId));
+    if (ownerId) {
+      dispatch(actGetSalonInformationByOwnerIdAsync(ownerId));
+    }
   }, [ownerId]);
   useEffect(() => {
     if (appoinmentIdUrl) {
       setLoading(true);
       AppointmentService.getAppointmentById(appoinmentIdUrl)
         .then((res) => {
-          console.log("res", res);
           setIsModalVisible(true);
           setCurrentAppointment(res.data);
         })
@@ -212,7 +213,6 @@ function SalonAppointmentVer2(props) {
   };
 
   const handleReport = (appointmentId) => {
-    console.log("Report appointment with ID:", appointmentId);
     setIsReportModalVisible(true);
     setItemReport(appointmentId);
   };
@@ -515,6 +515,15 @@ function SalonAppointmentVer2(props) {
                 <Text>{currentAppointment?.customer.phone}</Text>
               </p> */}
               <p>
+                <Text strong>Ngày tạo đơn: </Text>
+                <Text>
+                  {moment(currentAppointment.createdDate).format(
+                    "DD/MM/YYYY - HH:mm"
+                  )}
+                </Text>
+              </p>
+
+              <p>
                 <Text strong>Ngày hẹn: </Text>
                 <Text>
                   {moment(
@@ -577,10 +586,21 @@ function SalonAppointmentVer2(props) {
       render: (customer) => customer?.fullName,
     },
     {
-      title: "Ngày tạo",
-      dataIndex: "createdDate",
-      key: "createdDate",
-      render: (createdDate) => formatDate(createdDate),
+      title: "Phương thức",
+      dataIndex: "paymentMethod",
+      key: "paymentMethod",
+      render: (paymentMethod) => {
+        switch (paymentMethod) {
+          case "PAYBYWALLET":
+            return "Thanh toán qua ví";
+          case "PAYINSALON":
+            return "Thanh toán tại salon";
+          case "PAYBYBANK":
+            return "Thanh toán qua ngân hàng";
+          default:
+            return paymentMethod;
+        }
+      },
     },
     {
       title: "Ngày hẹn",
@@ -780,7 +800,17 @@ function SalonAppointmentVer2(props) {
                     </span>
                   </h4>
 
-                  <h4>Ngày tạo: {formatDate(appointment.createdDate)}</h4>
+                  <h4>
+                    Phương thức thanh toán:{" "}
+                    {appointment?.paymentMethod === "PAYBYWALLET"
+                      ? "Thanh toán qua ví"
+                      : appointment?.paymentMethod === "PAYINSALON"
+                      ? "Thanh toán tại salon"
+                      : appointment?.paymentMethod === "PAYBYBANK"
+                      ? "Thanh toán qua ngân hàng"
+                      : appointment?.paymentMethod}
+                  </h4>
+
                   <h4>Ngày bắt đầu: {formatDate(startTime)}</h4>
                   <h4>
                     Giá tiền: {appointment.totalPrice.toLocaleString()} VND

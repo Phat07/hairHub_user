@@ -4,6 +4,7 @@ export const SalonTransaction = {
   GetAppointmentTransaction(salonId, startDate, endDate) {
     return API.get(`/appointments/GetAppointmentTransaction/${salonId}`, {
       params: {
+        SalonId: salonId,
         startDate,
         endDate,
       },

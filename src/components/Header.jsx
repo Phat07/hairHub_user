@@ -65,6 +65,7 @@ function Header(props) {
   const userInfo = useSelector((state) => state.ACCOUNT.userInfo);
 
   const avatar = useSelector((state) => state.ACCOUNT.avatar);
+  
   useEffect(() => {
     if (idOwner) {
       try {

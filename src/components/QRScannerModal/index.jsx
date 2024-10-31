@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from "react";
 import { Modal, message } from "antd";
 import QrReader from "react-qr-scanner";
 import { AccountServices } from "@/services/accountServices";
+import { useDispatch, useSelector } from "react-redux";
+import { GetInformationAccount } from "@/store/account/action";
 
 const QRScannerModal = ({ isVisible, onClose, idCustomer }) => {
   const [qrData, setQrData] = useState(null);
@@ -9,7 +11,10 @@ const QRScannerModal = ({ isVisible, onClose, idCustomer }) => {
   const [isNotified, setIsNotified] = useState(false);
   const [key, setKey] = useState(0); // Để reset QR Reader component
   const qrReaderRef = useRef(null); // Ref để quản lý QR Reader
+  const uid = useSelector((state) => state.ACCOUNT.uid);
 
+  
+  const dispatch = useDispatch();
   const stopCamera = () => {
     if (qrReaderRef.current && qrReaderRef.current.videoElement) {
       const videoElement = qrReaderRef.current.videoElement;
@@ -34,6 +39,7 @@ const QRScannerModal = ({ isVisible, onClose, idCustomer }) => {
         .then(() => {
           message.success("Quét QR check-in thành công");
           setQrData(data.text); // Lưu QR đã quét thành công
+          dispatch(GetInformationAccount(uid));
           onClose(); // Đóng modal khi thành công
         })
         .catch(() => {
@@ -48,10 +54,12 @@ const QRScannerModal = ({ isVisible, onClose, idCustomer }) => {
   const handleError = (err) => {
     if (err.name === "NotAllowedError") {
       // Nếu quyền bị từ chối, đặt lỗi và reset component để yêu cầu quyền lại
-      setScanError('Bạn đã từ chối quyền truy cập camera. Vui lòng thử lại hoặc cấp quyền trong cài đặt trình duyệt.');
+      setScanError(
+        "Bạn đã từ chối quyền truy cập camera. Vui lòng thử lại hoặc cấp quyền trong cài đặt trình duyệt."
+      );
       setKey((prevKey) => prevKey + 1); // Reset component QR Reader
     } else {
-      setScanError('Đã xảy ra lỗi với camera: ' + err.message);
+      setScanError("Đã xảy ra lỗi với camera: " + err.message);
     }
     stopCamera(); // Dừng camera khi có lỗi
   };
@@ -90,7 +98,10 @@ const QRScannerModal = ({ isVisible, onClose, idCustomer }) => {
       {scanError && (
         <div style={{ color: "red" }}>
           {/* <p>{scanError}</p> */}
-          <p>Vui lòng vào cài đặt trình duyệt và cấp quyền truy cập camera để tiếp tục quét.</p>
+          <p>
+            Vui lòng vào cài đặt trình duyệt và cấp quyền truy cập camera để
+            tiếp tục quét.
+          </p>
         </div>
       )}
     </Modal>
