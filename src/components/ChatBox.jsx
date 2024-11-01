@@ -1,78 +1,81 @@
-import { Card } from "antd";
-import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { Avatar } from "antd";
+import React, { useState } from "react";
+import { FaComments, FaTimes } from "react-icons/fa";
 import iconZalo from "../../src/assets/images/policyImg/zalo1.jpg";
 import iconMes from "../../src/assets/images/policyImg/messager.png";
+import logo from "../assets/images/hairHubLogo.png";
+import styles from "../css/chatMesZalo.module.css";
+import {
+  MainContainer,
+  ChatContainer,
+  ConversationHeader,
+  MessageList,
+  Message,
+  MessageInput,
+  TypingIndicator,
+  VoiceCallButton,
+  VideoCallButton,
+  InfoButton,
+} from "@chatscope/chat-ui-kit-react";
+import { Avatar as ChatAvatar } from "@chatscope/chat-ui-kit-react";
+import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 const ChatButton = () => {
-  // Animation config cho Messenger
-  const [messengerKey, setMessengerKey] = useState(0);
-  const [zaloKey, setZaloKey] = useState(0);
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setMessengerKey((prev) => prev + 1);
-      setTimeout(() => {
-        setZaloKey((prev) => prev + 1);
-      }, 250); // Zalo lắc sau Messenger 250ms
-    }, 100); // Interval 2 giây
-
-    return () => clearInterval(intervalId);
-  }, []);
-
-  // Cấu hình animation lắc
-  const shakeAnimation = {
-    shake: {
-      rotate: [0, -10, 10, -10, 10, 0],
-      transition: {
-        duration: 0.5,
-        ease: "easeInOut",
-      },
+  // const handleClick = () => {
+  //   window.open("https://m.me/hairhubvn", "_blank");
+  // };
+  const isSmallScreen = window.innerWidth <= 768;
+  const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState([
+    {
+      direction: "incoming",
+      text: "Hello! How can we assist you today?",
+      sender: "Hairhub",
+      sentTime: "10:30 AM",
+      avatar: logo,
     },
+    {
+      direction: "outgoing",
+      text: "Hi, I would like to book an appointment.",
+      sender: "User",
+      sentTime: "10:32 AM",
+    },
+    {
+      direction: "incoming",
+      text: "Sure! Do you have a specific time in mind?",
+      sender: "Hairhub",
+      sentTime: "10:33 AM",
+      avatar: logo,
+    },
+  ]);
+
+  const toggleChatBox = () => {
+    setIsOpen(!isOpen);
   };
 
   return (
-    <div className="fixed bottom-20 right-2 z-50">
-      <div className="flex flex-col gap-4">
+    <div
+      className={styles.iconContainer}
+      // onClick={handleClick}
+    >
+      {/* <FaComments size={24} color="white" /> */}
+      <div className={styles.socialIcon}>
         <a
           href="https://m.me/hairhubvn"
           target="_blank"
           rel="noopener noreferrer"
-          className="block"
         >
-          <motion.div
-            key={messengerKey}
-            animate="shake"
-            variants={shakeAnimation}
-            className="w-16 h-16 rounded-full overflow-hidden hover:scale-110 transition-transform duration-300"
-            whileHover={{ scale: 1.1 }}
-          >
-            <img
-              src={iconMes}
-              alt="Messenger"
-              className="w-full h-full object-cover"
-            />
-          </motion.div>
+          <div className={`${styles.icon} ${styles.messenger}`}>
+            <Avatar src={iconMes} size={60} />
+          </div>
         </a>
-
         <a
           href="https://zalo.me/2991839580870454972"
           target="_blank"
           rel="noopener noreferrer"
-          className="block"
         >
-          <motion.div
-            key={zaloKey}
-            animate="shake"
-            variants={shakeAnimation}
-            className="w-14 h-14 rounded-full overflow-hidden hover:scale-110 transition-transform duration-300"
-            whileHover={{ scale: 1.1 }}
-          >
-            <img
-              src={iconZalo}
-              alt="Zalo"
-              className="w-full h-full object-cover"
-            />
-          </motion.div>
+          <div className={`${styles.icon} ${styles.zalo}`}>
+            <Avatar src={iconZalo} size={50} />
+          </div>
         </a>
         {/* <a target="_blank" rel="noopener noreferrer" onClick={toggleChatBox}>
           <div className={`${styles.icon}`}>
@@ -80,6 +83,67 @@ const ChatButton = () => {
           </div>
         </a> */}
       </div>
+      {isOpen && (
+        <MainContainer>
+          <ChatContainer
+            className={`${styles.chatContainer}`}
+            style={
+              isSmallScreen
+                ? { height: "78vh", width: "78vw" }
+                : { height: "75vh", width: "35vw" }
+            }
+          >
+            <ConversationHeader>
+              <ChatAvatar name="Hairhub" src={logo} />
+              <ConversationHeader.Content
+                info="Active 10 mins ago"
+                userName="Hairhub"
+              />
+              <ConversationHeader.Actions>
+                <VoiceCallButton />
+                <VideoCallButton />
+                <InfoButton />
+              </ConversationHeader.Actions>
+            </ConversationHeader>
+            <MessageList
+              className={`${styles.chatList}`}
+              typingIndicator={<TypingIndicator content="Hairhub is typing" />}
+            >
+              {messages.map((msg, i) => (
+                <Message
+                  key={i}
+                  model={{
+                    direction: msg.direction,
+                    message: msg.text,
+                    position: "single",
+                    sender: msg.sender,
+                    sentTime: msg.sentTime,
+                  }}
+                >
+                  {msg.direction === "incoming" && (
+                    <Avatar name={msg.sender} src={msg.avatar} />
+                  )}
+                </Message>
+              ))}
+            </MessageList>
+            <MessageInput placeholder="Type message here" />
+          </ChatContainer>
+
+          <button
+            style={{
+              position: "absolute",
+              top: "10px",
+              right: "10px",
+              backgroundColor: "transparent",
+              border: "none",
+              cursor: "pointer",
+            }}
+            onClick={toggleChatBox}
+          >
+            <FaTimes size={16} color="black" />
+          </button>
+        </MainContainer>
+      )}
     </div>
   );
 };
