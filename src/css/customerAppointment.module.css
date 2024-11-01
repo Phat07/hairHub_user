@@ -79,6 +79,29 @@
   flex: 1;
 }
 
+.table-fillter-item {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.table-fillter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-block: 1rem;
+}
+:global(.my-custom-add .ant-btn) {
+  background-color: #BF9456 !important;
+  border-color: #BF9456 !important;
+}
+
+:global(.my-custom-add .ant-btn:hover) {
+  background-color: #A38245 !important;
+  border-color: #A38245 !important;
+  color: white !important;
+}
+
+
 @media (max-width: 768px) {
   .appointmentDetail {
     flex-direction: column;
@@ -128,6 +151,17 @@
   }
   .appointmentTable {
     display: none;
+  }
+  .table-fillter-item {
+    width: 100%;
+  }
+  .table-fillter {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-block: 5px;
+  }
+  .datePickerCustomeMobile{
+  flex-direction: column;
   }
 }
 

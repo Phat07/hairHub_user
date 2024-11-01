@@ -147,22 +147,22 @@ function LoginGoogle(props) {
   };
 
   return (
-    <Spin  spinning={loading} className="custom-spin">
+    <Spin spinning={loading} className="custom-spin">
       <motion.div
-        variants={{
-          hidden: { y: "-100vh", opacity: 0 },
-          visible: {
-            y: "-1px",
-            opacity: 1,
-            transition: {
-              delay: 0.5,
-              type: "spring",
-              stiffness: 500,
-            },
-          },
-        }}
-        initial="hidden"
-        animate="visible"
+      // variants={{
+      //   hidden: { y: "-100vh", opacity: 0 },
+      //   visible: {
+      //     y: "-1px",
+      //     opacity: 1,
+      //     transition: {
+      //       delay: 0.5,
+      //       type: "spring",
+      //       stiffness: 500,
+      //     },
+      //   },
+      // }}
+      // initial="hidden"
+      // animate="visible"
       >
         <Divider>
           <Typography.Title level={5}>
@@ -174,7 +174,7 @@ function LoginGoogle(props) {
             onSuccess={handleLoginSuccess}
             onError={() => {
               // console.log("Login Failed");
-              message.warning("Vui lòng thử lại")
+              message.warning("Vui lòng thử lại");
             }}
           />
         </Space>

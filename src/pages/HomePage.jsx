@@ -149,7 +149,7 @@ function HomePage(props) {
   };
 
   return (
-    <div style={{ marginTop: "80px" }}>
+    <div style={{ marginTop: "80px", overflowX: "hidden" }}>
       <motion.section
         className="section hero has-before has-bg-image"
         id="home"

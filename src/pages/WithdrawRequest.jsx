@@ -376,8 +376,13 @@ function WithdrawRequest(props) {
         </div>
 
         <div className={styles.filterDate}>
-          <Text strong>Lọc theo ngày tạo: </Text>
-          <DatePicker onChange={handleDateChange} />
+          <div
+            className="datePickerCustome"
+            // className={styles["date-picker-custome"]}
+          >
+            <Text strong>Lọc theo ngày tạo: </Text>
+            <DatePicker onChange={handleDateChange} />
+          </div>
         </div>
 
         <Table
