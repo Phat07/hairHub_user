@@ -31,7 +31,7 @@ const ChatButton = () => {
   };
 
   return (
-    <div className="fixed bottom-32 right-2 z-50">
+    <div className="fixed bottom-20 right-2 z-50">
       <div className="flex flex-col gap-4">
         <a
           href="https://m.me/hairhubvn"
@@ -74,6 +74,11 @@ const ChatButton = () => {
             />
           </motion.div>
         </a>
+        {/* <a target="_blank" rel="noopener noreferrer" onClick={toggleChatBox}>
+          <div className={`${styles.icon}`}>
+            <Avatar src={logo} size={50} />
+          </div>
+        </a> */}
       </div>
     </div>
   );

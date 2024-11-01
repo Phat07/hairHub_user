@@ -209,6 +209,11 @@ const EmployeeStatistics = () => {
       <div
         className="datePickerCustome"
         // className={styles["date-picker-custome"]}
+        style={{
+          alignItems: "center",
+          display: "flex",
+          justifyContent: "center",
+        }}
       >
         <RangePicker
           onChange={handleDateChange}

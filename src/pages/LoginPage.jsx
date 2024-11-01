@@ -336,7 +336,7 @@ const LoginPage = () => {
           setSelected(false);
           form.resetFields();
           setUser(res.data);
-          setEmailVerified(false)
+          setEmailVerified(false);
           setAccessType("login");
         })
         .catch((err) => setLoadingLoad(false))
@@ -650,7 +650,7 @@ const LoginPage = () => {
     <>
       <div
         style={{
-          backgroundColor: "white",
+          backgroundColor: "black",
           height: "100vh",
         }}
       >
@@ -790,11 +790,11 @@ const LoginPage = () => {
           onCancel={() => setIsOtpModalOpen(false)}
         >
           <div
-            // style={{
-            //   display: "flex",
-            //   justifyContent: "center",
-            //   marginBottom: "1rem",
-            // }}
+          // style={{
+          //   display: "flex",
+          //   justifyContent: "center",
+          //   marginBottom: "1rem",
+          // }}
           >
             <OTPInput
               value={otp}

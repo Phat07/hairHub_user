@@ -2,7 +2,17 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styles from "../css/customerAppointment.module.css";
 import "../css/customerAppointmentTable.css";
-import { Pagination, Table, Tag, Button, Spin } from "antd";
+import {
+  Pagination,
+  Table,
+  Tag,
+  Button,
+  Spin,
+  Dropdown,
+  Menu,
+  Typography,
+  DatePicker,
+} from "antd";
 import {
   DownOutlined,
   LoadingOutlined,
@@ -13,7 +23,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import { GetPaymentHistory } from "@/store/salonPayment/action";
 import dayjs from "dayjs";
-
+import classNames from "classnames";
+const { Text } = Typography;
 const formatCurrency = (value) => {
   return new Intl.NumberFormat("vi-VN", {
     style: "currency",
@@ -29,6 +40,8 @@ function ManagementPaymentPage(props) {
   const [paymentType, setPaymentType] = useState(null);
   const [statusPayment, setstatusPayment] = useState("PAID");
   const [paymentDate, setPaymentDate] = useState(null);
+  const [sortLabelPayment, setSortLabelPayment] =
+    useState("Tất cả phương thức");
   const paymentHistory = useSelector(
     (state) => state.PAYMENTREDUCER.paymentHistory
   );
@@ -97,6 +110,31 @@ function ManagementPaymentPage(props) {
   function formatVND(amount) {
     return String(amount).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
+
+  const handleMenuClickPaymentSort = (e) => {
+    setCurrentPagePayment(1);
+    setPaymentType(e.key === "" ? null : e.key);
+    setSortLabelPayment(
+      e.key === ""
+        ? "Tất cả phương thức"
+        : `Sắp xếp theo ${
+            e.key === "DEPOSIT" ? "phương thức nạp" : "phương thức rút"
+          }`
+    );
+  };
+
+  const handleDateChange = (date, dateString) => {
+    setPaymentDate(dateString);
+    setCurrentPagePayment(1);
+  };
+
+  const sortMenu = (
+    <Menu onClick={handleMenuClickPaymentSort}>
+      <Menu.Item key="">Tất cả</Menu.Item>
+      <Menu.Item key="DEPOSIT">Nạp</Menu.Item>
+      <Menu.Item key="WITHDRAW">Rút</Menu.Item>
+    </Menu>
+  );
 
   const navigate = useNavigate();
   const columns = [
@@ -280,6 +318,30 @@ function ManagementPaymentPage(props) {
               {statusDisplayNames[statusKey]}
             </button>
           ))}
+        </div>
+        <div
+          className={`datePickerCustome ${styles.datePickerCustomeMobile}`}
+          style={{ marginBottom: "10px" }}
+        >
+          <div>
+            <Text strong>Ngày thanh toán: </Text>
+            <DatePicker onChange={handleDateChange} />
+          </div>
+
+          <div
+            className={classNames("my-custom-add", styles["table-fillter"])}
+            style={{ marginBlock: "0px" }}
+          >
+            <Dropdown
+              overlay={sortMenu}
+              trigger={["click"]}
+              className={styles["table-fillter-item"]}
+            >
+              <Button>
+                {sortLabelPayment} <DownOutlined />
+              </Button>
+            </Dropdown>
+          </div>
         </div>
 
         <Table

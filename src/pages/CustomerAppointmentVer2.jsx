@@ -819,8 +819,16 @@ function CustomerAppointmentVer2(props) {
         </div>
 
         <div className={styles.filterDate}>
-          <Text strong>Lọc theo ngày: </Text>
-          <DatePicker onChange={handleDateChange} />
+          <div
+            className="datePickerCustome"
+            // className={styles["date-picker-custome"]}
+          >
+            <Text strong>Lọc theo ngày hẹn: </Text>
+            <DatePicker
+              placeholder="Lọc theo thời gian"
+              onChange={handleDateChange}
+            />
+          </div>
         </div>
 
         <Table

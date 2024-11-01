@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import {
@@ -28,6 +28,7 @@ import styles from "../css/salonAppointment.module.css";
 import stylesCard from "../css/customerAppointment.module.css";
 import { useNavigate } from "react-router-dom";
 import { DownOutlined, LoadingOutlined } from "@ant-design/icons";
+import { debounce } from "lodash";
 
 const { Text, Title } = Typography;
 const { Option } = Select;
@@ -47,6 +48,7 @@ function SalonAppointmentVer2(props) {
   const [loading, setLoading] = useState(false);
   const [dateFilter, setDateFilter] = useState(null);
   const [nameFilter, setNameFilter] = useState(null);
+  const [nameFilterInput, setNameFilterInput] = useState(null);
   const searchParams = new URLSearchParams(location.search);
   const appoinmentIdUrl = searchParams.get("appointmentId");
   const [pageSize, setPageSize] = useState(4);
@@ -147,8 +149,16 @@ function SalonAppointmentVer2(props) {
     setDateFilter(dateString);
   };
 
+  const debouncedSetNameFilter = useCallback(
+    debounce((value) => {
+      setNameFilter(value);
+    }, 300), // 300ms debounce time
+    []
+  );
+
   const handleNameFilterChange = (e) => {
-    setNameFilter(e.target.value);
+    debouncedSetNameFilter(e.target.value);
+    setNameFilterInput(e.target.value);
   };
 
   const formatDate = (dateString) => {
@@ -586,7 +596,7 @@ function SalonAppointmentVer2(props) {
       render: (customer) => customer?.fullName,
     },
     {
-      title: "Phương thức",
+      title: "Phương thức thanh toán",
       dataIndex: "paymentMethod",
       key: "paymentMethod",
       render: (paymentMethod) => {
@@ -712,25 +722,30 @@ function SalonAppointmentVer2(props) {
         </div>
 
         <div className={styles.filterDate}>
-          <DatePicker
-            style={{ marginRight: "1rem" }}
-            onChange={handleDateChange}
-            placeholder="Lọc theo thời gian"
-          />
-          <Input
-            placeholder="Lọc theo tên"
-            value={nameFilter}
-            onChange={handleNameFilterChange}
-            allowClear
-            style={{ width: 200 }}
-          />
+          <div
+            className="datePickerCustome"
+            // className={styles["date-picker-custome"]}
+          >
+            <DatePicker
+              style={{ marginRight: "1rem" }}
+              onChange={handleDateChange}
+              placeholder="Lọc theo thời gian"
+            />
+            <Input
+              placeholder="Lọc theo tên"
+              value={nameFilterInput}
+              onChange={handleNameFilterChange}
+              allowClear
+              // style={{ width: 200 }}
+            />
+          </div>
         </div>
 
         <Table
           className={stylesCard.appointmentTable}
           columns={columns}
           dataSource={salonAppointments}
-          loading={loading}
+          // loading={loading}
           rowKey="id"
           pagination={false}
         />
