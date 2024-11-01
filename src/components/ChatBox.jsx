@@ -1,56 +1,81 @@
-import { Avatar } from "antd";
-import React, { useState } from "react";
-import { FaComments } from "react-icons/fa";
+import { Card } from "antd";
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import iconZalo from "../../src/assets/images/policyImg/zalo1.jpg";
 import iconMes from "../../src/assets/images/policyImg/messager.png";
-import "../css/chatMesZalo.css";
 const ChatButton = () => {
-  const handleClick = () => {
-    window.open("https://m.me/hairhubvn", "_blank");
+  // Animation config cho Messenger
+  const [messengerKey, setMessengerKey] = useState(0);
+  const [zaloKey, setZaloKey] = useState(0);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setMessengerKey((prev) => prev + 1);
+      setTimeout(() => {
+        setZaloKey((prev) => prev + 1);
+      }, 250); // Zalo lắc sau Messenger 250ms
+    }, 100); // Interval 2 giây
+
+    return () => clearInterval(intervalId);
+  }, []);
+
+  // Cấu hình animation lắc
+  const shakeAnimation = {
+    shake: {
+      rotate: [0, -10, 10, -10, 10, 0],
+      transition: {
+        duration: 0.5,
+        ease: "easeInOut",
+      },
+    },
   };
 
   return (
-    <button
-      style={{
-        position: "fixed",
-        bottom: "120px",
-        right: "5px",
-        zIndex: 1000,
-        // backgroundColor: "#bf9456",
-        border: "none",
-        borderRadius: "50%",
-        width: "4rem",
-        height: "4rem",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        cursor: "pointer",
-        // boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-      }}
-      onClick={handleClick}
-    >
-      {/* <FaComments size={24} color="white" /> */}
-      <div className="social-icon">
+    <div className="fixed bottom-32 right-2 z-50">
+      <div className="flex flex-col gap-4">
         <a
           href="https://m.me/hairhubvn"
           target="_blank"
           rel="noopener noreferrer"
+          className="block"
         >
-          <div className="icon messenger">
-            <Avatar src={iconMes} size={60} />
-          </div>
+          <motion.div
+            key={messengerKey}
+            animate="shake"
+            variants={shakeAnimation}
+            className="w-16 h-16 rounded-full overflow-hidden hover:scale-110 transition-transform duration-300"
+            whileHover={{ scale: 1.1 }}
+          >
+            <img
+              src={iconMes}
+              alt="Messenger"
+              className="w-full h-full object-cover"
+            />
+          </motion.div>
         </a>
+
         <a
           href="https://zalo.me/2991839580870454972"
           target="_blank"
           rel="noopener noreferrer"
+          className="block"
         >
-          <div className="icon zalo">
-            <Avatar src={iconZalo} size={50} />
-          </div>
+          <motion.div
+            key={zaloKey}
+            animate="shake"
+            variants={shakeAnimation}
+            className="w-14 h-14 rounded-full overflow-hidden hover:scale-110 transition-transform duration-300"
+            whileHover={{ scale: 1.1 }}
+          >
+            <img
+              src={iconZalo}
+              alt="Zalo"
+              className="w-full h-full object-cover"
+            />
+          </motion.div>
         </a>
       </div>
-    </button>
+    </div>
   );
 };
 
