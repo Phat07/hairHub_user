@@ -40,6 +40,57 @@ const ChatButton = () => {
       sentTime: "10:32 AM",
     },
     {
+      direction: "outgoing",
+      text: "Hi, I would like to book an appointment.",
+      sender: "User",
+      sentTime: "10:32 AM",
+    },
+    {
+      direction: "outgoing",
+      text: "Hi, I would like to book an appointment.",
+      sender: "User",
+      sentTime: "10:32 AM",
+    },
+    {
+      direction: "outgoing",
+      text: "Hi, I would like to book an appointment.",
+      sender: "User",
+      sentTime: "10:32 AM",
+    },
+    {
+      direction: "outgoing",
+      text: "Hi, I would like to book an appointment.",
+      sender: "User",
+      sentTime: "10:32 AM",
+    },
+    {
+      direction: "outgoing",
+      text: "Hi, I would like to book an appointment.",
+      sender: "User",
+      sentTime: "10:32 AM",
+    },
+    {
+      direction: "incoming",
+      text: "Sure! Do you have a specific time in mind?",
+      sender: "Hairhub",
+      sentTime: "10:33 AM",
+      avatar: logo,
+    },
+    {
+      direction: "incoming",
+      text: "Sure! Do you have a specific time in mind?",
+      sender: "Hairhub",
+      sentTime: "10:33 AM",
+      avatar: logo,
+    },
+    {
+      direction: "incoming",
+      text: "Sure! Do you have a specific time in mind?",
+      sender: "Hairhub",
+      sentTime: "10:33 AM",
+      avatar: logo,
+    },
+    {
       direction: "incoming",
       text: "Sure! Do you have a specific time in mind?",
       sender: "Hairhub",
@@ -65,7 +116,7 @@ const ChatButton = () => {
           rel="noopener noreferrer"
         >
           <div className={`${styles.icon} ${styles.messenger}`}>
-            <Avatar src={iconMes} size={60} />
+            <Avatar src={iconMes} size={50} />
           </div>
         </a>
         <a
@@ -77,7 +128,13 @@ const ChatButton = () => {
             <Avatar src={iconZalo} size={50} />
           </div>
         </a>
-        {/* <a target="_blank" rel="noopener noreferrer" onClick={toggleChatBox}>
+        {/* <a
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => {
+            toggleChatBox();
+          }}
+        >
           <div className={`${styles.icon}`}>
             <Avatar src={logo} size={50} />
           </div>
@@ -90,7 +147,7 @@ const ChatButton = () => {
             style={
               isSmallScreen
                 ? { height: "78vh", width: "78vw" }
-                : { height: "75vh", width: "35vw" }
+                : { height: "65vh", width: "25vw" }
             }
           >
             <ConversationHeader>
@@ -138,7 +195,9 @@ const ChatButton = () => {
               border: "none",
               cursor: "pointer",
             }}
-            onClick={toggleChatBox}
+            onClick={() => {
+              toggleChatBox();
+            }}
           >
             <FaTimes size={16} color="black" />
           </button>

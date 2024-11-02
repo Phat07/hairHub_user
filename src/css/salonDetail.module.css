@@ -28,7 +28,7 @@
 } */
 .customCheckbox {
   color: white; /* Đặt màu chữ */
-  background-color: #1a94ad; /* Đặt màu nền cho span */
+  background-color: #bf9456; /* Đặt màu nền cho span */
   padding: 5px 10px; /* Đặt padding cho span */
   border-radius: 8px; /* Bo tròn các góc của span */
   display: inline-block; /* Đặt span thành inline-block */
@@ -36,12 +36,12 @@
 }
 
 .customCheckboxBooked {
-  background-color: #28a745; /* Đặt màu nền cho "Booked" */
+  background-color: #aeaeae; /* Đặt màu nền cho "Booked" */
 }
 
-.customCheckboxHover:hover {
-  background-color: #007bff; /* Đặt màu nền khi hover */
-}
+/* .customCheckboxHover:hover {
+  background-color: #a86c40; 
+} */
 .no-close-btn .ant-modal-close {
   display: none;
 }
@@ -269,22 +269,26 @@
 }
 
 .arrow-button {
-  margin: 0 5px;
+  margin: 5px;
   background-color: #bf9456; /* Màu nền cho nút */
   color: white; /* Màu biểu tượng */
   border: none;
+  width: 3rem;
+  height: 3rem;
   padding: 8px;
-  border-radius: 50%; /* Làm nút thành hình tròn */
+  border-radius:50%; /* Làm nút thành hình tròn */
   cursor: pointer;
   transition: background-color 0.3s ease;
+  align-items: center;
+  justify-content: center;
 }
 
 .arrow-button:hover {
-  background-color: #007bff; /* Màu nền khi hover */
+  background-color: #bf9456; /* Màu nền khi hover */
 }
 
 .arrow-button:active {
-  background-color: #0056b3; /* Màu nền khi nhấn */
+  background-color: #bf9456; /* Màu nền khi nhấn */
 }
 
 .arrow-button svg {
@@ -296,6 +300,11 @@
 
 .arrow-button:active {
   transform: scale(0.95); /* Giảm kích thước khi nhấn */
+}
+
+.unselected {
+  background-color: #dcdbda;
+  color: black;
 }
 
 .selected {
@@ -507,3 +516,120 @@ font-size: large;
 :global(.my-custom-modal .ant-modal-content) {
   background-color: #ece8de !important;
 }
+
+
+.serviceBoking{
+  position: relative;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.serviceBookngContainer{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 5px;
+}
+.serviceBookngItem{
+color: black;
+}
+
+.voucher-container {
+  display: flex;
+  width: 100%;
+  padding: 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #bf946c;
+  transition: box-shadow 0.3s ease;
+}
+
+.voucher-container:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.voucher-left {
+  flex: 2;
+  padding-right: 12px;
+}
+
+.voucher-description {
+  font-size: 1rem; /* Điều chỉnh cỡ chữ cho mô tả */
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.voucher-minimum,
+.voucher-max-discount,
+.voucher-condition {
+  font-size: 0.875rem; /* Cỡ chữ nhỏ hơn cho các chi tiết khác */
+  color: #555;
+  margin-bottom: 4px;
+}
+
+.voucher-condition {
+  color: #ff4d4f; /* Màu đỏ cho điều kiện không đủ */
+  font-weight: bold;
+}
+
+.voucher-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ddd;
+  border-radius: 8px;
+  flex-direction: column;
+}
+
+.voucher-discount {
+  font-size: 1.5rem; /* Cỡ chữ lớn cho phần trăm giảm giá */
+  font-weight: bold;
+  color: #ff6f61; /* Màu nổi bật cho phần trăm giảm giá */
+}
+
+/* CSS để ghi đè màu nền của Modal */
+.custom-confirm-modal .ant-modal-content {
+  background-color: #f0f8ff; /* Màu nền mong muốn */
+}
+
+.custom-confirm-modal .ant-modal-footer .ant-btn-primary {
+  background-color: #d32f2f; /* Màu nút "Thoát" */
+  border-color: #d32f2f;
+}
+
+.custom-confirm-modal .ant-modal-footer .ant-btn {
+  color: #555; /* Màu nút "Hủy" */
+}
+
+
+
+@media (max-width: 768px) {
+  /* .serviceBookngContainer{
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    margin-top: 0;
+  } */
+  .serviceBookngItem{
+    margin-top: 5px;
+  }
+  .arrow-button{
+    display: none;
+  }
+  .voucher-discount {
+    font-size: 1rem; /* Cỡ chữ lớn cho phần trăm giảm giá */
+  }
+  .voucher-container {
+    padding: 10px;
+  }
+  .ant-list-item{
+    padding-inline: 0px;
+  }
+}
+

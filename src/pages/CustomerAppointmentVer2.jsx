@@ -661,14 +661,23 @@ function CustomerAppointmentVer2(props) {
       key: "totalPrice",
       render: (totalPrice) => `${formatVND(totalPrice)} VND`,
     },
-    // {
-    //   title: "Trạng thái",
-    //   dataIndex: "status",
-    //   key: "status",
-    //   render: (status) => (
-    //     <Tag color={statusColors[status]}>{statusDisplayNames[status]}</Tag>
-    //   ),
-    // },
+    {
+      title: "Phương thức thanh toán",
+      dataIndex: "paymentMethod",
+      key: "paymentMethod",
+      render: (paymentMethod) => {
+        switch (paymentMethod) {
+          case "PAYBYWALLET":
+            return "Thanh toán qua ví";
+          case "PAYINSALON":
+            return "Thanh toán tại salon";
+          case "PAYBYBANK":
+            return "Thanh toán qua ngân hàng";
+          default:
+            return paymentMethod;
+        }
+      },
+    },
     {
       title: "Chi tiết",
       key: "detail",
