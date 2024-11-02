@@ -1,4 +1,5 @@
 import {
+  ArrowLeftOutlined,
   CloseOutlined,
   CreditCardOutlined,
   LeftOutlined,
@@ -63,6 +64,7 @@ import {
 } from "../store/salonInformation/action";
 import { actCreateNotificationList } from "@/store/notification/action";
 import { GetInformationAccount } from "@/store/account/action";
+import { name } from "dayjs/locale/vi";
 const { Panel } = Collapse;
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -318,6 +320,7 @@ function SalonDetail(props) {
   const listVoucherNotPaging = useSelector(
     (state) => state.SALONVOUCHERS.getVoucherBySalonIdNotPaging
   );
+  console.log("listVoucherNotPaging", listVoucherNotPaging);
 
   const listFeedback = useSelector(
     (state) => state.RATING.getAllFeedbackbySalonId
@@ -1217,7 +1220,6 @@ function SalonDetail(props) {
       });
   };
 
-
   const fetchAvailable = async (currentDate) => {
     const postData = {
       day: currentDate,
@@ -1595,6 +1597,10 @@ function SalonDetail(props) {
     updatedServices?.map((e) => {
       total += e?.price;
     });
+    const updatedVoucherSelected = voucherSelected?.filter(
+      (voucher) => voucher?.minimumOrderAmount <= total
+    );
+    setVoucherSelected(updatedVoucherSelected);
     setTotalPriceVoucher(total);
   };
   const handleFilterChange = (rating) => {
@@ -1944,30 +1950,95 @@ function SalonDetail(props) {
                     title={
                       <div
                         style={{
-                          fontSize: "3rem",
+                          fontSize: "1.5rem",
                           fontWeight: "bold",
                           textAlign: "center",
                           backgroundColor: "#ece8de",
                         }}
                       >
-                        Đặt lịch cắt tóc
+                        {showServiceList
+                          ? "Thêm những dịch vụ khác"
+                          : displayVoucherList
+                          ? "Thêm voucher"
+                          : "Đặt lịch cắt tóc"}
                       </div>
                     }
+                    maskClosable={false}
                     visible={
                       isBookingModalVisible && additionalServices?.length !== 0
                     }
                     className={showServiceList ? "no-close-btn" : ""}
                     onCancel={() => {
-                      setIsBookingModalVisible(false);
+                      Modal.confirm({
+                        title: "Bạn muốn thoát chứ?",
+                        content: "Dữ liệu lịch hẹn bạn đã chọn sẽ mất hết.",
+                        okText: "Thoát",
+                        cancelText: "Hủy",
+                        onOk: () => {
+                          setIsBookingModalVisible(false);
+                          setAdditionalServices([]);
+                          setVoucherSelected([]);
+                          setShowServiceList(false);
+                        },
+                      });
                     }}
                     footer={null}
                     width={800}
                   >
+                    {/* {showServiceList && (
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: "18px",
+                          left: "20px",
+                          zIndex: 1, // Để nút nằm trên tất cả các phần tử khác
+                          cursor: "pointer",
+                        }}
+                        onClick={() => {
+                          setShowServiceList(false);
+                        }}
+                      >
+                        <ArrowLeftOutlined style={{ fontSize: "20px" }} />
+                      </div>
+                    )} */}
+
+                    {showServiceList ? (
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: "18px",
+                          left: "20px",
+                          zIndex: 1, // Để nút nằm trên tất cả các phần tử khác
+                          cursor: "pointer",
+                        }}
+                        onClick={() => {
+                          setShowServiceList(false);
+                        }}
+                      >
+                        <ArrowLeftOutlined style={{ fontSize: "20px" }} />
+                      </div> // Hiển thị khi `showServiceList` là true
+                    ) : displayVoucherList ? (
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: "18px",
+                          left: "20px",
+                          zIndex: 1, // Để nút nằm trên tất cả các phần tử khác
+                          cursor: "pointer",
+                        }}
+                        onClick={() => {
+                          setDisplayVoucherList(false);
+                        }}
+                      >
+                        <ArrowLeftOutlined style={{ fontSize: "20px" }} />
+                      </div> // Hiển thị khi `displayVoucherList` là true và `showServiceList` là false
+                    ) : null}
+
                     {showServiceList ? (
                       <>
                         <Spin className="custom-spin" spinning={loading}>
                           <div>
-                            <Title level={3}>Thêm những dịch vụ khác</Title>
+                            {/* <Title level={3}>Thêm những dịch vụ khác</Title> */}
                             <List
                               itemLayout="horizontal"
                               dataSource={data}
@@ -1992,66 +2063,138 @@ function SalonDetail(props) {
                                           handleServiceSelect(service)
                                         }
                                       >
-                                        {isChecked ? "Đã đặt" : "Đặt lịch"}
+                                        {isChecked ? "Đã chọn" : "Chọn thêm"}
                                       </div>,
                                     ]}
+                                    style={{
+                                      border: "1px solid #ddd",
+                                      borderRadius: "8px",
+                                      boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                                      padding: "0px",
+                                      marginTop: "10px",
+                                    }}
                                   >
                                     <List.Item.Meta
-                                      avatar={
-                                        <Avatar
-                                          size={{
-                                            xs: 24,
-                                            sm: 32,
-                                            md: 40,
-                                            lg: 64,
-                                            xl: 80,
-                                            xxl: 100,
-                                          }}
-                                          src={service?.img}
-                                        />
-                                      }
-                                      title={
-                                        <Title level={4}>
-                                          {service.serviceName}
-                                        </Title>
-                                      }
+                                      style={{
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                      }}
+                                      // avatar={
+                                      //   <Avatar
+                                      //     size={{
+                                      //       xs: 60,
+                                      //       sm: 60,
+                                      //       md: 60,
+                                      //       lg: 60,
+                                      //       xl: 60,
+                                      //       xxl: 100,
+                                      //     }}
+                                      //     src={service?.img}
+                                      //     shape="square"
+                                      //   />
+                                      // }
+                                      // title={
+                                      //   <Title level={4}>
+                                      //     {service.serviceName}
+                                      //   </Title>
+                                      // }
                                       description={
-                                        <Typography className="w-fit">
-                                          <Text strong>
-                                            Mô tả:&nbsp;
+                                        <Typography
+                                          className={style["serviceBoking"]}
+                                          style={{
+                                            boxShadow: "none",
+                                            border: "none",
+                                          }}
+                                        >
+                                          <Text
+                                            strong
+                                            className={
+                                              style["serviceBookngItem"]
+                                            }
+                                          >
+                                            Tên dịch vụ:&nbsp;
                                             <Text
                                               style={{
                                                 display: "inline",
                                                 fontWeight: "normal",
                                               }}
                                             >
-                                              {service.description}
-                                            </Text>
-                                          </Text>{" "}
-                                          <br />
-                                          <Text strong>
-                                            Giá:&nbsp;
-                                            <Text
-                                              style={{
-                                                display: "inline",
-                                                fontWeight: "normal",
-                                              }}
-                                            >
-                                              {formatMoneyVND(service.price)}
-                                            </Text>
-                                            <br />
-                                          </Text>
-                                          <Text strong>
-                                            Thời gian:&nbsp;
-                                            <Text
-                                              style={{
-                                                display: "inline",
-                                                fontWeight: "normal",
-                                              }}
-                                            >
-                                              {formatTime(service.time)}
+                                              {service.serviceName}
                                             </Text>
                                           </Text>
+                                          {/* <div
+                                            className={
+                                              style["serviceBookngItem"]
+                                            }
+                                          >
+                                            {service.serviceName}
+                                          </div> */}
+                                          <div
+                                            className={
+                                              style["serviceBookngContainer"]
+                                            }
+                                          >
+                                            <Text
+                                              strong
+                                              className={
+                                                style["serviceBookngItem"]
+                                              }
+                                            >
+                                              Mô tả:&nbsp;
+                                              <Text
+                                                style={{
+                                                  display: "inline",
+                                                  fontWeight: "normal",
+                                                }}
+                                              >
+                                                {service.description}
+                                              </Text>
+                                            </Text>
+                                          </div>
+                                          <div
+                                            className={
+                                              style["serviceBookngContainer"]
+                                            }
+                                          >
+                                            <Text
+                                              strong
+                                              className={
+                                                style["serviceBookngItem"]
+                                              }
+                                            >
+                                              Giá:&nbsp;
+                                              <Text
+                                                style={{
+                                                  display: "inline",
+                                                  fontWeight: "normal",
+                                                }}
+                                              >
+                                                {formatMoneyVND(service.price)}
+                                              </Text>
+                                            </Text>
+                                          </div>
+                                          <div
+                                            className={
+                                              style["serviceBookngContainer"]
+                                            }
+                                          >
+                                            <Text
+                                              strong
+                                              className={
+                                                style["serviceBookngItem"]
+                                              }
+                                            >
+                                              Thời gian:&nbsp;
+                                              <Text
+                                                style={{
+                                                  display: "inline",
+                                                  fontWeight: "normal",
+                                                }}
+                                              >
+                                                {formatTime(service.time)}
+                                              </Text>
+                                            </Text>
+                                          </div>
                                         </Typography>
                                       }
                                     />
@@ -2060,21 +2203,124 @@ function SalonDetail(props) {
                               }}
                               style={{ backgroundColor: "transparent" }}
                             />
-                            <Button
+                            {/* <Button
                               type="dashed"
                               block
-                              style={{ marginTop: "16px" }}
+                              style={{
+                                position: "absolute",
+                                top: "16px",
+                                left: "16px",
+                                zIndex: 1, // Để nút nằm trên tất cả các phần tử khác
+                              }}
                               onClick={() => {
                                 setShowServiceList(false);
                               }}
                               // disabled={hasError}
                             >
                               Trở về
-                            </Button>
+                            </Button> */}
                           </div>
                         </Spin>
                       </>
+                    ) : displayVoucherList ? (
+                      // displayVoucherList && (
+                      <List
+                        style={{
+                          marginTop: "16px",
+                          // background: "#f0f0f0",
+                        }}
+                        size="middle"
+                        dataSource={listVoucherNotPaging}
+                        renderItem={(item) => (
+                          <List.Item
+                            style={{
+                              cursor:
+                                item.minimumOrderAmount <= totalPriceVoucher
+                                  ? "pointer"
+                                  : "not-allowed",
+                              opacity:
+                                item.minimumOrderAmount <= totalPriceVoucher
+                                  ? 1
+                                  : 0.5,
+                              padding: "5px 0px",
+                            }}
+                            onClick={() => {
+                              if (
+                                item.minimumOrderAmount <= totalPriceVoucher
+                              ) {
+                                handleSelectedVoucher(item);
+                                setDisplayVoucherList(!displayVoucherList);
+                              }
+                            }}
+                          >
+                            <div className="flex justify-between w-full">
+                              <List.Item.Meta
+                                style={{
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                }}
+                                description={
+                                  <div className={style["voucher-container"]}>
+                                    <div className={style["voucher-left"]}>
+                                      <p
+                                        className={style["voucher-description"]}
+                                      >
+                                        {item.description}
+                                      </p>
+                                      <p className={style["voucher-minimum"]}>
+                                        Số tiền tối thiểu:{" "}
+                                        {formatMoneyVND(
+                                          item.minimumOrderAmount
+                                        )}{" "}
+                                        vnđ
+                                      </p>
+                                      <p
+                                        className={
+                                          style["voucher-max-discount"]
+                                        }
+                                      >
+                                        Giảm giá tối đa:{" "}
+                                        {formatMoneyVND(item.maximumDiscount)}{" "}
+                                        vnđ
+                                      </p>
+                                      <p
+                                        className={
+                                          style["voucher-max-discount"]
+                                        }
+                                      >
+                                        Ngày hết hạn:{" "}
+                                        {formattedDateUi(item.expiryDate)}
+                                      </p>
+                                      {item.minimumOrderAmount >
+                                        totalPriceVoucher && (
+                                        <p
+                                          className={style["voucher-condition"]}
+                                        >
+                                          Không đủ điều kiện
+                                        </p>
+                                      )}
+                                    </div>
+                                    <div className={style["voucher-right"]}>
+                                      <span
+                                        className={style["voucher-discount"]}
+                                      >
+                                        GIẢM GIÁ
+                                      </span>
+                                      <span
+                                        className={style["voucher-discount"]}
+                                      >
+                                        {item.discountPercentage * 100}%
+                                      </span>
+                                    </div>
+                                  </div>
+                                }
+                              ></List.Item.Meta>
+                            </div>
+                          </List.Item>
+                        )}
+                      />
                     ) : (
+                      // )
                       <div>
                         <Divider />
                         <div>
@@ -2117,8 +2363,9 @@ function SalonDetail(props) {
                                         selectedDate.toDateString() ===
                                           day.toDateString()
                                           ? style.selected
-                                          : ""
+                                          : style.unselected
                                       }
+                                      type="text"
                                     >
                                       {formatDate(day)}
                                     </Button>
@@ -2213,6 +2460,7 @@ function SalonDetail(props) {
 
                                               return (
                                                 <Button
+                                                  type="text"
                                                   key={index}
                                                   onClick={() =>
                                                     handleTimeSlotSelect(
@@ -2223,7 +2471,7 @@ function SalonDetail(props) {
                                                     selectedTimeSlot ===
                                                     slot?.timeSlot
                                                       ? style.selected
-                                                      : ""
+                                                      : style.unselected
                                                   }
                                                   disabled={isDisabled}
                                                 >
@@ -2251,7 +2499,7 @@ function SalonDetail(props) {
                                 ) : (
                                   <Title
                                     className={style["warning-title"]}
-                                    level={4}
+                                    level={5}
                                   >
                                     Salon không hoạt hộng hoặc không có nhân
                                     viên làm trong khoảng thời gian này!
@@ -2264,7 +2512,7 @@ function SalonDetail(props) {
                         )}
                         {additionalServices?.length > 0 && (
                           <div>
-                            <Title level={4}>Thêm dịch vụ</Title>
+                            <Title level={5}>Dịch vụ đang đặt</Title>
                             <List
                               loading={loadingBook}
                               itemLayout="horizontal"
@@ -2281,53 +2529,144 @@ function SalonDetail(props) {
                                   <List.Item>
                                     <div className="flex justify-between w-full">
                                       <List.Item.Meta
-                                        avatar={
-                                          <Avatar
-                                            size={{
-                                              xs: 24,
-                                              sm: 32,
-                                              md: 40,
-                                              lg: 64,
-                                              xl: 80,
-                                              xxl: 100,
-                                            }}
-                                            src={service?.img}
-                                          />
-                                        }
-                                        title={
-                                          <span className="text-xl md:text-2xl font-bold transition-transform duration-300 hover:scale-105">
-                                            {service.serviceName}
-                                          </span>
-                                        }
+                                        style={{
+                                          alignItems: "center",
+                                          justifyContent: "center",
+                                        }}
+                                        // avatar={
+                                        //   <Avatar
+                                        //     size={80}
+                                        //     shape="square"
+                                        //     src={service?.img}
+                                        //   />
+                                        // }
+                                        // title={
+                                        //   <span
+                                        //     className="font-bold"
+                                        //     style={{ fontSize: "1rem" }}
+                                        //   >
+                                        //     {service.serviceName}
+                                        //   </span>
+                                        // }
                                         description={
-                                          <div className="inline-grid border border-gray-300 p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out">
-                                            <span className="text-base md:text-lg">
-                                              Tiền:{" "}
-                                              {formatMoneyVND(service.price)}{" "}
-                                              vnđ
-                                            </span>
-                                            <span className="text-base md:text-lg">
-                                              Thời gian dịch vụ:{" "}
-                                              {formatTime(service.time)}
-                                            </span>
-                                            <span className="text-base md:text-lg">
-                                              Thời gian chờ:{" "}
-                                              {formatTime(service.waitingTime)}
-                                            </span>
-                                            <span className="text-base md:text-lg">
-                                              Nhân viên:{" "}
-                                              {data ? (
-                                                <>{data?.fullName}</>
-                                              ) : (
-                                                <>
-                                                  <RandomIcon /> Ngẫu nhiên
-                                                </>
-                                              )}
-                                            </span>
+                                          <div
+                                            className={style["serviceBoking"]}
+                                          >
+                                            {additionalServices?.length > 1 && (
+                                              <Button
+                                                key="close"
+                                                type="text"
+                                                icon={<CloseOutlined />}
+                                                onClick={() =>
+                                                  handleRemoveService(service)
+                                                }
+                                                className={`${style["close-button-close"]} text-black`}
+                                                style={{
+                                                  position: "absolute",
+                                                  top: "-10px", // Định vị nút cách cạnh trên 8px
+                                                  right: "-10px", // Định vị nút cách cạnh phải 8px
+                                                  zIndex: 1,
+                                                  backgroundColor: "gray",
+                                                  borderRadius: "50px",
+                                                  transition:
+                                                    "transform 0.3s ease",
+                                                }}
+                                              />
+                                            )}
+                                            {/* <Avatar
+                                              size={80}
+                                              shape="square"
+                                              src={service?.img}
+                                            /> */}
+                                            <div
+                                              className={
+                                                style["serviceBookngContainer"]
+                                              }
+                                            >
+                                              <span
+                                                className={
+                                                  style["serviceBookngItem"]
+                                                }
+                                                style={{ fontWeight: "bold" }}
+                                              >
+                                                Tên dịch vụ:{" "}
+                                                {service.serviceName}
+                                              </span>
+                                              <span
+                                                className={
+                                                  style["serviceBookngItem"]
+                                                }
+                                              >
+                                                Tiền:{" "}
+                                                {formatMoneyVND(service.price)}{" "}
+                                                vnđ
+                                              </span>
+                                            </div>
+
+                                            <div
+                                              className={
+                                                style["serviceBookngContainer"]
+                                              }
+                                            >
+                                              <span
+                                                className={
+                                                  style["serviceBookngItem"]
+                                                }
+                                              >
+                                                Thời gian dịch vụ:{" "}
+                                                {formatTime(service.time)}
+                                              </span>
+                                              <span
+                                                className={
+                                                  style["serviceBookngItem"]
+                                                }
+                                              >
+                                                Thời gian chờ:{" "}
+                                                {formatTime(
+                                                  service.waitingTime
+                                                )}
+                                              </span>
+                                            </div>
+
+                                            <div
+                                              className={
+                                                style["serviceBookngContainer"]
+                                              }
+                                            >
+                                              <span
+                                                className={
+                                                  style["serviceBookngItem"]
+                                                }
+                                              >
+                                                Nhân viên:{" "}
+                                                {data ? (
+                                                  data?.fullName
+                                                ) : (
+                                                  <>
+                                                    <RandomIcon /> Ngẫu nhiên
+                                                  </>
+                                                )}
+                                              </span>
+                                              <Button
+                                                key="change"
+                                                onClick={() =>
+                                                  handleChangeStaff(service)
+                                                }
+                                                type="primary"
+                                                success
+                                                style={{
+                                                  backgroundColor: "#bf9456",
+                                                }}
+                                                disabled={statusChangeStaff}
+                                                // Add margin-top to space from the close button
+                                              >
+                                                Chọn nhân viên
+                                              </Button>
+                                            </div>
                                           </div>
                                         }
                                       />
-                                      <div className="relative flex flex-col justify-start ml-4">
+                                      {/* <div className="relative flex flex-col justify-start ml-4">
                                         <Button
                                           key="close"
                                           type="text"
@@ -2346,71 +2685,128 @@ function SalonDetail(props) {
                                           onClick={() =>
                                             handleChangeStaff(service)
                                           }
+                                          type="primary"
+                                          success
+                                          style={{ backgroundColor: "#bf9456" }}
                                           disabled={statusChangeStaff}
                                           className="w-full mt-16" // Add margin-top to space from the close button
                                         >
                                           Chọn nhân viên
                                         </Button>
-                                      </div>
+                                      </div> */}
                                     </div>
                                     {currentService && (
+                                      // <Modal
+                                      //   title="Chọn nhân viên"
+                                      //   visible={isModalVisible}
+                                      //   onCancel={handleCancel}
+                                      //   footer={null}
+                                      // >
+                                      //   <Select
+                                      //     placeholder="Lựa chọn 1 nhân viên"
+                                      //     style={{ width: "100%" }}
+                                      //     value={
+                                      //       additionalServices.some(
+                                      //         (service) =>
+                                      //           service.id !==
+                                      //             currentService.id &&
+                                      //           service.bookingDetail
+                                      //             ?.salonEmployeeId ===
+                                      //             getSelectedEmployeeName(
+                                      //               currentService.id
+                                      //             )
+                                      //       )
+                                      //         ? undefined
+                                      //         : getSelectedEmployeeName(
+                                      //             currentService.id
+                                      //           ) || undefined
+                                      //     }
+                                      //     onChange={(value) => {
+                                      //       if (value === "random") {
+                                      //         handleChangeRandomEmployee();
+                                      //       } else {
+                                      //         handleChangeStaffSecond(
+                                      //           currentService,
+                                      //           value
+                                      //         );
+                                      //       }
+                                      //     }}
+                                      //   >
+                                      //     <Option key="random" value="random">
+                                      //       Ngẫu nhiên
+                                      //     </Option>
+                                      //     {currentService?.bookingDetailResponses?.employees?.map(
+                                      //       (e) => (
+                                      //         <Option
+                                      //           key={e.id}
+                                      //           value={e.id || e.fullName}
+                                      //         >
+                                      //           <div className="flex items-center">
+                                      //             <Avatar
+                                      //               src={e.img}
+                                      //               alt={e.fullName}
+                                      //               className="mr-2"
+                                      //             />
+                                      //             {e.fullName}
+                                      //           </div>
+                                      //         </Option>
+                                      //       )
+                                      //     )}
+                                      //   </Select>
+                                      // </Modal>
                                       <Modal
-                                        title="Chọn nhân viên"
+                                        title={`Chọn nhân viên cho dịch vụ ${currentService?.serviceName}`}
                                         visible={isModalVisible}
                                         onCancel={handleCancel}
                                         footer={null}
                                       >
-                                        <Select
-                                          placeholder="Lựa chọn 1 nhân viên"
-                                          style={{ width: "100%" }}
-                                          value={
-                                            additionalServices.some(
-                                              (service) =>
-                                                service.id !==
-                                                  currentService.id &&
-                                                service.bookingDetail
-                                                  ?.salonEmployeeId ===
-                                                  getSelectedEmployeeName(
-                                                    currentService.id
-                                                  )
-                                            )
-                                              ? undefined
-                                              : getSelectedEmployeeName(
-                                                  currentService.id
-                                                ) || undefined
-                                          }
-                                          onChange={(value) => {
-                                            if (value === "random") {
-                                              handleChangeRandomEmployee();
-                                            } else {
-                                              handleChangeStaffSecond(
-                                                currentService,
-                                                value
-                                              );
-                                            }
-                                          }}
-                                        >
-                                          <Option key="random" value="random">
-                                            Ngẫu nhiên
-                                          </Option>
-                                          {currentService?.bookingDetailResponses?.employees?.map(
-                                            (e) => (
-                                              <Option
-                                                key={e.id}
-                                                value={e.id || e.fullName}
-                                              >
-                                                <div className="flex items-center">
+                                        <List
+                                          itemLayout="horizontal"
+                                          dataSource={[
+                                            {
+                                              id: "random",
+                                              fullName: "Ngẫu nhiên",
+                                              img: null,
+                                            }, // Thêm mục "Ngẫu nhiên" vào danh sách
+                                            ...(currentService
+                                              ?.bookingDetailResponses
+                                              ?.employees || []),
+                                          ]}
+                                          renderItem={(employee) => (
+                                            <List.Item
+                                              actions={[
+                                                <Button
+                                                  key={employee.id}
+                                                  onClick={() => {
+                                                    if (
+                                                      employee.id === "random"
+                                                    ) {
+                                                      handleChangeRandomEmployee();
+                                                    } else {
+                                                      handleChangeStaffSecond(
+                                                        currentService,
+                                                        employee.id
+                                                      );
+                                                    }
+                                                  }}
+                                                >
+                                                  Chọn
+                                                </Button>,
+                                              ]}
+                                            >
+                                              <List.Item.Meta
+                                                avatar={
                                                   <Avatar
-                                                    src={e.img}
-                                                    alt={e.fullName}
-                                                    className="mr-2"
+                                                    src={employee.img}
+                                                    alt={employee.fullName}
                                                   />
-                                                  {e.fullName}
-                                                </div>
-                                              </Option>
-                                            )
+                                                }
+                                                title={employee.fullName}
+                                                description={employee?.gender}
+                                              />
+                                            </List.Item>
                                           )}
-                                        </Select>
+                                        />
                                       </Modal>
                                     )}
                                   </List.Item>
@@ -2421,29 +2817,37 @@ function SalonDetail(props) {
                         )}
 
                         <Button
-                          type="dashed"
+                          type="text"
                           block
-                          style={{ fontSize: "1rem" }}
+                          success
+                          style={{
+                            backgroundColor: "#bf9456",
+                            fontSize: "1rem",
+                          }}
                           // onClick={() => setShowServiceList(true)}
                           onClick={handleAddServiceClick}
                         >
                           Thêm dịch vụ khác
                         </Button>
                         <Button
-                          type="dashed"
-                          block
+                          type="primary"
                           style={{
+                            backgroundColor: "#bf9456",
                             marginTop: "16px",
-                            // opacity: 0.5, // Phủ mờ nút
-                            // cursor: "not-allowed"
                           }}
+                          // className={
+                          //   displayVoucherList
+                          //     ? style.selected
+                          //     : style.unselected
+                          // }
+                          block
                           onClick={handleDisplayVoucherList}
-                          disabled
+                          // disabled
                         >
                           {displayVoucherList ? (
                             <Text>Đóng</Text>
                           ) : (
-                            <Text>Voucher</Text>
+                            <Text>Xem danh sách Voucher</Text>
                           )}
                         </Button>
                         {/* <p
@@ -2456,58 +2860,120 @@ function SalonDetail(props) {
                           Sử dụng ứng dụng di động HairHub để có thêm nhiều ưu
                           đãi hấp dẫn
                         </p> */}
-                        {/* {displayVoucherList && ( */}
-                        {listVoucherNotPaging ? (
-                          // <List
-                          //   style={{ marginTop: "16px", background: "#ee22" }}
-                          //   size="middle"
-                          //   bordered
-                          //   dataSource={voucherList}
-                          //   renderItem={(item) => (
-                          //     <List.Item
-                          //       style={{ cursor: "pointer" }}
-                          //       onClick={() => handleSelectedVoucher(item)}
-                          //     >
-                          //       {item.description}
-                          //     </List.Item>
-                          //   )}
-                          // />
-                          <List
-                            style={{ marginTop: "16px", background: "#f0f0f0" }}
-                            size="middle"
-                            bordered
-                            dataSource={listVoucherNotPaging}
-                            renderItem={(item) => (
-                              <List.Item
-                                style={{
-                                  cursor:
-                                    item.minimumOrderAmount <= totalPriceVoucher
-                                      ? "pointer"
-                                      : "not-allowed",
-                                  opacity:
-                                    item.minimumOrderAmount <= totalPriceVoucher
-                                      ? 1
-                                      : 0.5,
-                                }}
-                                onClick={() => {
-                                  if (
-                                    item.minimumOrderAmount <= totalPriceVoucher
-                                  ) {
-                                    handleSelectedVoucher(item);
-                                  }
-                                }}
-                              >
-                                {item.description}
-                                {item.minimumOrderAmount > totalPriceVoucher &&
-                                  " (Không đủ điều kiện)"}
-                              </List.Item>
-                            )}
-                          />
-                        ) : (
-                          <div>
-                            <Empty />
-                          </div>
-                        )}
+                        {
+                          // displayVoucherList && (
+                          //   <List
+                          //     style={{
+                          //       marginTop: "16px",
+                          //       // background: "#f0f0f0",
+                          //     }}
+                          //     size="middle"
+                          //     bordered
+                          //     dataSource={listVoucherNotPaging}
+                          //     renderItem={(item) => (
+                          //       <List.Item
+                          //         style={{
+                          //           cursor:
+                          //             item.minimumOrderAmount <=
+                          //             totalPriceVoucher
+                          //               ? "pointer"
+                          //               : "not-allowed",
+                          //           opacity:
+                          //             item.minimumOrderAmount <=
+                          //             totalPriceVoucher
+                          //               ? 1
+                          //               : 0.5,
+                          //         }}
+                          //         onClick={() => {
+                          //           if (
+                          //             item.minimumOrderAmount <=
+                          //             totalPriceVoucher
+                          //           ) {
+                          //             handleSelectedVoucher(item);
+                          //             setDisplayVoucherList(
+                          //               !displayVoucherList
+                          //             );
+                          //           }
+                          //         }}
+                          //       >
+                          //         <div className="flex justify-between w-full">
+                          //           <List.Item.Meta
+                          //             style={{
+                          //               alignItems: "center",
+                          //               justifyContent: "center",
+                          //             }}
+                          //             description={
+                          //               <div
+                          //                 className={style["voucher-container"]}
+                          //               >
+                          //                 <div
+                          //                   className={style["voucher-left"]}
+                          //                 >
+                          //                   <p
+                          //                     className={
+                          //                       style["voucher-description"]
+                          //                     }
+                          //                   >
+                          //                     {item.description}
+                          //                   </p>
+                          //                   <p
+                          //                     className={
+                          //                       style["voucher-minimum"]
+                          //                     }
+                          //                   >
+                          //                     Số tiền tối thiểu:{" "}
+                          //                     {formatMoneyVND(
+                          //                       item.minimumOrderAmount
+                          //                     )}{" "}
+                          //                     vnđ
+                          //                   </p>
+                          //                   <p
+                          //                     className={
+                          //                       style["voucher-max-discount"]
+                          //                     }
+                          //                   >
+                          //                     Giảm giá tối đa:{" "}
+                          //                     {formatMoneyVND(
+                          //                       item.maximumDiscount
+                          //                     )}{" "}
+                          //                     vnđ
+                          //                   </p>
+                          //                   {item.minimumOrderAmount >
+                          //                     totalPriceVoucher && (
+                          //                     <p
+                          //                       className={
+                          //                         style["voucher-condition"]
+                          //                       }
+                          //                     >
+                          //                       Không đủ điều kiện
+                          //                     </p>
+                          //                   )}
+                          //                 </div>
+                          //                 <div
+                          //                   className={style["voucher-right"]}
+                          //                 >
+                          //                   <span
+                          //                     className={
+                          //                       style["voucher-discount"]
+                          //                     }
+                          //                   >
+                          //                     {item.discountPercentage * 100}%
+                          //                   </span>
+                          //                 </div>
+                          //               </div>
+                          //             }
+                          //           ></List.Item.Meta>
+                          //         </div>
+                          //       </List.Item>
+                          //     )}
+                          //   />
+                          // )
+                          // : (
+                          //   <div>
+                          //     <Empty />
+                          //   </div>
+                          // )
+                        }
                         {/* {voucherSelected &&
                           voucherSelected?.map((e) => {
                             return (
@@ -2551,39 +3017,50 @@ function SalonDetail(props) {
                           })} */}
                         {voucherSelected &&
                           voucherSelected.map((e) => (
-                            <Card
+                            <div
                               key={e.id}
                               title="Voucher đã chọn"
                               style={{
+                                padding: "0px",
                                 marginTop: "16px",
-                                backgroundColor: "#fafafa",
                               }}
-                              bordered={true}
+                              // bordered={true}
                             >
-                              <p>
-                                <Text strong>Mô tả:</Text> {e.description}
-                              </p>
-                              <p>
-                                <Text strong>Giá tối thiểu:</Text>{" "}
-                                {formatCurrency(e.minimumOrderAmount)}
-                              </p>
-                              <p>
-                                <Text strong>Phần trăm giảm:</Text>{" "}
-                                {formatDiscountPercentage(e.discountPercentage)}
-                                %
-                              </p>
-                              <p>
-                                <Text strong>Ngày hết hạn:</Text>{" "}
-                                {formattedDateUi(e.expiryDate)}
-                              </p>
-                              <Button
-                                type="primary"
-                                danger
-                                onClick={() => handleRemoveVoucher(e.id)}
-                              >
-                                Xóa mã khuyến mãi
-                              </Button>
-                            </Card>
+                              <div className={style["voucher-container"]}>
+                                <div className={style["voucher-left"]}>
+                                  <p className={style["voucher-description"]}>
+                                    {e.description}
+                                  </p>
+                                  <p className={style["voucher-minimum"]}>
+                                    Số tiền tối thiểu:{" "}
+                                    {formatMoneyVND(e.minimumOrderAmount)} vnđ
+                                  </p>
+                                  <p className={style["voucher-max-discount"]}>
+                                    Giảm giá tối đa:{" "}
+                                    {formatMoneyVND(e.maximumDiscount)} vnđ
+                                  </p>
+                                  <p className={style["voucher-max-discount"]}>
+                                    Ngày hết hạn:{" "}
+                                    {formattedDateUi(e.expiryDate)}
+                                  </p>
+                                  <Button
+                                    type="primary"
+                                    danger
+                                    onClick={() => handleRemoveVoucher(e.id)}
+                                  >
+                                    Xóa mã khuyến mãi
+                                  </Button>
+                                </div>
+                                <div className={style["voucher-right"]}>
+                                  <span className={style["voucher-discount"]}>
+                                    GIẢM GIÁ
+                                  </span>
+                                  <span className={style["voucher-discount"]}>
+                                    {e.discountPercentage * 100}%
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
                           ))}
 
                         {/* <div style={{ marginTop: "16px" }}>
@@ -2599,12 +3076,14 @@ function SalonDetail(props) {
                           </Button>
                         </div> */}
                         <div style={{ marginTop: "16px" }}>
-                          <Title level={4}>Tổng</Title>
-                          <p style={{ fontSize: "2rem" }}>{calculateTotal()}</p>
+                          <Title level={4}>Tổng số tiền</Title>
+                          <p style={{ fontSize: "1.2rem" }}>
+                            {calculateTotal()}
+                          </p>
 
                           {/* Discount Section */}
                           {voucherSelected?.length > 0 && (
-                            <div className="flex justify-between items-center mt-4">
+                            <div className="flex items-center mt-4">
                               <span className="text-lg font-medium text-gray-700">
                                 Giảm giá:
                               </span>
@@ -2618,15 +3097,22 @@ function SalonDetail(props) {
                             </div>
                           )}
 
-                          <Button
-                            style={{ backgroundColor: "#bf9456" }}
+                          <button
+                            style={{
+                              backgroundColor: "#bf9456",
+                              paddingBlock: "10px",
+                              width: "100%",
+                              borderRadius: "8px",
+                              fontSize: "1rem",
+                              fontWeight: "bold",
+                              color: "white",
+                            }}
                             onClick={handleBooking}
                             type="primary"
-                            block
-                            className="mt-4"
+                            className="mt-2"
                           >
                             Đặt lịch
-                          </Button>
+                          </button>
                         </div>
                       </div>
                     )}
@@ -2987,7 +3473,6 @@ function SalonDetail(props) {
                       level={3}
                       style={{
                         textAlign: "center",
-                        fontSize: "2rem",
                         backgroundColor: "#ece8de",
                       }}
                     >
@@ -3031,68 +3516,119 @@ function SalonDetail(props) {
                       );
 
                     return (
-                      <Card
-                        key={service.id}
-                        style={{
-                          marginBottom: "20px",
-                          borderRadius: "8px",
-                          padding: "20px",
-                          backgroundColor: "#ece8de",
-                        }}
-                      >
-                        <Row gutter={16} align="middle">
-                          {/* Service Info */}
-                          <Col span={12}>
-                            <Title level={4}>{service?.serviceName}</Title>
-                            <Text strong>
-                              Thời gian: {formattedStartTime} -{" "}
-                              {formattedEndTime}
-                            </Text>
-                            <br />
-                            <Text strong>Tổng thời gian: {totalTime} phút</Text>
-                          </Col>
+                      // <Card
+                      //   key={service.id}
+                      //   style={{
+                      //     marginBottom: "20px",
+                      //     borderRadius: "8px",
+                      //     padding: "20px",
+                      //     backgroundColor: "#ece8de",
+                      //   }}
+                      // >
+                      //   <Row gutter={16} align="middle">
+                      //     {/* Service Info */}
+                      //     <Col span={12}>
+                      //       <Title level={4}>{service?.serviceName}</Title>
+                      //       <Text strong>
+                      //         Thời gian: {formattedStartTime} -{" "}
+                      //         {formattedEndTime}
+                      //       </Text>
+                      //       <br />
+                      //       <Text strong>Tổng thời gian: {totalTime} phút</Text>
+                      //     </Col>
 
-                          {/* Employee Info */}
-                          <Col span={12} style={{ textAlign: "right" }}>
+                      //     {/* Employee Info */}
+                      //     <Col span={12} style={{ textAlign: "right" }}>
+                      //       {employee ? (
+                      //         <>
+                      //           <Avatar
+                      //             src={employee.img}
+                      //             size="large"
+                      //             style={{ marginRight: 10 }}
+                      //           />
+                      //           <Text strong>
+                      //             Nhân viên: {employee.fullName}
+                      //           </Text>
+                      //         </>
+                      //       ) : (
+                      //         <>
+                      //           <Avatar
+                      //             icon={<RandomIcon />}
+                      //             size="large"
+                      //             style={{ marginRight: 10 }}
+                      //           />
+                      //           <Text strong>Nhân viên: Ngẫu nhiên</Text>
+                      //         </>
+                      //       )}
+                      //     </Col>
+                      //   </Row>
+
+                      //   {/* Service Image */}
+                      //   {service?.img && (
+                      //     <Row justify="center" style={{ marginTop: "10px" }}>
+                      //       {" "}
+                      //       {/* Center the image */}
+                      //       <Col>
+                      //         <Image
+                      //           src={service?.img}
+                      //           width={200}
+                      //           style={{ borderRadius: "8px" }}
+                      //         />
+                      //       </Col>
+                      //     </Row>
+                      //   )}
+                      // </Card>
+                      <div key={service.id} className={style["serviceBoking"]}>
+                        {/* <Avatar size={80} shape="square" src={service?.img} /> */}
+                        <div className={style["serviceBookngContainer"]}>
+                          <span
+                            className={style["serviceBookngItem"]}
+                            style={{ fontWeight: "bold" }}
+                          >
+                            Tên dịch vụ: {service.serviceName}
+                          </span>
+                          <span className={style["serviceBookngItem"]}>
+                            Số tiền: {formatMoneyVND(service.price)} vnđ
+                          </span>
+                        </div>
+
+                        <div className={style["serviceBookngContainer"]}>
+                          <span className={style["serviceBookngItem"]}>
+                            Thời gian dịch vụ: {formattedStartTime} -{" "}
+                            {formattedEndTime}
+                          </span>
+                        </div>
+                        <div className={style["serviceBookngContainer"]}>
+                          <span className={style["serviceBookngItem"]}>
+                            Tổng thời gian: {totalTime} phút
+                          </span>
+                        </div>
+                        <div className={style["serviceBookngContainer"]}>
+                          <span className={style["serviceBookngItem"]}>
                             {employee ? (
                               <>
                                 <Avatar
                                   src={employee.img}
-                                  size="large"
+                                  size="default"
                                   style={{ marginRight: 10 }}
+                                  shape="square"
                                 />
-                                <Text strong>
-                                  Nhân viên: {employee.fullName}
-                                </Text>
+                                <Text>Nhân viên: {employee.fullName}</Text>
                               </>
                             ) : (
                               <>
                                 <Avatar
                                   icon={<RandomIcon />}
-                                  size="large"
+                                  size="default"
                                   style={{ marginRight: 10 }}
+                                  shape="square"
                                 />
-                                <Text strong>Nhân viên: Ngẫu nhiên</Text>
+                                <span>Nhân viên: Ngẫu nhiên</span>
                               </>
                             )}
-                          </Col>
-                        </Row>
-
-                        {/* Service Image */}
-                        {service?.img && (
-                          <Row justify="center" style={{ marginTop: "10px" }}>
-                            {" "}
-                            {/* Center the image */}
-                            <Col>
-                              <Image
-                                src={service?.img}
-                                width={200}
-                                style={{ borderRadius: "8px" }}
-                              />
-                            </Col>
-                          </Row>
-                        )}
-                      </Card>
+                          </span>
+                        </div>
+                      </div>
                     );
                   })}
 
@@ -3104,12 +3640,12 @@ function SalonDetail(props) {
                     style={{ marginTop: "20px" }}
                   >
                     <Col span={8}>
-                      <Text strong style={{ fontSize: "1.2rem" }}>
+                      <Text strong style={{ fontSize: "1rem" }}>
                         Giá gốc:
                       </Text>
                     </Col>
                     <Col span={16} style={{ textAlign: "right" }}>
-                      <Text style={{ fontSize: "1.2rem" }}>
+                      <Text style={{ fontSize: "1rem" }}>
                         {formatCurrency(originalPrice)}
                       </Text>
                     </Col>
@@ -3120,12 +3656,12 @@ function SalonDetail(props) {
                     style={{ marginTop: "10px" }}
                   >
                     <Col span={8}>
-                      <Text strong style={{ fontSize: "1.2rem" }}>
+                      <Text strong style={{ fontSize: "1rem" }}>
                         Giá đã giảm:
                       </Text>
                     </Col>
                     <Col span={16} style={{ textAlign: "right" }}>
-                      <Text style={{ fontSize: "1.2rem" }}>
+                      <Text style={{ fontSize: "1rem" }}>
                         {formatCurrency(discountedPrice)}
                       </Text>
                     </Col>
@@ -3136,12 +3672,12 @@ function SalonDetail(props) {
                     style={{ marginTop: "10px" }}
                   >
                     <Col span={8}>
-                      <Text strong style={{ fontSize: "1.2rem" }}>
+                      <Text strong style={{ fontSize: "1rem" }}>
                         Giá tổng:
                       </Text>
                     </Col>
                     <Col span={16} style={{ textAlign: "right" }}>
-                      <Text strong style={{ fontSize: "1.2rem" }}>
+                      <Text strong style={{ fontSize: "1rem" }}>
                         {formatCurrency(totalPrice)}
                       </Text>
                     </Col>
@@ -3149,7 +3685,11 @@ function SalonDetail(props) {
                   <Spin className="custom-spin" spinning={loadingCheck}>
                     <Card
                       title="Phương thức thanh toán"
-                      style={{ maxWidth: 500, margin: "0 auto" }}
+                      style={{
+                        width: "100%",
+                        margin: "0 auto",
+                        backgroundColor: "#ece8de",
+                      }}
                       headStyle={{ textAlign: "center", fontSize: "18px" }}
                     >
                       <Radio.Group
