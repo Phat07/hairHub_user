@@ -1588,8 +1588,6 @@ function SalonDetail(props) {
     const updatedServices = additionalServices.filter(
       (service) => service.id !== serviceToRemove.id
     );
-
-    // Update the state with the new array
     setAdditionalServices(updatedServices);
     let total = 0;
     updatedServices?.map((e) => {
@@ -1962,6 +1960,7 @@ function SalonDetail(props) {
                     }}
                     footer={null}
                     width={800}
+                    maskClosable={false}
                   >
                     {showServiceList ? (
                       <>
