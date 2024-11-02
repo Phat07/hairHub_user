@@ -1,16 +1,14 @@
-import { ConfigProvider, Table } from "antd";
-import { App, SnackbarProvider } from "zmp-ui";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import { ConfigProvider } from "antd";
 import viVn from "antd/lib/locale/vi_VN";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import {
-  BrowserRouter,
-  MemoryRouter,
   Route,
   RouterProvider,
   Routes,
-  createBrowserRouter,
+  createBrowserRouter
 } from "react-router-dom";
 import "rsuite/dist/rsuite.min.css";
 import App1 from "./App.jsx";
@@ -18,6 +16,7 @@ import Footer from "./components/Footer.jsx";
 import SalonForm from "./components/SalonShop/SalonForm.jsx";
 import "./index.css";
 import AboutPage from "./pages/About.jsx";
+import AccountDeletionGuide from "./pages/AccountDeletionGuide.jsx";
 import AccountPage from "./pages/AccountPage.jsx";
 import BarberPage from "./pages/BarberPage.jsx";
 import BookingAppointmentCustomerPage from "./pages/BookingAppointmentCustomerPage.jsx";
@@ -25,25 +24,31 @@ import CustomerAppointmentVer2 from "./pages/CustomerAppointmentVer2.jsx";
 import CustomerFeedback from "./pages/CustomerFeedback.jsx";
 import CustomerReport from "./pages/CustomerReport.jsx";
 import DashboardTransactionPage from "./pages/DashboardTransactionPage.jsx";
-import ReviewEmployee from "./pages/ReviewEmployee.jsx";
+import EmployeeAppointment from "./pages/EmployeeAppointment.jsx";
+import EmployeeSchedule from "./pages/EmployeeSchedule.jsx";
+import EmployeeStatistics from "./pages/EmployeeStatistics.jsx";
 import ErrorPage from "./pages/ErrorPage.jsx";
 import FailPayment from "./pages/FailPayment.jsx";
 import FavoriteList from "./pages/FavoriteList.jsx";
 import HomePage from "./pages/HomePage.jsx";
+import ImageForSalon from "./pages/ImageForSalon.jsx";
 import ListBarberEmployees from "./pages/ListBarberEmployees.jsx";
 import ListSalon from "./pages/ListSalon.jsx";
 import ListSalonVer2 from "./pages/ListSalonVer2.jsx";
 import ListServices from "./pages/ListServices.jsx";
 import ListShopBarber from "./pages/ListShopBarber.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
+import ManagementPaymentPage from "./pages/ManagementPaymentPage.jsx";
+import ManagementPaymentPge from "./pages/ManagementPaymentPge.jsx";
 import ManageVoucher from "./pages/ManageVoucher.jsx";
 import PackagePage from "./pages/PackagePage.jsx";
 import PackageSuccessPage from "./pages/PackageSuccessPage.jsx";
 import PaymentCommissionPage from "./pages/PaymentCommissionPage.jsx";
+import ReviewEmployee from "./pages/ReviewEmployee.jsx";
 import SalonAppointment from "./pages/SalonAppointment.jsx";
 import SalonAppointmentVer2 from "./pages/SalonAppointmentVer2.jsx";
-import EmployeeAppointment from "./pages/EmployeeAppointment.jsx";
 import SalonDetail from "./pages/SalonDetail.jsx";
+import SalonEmployee from "./pages/SalonEmployee.jsx";
 import SalonFeedback from "./pages/SalonFeedback.jsx";
 import SalonOwnerAccountPage from "./pages/SalonOwnerAccountPage.jsx";
 import SalonOwnerPage from "./pages/SalonOwnerPage.jsx";
@@ -51,20 +56,10 @@ import SalonPayment from "./pages/SalonPayment.jsx";
 import SalonReport from "./pages/SalonReport.jsx";
 import SucessPayment from "./pages/SucessPayment.jsx";
 import SystemBarberPage from "./pages/SystemBarberPage.jsx";
+import WalletPage from "./pages/WalletPage.jsx";
+import WithdrawRequest from "./pages/WithdrawRequest.jsx";
 import RequireAuth from "./PrivateRoute.js";
 import store from "./store";
-import Footer2 from "./components/Footer2.jsx";
-import EmployeeSchedule from "./pages/EmployeeSchedule.jsx";
-import EmployeeStatistics from "./pages/EmployeeStatistics.jsx";
-import SalonEmployee from "./pages/SalonEmployee.jsx";
-import ImageForSalon from "./pages/ImageForSalon.jsx";
-import { GoogleOAuthProvider } from "@react-oauth/google";
-import LoginGoogle from "./components/LoginGoogle/index.jsx";
-import AccountDeletionGuide from "./pages/AccountDeletionGuide.jsx";
-import WalletPage from "./pages/WalletPage.jsx";
-import ManagementPaymentPge from "./pages/ManagementPaymentPge.jsx";
-import WithdrawRequest from "./pages/WithdrawRequest.jsx";
-import ManagementPaymentPage from "./pages/ManagementPaymentPage.jsx";
 
 const version = import.meta.env.APP_ID || "default";
 const basePath = `/zapps/2685475901677367467`;
@@ -479,9 +474,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       {/* <BrowserRouter> */}
       <GoogleOAuthProvider clientId="160573115812-l88je63eolr52ichb690e7i8g3f59r9t.apps.googleusercontent.com">
         <ConfigProvider locale={viVn} theme={customTheme}>
-          {/* <App> */}
           <RouterProvider router={router} />
-          {/* </App> */}
         </ConfigProvider>
       </GoogleOAuthProvider>
       {/* </BrowserRouter> */}

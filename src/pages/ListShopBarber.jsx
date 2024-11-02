@@ -1385,6 +1385,8 @@ function ListShopBarber(props) {
         await SalonEmployeesServices.activateEmployee(data).then((res) => {
           message.success("Chúc mừng đã kích hoạt tài khoản thành công!");
           setShow(!show);
+          setEmailVerified(false)
+          setActiveEmployeeId(null)
         });
       } catch (error) {
         // Error block

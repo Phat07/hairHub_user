@@ -1,28 +1,24 @@
-  .iconContainer{
-    position: fixed;
-    bottom: 120px;
-    right: 5px;
-    z-index: 900;
-    justify-content: center;
-    align-items: center;
-    border-width: 0;
-    border-color: none;
-  }
-  
-  .socialIcon {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border-width: 0;
-  }
-  
-  .icon {
-    margin-bottom: 10px;
-    position: relative;
-    cursor: pointer;
-    border-width: 0;
-    /* animation: shake 0.4s ease-in-out infinite; */
-  }
+.iconContainer{
+  position: fixed;
+  bottom: 120px;
+  right: 5px;
+  z-index: 900;
+  justify-content: center;
+  align-items: center;
+}
+
+.socialIcon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.icon {
+  margin-bottom: 10px;
+  position: relative;
+  cursor: pointer;
+  /* animation: shake 0.4s ease-in-out infinite; */
+}
 
   .icon:hover {
     animation: shake 0.3s ease-in-out both;
@@ -71,28 +67,28 @@
     overflow-y: auto; /* Hiển thị thanh cuộn dọc nếu cần */
   }
 
-  /* @media (max-width: 768px) {
-    .chatContainer {
-        margin-top: 80px;
-        width: 20rem;
-        height: 40rem;
-        bottom: 5rem;
-        right: 80px;
-        border-radius: 0; 
-    }
-}
-   */
-   @keyframes shake {
-    0%, 100% {
-      transform: translateX(0);
-    }
-    25% {
-      transform: translateX(-4px);
-    }
-    50% {
-      transform: translateX(4px);
-    }
-    75% {
-      transform: translateX(-4px);
-    }
+/* @media (max-width: 768px) {
+  .chatContainer {
+      margin-top: 80px;
+      width: 20rem;
+      height: 40rem;
+      bottom: 5rem;
+      right: 80px;
+      border-radius: 0; 
   }
+}
+ */
+ @keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  50% {
+    transform: translateX(4px);
+  }
+  75% {
+    transform: translateX(-4px);
+  }
+}
