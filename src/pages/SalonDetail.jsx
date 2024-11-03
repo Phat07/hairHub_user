@@ -1590,8 +1590,6 @@ function SalonDetail(props) {
     const updatedServices = additionalServices.filter(
       (service) => service.id !== serviceToRemove.id
     );
-
-    // Update the state with the new array
     setAdditionalServices(updatedServices);
     let total = 0;
     updatedServices?.map((e) => {
@@ -2552,7 +2550,7 @@ function SalonDetail(props) {
                                           <div
                                             className={style["serviceBoking"]}
                                           >
-                                            {additionalServices?.length > 1 && (
+                                            {additionalServices?.length > 0 && (
                                               <Button
                                                 key="close"
                                                 type="text"
