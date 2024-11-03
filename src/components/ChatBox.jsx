@@ -19,88 +19,77 @@ import {
 } from "@chatscope/chat-ui-kit-react";
 import { Avatar as ChatAvatar } from "@chatscope/chat-ui-kit-react";
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
+import { AccountServices } from "@/services/accountServices";
+import { useSelector } from "react-redux";
 const ChatButton = () => {
   // const handleClick = () => {
   //   window.open("https://m.me/hairhubvn", "_blank");
   // };
+  const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
+  const avatar = useSelector((state) => state.ACCOUNT.avatar);
+  const userInfo = useSelector((state) => state.ACCOUNT.userInfo);
   const isSmallScreen = window.innerWidth <= 768;
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState([
-    {
-      direction: "incoming",
-      text: "Hello! How can we assist you today?",
-      sender: "Hairhub",
-      sentTime: "10:30 AM",
-      avatar: logo,
-    },
-    {
-      direction: "outgoing",
-      text: "Hi, I would like to book an appointment.",
-      sender: "User",
-      sentTime: "10:32 AM",
-    },
-    {
-      direction: "outgoing",
-      text: "Hi, I would like to book an appointment.",
-      sender: "User",
-      sentTime: "10:32 AM",
-    },
-    {
-      direction: "outgoing",
-      text: "Hi, I would like to book an appointment.",
-      sender: "User",
-      sentTime: "10:32 AM",
-    },
-    {
-      direction: "outgoing",
-      text: "Hi, I would like to book an appointment.",
-      sender: "User",
-      sentTime: "10:32 AM",
-    },
-    {
-      direction: "outgoing",
-      text: "Hi, I would like to book an appointment.",
-      sender: "User",
-      sentTime: "10:32 AM",
-    },
-    {
-      direction: "outgoing",
-      text: "Hi, I would like to book an appointment.",
-      sender: "User",
-      sentTime: "10:32 AM",
-    },
-    {
-      direction: "incoming",
-      text: "Sure! Do you have a specific time in mind?",
-      sender: "Hairhub",
-      sentTime: "10:33 AM",
-      avatar: logo,
-    },
-    {
-      direction: "incoming",
-      text: "Sure! Do you have a specific time in mind?",
-      sender: "Hairhub",
-      sentTime: "10:33 AM",
-      avatar: logo,
-    },
-    {
-      direction: "incoming",
-      text: "Sure! Do you have a specific time in mind?",
-      sender: "Hairhub",
-      sentTime: "10:33 AM",
-      avatar: logo,
-    },
-    {
-      direction: "incoming",
-      text: "Sure! Do you have a specific time in mind?",
-      sender: "Hairhub",
-      sentTime: "10:33 AM",
-      avatar: logo,
-    },
-  ]);
-
+  const [messages, setMessages] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const refreshToken = localStorage.getItem("refreshToken");
   const toggleChatBox = () => {
     setIsOpen(!isOpen);
+  };
+
+  const getCurrentTime = () => {
+    const now = new Date();
+    return now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }); // Ví dụ: "14:30"
+  };
+
+  const handleSend = async (message) => {
+    if (message.trim() === "") return;
+
+    if (!idCustomer) {
+      return;
+    }
+    if (!refreshToken) {
+      return;
+    }
+
+    const userMessage = {
+      text: message,
+      direction: "outgoing",
+      avatar: avatar,
+      sender: userInfo?.fullName,
+      sentTime: getCurrentTime(),
+    };
+
+    setMessages((prevMessages) => [...prevMessages, userMessage]);
+
+    // Lấy tin nhắn trước đó (nếu có)
+    const previousMessage =
+      messages
+        .slice()
+        .reverse()
+        .find((msg) => msg.direction === "outgoing")?.text || "";
+    setIsLoading(true);
+    try {
+      let data = {
+        askMessage: message,
+        preQuestion: previousMessage,
+        customerId: idCustomer,
+      };
+      const response = await AccountServices.ChatMessageAI(data);
+      const replyMessage = {
+        text: response.data,
+        direction: "incoming",
+        avatar: logo,
+        sender: "Hairhub",
+        sentTime: getCurrentTime(),
+      };
+      setMessages((prevMessages) => [...prevMessages, replyMessage]);
+    } catch (error) {
+      console.error("Error fetching message:", error);
+    } finally {
+      // Kết thúc loading
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -128,43 +117,50 @@ const ChatButton = () => {
             <Avatar src={iconZalo} size={50} />
           </div>
         </a>
-        {/* <a
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={() => {
-            toggleChatBox();
-          }}
-        >
-          <div className={`${styles.icon}`}>
-            <Avatar src={logo} size={50} />
-          </div>
-        </a> */}
+        {idCustomer && refreshToken && (
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => {
+              toggleChatBox();
+            }}
+          >
+            <div className={`${styles.icon}`}>
+              <Avatar src={logo} size={50} />
+            </div>
+          </a>
+        )}
       </div>
-      {isOpen && (
+      {isOpen && refreshToken && idCustomer && (
         <MainContainer>
           <ChatContainer
             className={`${styles.chatContainer}`}
-            style={
-              isSmallScreen
-                ? { height: "78vh", width: "78vw" }
-                : { height: "65vh", width: "25vw" }
-            }
+            style={{
+              height: isSmallScreen ? "78vh" : "65vh",
+              width: isSmallScreen ? "78vw" : "25vw",
+              minWidth: "300px", // Chiều rộng tối thiểu
+              minHeight: "400px", // Chiều cao tối thiểu
+              maxWidth: "100%", // Chiều rộng tối đa không vượt quá màn hình
+            }}
           >
             <ConversationHeader>
-              <ChatAvatar name="Hairhub" src={logo} />
+              <ChatAvatar status="available" name="Hairhub" src={logo} />
               <ConversationHeader.Content
-                info="Active 10 mins ago"
-                userName="Hairhub"
+                // info="Chatbot by Hairhub"
+                userName="Hairhub Chatbot"
               />
-              <ConversationHeader.Actions>
+              {/* <ConversationHeader.Actions>
                 <VoiceCallButton />
                 <VideoCallButton />
                 <InfoButton />
-              </ConversationHeader.Actions>
+              </ConversationHeader.Actions> */}
             </ConversationHeader>
             <MessageList
-              className={`${styles.chatList}`}
-              typingIndicator={<TypingIndicator content="Hairhub is typing" />}
+              typingIndicator={
+                isLoading && (
+                  <TypingIndicator content="Chatbot Hairhub đang phản hồi" />
+                )
+              }
             >
               {messages.map((msg, i) => (
                 <Message
@@ -178,12 +174,24 @@ const ChatButton = () => {
                   }}
                 >
                   {msg.direction === "incoming" && (
-                    <Avatar name={msg.sender} src={msg.avatar} />
+                    <ChatAvatar
+                      status="available"
+                      size="sm"
+                      name={msg.sender}
+                      src={msg.avatar}
+                    />
+                  )}
+                  {msg.direction === "outgoing" && (
+                    <ChatAvatar size="sm" name={msg.sender} src={msg.avatar} />
                   )}
                 </Message>
               ))}
             </MessageList>
-            <MessageInput placeholder="Type message here" />
+            <MessageInput
+              placeholder="Nhập câu hỏi tại đây !!!"
+              onSend={handleSend}
+              attachButton="false"
+            />
           </ChatContainer>
 
           <button

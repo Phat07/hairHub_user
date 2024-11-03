@@ -8,7 +8,7 @@ import {
   Route,
   RouterProvider,
   Routes,
-  createBrowserRouter
+  createBrowserRouter,
 } from "react-router-dom";
 import "rsuite/dist/rsuite.min.css";
 import App1 from "./App.jsx";
@@ -306,7 +306,7 @@ const router = createBrowserRouter(
           path: "payment",
           element: (
             <RequireAuth
-              requiredRoles={["SalonOwner", "Customer"]}
+              requiredRoles={["SalonOwner", "Customer", "SalonEmployee"]}
               fallbackPath="/login"
             >
               <WalletPage />

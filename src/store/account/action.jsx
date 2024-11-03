@@ -5,6 +5,7 @@ import { AccountServices } from "../../services/accountServices";
 export const LOGIN_ACCOUNT = "LOGIN_ACCOUNT";
 export const FETCH_USER = "FETCH_USER";
 export const FETCH_USER_BY_ID = "FETCH_USER_BY_ID";
+export const CLEAR_USER = "CLEAR_USER";
 export const LOGIN = (list) => {
   return {
     type: LOGIN_ACCOUNT,
@@ -21,6 +22,12 @@ export const fetchUserById = (list) => {
   return {
     type: FETCH_USER_BY_ID,
     payload: list,
+  };
+};
+
+export const clearUserInfo = () => {
+  return {
+    type: CLEAR_USER,
   };
 };
 

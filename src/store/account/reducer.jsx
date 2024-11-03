@@ -1,4 +1,9 @@
-import { FETCH_USER, LOGIN_ACCOUNT, FETCH_USER_BY_ID } from "./action";
+import {
+  FETCH_USER,
+  LOGIN_ACCOUNT,
+  FETCH_USER_BY_ID,
+  CLEAR_USER,
+} from "./action";
 
 const initialState = {
   idCustomer: "",
@@ -62,6 +67,8 @@ const reducer = (state = initialState, action) => {
         ...state,
         userInfo: action.payload,
       };
+    case CLEAR_USER:
+      return initialState;
 
     default:
       return state;

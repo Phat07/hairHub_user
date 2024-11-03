@@ -890,13 +890,23 @@ function CustomerAppointmentVer2(props) {
                   {appointment.salonInformation.name}
                 </h4>
                 <h4>
-                  {" "}
                   Ngày tạo lịch hẹn: {formatDate(appointment?.createdDate)}
                 </h4>
                 <h4>
                   Ngày bắt đầu:{" "}
                   {formatDate(appointment?.appointmentDetails[0]?.startTime)}
                 </h4>
+                <h4>
+                  Phương thức thanh toán:{" "}
+                  {appointment?.paymentMethod === "PAYBYWALLET"
+                    ? "Thanh toán qua ví"
+                    : appointment?.paymentMethod === "PAYINSALON"
+                    ? "Thanh toán tại salon"
+                    : appointment?.paymentMethod === "PAYBYBANK"
+                    ? "Thanh toán qua ngân hàng"
+                    : appointment?.paymentMethod}
+                </h4>
+
                 <h4>Tổng giá tiền: {formatCurrency(appointment.totalPrice)}</h4>
                 <Button
                   style={{

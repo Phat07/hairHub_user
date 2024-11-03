@@ -20,19 +20,19 @@
 
 .register-child-img {
   width: 100%;
-  min-height: 20rem; 
+  min-height: 22rem; 
   object-fit: cover; 
 }
 
 @media (max-width: 768px) {
   .register-img {
-    max-width: 200px; 
+    max-width: 250px; 
   }
 }
 
 @media (max-width: 480px) {
   .register-img {
-    max-width: 150px; 
+    max-width: 250px; 
   }
 }
 

@@ -1,11 +1,12 @@
 import React from "react";
-import '../../css/loader.css'
+import "../../css/loader.css";
+import { Spin } from "antd";
 function Loader(props) {
   return (
     <div className="container1">
-      <div className="loader">
+      {/* <div className="loader">
         <div className="rocket">
-          <i className="fas fa-rocket" />
+          <i className="fas fa-car" />
           <i className="fas fa-cloud" style={{ "--i": 0 }} />
           <i className="fas fa-cloud" style={{ "--i": 1 }} />
           <i className="fas fa-cloud" style={{ "--i": 2 }} />
@@ -14,7 +15,8 @@ function Loader(props) {
         <span>
           <i />
         </span>
-      </div>
+      </div> */}
+      <Spin className="custom-spin"></Spin>
     </div>
   );
 }

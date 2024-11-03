@@ -1,8 +1,10 @@
 import {
   BellOutlined,
+  CreditCardOutlined,
   LogoutOutlined,
   QrcodeOutlined,
   UserOutlined,
+  WalletOutlined,
 } from "@ant-design/icons";
 import { Avatar, Badge, Dropdown, Menu, message } from "antd";
 import { useEffect, useRef, useState } from "react";
@@ -22,6 +24,7 @@ import { actGetSalonInformationByOwnerIdByCheck } from "../store/salonInformatio
 import NotificationComponent from "./Notification";
 import QRScannerModal from "./QRScannerModal";
 import { AccountServices } from "@/services/accountServices";
+import { clearUserInfo } from "@/store/account/action";
 
 function Header(props) {
   const { id } = useParams();
@@ -65,7 +68,7 @@ function Header(props) {
   const userInfo = useSelector((state) => state.ACCOUNT.userInfo);
 
   const avatar = useSelector((state) => state.ACCOUNT.avatar);
-  
+
   useEffect(() => {
     if (idOwner) {
       try {
@@ -81,10 +84,11 @@ function Header(props) {
 
     if (refreshToken) {
       AccountServices.LogOut(refreshToken)
-        .then(() => {
+        .then(async () => {
           localStorage.removeItem("refreshToken");
           localStorage.removeItem("accessToken");
           localStorage.removeItem("role");
+          await dispatch(clearUserInfo());
           message.success("Đăng xuất thành công");
           navigate("/");
         })
@@ -169,12 +173,12 @@ function Header(props) {
       </Menu.Item> */}
       <Menu.Item key="appointment-history">
         <Link to="/WithdrawRequest">
-          <UserOutlined /> Đơn rút tiền
+          <CreditCardOutlined /> Đơn rút tiền
         </Link>
       </Menu.Item>
       <Menu.Item key="transaction-history">
-        <Link to={'/managerPayment'}>
-          <UserOutlined /> Lịch sử giao dịch
+        <Link to={"/managerPayment"}>
+          <WalletOutlined /> Lịch sử giao dịch
         </Link>
       </Menu.Item>
 

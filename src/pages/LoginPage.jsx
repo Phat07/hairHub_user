@@ -1,6 +1,10 @@
 import {
+  CheckCircleOutlined,
+  CloseCircleOutlined,
   GoogleOutlined,
   LockOutlined,
+  StepBackwardOutlined,
+  StepForwardOutlined,
   UserOutlined,
   createFromIconfontCN,
 } from "@ant-design/icons";
@@ -379,17 +383,30 @@ const LoginPage = () => {
             hoverable
             className="register-img"
             style={{
-              opacity: selected === true && role === "Customer" ? 0.5 : 1,
+              opacity: selected === true && role === "Customer" ? 1 : 0.5,
             }}
             cover={
               <img
                 className="register-child-img"
                 alt="example"
-                src="https://amis.misa.vn/wp-content/uploads/2022/03/khach-hang.jpg"
+                src="https://i2-prod.manchestereveningnews.co.uk/news/article30022959.ece/ALTERNATES/s615/1_The-hands-of-young-barber-making-haircut-to-attractive-man.jpg"
               />
             }
           >
-            <Meta title="Khách hàng" />
+            <Meta style={{ textAlign: "center" }} title="Khách hàng" />
+            {selected === true && role === "Customer" && (
+              <CheckCircleOutlined
+                style={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)", // Căn giữa icon
+                  fontSize: "7rem",
+                  color: "#52c41a", // Màu xanh lá cây cho icon
+                  zIndex: 1, // Đảm bảo icon ở trên ảnh
+                }}
+              />
+            )}
           </Card>
 
           <Card
@@ -399,18 +416,30 @@ const LoginPage = () => {
             hoverable
             className="register-img"
             style={{
-              opacity: selected === true && role === "SalonOwner" ? 0.5 : 1,
+              opacity: selected === true && role === "SalonOwner" ? 1 : 0.5,
             }}
             cover={
               <img
                 className="register-child-img"
-                // style={{ width: "250px", height: "250px" }}
                 alt="example"
-                src="https://res.cloudinary.com/dkjghxf2j/image/upload/v1719246287/Default/ewx9nzljcilf0sychzmb.jpg"
+                src="https://tdtdecor.vn/wp-content/uploads/2023/06/thiet-ke-baber-shop-02.jpg"
               />
             }
           >
-            <Meta title="Chủ salon" />
+            <Meta style={{ textAlign: "center" }} title="Chủ salon" />
+            {selected === true && role === "SalonOwner" && (
+              <CheckCircleOutlined
+                style={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)", // Căn giữa icon
+                  fontSize: "7rem",
+                  color: "#52c41a", // Màu xanh lá cây cho icon
+                  zIndex: 1, // Đảm bảo icon ở trên ảnh
+                }}
+              />
+            )}
           </Card>
         </Space>
       ),
@@ -439,10 +468,10 @@ const LoginPage = () => {
                 { required: true, message: "This fields is required!" },
                 {
                   pattern: emailPattern,
-                  message: "Please input email include @!",
+                  message: "Hãy nhập email đúng cú pháp!",
                 },
               ]}
-              tooltip="example@gmail.com"
+              // tooltip="example@gmail.com"
             >
               <Space>
                 <Input
@@ -452,7 +481,16 @@ const LoginPage = () => {
               </Space>
             </Form.Item>
             {!emailVerified && (
-              <Button loading={loading} type="primary" onClick={showOtpModal}>
+              <Button
+                type="text"
+                size={"large"}
+                style={{
+                  backgroundColor: "#bf9456",
+                  color: "black",
+                }}
+                loading={loading}
+                onClick={showOtpModal}
+              >
                 Gửi OTP
               </Button>
             )}
@@ -500,7 +538,13 @@ const LoginPage = () => {
                   <Input placeholder="037xxxxxxx" />
                 </Form.Item>
                 <Button
-                  style={{ width: "100%" }}
+                  style={{
+                    backgroundColor: "#bf9456",
+                    color: "black",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: "100%",
+                  }}
                   type="primary"
                   htmlType="submit"
                   loading={loadingLoad}
@@ -568,12 +612,12 @@ const LoginPage = () => {
     title: item.title,
   }));
   const contentStyle = {
-    lineHeight: "200px",
+    // lineHeight: "200px",
     textAlign: "center",
-    color: token.colorTextTertiary,
-    backgroundColor: token.colorFillAlter,
-    borderRadius: token.borderRadiusLG,
-    border: `1px dashed ${token.colorBorder}`,
+    // color: token.colorTextTertiary,
+    // backgroundColor: token.colorFillAlter,
+    // borderRadius: token.borderRadiusLG,
+    // border: `1px dashed ${token.colorBorder}`,
     marginTop: 20,
   };
 
@@ -784,10 +828,34 @@ const LoginPage = () => {
           </div>
         </Modal>
         <Modal
-          title="Enter OTP"
+          title="Nhập OTP"
           visible={isOtpModalOpen}
           onOk={() => verifyOtp(otp)}
           onCancel={() => setIsOtpModalOpen(false)}
+          // footer={[
+          //   <Button
+          //     key={2}
+          //     type="text"
+          //     style={{
+          //       backgroundColor: "#bf9456",
+          //       color: "black",
+          //       justifyContent: "center",
+          //       alignItems: "center",
+          //     }}
+          //     size={"middle"}
+          //     onClick={() => {
+          //       verifyOtp(otp);
+          //     }}
+          //   >
+          //     Xác nhận
+          //   </Button>,
+          // ]}
+          okButtonProps={{
+            style: {
+              backgroundColor: "#bf9456",
+              color: "black",
+            },
+          }}
         >
           <div
           // style={{
@@ -985,18 +1053,46 @@ const LoginPage = () => {
               title="Đăng ký"
               open={isModalOpen}
               onCancel={() => {
-                handleCancel(), handleSetFormDefault();
+                handleCancel(), handleSetFormDefault(), setCurrent(0);
               }}
               footer={[
                 <Button
                   key={2}
-                  type="primary"
+                  type="text"
+                  icon={<CloseCircleOutlined />}
+                  style={{
+                    backgroundColor: "red",
+                    color: "white",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                  size={"middle"}
                   onClick={() => {
-                    handleOk();
+                    // handleOk();
+                    handleCancel(), handleSetFormDefault(), setCurrent(0);
                   }}
                 >
                   Đóng
                 </Button>,
+                // <Button
+                //   key={2}
+                //   type="text"
+                //   icon={<CheckCircleOutlined />}
+                //   style={{
+                //     backgroundColor: "#bf9456",
+                //     color: "black",
+                //     justifyContent: "center",
+                //     alignItems: "center",
+                //   }}
+                //   size={"middle"}
+                //   onClick={() => {
+                //     handleOk();
+                //     // handleCancel(),
+                //     // handleSetFormDefault();
+                //   }}
+                // >
+                //   Tạo tài khoản
+                // </Button>,
               ]}
             >
               <motion.p
@@ -1027,14 +1123,27 @@ const LoginPage = () => {
                 }}
               >
                 {current < steps.length - 1 && current < 1 && (
-                  <Button type="primary" onClick={() => next()}>
+                  <Button
+                    type="text"
+                    icon={<StepForwardOutlined />}
+                    size={"large"}
+                    style={{
+                      backgroundColor: "#bf9456",
+                      color: "black",
+                    }}
+                    onClick={() => next()}
+                  >
                     Bước tiếp theo
                   </Button>
                 )}
                 {current > 0 && current < 2 && (
                   <Button
+                    type="text"
+                    icon={<StepBackwardOutlined />}
+                    size={"large"}
                     style={{
-                      margin: "0 8px",
+                      backgroundColor: "#bf9456",
+                      color: "black",
                     }}
                     onClick={() => prev()}
                   >

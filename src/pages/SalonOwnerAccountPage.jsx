@@ -24,6 +24,7 @@ import {
   FormOutlined,
   InfoCircleOutlined,
   MenuOutlined,
+  ScissorOutlined,
   UploadOutlined,
   UserOutlined,
 } from "@ant-design/icons";

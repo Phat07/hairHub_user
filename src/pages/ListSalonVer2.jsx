@@ -38,6 +38,7 @@ import {
 } from "@react-google-maps/api";
 import axios from "axios";
 import LoadScriptMap from "../components/LoadScriptMap";
+import LoadScriptMap2 from "../components/LoadScriptMap2";
 import { motion } from "framer-motion";
 import "antd/dist/reset.css";
 import "../css/customerAppointmentTable.css";
@@ -47,9 +48,10 @@ import SparklesText from "@/components/magicui/sparkles-text";
 import { set } from "rsuite/esm/internals/utils/date";
 import { useTransition } from "@react-spring/web";
 const defaultCenter = {
-  lat: 10.8231, // Default to Ho Chi Minh City
-  lng: 106.6297,
+  lat: 10.8413699483297, // Vĩ độ của Đại học FPT HCM
+  lng: 106.80988299540918, // Kinh độ của Đại học FPT HCM
 };
+
 const MotionButton = motion.button;
 const Button = ({ children, className, ...props }) => (
   <MotionButton
@@ -247,7 +249,7 @@ function ListSalonVer2(props) {
 
     if (province) {
       setCurrentLocation({ lat: province.lat, lng: province.lng });
-      setIsSalonNear(false)
+      setIsSalonNear(false);
     } else {
       setCurrentLocation(defaultCenter);
     }
@@ -454,18 +456,18 @@ function ListSalonVer2(props) {
       setSalonList(salons);
       setTotalPages(salonRes.data.total);
       setTotal(salonRes.data.total);
-      setIsSalonNear(!isSalonNear)
+      setIsSalonNear(!isSalonNear);
       setCurrentLocation({
-        lat:latitude,
-        lng: longtitude
-      })
-      message.info(
-        <>
-          Có {salons.length || 0} salon gần bạn
-          {servicesName && <> với dịch vụ: {servicesName}</>}
-          {salonName && <> , salon: {salonName}</>}
-        </>
-      );
+        lat: latitude,
+        lng: longtitude,
+      });
+      // message.info(
+      //   <>
+      //     Có {salons.length || 0} salon gần bạn
+      //     {servicesName && <> với dịch vụ: {servicesName}</>}
+      //     {salonName && <> , salon: {salonName}</>}
+      //   </>
+      // );
     } catch (err) {
       console.log(err, "errors");
     } finally {
@@ -815,7 +817,7 @@ function ListSalonVer2(props) {
               </div>
               <Divider />
               <div className={styles["list-salon-end"]}>
-                <div className={styles["list-salon-actbtn"]}>
+                {/* <div className={styles["list-salon-actbtn"]}>
                   <div className={styles["list-salon-filmap"]}>
                     <Popover
                       content={filterOptions}
@@ -832,14 +834,14 @@ function ListSalonVer2(props) {
                         Sắp xếp
                       </Button>
                     </Popover>
-                    {/* <Button
-                className="view-map-button"
-                icon={<EnvironmentOutlined />}
-              >
-                View Map
-              </Button> */}
+                    <Button
+                      className="view-map-button"
+                      icon={<EnvironmentOutlined />}
+                    >
+                      View Map
+                    </Button>
                   </div>
-                </div>
+                </div> */}
 
                 <div className={styles["list-salon-content"]}>
                   {salonList.length !== 0 ? (
@@ -904,7 +906,14 @@ function ListSalonVer2(props) {
                               textAlign: "center",
                             }}
                           >
-                            <p style={{ fontSize: "1.5rem" }}>{salon.name}</p>
+                            <p
+                              style={{
+                                fontSize: "1.5rem",
+                                marginBottom: "10px",
+                              }}
+                            >
+                              {salon.name}
+                            </p>
                             <motion.div
                               key={salon.operatingStatus} // Ensures re-render when status changes
                               initial={{
@@ -927,22 +936,29 @@ function ListSalonVer2(props) {
                               <p
                                 className={`text-lg font-semibold ${
                                   salon.operatingStatus === "Đang hoạt động"
-                                    ? "text-green-500"
-                                    : "text-red-500"
+                                    ? "text-green-400"
+                                    : "text-red-400"
                                 }`}
+                                style={{ fontSize: "0.9rem" }}
                               >
                                 {salon.operatingStatus}
                               </p>
                             </motion.div>
-                            <div className="flex items-center space-x-2">
-                              {salon.distance === null ? (
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}
+                            >
+                              {salon.distance === null ? null : (
                                 <div className="flex align-middle">
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
                                     viewBox="0 0 24 24"
                                     stroke="currentColor"
-                                    className="w-6 h-6 text-gray-500"
+                                    className="w-5 h-5 text-green-500"
                                   >
                                     <path
                                       strokeLinecap="round"
@@ -951,27 +967,13 @@ function ListSalonVer2(props) {
                                       d="M12 2a9 9 0 00-9 9c0 6 9 11 9 11s9-5 9-11a9 9 0 00-9-9zm0 13a3 3 0 100-6 3 3 0 000 6z"
                                     />
                                   </svg>
-                                  <p className="text-gray-500 font-medium ml-2">
-                                    ...
-                                  </p>
-                                </div>
-                              ) : (
-                                <div className="flex align-middle">
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    className="w-6 h-6 text-green-500"
+                                  <p
+                                    className="text-green-500"
+                                    style={{
+                                      fontSize: "1rem",
+                                      textAlign: "center",
+                                    }}
                                   >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M12 2a9 9 0 00-9 9c0 6 9 11 9 11s9-5 9-11a9 9 0 00-9-9zm0 13a3 3 0 100-6 3 3 0 000 6z"
-                                    />
-                                  </svg>
-                                  <p className="text-green-500 font-medium">
                                     {salon.distance.toFixed(1)} km
                                   </p>
                                 </div>
@@ -1104,11 +1106,12 @@ function ListSalonVer2(props) {
             </Row>
           </div>
           <div className={styles["showMap"]}>
-            <LoadScriptMap
-            loading={loading}
-            serviceName={servicesName}
+            <LoadScriptMap2
+              loading={loading}
+              serviceName={servicesName}
               salonName={salonName}
               isSalonNear={isSalonNear}
+              setIsSalonNear={() => setIsSalonNear(false)}
               salonList={salonList}
               mapStyle={mapStyle}
               currentLocation={currentLocation}

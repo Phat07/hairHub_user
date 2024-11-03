@@ -17,6 +17,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { phonePattern } from "../Regex/Patterns";
+import { CheckCircleOutlined } from "@ant-design/icons";
 const { Meta } = Card;
 
 function LoginGoogle(props) {
@@ -140,7 +141,7 @@ function LoginGoogle(props) {
     setPhone(value);
 
     if (!phonePattern.test(value)) {
-      setError("Số điện thoại không hợp lệ. Vui lòng nhập lại.");
+      setError("Số điện thoại phải gồm 10 chữ số.");
     } else {
       setError(""); // Clear the error if the phone number is valid
     }
@@ -182,7 +183,7 @@ function LoginGoogle(props) {
           title="Chọn vai trò và nhập số điện thoại"
           visible={isModalVisible}
           onCancel={() => {
-            setIsModalVisible(false), setLoading(false);
+            setIsModalVisible(false), setLoading(false), setError("");
           }}
           footer={null}
         >
@@ -195,17 +196,30 @@ function LoginGoogle(props) {
               hoverable
               className="register-img"
               style={{
-                opacity: selected === true && role === "Customer" ? 0.5 : 1,
+                opacity: selected === true && role === "Customer" ? 1 : 0.5,
               }}
               cover={
                 <img
                   className="register-child-img"
                   alt="example"
-                  src="https://amis.misa.vn/wp-content/uploads/2022/03/khach-hang.jpg"
+                  src="https://i2-prod.manchestereveningnews.co.uk/news/article30022959.ece/ALTERNATES/s615/1_The-hands-of-young-barber-making-haircut-to-attractive-man.jpg"
                 />
               }
             >
-              <Meta title="Khách hàng" />
+              <Meta style={{ textAlign: "center" }} title="Khách hàng" />
+              {selected === true && role === "Customer" && (
+                <CheckCircleOutlined
+                  style={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)", // Căn giữa icon
+                    fontSize: "7rem",
+                    color: "#52c41a", // Màu xanh lá cây cho icon
+                    zIndex: 1, // Đảm bảo icon ở trên ảnh
+                  }}
+                />
+              )}
             </Card>
 
             <Card
@@ -216,25 +230,42 @@ function LoginGoogle(props) {
               hoverable
               className="register-img"
               style={{
-                opacity: selected === true && role === "SalonOwner" ? 0.5 : 1,
+                opacity: selected === true && role === "SalonOwner" ? 1 : 0.5,
               }}
               cover={
                 <img
                   className="register-child-img"
                   alt="example"
-                  src="https://res.cloudinary.com/dkjghxf2j/image/upload/v1719246287/Default/ewx9nzljcilf0sychzmb.jpg"
+                  src="https://tdtdecor.vn/wp-content/uploads/2023/06/thiet-ke-baber-shop-02.jpg"
                 />
               }
             >
-              <Meta title="Chủ salon" />
+              <Meta style={{ textAlign: "center" }} title="Chủ salon" />
+              {selected === true && role === "SalonOwner" && (
+                <CheckCircleOutlined
+                  style={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)", // Căn giữa icon
+                    fontSize: "7rem",
+                    color: "#52c41a", // Màu xanh lá cây cho icon
+                    zIndex: 1, // Đảm bảo icon ở trên ảnh
+                  }}
+                />
+              )}
             </Card>
           </Space>
           <Divider />
-          <Input
-            placeholder="Nhập số điện thoại"
-            value={phone}
-            onChange={handlePhoneChange}
-          />
+          <div>
+            <Input
+              placeholder="Nhập số điện thoại"
+              value={phone}
+              type="number"
+              onChange={handlePhoneChange}
+            />
+          </div>
+
           {error && (
             <div style={{ color: "red", marginTop: "10px" }}>{error}</div>
           )}

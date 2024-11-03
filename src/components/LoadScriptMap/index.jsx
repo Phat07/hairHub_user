@@ -284,7 +284,7 @@ function LoadScriptMapModal({
   const [selectedSalon, setSelectedSalon] = useState(null);
   const [latLng, setLatLng] = useState({ lat: null, lng: null });
   const autocompleteRef = useRef(null);
-  const [modalVisible, setModalVisible] = useState(false); // Modal control
+  const [modalVisible, setModalVisible] = useState(); // Modal control
   const [tempLatLng, setTempLatLng] = useState({ lat: null, lng: null }); // Temporary lat/lng for modal
   const [zoom, setZoom] = useState(8);
   const [distance, setDistance] = useState("");
@@ -409,6 +409,9 @@ function LoadScriptMapModal({
                     (autocompleteRef.current = autocomplete)
                   }
                   onPlaceChanged={handlePlaceChanged}
+                  options={{
+                    componentRestrictions: { country: "VN" }, // Giới hạn trong Việt Nam
+                  }}
                 >
                   <input
                     type="text"

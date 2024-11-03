@@ -95,6 +95,16 @@
   animation: animateRocket 0.2s linear infinite;
 }
 
+.rocket .fa-car {
+  position: absolute;
+  top: 35%;
+  color: #ff518c; /* Thay đổi màu nếu muốn */
+  font-size: 3.5em;
+  -webkit-text-stroke: 2px #000;
+  animation: animateRocket 0.2s linear infinite;
+}
+
+
 @keyframes animateRocket {
   0%,
   100% {

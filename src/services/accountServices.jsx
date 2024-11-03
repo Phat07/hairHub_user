@@ -55,4 +55,7 @@ export const AccountServices = {
   DeleteAccount(id) {
     return API.delete(`/accounts/DeleteAccount/${id}`);
   },
+  ChatMessageAI(data) {
+    return API.post("/accounts/ChatMessageAI", data);
+  },
 };
