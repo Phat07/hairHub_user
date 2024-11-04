@@ -461,13 +461,15 @@ function ListSalonVer2(props) {
         lat: latitude,
         lng: longtitude,
       });
-      // message.info(
-      //   <>
-      //     Có {salons.length || 0} salon gần bạn
-      //     {servicesName && <> với dịch vụ: {servicesName}</>}
-      //     {salonName && <> , salon: {salonName}</>}
-      //   </>
-      // );
+      if (latitude !== null && longtitude !== null) {
+        message.info(
+          <>
+            Có {salons.length || 0} salon gần bạn
+            {servicesName && <> với dịch vụ: {servicesName}</>}
+            {salonName && <> , salon: {salonName}</>}
+          </>
+        );
+      }
     } catch (err) {
       console.log(err, "errors");
     } finally {
