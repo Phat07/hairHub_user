@@ -37,7 +37,7 @@ import {
 import axios from "axios";
 // import { ProFormInstance } from "@ant-design/pro-components";
 import OTPInput from "react-otp-input";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
 import {
@@ -49,7 +49,7 @@ import {
 import ResendCode from "../components/Resend/resendCode";
 import "../css/loader.css";
 import { AccountServices } from "../services/accountServices";
-import { loginAccount } from "../store/account/action";
+import { fetchUserByTokenApi, loginAccount } from "../store/account/action";
 // import LoginGoogle from "../components/googleSignIn/LoginGoogle";
 import hairhubLogo from "../assets/images/hairHubLogo.png";
 import classNames from "classnames";
@@ -109,6 +109,32 @@ const LoginPage = () => {
   const [otpForgot, setOtpForgot] = useState("");
   const [loadingLoad, setLoadingLoad] = useState(false);
 
+  const isTokenExpired = (token) => {
+    try {
+      const decodedToken = jwtDecode(token);
+      const currentTime = Date.now() / 1000; // Convert milliseconds to seconds
+      return decodedToken.exp < currentTime;
+    } catch (error) {
+      return true;
+    }
+  };
+
+  const authenticateUser = async () => {
+    try {
+      let accessToken = localStorage.getItem("accessToken");
+      if (accessToken) {
+        navigate("/");
+      } else {
+        return;
+      }
+    } catch (error) {
+      // message.error("Lỗi xác thực người dùng");
+    }
+  };
+
+  useEffect(() => {
+    authenticateUser();
+  }, []);
   const renderInput = (props) => (
     <input
       {...props}
@@ -331,7 +357,12 @@ const LoginPage = () => {
       password: values?.password,
       fullname: values?.fullname,
     };
+    let dataMap = {
+      userName: values?.email,
+      password: values?.password,
+    };
     setLoadingLoad(true);
+    setSubmitting(false);
     if (newValues) {
       AccountServices.registerUser(data)
         .then((res) => {
@@ -342,6 +373,18 @@ const LoginPage = () => {
           setUser(res.data);
           setEmailVerified(false);
           setAccessType("login");
+          dispatch(loginAccount(dataMap, navigate))
+            .then(() => {
+              // message.success("Đăng nhập thành công");
+              // Handle success (optional)
+            })
+            .catch((error) => {
+              // Handle any errors (optional)
+              console.error("Error during login:", error);
+            })
+            .finally((err) => {
+              setSubmitting(false);
+            });
         })
         .catch((err) => setLoadingLoad(false))
         .finally((err) => {

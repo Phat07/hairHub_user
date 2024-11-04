@@ -1,7 +1,7 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import dotenv from 'dotenv';
-import path from 'path';
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import dotenv from "dotenv";
+import path from "path";
 
 // Load environment variables
 dotenv.config();
@@ -10,7 +10,7 @@ dotenv.config();
 export default defineConfig({
   plugins: [react()],
   define: {
-    'process.env': process.env
+    "process.env": process.env,
   },
   resolve: {
     alias: {
@@ -18,12 +18,14 @@ export default defineConfig({
     },
   },
   base: "/", // Base is "/" to use absolute paths after deployment
-  build: { 
+  build: {
+    polyfillModulePreload: false,
+    chunkSizeWarningLimit: 1600,
     rollupOptions: {
-    output: {
-        entryFileNames: 'assets/[name].[hash].module.js',
-        chunkFileNames: 'assets/[name].[hash].module.js',
+      output: {
+        entryFileNames: "assets/[name].[hash].module.js",
+        chunkFileNames: "assets/[name].[hash].module.js",
       },
     },
-  }
+  },
 });
