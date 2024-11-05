@@ -278,6 +278,8 @@ function SalonDetail(props) {
 
   const [selectedStaff, setSelectedStaff] = useState({});
   const [currentService, setCurrentService] = useState(null);
+  console.log("currentService", currentService);
+
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [additionalServices, setAdditionalServices] = useState([]);
   const [timeSlots, setTimeSlots] = useState([]);
@@ -1955,7 +1957,7 @@ function SalonDetail(props) {
                         }}
                       >
                         {showServiceList
-                          ? "Thêm những dịch vụ khác"
+                          ? "Thêm dịch vụ"
                           : displayVoucherList
                           ? "Thêm voucher"
                           : "Đặt lịch cắt tóc"}
@@ -2004,8 +2006,8 @@ function SalonDetail(props) {
                       <div
                         style={{
                           position: "absolute",
-                          top: "18px",
-                          left: "20px",
+                          top: "1.2rem",
+                          left: "1.2rem",
                           zIndex: 1, // Để nút nằm trên tất cả các phần tử khác
                           cursor: "pointer",
                         }}
@@ -2019,8 +2021,8 @@ function SalonDetail(props) {
                       <div
                         style={{
                           position: "absolute",
-                          top: "18px",
-                          left: "20px",
+                          top: "1.2rem",
+                          left: "1.2rem",
                           zIndex: 1, // Để nút nằm trên tất cả các phần tử khác
                           cursor: "pointer",
                         }}
@@ -2049,21 +2051,21 @@ function SalonDetail(props) {
                                 return (
                                   <List.Item
                                     key={index} // Thêm thuộc tính key
-                                    actions={[
-                                      <div
-                                        className={`${style.customCheckbox} ${
-                                          isChecked
-                                            ? style.customCheckboxBooked
-                                            : ""
-                                        } ${style.customCheckboxHover}`}
-                                        key={`checkbox-${index}`} // Thêm thuộc tính key
-                                        onClick={() =>
-                                          handleServiceSelect(service)
-                                        }
-                                      >
-                                        {isChecked ? "Đã chọn" : "Chọn thêm"}
-                                      </div>,
-                                    ]}
+                                    // actions={[
+                                    //   <div
+                                    //     className={`${style.customCheckbox} ${
+                                    //       isChecked
+                                    //         ? style.customCheckboxBooked
+                                    //         : ""
+                                    //     } ${style.customCheckboxHover}`}
+                                    //     key={`checkbox-${index}`}
+                                    //     onClick={() =>
+                                    //       handleServiceSelect(service)
+                                    //     }
+                                    //   >
+                                    //     {isChecked ? "Đã chọn" : "Chọn thêm"}
+                                    //   </div>,
+                                    // ]}
                                     style={{
                                       border: "1px solid #ddd",
                                       borderRadius: "8px",
@@ -2104,30 +2106,125 @@ function SalonDetail(props) {
                                             border: "none",
                                           }}
                                         >
-                                          <Text
-                                            strong
+                                          <div
                                             className={
-                                              style["serviceBookngItem"]
+                                              style["serviceBookngContainer"]
                                             }
                                           >
-                                            Tên dịch vụ:&nbsp;
-                                            <Text
+                                            <div
+                                              className={
+                                                style["serviceBookngContainer2"]
+                                              }
+                                            >
+                                              <Text
+                                                strong
+                                                className={
+                                                  style["serviceBookngItem"]
+                                                }
+                                              >
+                                                Tên dịch vụ:&nbsp;
+                                                <Text
+                                                  style={{
+                                                    display: "inline",
+                                                    fontWeight: "normal",
+                                                  }}
+                                                >
+                                                  {service.serviceName}
+                                                </Text>
+                                              </Text>
+                                              <Text
+                                                strong
+                                                className={
+                                                  style["serviceBookngItem"]
+                                                }
+                                              >
+                                                Mô tả:&nbsp;
+                                                <Text
+                                                  style={{
+                                                    display: "inline",
+                                                    fontWeight: "normal",
+                                                  }}
+                                                >
+                                                  {service.description}
+                                                </Text>
+                                              </Text>
+                                              <Text
+                                                strong
+                                                className={
+                                                  style["serviceBookngItem"]
+                                                }
+                                              >
+                                                Giá:&nbsp;
+                                                <Text
+                                                  style={{
+                                                    display: "inline",
+                                                    fontWeight: "normal",
+                                                  }}
+                                                >
+                                                  {formatMoneyVND(
+                                                    service.price
+                                                  )}
+                                                </Text>
+                                              </Text>
+                                              <Text
+                                                strong
+                                                className={
+                                                  style["serviceBookngItem"]
+                                                }
+                                              >
+                                                Thời gian:&nbsp;
+                                                <Text
+                                                  style={{
+                                                    display: "inline",
+                                                    fontWeight: "normal",
+                                                  }}
+                                                >
+                                                  {formatTime(service.time)}
+                                                </Text>
+                                              </Text>
+                                            </div>
+                                            <div
+                                              className={
+                                                style["serviceBookngContainer2"]
+                                              }
                                               style={{
-                                                display: "inline",
-                                                fontWeight: "normal",
+                                                alignItems: "end",
+                                                justifyContent: "center",
                                               }}
                                             >
-                                              {service.serviceName}
-                                            </Text>
-                                          </Text>
+                                              <Avatar
+                                                size={{
+                                                  xs: 60,
+                                                  sm: 60,
+                                                  md: 60,
+                                                  lg: 60,
+                                                  xl: 60,
+                                                  xxl: 100,
+                                                }}
+                                                src={service?.img}
+                                                shape="square"
+                                                style={{ marginBottom: "10px" }}
+                                              />
+                                              <div
+                                                className={`${
+                                                  style.customCheckbox
+                                                } ${
+                                                  isChecked
+                                                    ? style.customCheckboxBooked
+                                                    : ""
+                                                } ${style.customCheckboxHover}`}
+                                                key={`checkbox-${index}`}
+                                                onClick={() =>
+                                                  handleServiceSelect(service)
+                                                }
+                                              >
+                                                {isChecked
+                                                  ? "Đã chọn"
+                                                  : "Chọn thêm"}
+                                              </div>
+                                            </div>
+                                          </div>
                                           {/* <div
-                                            className={
-                                              style["serviceBookngItem"]
-                                            }
-                                          >
-                                            {service.serviceName}
-                                          </div> */}
-                                          <div
                                             className={
                                               style["serviceBookngContainer"]
                                             }
@@ -2192,7 +2289,7 @@ function SalonDetail(props) {
                                                 {formatTime(service.time)}
                                               </Text>
                                             </Text>
-                                          </div>
+                                          </div> */}
                                         </Typography>
                                       }
                                     />
@@ -2753,10 +2850,21 @@ function SalonDetail(props) {
                                       //   </Select>
                                       // </Modal>
                                       <Modal
-                                        title={`Chọn nhân viên cho dịch vụ ${currentService?.serviceName}`}
+                                        title={
+                                          <div
+                                            style={{
+                                              fontWeight: "bold",
+                                              textAlign: "center",
+                                              backgroundColor: "#ece8de",
+                                            }}
+                                          >
+                                            {`Chọn nhân viên cho dịch vụ ${currentService?.serviceName}`}
+                                          </div>
+                                        }
                                         visible={isModalVisible}
                                         onCancel={handleCancel}
                                         footer={null}
+                                        wrapClassName="my-custom-modal"
                                       >
                                         <List
                                           itemLayout="horizontal"
@@ -2764,7 +2872,7 @@ function SalonDetail(props) {
                                             {
                                               id: "random",
                                               fullName: "Ngẫu nhiên",
-                                              img: null,
+                                              img: <RandomIcon color="black" />,
                                             }, // Thêm mục "Ngẫu nhiên" vào danh sách
                                             ...(currentService
                                               ?.bookingDetailResponses
@@ -2774,6 +2882,13 @@ function SalonDetail(props) {
                                             <List.Item
                                               actions={[
                                                 <Button
+                                                  type="text"
+                                                  block
+                                                  success
+                                                  style={{
+                                                    backgroundColor: "#bf9456",
+                                                    fontSize: "1rem",
+                                                  }}
                                                   key={employee.id}
                                                   onClick={() => {
                                                     if (
@@ -2800,7 +2915,6 @@ function SalonDetail(props) {
                                                   />
                                                 }
                                                 title={employee.fullName}
-                                                description={employee?.gender}
                                               />
                                             </List.Item>
                                           )}
@@ -3026,18 +3140,30 @@ function SalonDetail(props) {
                             >
                               <div className={style["voucher-container"]}>
                                 <div className={style["voucher-left"]}>
-                                  <p className={style["voucher-description"]}>
+                                  <p
+                                    className={style["voucher-description"]}
+                                    style={{ marginBottom: "5px" }}
+                                  >
                                     {e.description}
                                   </p>
-                                  <p className={style["voucher-minimum"]}>
+                                  <p
+                                    className={style["voucher-minimum"]}
+                                    style={{ marginBottom: "5px" }}
+                                  >
                                     Số tiền tối thiểu:{" "}
                                     {formatMoneyVND(e.minimumOrderAmount)} vnđ
                                   </p>
-                                  <p className={style["voucher-max-discount"]}>
+                                  <p
+                                    className={style["voucher-max-discount"]}
+                                    style={{ marginBottom: "5px" }}
+                                  >
                                     Giảm giá tối đa:{" "}
                                     {formatMoneyVND(e.maximumDiscount)} vnđ
                                   </p>
-                                  <p className={style["voucher-max-discount"]}>
+                                  <p
+                                    className={style["voucher-max-discount"]}
+                                    style={{ marginBottom: "5px" }}
+                                  >
                                     Ngày hết hạn:{" "}
                                     {formattedDateUi(e.expiryDate)}
                                   </p>
@@ -3074,14 +3200,55 @@ function SalonDetail(props) {
                           </Button>
                         </div> */}
                         <div style={{ marginTop: "16px" }}>
-                          <Title level={4}>Tổng số tiền</Title>
-                          <p style={{ fontSize: "1.2rem" }}>
+                          <Title style={{ marginBottom: "5px" }} level={4}>
+                            Tổng số tiền
+                          </Title>
+                          <p
+                            style={{
+                              fontSize:
+                                voucherSelected?.length > 0
+                                  ? "0.9rem"
+                                  : "1.2rem",
+                              marginBottom: "0px",
+                              textDecoration:
+                                voucherSelected?.length > 0
+                                  ? "line-through"
+                                  : "none",
+                              color:
+                                voucherSelected?.length > 0
+                                  ? "gray"
+                                  : "inherit",
+                            }}
+                          >
                             {calculateTotal()}
                           </p>
+                          {voucherSelected?.length > 0 && (
+                            <p
+                              style={{
+                                fontSize: "1.2rem",
+                                marginBottom: "0px",
+                                marginTop: "0px",
+                              }}
+                            >
+                              {formatCurrency(totalPrice)}{" "}
+                              <span
+                                style={{
+                                  marginLeft: "5px",
+                                }}
+                                className="font-bold text-green-500"
+                              >
+                                -
+                                {formatDiscountPercentage(
+                                  voucherSelected[0]?.discountPercentage
+                                )}
+                                %
+                              </span>
+                            </p>
+                          )}
 
                           {/* Discount Section */}
-                          {voucherSelected?.length > 0 && (
-                            <div className="flex items-center mt-4">
+                          {/* {voucherSelected?.length > 0 && (
+                            <div className="flex items-center">
                               <span className="text-lg font-medium text-gray-700">
                                 Giảm giá:
                               </span>
@@ -3093,7 +3260,7 @@ function SalonDetail(props) {
                                 %
                               </span>
                             </div>
-                          )}
+                          )} */}
 
                           <button
                             style={{

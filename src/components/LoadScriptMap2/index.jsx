@@ -266,12 +266,12 @@ function LoadScriptMapModal({
           visible={isSalonNear}
           onOk={handleModalClose}
           onCancel={() => setIsSalonNear()}
-          closable={false}
+          closable={true}
           footer={null}
-          width={800}
+          width={1200}
         >
           <Spin className="custom-spin" spinning={loading}>
-            <div className="relative h-[500px]">
+            <div className="relative h-[70vh]">
               {/* Input Fields */}
               <div className={styles.searchContainer}>
                 <motion.div

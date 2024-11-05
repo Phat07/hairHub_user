@@ -54,8 +54,8 @@
     width: 35rem; /* Điều chỉnh kích thước tùy theo nhu cầu */
     height: 40rem; /* Điều chỉnh chiều cao tùy theo nhu cầu */
     position: fixed; /* Đảm bảo MainContainer nằm cố định trên màn hình */
-    bottom: 1.5rem; /* Khoảng cách từ đáy */
-    right: 70px; /* Khoảng cách từ bên phải */
+    bottom: 2.5rem; /* Khoảng cách từ đáy */
+    right: 1.5rem; /* Khoảng cách từ bên phải */
     border: 1px solid #ccc;
     border-radius: 10px;
     background-color: white;
@@ -71,17 +71,16 @@
     overflow-y: auto; /* Hiển thị thanh cuộn dọc nếu cần */
   }
 
-/* @media (max-width: 768px) {
+@media (max-width: 768px) {
   .chatContainer {
-      margin-top: 80px;
-      width: 20rem;
-      height: 40rem;
-      bottom: 5rem;
-      right: 80px;
-      border-radius: 0; 
+    bottom: 1.5rem; 
+    right: 0.5rem; 
+  }
+  .icon:before {
+    display: none;
   }
 }
- */
+
  @keyframes shake {
   0%, 100% {
     transform: translateX(0);
