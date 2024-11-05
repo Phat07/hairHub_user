@@ -8,6 +8,8 @@ function ErrorPage() {
   const handleGoHome = () => {
     if (role === "SalonOwner") {
       navigate("/list_shop"); // Điều hướng đến list_shop nếu role là SalonOwner
+    } else if (role === "SalonEmployee") {
+      navigate("/SalonEmployee"); // Điều hướng đến SalonEmployee nếu role là SalonEmployee
     } else {
       navigate("/"); // Điều hướng đến trang chủ cho các role khác
     }
@@ -18,10 +20,16 @@ function ErrorPage() {
       <div style={styles.content}>
         <h1 style={styles.heading}>Oops!</h1>
         <button onClick={handleGoHome} style={styles.button}>
-          Go to Home
+          {role === "SalonOwner"
+            ? "Quay về trang quản lý"
+            : role === "SalonEmployee"
+            ? "Quay về trang quản lý"
+            : "Quay về trang chủ"}
         </button>
       </div>
-      <p style={styles.message}>Sorry! Some unexpected error has occurred</p>
+      <p style={styles.message}>
+        Xin lỗi! Một số lỗi không mong muốn đã xảy ra, hãy quay lại sau
+      </p>
       <p style={styles.errorDetails}>
         <i>{error?.statusText || error?.message}</i>
       </p>
@@ -51,7 +59,7 @@ const styles = {
     padding: "0.5rem 1rem",
     fontSize: "1.5rem",
     color: "#fff",
-    backgroundColor: "#0275d8", // Blue color for the button
+    backgroundColor: "#bf9456",
     border: "none",
     borderRadius: "5px",
     cursor: "pointer",

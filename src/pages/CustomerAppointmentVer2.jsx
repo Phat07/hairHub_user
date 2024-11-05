@@ -695,7 +695,12 @@ function CustomerAppointmentVer2(props) {
       key: "action",
       render: (text, record) => {
         const { status, isFeedback, isReportByCustomer, id } = record;
-
+        const startTime = moment(record.appointmentDetails[0]?.startTime);
+        const currentTime = moment();
+        const isSameDay = moment(record.startDate).isSame(currentTime, "day");
+        const hoursDiff = currentTime.diff(startTime, "hours");
+        const isReportButtonVisible = currentTime.isSameOrAfter(startTime);
+        const isReportExpired = hoursDiff >= 72;
         if (status === "BOOKING") {
           return (
             <Button danger onClick={() => handleCancel(id)}>
@@ -705,22 +710,42 @@ function CustomerAppointmentVer2(props) {
         } else if (status === "SUCCESSED") {
           return (
             <>
-              <Button
-                style={{ marginRight: "1rem" }}
-                type={isFeedback ? "" : "primary"}
-                size="medium"
-                onClick={() => handleRating(id, record)}
-                disabled={isFeedback}
-              >
-                {isFeedback ? "Đã đánh giá" : "Đánh giá"}
-              </Button>
-              <Button
-                danger
-                onClick={() => handleReport(id, record)}
-                disabled={isReportByCustomer}
-              >
-                {isReportByCustomer ? "Đã báo cáo" : "Báo cáo"}
-              </Button>
+              {isReportExpired && !isFeedback ? (
+                <Button
+                  style={{ marginRight: "1rem" }}
+                  size="medium"
+                  disabled={isReportExpired}
+                >
+                  Đã quá hạn đánh giá
+                </Button>
+              ) : (
+                <Button
+                  style={{ marginRight: "1rem" }}
+                  type={isFeedback ? "" : "primary"}
+                  size="medium"
+                  onClick={() => handleRating(id, record)}
+                  disabled={isFeedback}
+                >
+                  {isFeedback ? "Đã đánh giá" : "Đánh giá"}
+                </Button>
+              )}
+              {isReportExpired && !isReportByCustomer ? (
+                <Button
+                  style={{ marginRight: "1rem" }}
+                  size="medium"
+                  disabled={isReportExpired}
+                >
+                  Đã quá hạn báo cáo
+                </Button>
+              ) : (
+                <Button
+                  danger
+                  onClick={() => handleReport(id, record)}
+                  disabled={isReportByCustomer}
+                >
+                  {isReportByCustomer ? "Đã báo cáo" : "Báo cáo"}
+                </Button>
+              )}
             </>
           );
         } else {
@@ -873,69 +898,112 @@ function CustomerAppointmentVer2(props) {
             <div key={date} className={styles.dateGroup}>
               <h3 className={styles.dateHeader}>{date}</h3> */}
           <div className={styles.grid}>
-            {customerAppointments.map((appointment) => (
-              <div key={appointment.id} className={styles.card}>
-                <img
-                  src={appointment.salonInformation.img}
-                  alt="Salon"
-                  className={styles.salonImage}
-                />
-                <h4
-                  style={{
-                    fontWeight: "bold",
-                    color: "#bf9456",
-                    textAlign: "center",
-                  }}
-                >
-                  {appointment.salonInformation.name}
-                </h4>
-                <h4>
-                  Ngày tạo lịch hẹn: {formatDate(appointment?.createdDate)}
-                </h4>
-                <h4>
-                  Ngày bắt đầu:{" "}
-                  {formatDate(appointment?.appointmentDetails[0]?.startTime)}
-                </h4>
-                <h4>
-                  Phương thức thanh toán:{" "}
-                  {appointment?.paymentMethod === "PAYBYWALLET"
-                    ? "Thanh toán qua ví"
-                    : appointment?.paymentMethod === "PAYINSALON"
-                    ? "Thanh toán tại salon"
-                    : appointment?.paymentMethod === "PAYBYBANK"
-                    ? "Thanh toán qua ngân hàng"
-                    : appointment?.paymentMethod}
-                </h4>
+            {customerAppointments.map((appointment) => {
+              const startTime = moment(
+                appointment.appointmentDetails[0]?.startTime
+              );
+              const currentTime = moment();
 
-                <h4>Tổng giá tiền: {formatCurrency(appointment.totalPrice)}</h4>
-                <Button
-                  style={{
-                    backgroundColor: "#bf9456",
-                    marginBottom: "0.5rem",
-                  }}
-                  onClick={() => showAppointmentDetail(appointment)}
-                >
-                  Xem chi tiết
-                </Button>
-                {appointment.status === "BOOKING" && (
-                  <Button danger onClick={() => handleCancel(appointment.id)}>
-                    Hủy cuộc hẹn
+              // Kiểm tra xem ngày hiện tại có trùng với ngày hẹn hay không
+              const isSameDay = moment(appointment.startDate).isSame(
+                currentTime,
+                "day"
+              );
+
+              // Tính khoảng cách thời gian giữa startTime và thời gian hiện tại
+              const hoursDiff = currentTime.diff(startTime, "hours");
+
+              // Kiểm tra xem nút báo cáo có được hiển thị hay không
+              const isReportButtonVisible =
+                currentTime.isSameOrAfter(startTime);
+              const isReportExpired = hoursDiff >= 72;
+
+              return (
+                <div key={appointment.id} className={styles.card}>
+                  <img
+                    src={appointment.salonInformation.img}
+                    alt="Salon"
+                    className={styles.salonImage}
+                  />
+                  <h4
+                    style={{
+                      fontWeight: "bold",
+                      color: "#bf9456",
+                      textAlign: "center",
+                    }}
+                  >
+                    {appointment.salonInformation.name}
+                  </h4>
+                  <h4>
+                    Ngày tạo lịch hẹn: {formatDate(appointment?.createdDate)}
+                  </h4>
+                  <h4>
+                    Ngày bắt đầu:{" "}
+                    {formatDate(appointment?.appointmentDetails[0]?.startTime)}
+                  </h4>
+                  <h4>
+                    Phương thức thanh toán:{" "}
+                    {appointment?.paymentMethod === "PAYBYWALLET"
+                      ? "Thanh toán qua ví"
+                      : appointment?.paymentMethod === "PAYINSALON"
+                      ? "Thanh toán tại salon"
+                      : appointment?.paymentMethod === "PAYBYBANK"
+                      ? "Thanh toán qua ngân hàng"
+                      : appointment?.paymentMethod}
+                  </h4>
+                  <h4>
+                    Tổng giá tiền: {formatCurrency(appointment.totalPrice)}
+                  </h4>
+                  <Button
+                    style={{
+                      backgroundColor: "#bf9456",
+                      marginBottom: "0.5rem",
+                    }}
+                    onClick={() => showAppointmentDetail(appointment)}
+                  >
+                    Xem chi tiết
                   </Button>
-                )}
-                {appointment.status === "SUCCESSED" &&
-                  !appointment.isFeedback && (
-                    <Button
-                      onClick={() => handleRating(appointment.id, appointment)}
-                    >
-                      {"Đánh giá"}
+                  {appointment.status === "BOOKING" && (
+                    <Button danger onClick={() => handleCancel(appointment.id)}>
+                      Hủy cuộc hẹn
                     </Button>
                   )}
-                {appointment.status === "SUCCESSED" &&
-                  appointment.isFeedback && (
-                    <Button disabled>{"Đã đánh giá"}</Button>
+                  {appointment.status === "SUCCESSED" && (
+                    <>
+                      <Button
+                        danger
+                        onClick={() =>
+                          handleRating(appointment.id, appointment)
+                        }
+                        disabled={appointment?.isFeedback || isReportExpired}
+                      >
+                        {appointment?.isFeedback
+                          ? "Đã đánh giá"
+                          : isReportExpired
+                          ? "Quá hạn đánh giá"
+                          : "Đánh giá"}
+                      </Button>
+                      <Button
+                        style={{ marginTop: "5px" }}
+                        danger
+                        onClick={() =>
+                          handleReport(appointment.id, appointment)
+                        }
+                        disabled={
+                          appointment?.isReportByCustomer || isReportExpired
+                        }
+                      >
+                        {appointment?.isReportByCustomer
+                          ? "Đã báo cáo"
+                          : isReportExpired
+                          ? "Quá hạn báo cáo"
+                          : "Báo cáo"}
+                      </Button>
+                    </>
                   )}
-              </div>
-            ))}
+                </div>
+              );
+            })}
           </div>
           {/* </div>
           )

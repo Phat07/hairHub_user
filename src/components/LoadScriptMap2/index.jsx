@@ -27,7 +27,6 @@ function LoadScriptMapModal({
   const [latLng, setLatLng] = useState({ lat: null, lng: null });
   const autocompleteRef = useRef(null);
   const inputRef = useRef(null);
-  console.log("currentLocation", currentLocation);
 
   const [modalVisible, setModalVisible] = useState(); // Modal control
   const [tempLatLng, setTempLatLng] = useState({ lat: null, lng: null }); // Temporary lat/lng for modal
@@ -266,12 +265,12 @@ function LoadScriptMapModal({
           visible={isSalonNear}
           onOk={handleModalClose}
           onCancel={() => setIsSalonNear()}
-          closable={false}
+          closable={true}
           footer={null}
-          width={800}
+          width={1200}
         >
           <Spin className="custom-spin" spinning={loading}>
-            <div className="relative h-[500px]">
+            <div className="relative h-[70vh]">
               {/* Input Fields */}
               <div className={styles.searchContainer}>
                 <motion.div

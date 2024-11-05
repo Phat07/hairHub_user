@@ -50,17 +50,17 @@ function App() {
       dispatch(GetInformationAccount(uid));
     }
   }, [uid]);
-  useEffect(() => {
-    if (idCustomer) {
-      navigate("/");
-    } else if (idOwner) {
-      navigate("list_shop");
-    } else if (idEmployee) {
-      navigate("/SalonEmployee");
-    } else {
-      navigate("/");
-    }
-  }, [idCustomer, idEmployee, idOwner]);
+  // useEffect(() => {
+  //   if (idCustomer) {
+  //     navigate("/");
+  //   } else if (idOwner) {
+  //     navigate("list_shop");
+  //   } else if (idEmployee) {
+  //     navigate("/SalonEmployee");
+  //   } else {
+  //     navigate("/");
+  //   }
+  // }, [idCustomer, idEmployee, idOwner]);
   useEffect(() => {
     if (uid) {
       dispatch(actGetNotificationList(uid));

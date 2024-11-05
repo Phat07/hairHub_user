@@ -139,25 +139,26 @@ function Header(props) {
           <div className="text-sm">{userInfo?.email}</div>
         </div>
       </Menu.Item>
-
-      <Menu.Item key="wallet">
-        <div className="flex justify-center">
-          <span>
-            Số tiền trong ví :{" "}
-            {new Intl.NumberFormat("vi-VN", {
-              style: "currency",
-              currency: "VND",
-            }).format(userInfo?.balance)}
-          </span>
-        </div>
-        <div className="flex justify-center mt-2">
-          <Link to="/payment">
-            <button className="px-6 py-2 text-white bg-[#BF9456] hover:bg-[#d0ac79] rounded-md transition-all">
-              Nạp tiền vào ví
-            </button>
-          </Link>
-        </div>
-      </Menu.Item>
+      {!idEmployee && (
+        <Menu.Item key="wallet">
+          <div className="flex justify-center">
+            <span>
+              Số tiền trong ví :{" "}
+              {new Intl.NumberFormat("vi-VN", {
+                style: "currency",
+                currency: "VND",
+              }).format(userInfo?.balance)}
+            </span>
+          </div>
+          <div className="flex justify-center mt-2">
+            <Link to="/payment">
+              <button className="px-6 py-2 text-white bg-[#BF9456] hover:bg-[#d0ac79] rounded-md transition-all">
+                Nạp tiền vào ví
+              </button>
+            </Link>
+          </div>
+        </Menu.Item>
+      )}
 
       <Menu.Divider />
 
@@ -171,16 +172,20 @@ function Header(props) {
           <UserOutlined /> Lịch sử báo cáo
         </Link>
       </Menu.Item> */}
-      <Menu.Item key="appointment-history">
-        <Link to="/WithdrawRequest">
-          <CreditCardOutlined /> Đơn rút tiền
-        </Link>
-      </Menu.Item>
-      <Menu.Item key="transaction-history">
-        <Link to={"/managerPayment"}>
-          <WalletOutlined /> Lịch sử giao dịch
-        </Link>
-      </Menu.Item>
+      {!idEmployee && (
+        <Menu.Item key="appointment-history">
+          <Link to="/WithdrawRequest">
+            <CreditCardOutlined /> Đơn rút tiền
+          </Link>
+        </Menu.Item>
+      )}
+      {!idEmployee && (
+        <Menu.Item key="transaction-history">
+          <Link to={"/managerPayment"}>
+            <WalletOutlined /> Lịch sử giao dịch
+          </Link>
+        </Menu.Item>
+      )}
 
       <Menu.Divider />
 

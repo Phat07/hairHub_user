@@ -305,7 +305,7 @@ const router = createBrowserRouter(
           path: "payment",
           element: (
             <RequireAuth
-              requiredRoles={["SalonOwner", "Customer", "SalonEmployee"]}
+              requiredRoles={["SalonOwner", "Customer"]}
               fallbackPath="/login"
             >
               <WalletPage />
@@ -316,7 +316,7 @@ const router = createBrowserRouter(
           path: "managerPayment",
           element: (
             <RequireAuth
-              requiredRoles={["SalonOwner", "Customer", "SalonEmployee"]}
+              requiredRoles={["SalonOwner", "Customer"]}
               fallbackPath="/login"
             >
               {/* <ManagementPaymentPge /> */}
@@ -421,8 +421,14 @@ const router = createBrowserRouter(
         //WithdrawRequest
         {
           path: `WithdrawRequest`,
-          element: <WithdrawRequest />,
-          errorElement: <ErrorPage />,
+          element: (
+            <RequireAuth
+              requiredRoles={["SalonOwner", "Customer"]}
+              fallbackPath="/login"
+            >
+              <WithdrawRequest />
+            </RequireAuth>
+          ),
         },
       ],
     },
