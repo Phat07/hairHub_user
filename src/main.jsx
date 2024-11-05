@@ -61,8 +61,7 @@ import WithdrawRequest from "./pages/WithdrawRequest.jsx";
 import RequireAuth from "./PrivateRoute.js";
 import store from "./store";
 
-const version = import.meta.env.APP_ID || "default";
-const basePath = `/zapps/2685475901677367467`;
+const basePath = `/zapps/2685475901677367467`; 
 
 const router = createBrowserRouter(
   [
@@ -447,7 +446,7 @@ const router = createBrowserRouter(
       path: "*",
       element: <ErrorPage />,
     },
-  ]
+  ],
   // { basename: basePath }
 );
 
@@ -474,7 +473,7 @@ const customTheme = {
   },
 };
 
-ReactDOM.createRoot(document.getElementById("root")).render(
+ReactDOM.createRoot(document.getElementById("app")).render(
   <React.StrictMode>
     <Provider store={store}>
       {/* <BrowserRouter> */}

@@ -43,11 +43,24 @@ function App() {
   // const token = useSelector((state) => state.ACCOUNT.token);
   const idOwner = useSelector((state) => state.ACCOUNT.idOwner);
   const uid = useSelector((state) => state.ACCOUNT.uid);
+  const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
+  const idEmployee = useSelector((state) => state.ACCOUNT.idEmployee);
   useEffect(() => {
     if (uid) {
       dispatch(GetInformationAccount(uid));
     }
   }, [uid]);
+  useEffect(() => {
+    if (idCustomer) {
+      navigate("/");
+    } else if (idOwner) {
+      navigate("list_shop");
+    } else if (idEmployee) {
+      navigate("/SalonEmployee");
+    } else {
+      navigate("/");
+    }
+  }, [idCustomer, idEmployee, idOwner]);
   useEffect(() => {
     if (uid) {
       dispatch(actGetNotificationList(uid));
