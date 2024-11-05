@@ -3652,11 +3652,13 @@ function SalonDetail(props) {
                       backgroundColor: "#bf9456",
                       borderColor: "#bf9456",
                     },
+                    loading:loadingCheck
                   }}
                   cancelButtonProps={{
                     style: {
                       color: "#878787",
                     },
+                    disabled: loadingCheck
                   }}
                   width={800} // Set modal width to be wider
                   style={{ backgroundColor: "#f4f2eb" }} // Set modal background color
