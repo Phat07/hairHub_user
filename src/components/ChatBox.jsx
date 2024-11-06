@@ -156,7 +156,7 @@ Bạn cần tớ hỗ trợ điều gì nào?
           <ChatContainer
             className={`${styles.chatContainer}`}
             style={{
-              height: isSmallScreen ? "85vh" : "65vh",
+              height: isSmallScreen ? "70vh" : "65vh",
               width: isSmallScreen ? "96vw" : "25vw",
               minWidth: "300px", // Chiều rộng tối thiểu
               minHeight: "400px", // Chiều cao tối thiểu
