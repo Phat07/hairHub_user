@@ -31,12 +31,12 @@ function FooterMobileUnAuth() {
           </li>
           <li
             className={`${style.footerItem} ${
-              isActive("/about") ? style.active : ""
+              isActive("Hairhub/aboutUs") ? style.active : ""
             }`}
           >
-            <Link to="/about" onClick={scrollToTop}>
+            <Link to="Hairhub/aboutUs" onClick={scrollToTop}>
               <SnippetsOutlined className={style.icon} />
-              {isActive("/about") && <span>Giới thiệu</span>}
+              {isActive("Hairhub/aboutUs") && <span>Giới thiệu</span>}
             </Link>
           </li>
           <li

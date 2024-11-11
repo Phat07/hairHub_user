@@ -61,7 +61,7 @@ import WithdrawRequest from "./pages/WithdrawRequest.jsx";
 import RequireAuth from "./PrivateRoute.js";
 import store from "./store";
 
-const basePath = `/zapps/2685475901677367467`; 
+const basePath = `/zapps/2685475901677367467`;
 
 const router = createBrowserRouter(
   [
@@ -408,8 +408,13 @@ const router = createBrowserRouter(
           element: <ListSalonVer2 />,
           errorElement: <ErrorPage />,
         },
+        // {
+        //   path: `about`,
+        //   element: <AboutPage />,
+        //   errorElement: <ErrorPage />,
+        // },
         {
-          path: `about`,
+          path: `Hairhub/:key`,
           element: <AboutPage />,
           errorElement: <ErrorPage />,
         },
@@ -446,7 +451,7 @@ const router = createBrowserRouter(
       path: "*",
       element: <ErrorPage />,
     },
-  ],
+  ]
   // { basename: basePath }
 );
 

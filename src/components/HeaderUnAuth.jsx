@@ -42,9 +42,9 @@ function HeaderUnAuth(props) {
               </li>
               <li className={style.navItem}>
                 <Link
-                  to="/about"
+                  to="Hairhub/aboutUs"
                   className={`${style.navLink} ${
-                    isActive("/about") ? style.active : ""
+                    isActive("Hairhub/aboutUs") ? style.active : ""
                   }`}
                 >
                   Giới thiệu

@@ -9,7 +9,7 @@ const { Title } = Typography;
 const Footer2 = () => {
   const navigate = useNavigate();
   const handleNavigation = (selectedKey) => {
-    navigate("/about", { state: { selectedKey } });
+    navigate(`/Hairhub/${selectedKey}`);
   };
   return (
     <div className="footer-container">
