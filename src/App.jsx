@@ -117,6 +117,7 @@ function App() {
       // message.error("Lỗi xác thực người dùng");
     }
   };
+  console.log("hairhub");
 
   useEffect(() => {
     authenticateUser();
