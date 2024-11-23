@@ -700,6 +700,11 @@ function SalonDetail(props) {
   };
 
   const handleDateSelect = async (day) => {
+    if (!localStorage.getItem("accessToken")) {
+      message.info("Vui lòng đăng nhập!");
+      navigate("/login");
+      return;
+    }
     setLoadingTime(true);
     const idSer = additionalServices[0]?.id;
     const formatDate = (date) => {
@@ -739,7 +744,6 @@ function SalonDetail(props) {
           const availableTimes = res?.data?.availableTimes?.map((e) => {
             return e.timeSlot;
           });
-
           // Check if the selectedTimeSlot is within the available times
           if (selectedTimeSlot && !availableTimes.includes(selectedTimeSlot)) {
             setSelectedTimeSlot(null);
@@ -3652,13 +3656,13 @@ function SalonDetail(props) {
                       backgroundColor: "#bf9456",
                       borderColor: "#bf9456",
                     },
-                    loading:loadingCheck
+                    loading: loadingCheck,
                   }}
                   cancelButtonProps={{
                     style: {
                       color: "#878787",
                     },
-                    disabled: loadingCheck
+                    disabled: loadingCheck,
                   }}
                   width={800} // Set modal width to be wider
                   style={{ backgroundColor: "#f4f2eb" }} // Set modal background color

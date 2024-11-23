@@ -480,15 +480,15 @@ const customTheme = {
 
 ReactDOM.createRoot(document.getElementById("app")).render(
   <React.StrictMode>
-    <Provider store={store}>
-      {/* <BrowserRouter> */}
-      <GoogleOAuthProvider clientId="160573115812-l88je63eolr52ichb690e7i8g3f59r9t.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId="160573115812-l88je63eolr52ichb690e7i8g3f59r9t.apps.googleusercontent.com">
+      <Provider store={store}>
+        {/* <BrowserRouter> */}
         <ConfigProvider locale={viVn} theme={customTheme}>
           <RouterProvider router={router} />
         </ConfigProvider>
-      </GoogleOAuthProvider>
-      {/* </BrowserRouter> */}
-    </Provider>
+        {/* </BrowserRouter> */}
+      </Provider>
+    </GoogleOAuthProvider>
   </React.StrictMode>
 );
 // main.jsx
