@@ -156,6 +156,11 @@ function ReviewEmployee(props) {
       title: "Doanh thu",
       dataIndex: "totalRevuenueEmployee",
       key: "totalRevuenueEmployee",
+      render: (value) =>
+        new Intl.NumberFormat("vi-VN", {
+          style: "currency",
+          currency: "VND",
+        }).format(value),
     },
   ];
 
@@ -195,6 +200,13 @@ function ReviewEmployee(props) {
       (currentPage - 1) * pageSize,
       currentPage * pageSize
     ) || [];
+    function formatVND(number) {
+      // Chuyển đổi số thành chuỗi
+      let numberString = number?.toString();
+      // Sử dụng regex để thêm dấu chấm mỗi 3 chữ số từ phải sang trái
+      let formattedString = numberString?.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      return formattedString + " VND";
+    }
 
   return (
     <div className={styles["review-employee-container"]}>
@@ -215,7 +227,7 @@ function ReviewEmployee(props) {
             <div className={styles["table-section"]}>
               <p className={styles["main-title-second"]}>Tổng doanh thu</p>
               <p className={styles["main-title-third"]}>
-                {reviewRevenue.totalRevenue}
+                {formatVND(reviewRevenue.totalRevenue)}
               </p>
               <Table
                 dataSource={reviewRevenue.employees}
@@ -259,8 +271,7 @@ function ReviewEmployee(props) {
                   {employee.totalCanceledAppointment}
                 </p>
                 <p className={styles["employee-fields"]}>
-                  <strong>Doanh thu:</strong> {employee.totalRevuenueEmployee}
-                  vnđ
+                  <strong>Doanh thu:</strong> {formatVND(employee.totalRevuenueEmployee)}
                 </p>
               </div>
               <div className={styles["employee-chart"]}>
