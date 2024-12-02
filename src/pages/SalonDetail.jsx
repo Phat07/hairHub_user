@@ -27,6 +27,7 @@ import {
   Pagination,
   Progress,
   Radio,
+  Rate,
   Row,
   Select,
   Space,
@@ -1680,6 +1681,7 @@ function SalonDetail(props) {
     // Set modal visibility based on payment method
   };
 
+
   return (
     <div style={{ marginTop: "75px" }}>
       <Layout>
@@ -1902,7 +1904,7 @@ function SalonDetail(props) {
                                 </Button>,
                               ]}
                             >
-                              <List.Item.Meta
+                              {/* <List.Item.Meta
                                 avatar={
                                   <Avatar
                                     shape="square"
@@ -1921,6 +1923,46 @@ function SalonDetail(props) {
                                   </span>
                                 }
                                 description={employee?.gender}
+                              /> */}
+                              <List.Item.Meta
+                                avatar={
+                                  <Avatar
+                                    shape="square"
+                                    size={50}
+                                    src={employee?.img}
+                                  />
+                                }
+                                title={
+                                  <span
+                                    style={{
+                                      fontSize: "1.1rem",
+                                      cursor: "pointer",
+                                    }}
+                                  >
+                                    {employee?.fullName}
+                                  </span>
+                                }
+                                description={
+                                  <motion.div
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.3 }}
+                                    className="flex items-center space-x-2 whitespace-nowrap overflow-hidden"
+                                  >
+                                    <Rate
+                                      disabled
+                                      allowHalf
+                                      defaultValue={employee?.rating || 0}
+                                      className="text-sm"
+                                      style={{ color: "#BF9456" }}
+                                    />
+                                    <span className="text-sm text-gray-500">
+                                      {`(${
+                                        employee?.ratingCount || 0
+                                      } đánh giá)`}
+                                    </span>
+                                  </motion.div>
+                                }
                               />
                             </List.Item>
                           </motion.div>
