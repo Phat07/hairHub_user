@@ -549,7 +549,7 @@ function Header(props) {
                   <BellOutlined className={style.iconHeader} />
                 </Badge>
               )}
-              <Dropdown overlay={accountMenu} trigger={["click"]}>
+              <Dropdown menu={accountMenu} trigger={["click"]}>
                 <a onClick={(e) => e.preventDefault()}>
                   <Avatar
                     className={style.avatarLink}

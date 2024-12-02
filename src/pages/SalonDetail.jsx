@@ -1681,7 +1681,6 @@ function SalonDetail(props) {
     // Set modal visibility based on payment method
   };
 
-
   return (
     <div style={{ marginTop: "75px" }}>
       <Layout>
@@ -1886,25 +1885,25 @@ function SalonDetail(props) {
                         // dataSource={services}
                         dataSource={employees}
                         renderItem={(employee) => (
-                          <motion.div
-                            variants={listItemVariants}
-                            initial="hidden"
-                            animate="visible"
-                            whileHover="hover"
+                          // <motion.div
+                          //   variants={listItemVariants}
+                          //   initial="hidden"
+                          //   animate="visible"
+                          //   whileHover="hover"
+                          // >
+                          <List.Item
+                            actions={[
+                              <Button
+                                type="primary"
+                                key="book"
+                                onClick={() => handleEmployeeClick(employee)}
+                                style={{ backgroundColor: "#bf9456" }}
+                              >
+                                Chi tiết
+                              </Button>,
+                            ]}
                           >
-                            <List.Item
-                              actions={[
-                                <Button
-                                  type="primary"
-                                  key="book"
-                                  onClick={() => handleEmployeeClick(employee)}
-                                  style={{ backgroundColor: "#bf9456" }}
-                                >
-                                  Chi tiết
-                                </Button>,
-                              ]}
-                            >
-                              {/* <List.Item.Meta
+                            {/* <List.Item.Meta
                                 avatar={
                                   <Avatar
                                     shape="square"
@@ -1924,48 +1923,60 @@ function SalonDetail(props) {
                                 }
                                 description={employee?.gender}
                               /> */}
-                              <List.Item.Meta
-                                avatar={
-                                  <Avatar
-                                    shape="square"
-                                    size={50}
-                                    src={employee?.img}
+                            <List.Item.Meta
+                              avatar={
+                                <Avatar
+                                  shape="square"
+                                  size={50}
+                                  src={employee?.img}
+                                />
+                              }
+                              title={
+                                <span
+                                  style={{
+                                    fontSize: "1.1rem",
+                                    cursor: "pointer",
+                                  }}
+                                >
+                                  {employee?.fullName}
+                                </span>
+                              }
+                              description={
+                                // <motion.div
+                                //   initial={{ opacity: 0, y: 10 }}
+                                //   animate={{ opacity: 1, y: 0 }}
+                                //   transition={{ duration: 0.3 }}
+                                //   className="flex items-center space-x-2 whitespace-nowrap overflow-hidden"
+                                // >
+                                //   <Rate
+                                //     disabled
+                                //     allowHalf
+                                //     defaultValue={employee?.rating || 0}
+                                //     className="text-sm"
+                                //     style={{ color: "#BF9456" }}
+                                //   />
+                                //   <span className="text-sm text-gray-500">
+                                //     {`(${
+                                //       employee?.ratingCount || 0
+                                //     } đánh giá)`}
+                                //   </span>
+                                // </motion.div>
+                                <div className="flex items-center space-x-2 whitespace-nowrap overflow-hidden">
+                                  <Rate
+                                    key={employee.id}
+                                    disabled
+                                    allowHalf
+                                    defaultValue={employee?.rating || 0}
+                                    className="text-sm text-[#BF9456]"
                                   />
-                                }
-                                title={
-                                  <span
-                                    style={{
-                                      fontSize: "1.1rem",
-                                      cursor: "pointer",
-                                    }}
-                                  >
-                                    {employee?.fullName}
+                                  <span className="text-sm text-gray-500">
+                                    {`(${employee?.ratingCount || 0} đánh giá)`}
                                   </span>
-                                }
-                                description={
-                                  <motion.div
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.3 }}
-                                    className="flex items-center space-x-2 whitespace-nowrap overflow-hidden"
-                                  >
-                                    <Rate
-                                      disabled
-                                      allowHalf
-                                      defaultValue={employee?.rating || 0}
-                                      className="text-sm"
-                                      style={{ color: "#BF9456" }}
-                                    />
-                                    <span className="text-sm text-gray-500">
-                                      {`(${
-                                        employee?.ratingCount || 0
-                                      } đánh giá)`}
-                                    </span>
-                                  </motion.div>
-                                }
-                              />
-                            </List.Item>
-                          </motion.div>
+                                </div>
+                              }
+                            />
+                          </List.Item>
+                          // </motion.div>
                         )}
                         // style={{ backgroundColor: "transparent" }}
                         // pagination={{
@@ -3230,19 +3241,6 @@ function SalonDetail(props) {
                               </div>
                             </div>
                           ))}
-
-                        {/* <div style={{ marginTop: "16px" }}>
-                          <Title level={4}>Tổng</Title>
-                          <p style={{ fontSize: "2rem" }}>{calculateTotal()}</p>
-                          <Button
-                            style={{ backgroundColor: "#bf9456" }}
-                            onClick={handleBooking}
-                            type="primary"
-                            block
-                          >
-                            Đặt lịch
-                          </Button>
-                        </div> */}
                         <div style={{ marginTop: "16px" }}>
                           <Title style={{ marginBottom: "5px" }} level={4}>
                             Tổng số tiền
