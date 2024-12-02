@@ -56,19 +56,25 @@ const Footer2 = () => {
             </li>
           </ul>
         </nav>
-        <img
-          src={googleplay}
-          alt="googleplay Banner"
-          style={{
-            width: "100%",
-            height: "100%",
-            maxWidth: "10rem",
-            maxHeight: "10rem",
-            objectFit: "cover",
-            borderRadius: "0 2px 2px 0",
-          }}
-          className="googleplay-footer  "
-        />
+        <a
+          href="https://play.google.com/store/apps/details?id=com.hairhub.hairhubvn&pcampaignid=web_share"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img
+            src={googleplay}
+            alt="Google Play Banner"
+            style={{
+              width: "100%",
+              height: "100%",
+              maxWidth: "10rem",
+              maxHeight: "10rem",
+              objectFit: "cover",
+              borderRadius: "0 2px 2px 0",
+            }}
+            className="googleplay-footer"
+          />
+        </a>
       </div>
       <div
         style={{
