@@ -1,0 +1,15 @@
+.rbc-event.active {
+  background-color: #4caf50; /* Màu nền xanh lá cho sự kiện hoạt động */
+  color: white; /* Màu chữ trắng */
+  border-radius: 4px; /* Bo góc cho sự kiện */
+}
+
+.rbc-event.busy {
+  background-color: #f44336; /* Màu nền đỏ cho sự kiện bận */
+  color: white; /* Màu chữ trắng */
+  border-radius: 4px; /* Bo góc cho sự kiện */
+}
+
+.rbc-event:hover {
+  opacity: 0.8; /* Tăng cường độ mờ khi hover */
+}

@@ -39,6 +39,9 @@ export const employeeService = {
   GetScheduleByEmployeeId(id) {
     return API.get(`/schedules/GetScheduleByEmployeeId/${id}`);
   },
+  GetScheduleTodayByEmployeeId(id) {
+    return API.get(`/schedules/GetScheduleTodayByEmployeeId/${id}`);
+  },
   GetServiceHairByEmployeeId(id, page, size, search, filter, orderby) {
     return API.get(`/servicehairs/GetServiceHairByEmployeeId/${id}`, {
       params: {

@@ -53,9 +53,14 @@ import stylesCard from "../css/customerAppointment.module.css";
 import {
   actGetSalonByEmployeeId,
   actGetScheduleByEmployeeId,
+  actGetScheduleTodayByEmployeeId,
   actGetServiceHairByEmployeeId,
 } from "../store/employee/action";
 import classNames from "classnames";
+import { Calendar, momentLocalizer } from "react-big-calendar";
+import "../css/scheduleToday.css";
+
+const localizer = momentLocalizer(moment);
 
 function SalonEmployee(props) {
   dayjs.locale("vi");
@@ -69,6 +74,7 @@ function SalonEmployee(props) {
   // const auth = useAuthUser();
   // const ownerId = auth?.idOwner;
   const idEmployee = useSelector((state) => state.ACCOUNT.idEmployee);
+  console.log("idEmployee", idEmployee);
 
   const dispatch = useDispatch();
 
@@ -81,6 +87,11 @@ function SalonEmployee(props) {
   const listScheduleEmployee = useSelector(
     (state) => state.EMPLOYEE.getScheduleByEmployeeId
   );
+  const scheduleEmployeeToday = useSelector(
+    (state) => state.EMPLOYEE.getScheduleTodayByEmployeeId
+  );
+  console.log("scheduleEmployeeToday", scheduleEmployeeToday);
+  
 
   //logic fillter
   const [searchService, setSearchService] = useState("");
@@ -89,6 +100,35 @@ function SalonEmployee(props) {
   const [FillterService, setFillterService] = useState("");
   const [sortLabelService, setSortLabelService] = useState("Sắp xếp");
   const [filterLabelService, setFilterLabelService] = useState("Lọc");
+
+  const events = [
+    {
+      start: new Date(2024, 10, 1, 7, 0),
+      end: new Date(2024, 10, 1, 21, 0),
+      title: "Hoạt động",
+      isActive: true,
+    },
+    {
+      start: new Date(2024, 10, 1, 13, 0),
+      end: new Date(2024, 10, 1, 14, 0),
+      title: "Bận",
+      isActive: false,
+    },
+  ];
+
+  const Event = ({ event }) => {
+    const eventStyle = {
+      backgroundColor: event.isActive ? "#4caf50" : "#f44336", // Màu nền xanh lá hoặc đỏ
+      color: "white",
+      borderRadius: "4px",
+      padding: "10px",
+      display: "flex",
+      alignItems: "center",
+      height: "100%",
+    };
+
+    return <div style={eventStyle}>{event.title}</div>;
+  };
 
   const handleMenuClickServiceSort = (e) => {
     setCurrentPageService(1);
@@ -142,6 +182,11 @@ function SalonEmployee(props) {
   useEffect(() => {
     if (idEmployee) {
       dispatch(actGetScheduleByEmployeeId(idEmployee));
+    }
+  }, [idEmployee]);
+  useEffect(() => {
+    if (idEmployee) {
+      dispatch(actGetScheduleTodayByEmployeeId(idEmployee));
     }
   }, [idEmployee]);
 
@@ -511,6 +556,37 @@ function SalonEmployee(props) {
                         )
                       )}
                   </Descriptions>
+                </Col>
+              </Row>
+              <Row gutter={16} style={{ marginTop: "20px" }}>
+                <Col span={24}>
+                  <div className="schedule-container">
+                    <h3
+                      className={styles["custom-header"]}
+                      style={{ marginLeft: "1rem" }}
+                    >
+                      Thời gian làm việc hôm nay
+                    </h3>
+                    <Calendar
+                      localizer={localizer}
+                      events={events}
+                      startAccessor="start"
+                      endAccessor="end"
+                      style={{
+                        marginLeft: "50px",
+                        marginRight: "50px",
+                      }}
+                      views={["day"]}
+                      defaultView="day"
+                      step={120}
+                      timeslots={1}
+                      popup={true}
+                      components={{
+                        event: Event, // Sử dụng component Event tùy chỉnh
+                        toolbar: () => null, // Ẩn toolbar
+                      }}
+                    />
+                  </div>
                 </Col>
               </Row>
               <Row gutter={16} style={{ marginBlock: "30px" }}>
