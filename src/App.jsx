@@ -214,11 +214,11 @@ function App() {
   return (
     <>
       <div className="super-container">
-        {localStorage.getItem("refreshToken") ? <Header /> : <HeaderUnAuth />}
+        {localStorage?.getItem("refreshToken") ? <Header /> : <HeaderUnAuth />}
       </div>
       <Footer2 />
       <ChatBox />
-      {localStorage.getItem("refreshToken") ? (
+      {localStorage?.getItem("refreshToken") ? (
         <FooterMobileAuth />
       ) : (
         <FooterMobileUnAuth />

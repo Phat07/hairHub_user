@@ -731,7 +731,7 @@ function CustomerAppointmentVer2(props) {
               )}
               {isReportExpired && !isReportByCustomer ? (
                 <Button
-                  style={{ marginRight: "1rem" }}
+                  style={{ marginRight: "1rem", marginTop: "1rem" }}
                   size="medium"
                   disabled={isReportExpired}
                 >
