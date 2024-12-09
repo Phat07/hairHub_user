@@ -2,14 +2,9 @@ import {
   CaretRightOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
-  DeleteOutlined,
-  DollarCircleOutlined,
   DownOutlined,
-  EditOutlined,
   LineOutlined,
-  PlusOutlined,
   SearchOutlined,
-  UploadOutlined,
 } from "@ant-design/icons";
 import {
   Avatar,
@@ -20,15 +15,12 @@ import {
   DatePicker,
   Descriptions,
   Dropdown,
-  Flex,
   Form,
-  Image,
   Input,
-  InputNumber,
   Menu,
+  message,
   Modal,
   Pagination,
-  Popconfirm,
   Rate,
   Row,
   Skeleton,
@@ -38,24 +30,27 @@ import {
   Tag,
   TimePicker,
   Typography,
-  Upload,
-  message,
 } from "antd";
-import axios from "axios";
+import classNames from "classnames";
 import dayjs from "dayjs";
 import moment from "moment";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { Calendar, momentLocalizer } from "react-big-calendar";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
 import { isEmptyObject } from "../components/formatCheckValue/checkEmptyObject";
-import styles from "../css/listShopBarber.module.css";
 import stylesCard from "../css/customerAppointment.module.css";
+import styles from "../css/listShopBarber.module.css";
+import "../css/scheduleToday.css";
 import {
   actGetSalonByEmployeeId,
   actGetScheduleByEmployeeId,
+  actGetScheduleTodayByEmployeeId,
   actGetServiceHairByEmployeeId,
+  actPostSchedule,
 } from "../store/employee/action";
-import classNames from "classnames";
+const { RangePicker } = TimePicker;
+
+const localizer = momentLocalizer(moment);
 
 function SalonEmployee(props) {
   dayjs.locale("vi");
@@ -66,9 +61,30 @@ function SalonEmployee(props) {
   const [currentPageService, setCurrentPageService] = useState(1);
   const [pageSizeService, setPageSizeService] = useState(4);
   const [loading, setLoading] = useState(false);
+  const [loadingBusy, setLoadingBusy] = useState(false);
   // const auth = useAuthUser();
   // const ownerId = auth?.idOwner;
   const idEmployee = useSelector((state) => state.ACCOUNT.idEmployee);
+  console.log("idEmployee", idEmployee);
+  const disabledRangePickerTimes = () => {
+    const now = dayjs();
+    const currentHour = now.hour();
+    const currentMinute = now.minute();
+
+    return {
+      disabledHours: () => {
+        // Chặn các giờ trước giờ hiện tại
+        return Array.from({ length: currentHour }, (_, i) => i);
+      },
+      disabledMinutes: (selectedHour) => {
+        // Nếu chọn giờ hiện tại, chặn các phút trước phút hiện tại
+        if (selectedHour === currentHour) {
+          return Array.from({ length: currentMinute }, (_, i) => i);
+        }
+        return [];
+      },
+    };
+  };
 
   const dispatch = useDispatch();
 
@@ -81,6 +97,10 @@ function SalonEmployee(props) {
   const listScheduleEmployee = useSelector(
     (state) => state.EMPLOYEE.getScheduleByEmployeeId
   );
+  const scheduleEmployeeToday = useSelector(
+    (state) => state.EMPLOYEE.getScheduleTodayByEmployeeId
+  );
+  console.log("scheduleEmployeeToday", scheduleEmployeeToday);
 
   //logic fillter
   const [searchService, setSearchService] = useState("");
@@ -89,6 +109,35 @@ function SalonEmployee(props) {
   const [FillterService, setFillterService] = useState("");
   const [sortLabelService, setSortLabelService] = useState("Sắp xếp");
   const [filterLabelService, setFilterLabelService] = useState("Lọc");
+
+  const events = [
+    {
+      start: new Date(2024, 12, 3, 7, 0),
+      end: new Date(2024, 12, 3, 21, 0),
+      title: "Hoạt động",
+      isActive: true,
+    },
+    {
+      start: new Date(2024, 10, 1, 13, 0),
+      end: new Date(2024, 10, 1, 14, 0),
+      title: "Bận",
+      isActive: false,
+    },
+  ];
+
+  const Event = ({ event }) => {
+    const eventStyle = {
+      backgroundColor: event.isActive ? "#4caf50" : "#f44336", // Màu nền xanh lá hoặc đỏ
+      color: "white",
+      borderRadius: "4px",
+      padding: "10px",
+      display: "flex",
+      alignItems: "center",
+      height: "100%",
+    };
+
+    return <div style={eventStyle}>{event.title}</div>;
+  };
 
   const handleMenuClickServiceSort = (e) => {
     setCurrentPageService(1);
@@ -142,6 +191,11 @@ function SalonEmployee(props) {
   useEffect(() => {
     if (idEmployee) {
       dispatch(actGetScheduleByEmployeeId(idEmployee));
+    }
+  }, [idEmployee]);
+  useEffect(() => {
+    if (idEmployee) {
+      dispatch(actGetScheduleTodayByEmployeeId(idEmployee));
     }
   }, [idEmployee]);
 
@@ -277,6 +331,52 @@ function SalonEmployee(props) {
   const onPageChangeService = (page) => {
     setCurrentPageService(page);
   };
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [form] = Form.useForm();
+
+  const handleAddBusySchedule = () => {
+    setIsModalOpen(true);
+  };
+  console.log("sa", salonDetailEmployee);
+
+  const handleOk = () => {
+    setLoadingBusy(true);
+    form
+      .validateFields()
+      .then((values) => {
+        // Bật trạng thái loading
+        const [startTime, endTime] = values.timeRange || [];
+        const data = {
+          startDate: startTime.toISOString(),
+          endDate: endTime.toISOString(),
+          note: values.note,
+        };
+
+        dispatch(actPostSchedule(data, idEmployee))
+          .then((res) => {
+            console.log("API Response:", res);
+            message.success("Lịch bận đã được thêm!");
+            form.resetFields();
+            setIsModalOpen(false);
+          })
+          .catch((err) => {
+            console.error("API Error:", err);
+            message.error("Thêm lịch bận thất bại!");
+          })
+          .finally(() => {
+            setLoadingBusy(false); // Tắt trạng thái loading
+          });
+      })
+      .catch((info) => {
+        console.log("Validate Failed:", info);
+      });
+  };
+
+  const handleCancel = () => {
+    form.resetFields();
+    setIsModalOpen(false);
+  };
 
   return (
     <div>
@@ -396,7 +496,11 @@ function SalonEmployee(props) {
                     </Descriptions.Item>
 
                     <Descriptions.Item label="Đánh giá">
-                      <Rate disabled defaultValue={salonDetailEmployee?.rate} />
+                      <Rate
+                        key={salonDetailEmployee?.id}
+                        disabled
+                        defaultValue={salonDetailEmployee?.rate}
+                      />
                     </Descriptions.Item>
                     <Descriptions.Item label="Tổng đánh giá">
                       {salonDetailEmployee?.totalRating}
@@ -511,6 +615,99 @@ function SalonEmployee(props) {
                         )
                       )}
                   </Descriptions>
+                </Col>
+              </Row>
+              <Row gutter={16} style={{ marginTop: "20px" }}>
+                <Col span={24}>
+                  <div className="schedule-container">
+                    <div className="flex justify-around ">
+                      <h3
+                        className={styles["custom-header"]}
+                        style={{ marginLeft: "1rem" }}
+                      >
+                        Thời gian làm việc hôm nay
+                      </h3>
+
+                      <Button
+                        className="bg-[#8C6239] text-white px-8 rounded-lg hover:!border-white hover:!bg-[#b08d5f] hover:!text-black"
+                        onClick={handleAddBusySchedule}
+                      >
+                        Add Lịch Bận
+                      </Button>
+                    </div>
+                    <Modal
+                      title="Thêm Lịch Bận"
+                      visible={isModalOpen}
+                      onOk={handleOk}
+                      onCancel={handleCancel}
+                      footer={null} // Ẩn nút mặc định của modal
+                    >
+                      <Form form={form} layout="vertical">
+                        <Form.Item
+                          name="timeRange"
+                          label="Khoảng thời gian"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Vui lòng chọn khoảng thời gian!",
+                            },
+                          ]}
+                        >
+                          <RangePicker
+                            format="HH:mm"
+                            showNow={false}
+                            style={{ width: "100%" }}
+                            disabledTime={disabledRangePickerTimes}
+                          />
+                        </Form.Item>
+                        <Form.Item
+                          name="note"
+                          label="Ghi chú"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Vui lòng nhập ghi chú!",
+                            },
+                          ]}
+                        >
+                          <Input.TextArea
+                            rows={4}
+                            placeholder="Nhập ghi chú tại đây"
+                          />
+                        </Form.Item>
+                        <Form.Item>
+                          <Button
+                            type="button"
+                            onClick={handleOk}
+                            className="bg-[#8C6239] text-white mt-4 py-2 px-8 rounded-lg hover:!border-white hover:!bg-[#b08d5f] hover:!text-black"
+                            loading={loading} // Vô hiệu hóa nút khi đang loading
+                          >
+                            Thêm Lịch Bận
+                          </Button>
+                        </Form.Item>
+                      </Form>
+                    </Modal>
+                    ;
+                    <Calendar
+                      localizer={localizer}
+                      events={events}
+                      startAccessor="start"
+                      endAccessor="end"
+                      style={{
+                        marginLeft: "50px",
+                        marginRight: "50px",
+                      }}
+                      views={["day"]}
+                      defaultView="day"
+                      step={120}
+                      timeslots={1}
+                      popup={true}
+                      components={{
+                        event: Event, // Sử dụng component Event tùy chỉnh
+                        toolbar: () => null, // Ẩn toolbar
+                      }}
+                    />
+                  </div>
                 </Col>
               </Row>
               <Row gutter={16} style={{ marginBlock: "30px" }}>

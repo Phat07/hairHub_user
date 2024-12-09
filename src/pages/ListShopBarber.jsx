@@ -1,3 +1,6 @@
+import { emailPattern } from "@/components/Regex/Patterns";
+import ResendCode from "@/components/Resend/resendCode";
+import { SalonEmployeesServices } from "@/services/salonEmployeesServices";
 import {
   CaretRightOutlined,
   CheckCircleOutlined,
@@ -7,7 +10,6 @@ import {
   DownOutlined,
   EditOutlined,
   LineOutlined,
-  LoadingOutlined,
   PlusOutlined,
   SearchOutlined,
   UploadOutlined,
@@ -43,17 +45,19 @@ import {
   message,
 } from "antd";
 import axios from "axios";
+import classNames from "classnames";
 import dayjs from "dayjs";
 import moment from "moment";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import OTPInput from "react-otp-input";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { isEmptyObject } from "../components/formatCheckValue/checkEmptyObject";
 import AddEmployeeForm from "../components/SalonShop/EmployeeForm";
 import AddServiceForm from "../components/SalonShop/ServiceForm";
-import styles from "../css/listShopBarber.module.css";
 import stylesCard from "../css/customerAppointment.module.css";
 import stylesModal from "../css/employeeForm.module.css";
+import styles from "../css/listShopBarber.module.css";
 import { ServiceHairServices } from "../services/servicesHairServices";
 import { voucherServices } from "../services/voucherServices";
 import { actGetVoucherBySalonId } from "../store/manageVoucher/action";
@@ -63,11 +67,6 @@ import {
   actGetAllServicesBySalonId,
 } from "../store/salonEmployees/action";
 import { actGetSalonInformationByOwnerId } from "../store/salonInformation/action";
-import classNames from "classnames";
-import { emailPattern } from "@/components/Regex/Patterns";
-import OTPInput from "react-otp-input";
-import ResendCode from "@/components/Resend/resendCode";
-import { SalonEmployeesServices } from "@/services/salonEmployeesServices";
 const renderInput = (props) => (
   <input
     {...props}
@@ -1385,8 +1384,8 @@ function ListShopBarber(props) {
         await SalonEmployeesServices.activateEmployee(data).then((res) => {
           message.success("Chúc mừng đã kích hoạt tài khoản thành công!");
           setShow(!show);
-          setEmailVerified(false)
-          setActiveEmployeeId(null)
+          setEmailVerified(false);
+          setActiveEmployeeId(null);
         });
       } catch (error) {
         // Error block
@@ -1567,6 +1566,7 @@ function ListShopBarber(props) {
                     <Descriptions.Item label="Đánh giá">
                       <div>
                         <Rate
+                          key={salonDetail?.id}
                           disabled
                           allowHalf
                           defaultValue={salonDetail?.rate ?? 0}

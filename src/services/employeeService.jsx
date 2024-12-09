@@ -39,6 +39,9 @@ export const employeeService = {
   GetScheduleByEmployeeId(id) {
     return API.get(`/schedules/GetScheduleByEmployeeId/${id}`);
   },
+  GetScheduleTodayByEmployeeId(id) {
+    return API.get(`/schedules/GetScheduleTodayByEmployeeId/${id}`);
+  },
   GetServiceHairByEmployeeId(id, page, size, search, filter, orderby) {
     return API.get(`/servicehairs/GetServiceHairByEmployeeId/${id}`, {
       params: {
@@ -47,6 +50,13 @@ export const employeeService = {
         search,
         filter,
         orderby,
+      },
+    });
+  },
+  PostBusySchedule(data, id) {
+    return API.post(`/busy_schedule_employee/BusySchedule/${id}`, data, {
+      params: {
+        id: id,
       },
     });
   },

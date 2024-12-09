@@ -1514,8 +1514,8 @@ function SalonDetail(props) {
             data
           );
           const paymentUrl = paymentResponse.data.checkoutUrl;
-
           setPaymentMethodDetail(paymentUrl);
+          dispatch(GetInformationAccount(uid));
         } else {
           setIsModalPaymentVisible(false);
         }

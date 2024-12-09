@@ -7,6 +7,7 @@ export const GET_REVENUE_APPOINTMENT = "GET_REVENUE_APPOINTMENT";
 export const GET_REVENUE_APPOINTMENT_DAY = "GET_REVENUE_APPOINTMENT_DAY";
 export const GET_SALON_EMPLOYEE = "GET_SALON_EMPLOYEE";
 export const GET_SCHEDULE_EMPLOYEE = "GET_SCHEDULE_EMPLOYEE";
+export const GET_SCHEDULE_EMPLOYEE_TODAY = "GET_SCHEDULE_EMPLOYEE_TODAY";
 export const GET_SERVICE_EMPLOYEE = "GET_SERVICE_EMPLOYEE";
 export const getNumberAppointmentByStatus = (list) => {
   return {
@@ -41,6 +42,12 @@ export const getSalonByEmployeeId = (list) => {
 export const getScheduleByEmployeeId = (list) => {
   return {
     type: GET_SCHEDULE_EMPLOYEE,
+    payload: list,
+  };
+};
+export const getScheduleTodayByEmployeeId = (list) => {
+  return {
+    type: GET_SCHEDULE_EMPLOYEE_TODAY,
     payload: list,
   };
 };
@@ -139,6 +146,25 @@ export function actGetRevenueofAppointmentDaybyDay(id, startdate, enddate) {
   };
 }
 
+export function actPostSchedule(data, id) {
+  return async (dispatch) => {
+    const result = employeeService.PostBusySchedule(data, id);
+    await result
+      .then((response) => {
+        if (response.status === 200 || response.status === 201) {
+          return response;
+          // dispatch(getRevenueofAppointmentDaybyDay(response.data));
+        } else {
+          message.error("Lỗi lấy dữ liệu!!!!");
+        }
+      })
+      .catch((error) => {
+        // Xử lý lỗi nếu có
+        // console.error("Error while fetching all config money:", error);
+      });
+  };
+}
+
 export function actGetSalonByEmployeeId(id) {
   return async (dispatch) => {
     const result = employeeService.GetSalonByEmployeeId(id);
@@ -164,6 +190,24 @@ export function actGetScheduleByEmployeeId(id) {
       .then((response) => {
         if (response.status === 200 || response.status === 201) {
           dispatch(getScheduleByEmployeeId(response.data));
+        } else {
+          message.error("Lỗi lấy dữ liệu!!!!");
+        }
+      })
+      .catch((error) => {
+        // Xử lý lỗi nếu có
+        // console.error("Error while fetching all config money:", error);
+      });
+  };
+}
+
+export function actGetScheduleTodayByEmployeeId(id) {
+  return async (dispatch) => {
+    const result = employeeService.GetScheduleTodayByEmployeeId(id);
+    await result
+      .then((response) => {
+        if (response.status === 200 || response.status === 201) {
+          dispatch(getScheduleTodayByEmployeeId(response.data));
         } else {
           message.error("Lỗi lấy dữ liệu!!!!");
         }
