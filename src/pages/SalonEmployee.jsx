@@ -157,6 +157,8 @@ function SalonEmployee(props) {
   const [isModalDetailBusyVisible, setIsModalDetailBusyVisible] =
     useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  console.log("selectedEvent", selectedEvent);
+
   const [formUpdateBusy] = Form.useForm();
   const navigate = useNavigate();
   const handleSelectEvent = (event) => {
@@ -494,18 +496,33 @@ function SalonEmployee(props) {
     const currentDate = moment().format("YYYY-MM-DD HH:mm:ss");
     setLoadingBusy(true);
     const currentTime = new Date(); // Lấy thời gian hiện tại
-    const { timeRange } = formUpdateBusy.getFieldsValue(); // Lấy khoảng thời gian từ form
+    const { timeRange, note } = formUpdateBusy.getFieldsValue(); // Lấy khoảng thời gian từ form
 
     if (timeRange && timeRange[1] && timeRange[1].toDate() < currentTime) {
       // Nếu thời gian kết thúc đã qua
       message.warning("Không thể cập nhật lịch bận đã qua thời gian hiện tại!");
       return;
     }
+
+    const [startTime, endTime] = timeRange || [];
+    const isUnchanged =
+      selectedEvent &&
+      dayjs(selectedEvent.start).isSame(startTime) &&
+      dayjs(selectedEvent.end).isSame(endTime) &&
+      selectedEvent.title === note;
+
+    if (isUnchanged) {
+      message.info("Không có thay đổi nào để cập nhật.");
+      setLoadingBusy(false);
+      return;
+    }
+
     formUpdateBusy
       .validateFields()
       .then((values) => {
         const [startTime, endTime] = values.timeRange || [];
         const data = {
+          busyScheduleId: selectedEvent?.id,
           startDate: startTime.local().add(7, "hour").toISOString(), // Cộng thêm 7 giờ vào thời gian bắt đầu
           endDate: endTime.local().add(7, "hour").toISOString(), // Cộng thêm 7 giờ vào thời gian kết thúc
           note: values.note,
@@ -896,7 +913,7 @@ function SalonEmployee(props) {
                           >
                             Xóa lịch Bận
                           </Button>
-                          {/* <Button
+                          <Button
                             type="button"
                             onClick={handleUpdateBusy}
                             className={styles["add-busy-button"]}
@@ -904,7 +921,7 @@ function SalonEmployee(props) {
                             loading={loading} // Vô hiệu hóa nút khi đang loading
                           >
                             Chỉnh sửa lịch bận
-                          </Button> */}
+                          </Button>
                         </Form.Item>
                       </Form>
                     </Modal>
