@@ -53,10 +53,6 @@ function Header(props) {
   const notificationListUnread = useSelector(
     (state) => state.NOTIFICATION.notificationListUnread
   );
-  console.log("id", idOwner);
-  console.log("id1", idCustomer);
-  
-  
   // Hàm đóng modal
   const closeModal = () => {
     setIsModalVisibleQr(false);

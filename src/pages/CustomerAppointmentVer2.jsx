@@ -72,6 +72,7 @@ function CustomerAppointmentVer2(props) {
   const [pageSize, setPageSize] = useState(4);
   const [ratings, setRatings] = useState({});
   const [expanded, setExpanded] = useState({});
+  const uid = useSelector((state) => state.ACCOUNT.uid);
 
   const handleRatingChange = (employeeId, value) => {
     setRatings({
@@ -211,7 +212,8 @@ function CustomerAppointmentVer2(props) {
         actDeleteAppointmentByCustomerId(
           selectedAppointmentId,
           idCustomer,
-          reasonCancel
+          reasonCancel,
+          uid
         )
       );
       setStatus("CANCEL_BY_CUSTOMER");

@@ -1193,6 +1193,8 @@ function SalonDetail(props) {
 
     await AppointmentService.calculatePrice(appointmentFormData)
       .then((res) => {
+        console.log("re", res);
+
         setOriginalPrice(res.data.originalPrice);
         setTotalPrice(res.data.totalPrice);
         setDiscountedPrice(res.data.discountedPrice);
@@ -1224,6 +1226,7 @@ function SalonDetail(props) {
         setLoadingBook(false);
       });
   };
+  console.log("total", totalPrice);
 
   const fetchAvailable = async (currentDate) => {
     const postData = {
@@ -2385,18 +2388,24 @@ function SalonDetail(props) {
                           <List.Item
                             style={{
                               cursor:
-                                item.minimumOrderAmount <= totalPriceVoucher
+                                item.minimumOrderAmount <= totalPriceVoucher &&
+                                item?.quantity > 0 &&
+                                new Date(item.expiryDate) >= new Date()
                                   ? "pointer"
                                   : "not-allowed",
                               opacity:
-                                item.minimumOrderAmount <= totalPriceVoucher
+                                item.minimumOrderAmount <= totalPriceVoucher &&
+                                item?.quantity > 0 &&
+                                new Date(item.expiryDate) >= new Date()
                                   ? 1
                                   : 0.5,
                               padding: "5px 0px",
                             }}
                             onClick={() => {
                               if (
-                                item.minimumOrderAmount <= totalPriceVoucher
+                                item.minimumOrderAmount <= totalPriceVoucher &&
+                                item?.quantity > 0 &&
+                                new Date(item.expiryDate) >= new Date()
                               ) {
                                 handleSelectedVoucher(item);
                                 setDisplayVoucherList(!displayVoucherList);
@@ -2421,7 +2430,7 @@ function SalonDetail(props) {
                                         Số tiền tối thiểu:{" "}
                                         {formatMoneyVND(
                                           item.minimumOrderAmount
-                                        )}{" "}
+                                        )}
                                         vnđ
                                       </p>
                                       <p
@@ -2434,12 +2443,21 @@ function SalonDetail(props) {
                                         vnđ
                                       </p>
                                       <p
+                                        className={`voucher-max-discount ${
+                                          new Date(item.expiryDate) < new Date()
+                                            ? "text-red-500"
+                                            : ""
+                                        }`}
+                                      >
+                                        Ngày hết hạn:{" "}
+                                        {formattedDateUi(item.expiryDate)}
+                                      </p>
+                                      <p
                                         className={
                                           style["voucher-max-discount"]
                                         }
                                       >
-                                        Ngày hết hạn:{" "}
-                                        {formattedDateUi(item.expiryDate)}
+                                        Số lượng: {item.quantity}
                                       </p>
                                       {item.minimumOrderAmount >
                                         totalPriceVoucher && (
@@ -3249,13 +3267,13 @@ function SalonDetail(props) {
                             style={{
                               fontSize:
                                 voucherSelected?.length > 0
-                                  ? "0.9rem"
+                                  ? "1.9rem"
                                   : "1.2rem",
                               marginBottom: "0px",
-                              textDecoration:
-                                voucherSelected?.length > 0
-                                  ? "line-through"
-                                  : "none",
+                              // textDecoration:
+                              //   voucherSelected?.length > 0
+                              //     ? "line-through"
+                              //     : "none",
                               color:
                                 voucherSelected?.length > 0
                                   ? "gray"
@@ -3272,7 +3290,7 @@ function SalonDetail(props) {
                                 marginTop: "0px",
                               }}
                             >
-                              {formatCurrency(totalPrice)}{" "}
+                              {/* {formatCurrency(totalPrice)}{" "} */}
                               <span
                                 style={{
                                   marginLeft: "5px",
