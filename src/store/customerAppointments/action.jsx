@@ -1,6 +1,7 @@
 import { message } from "antd";
 import { SalonInformationServices } from "../../services/salonInformationServices";
 import { AppointmentService } from "../../services/appointmentServices";
+import { GetInformationAccount } from "../account/action";
 
 export const GET_ALL_APPOINTMENT_CUSTOMER = "GET_ALL_APPOINTMENT_CUSTOMER";
 export const ALL_APPOINTMENT_CUSTOMER = "ALL_APPOINTMENT_CUSTOMER";
@@ -115,7 +116,7 @@ export function actGetAllAppointmentHistoryByCustomerId(id, page, size) {
   };
 }
 
-export function actDeleteAppointmentByCustomerId(id, customerId, reasonCancel) {
+export function actDeleteAppointmentByCustomerId(id, customerId, reasonCancel, uid) {
   return async (dispatch) => {
     const result = AppointmentService.deleteAppointmentCustomer(
       id,
@@ -129,6 +130,7 @@ export function actDeleteAppointmentByCustomerId(id, customerId, reasonCancel) {
           await dispatch(
             actGetAllAppointmentHistoryByCustomerId(customerId, 1, 5)
           );
+          dispatch(GetInformationAccount(uid));
           message.success("Hủy lịch hẹn thành công");
         } else {
           message.error("Hủy lịch hẹn thất bại!!!");
