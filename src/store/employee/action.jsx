@@ -9,6 +9,7 @@ export const GET_SALON_EMPLOYEE = "GET_SALON_EMPLOYEE";
 export const GET_SCHEDULE_EMPLOYEE = "GET_SCHEDULE_EMPLOYEE";
 export const GET_SCHEDULE_EMPLOYEE_TODAY = "GET_SCHEDULE_EMPLOYEE_TODAY";
 export const GET_SERVICE_EMPLOYEE = "GET_SERVICE_EMPLOYEE";
+export const GET_SCHEDULE_BUSY_EMPLOYEE = "GET_SCHEDULE_BUSY_EMPLOYEE";
 export const getNumberAppointmentByStatus = (list) => {
   return {
     type: GET_NUMBER_APPOINTMENT,
@@ -54,6 +55,12 @@ export const getScheduleTodayByEmployeeId = (list) => {
 export const getServiceHairByEmployeeId = (list) => {
   return {
     type: GET_SERVICE_EMPLOYEE,
+    payload: list,
+  };
+};
+export const getScheduleBusyByEmployeeId = (list) => {
+  return {
+    type: GET_SCHEDULE_BUSY_EMPLOYEE,
     payload: list,
   };
 };
@@ -165,6 +172,45 @@ export function actPostSchedule(data, id) {
   };
 }
 
+export function actDeleteBusySchedule(id) {
+  return async (dispatch) => {
+    const result = employeeService.DeleteBusySchedule(id);
+    await result
+      .then((response) => {
+        if (response.status === 200 || response.status === 201) {
+          return response;
+          // dispatch(getRevenueofAppointmentDaybyDay(response.data));
+        } else {
+          message.error("Lỗi lấy dữ liệu!!!!");
+        }
+      })
+      .catch((error) => {
+        // Xử lý lỗi nếu có
+        // console.error("Error while fetching all config money:", error);
+      });
+  };
+}
+
+export function actUpdateBusySchedule(id, data) {
+  return async (dispatch) => {
+    const result = employeeService.UpdateBusySchedule(id, data);
+    await result
+      .then((response) => {
+        console.log("response", response);
+
+        if (response.status === 200 || response.status === 201) {
+          return response;
+          // dispatch(getRevenueofAppointmentDaybyDay(response.data));
+        } else {
+          message.error("Lỗi lấy dữ liệu!!!!");
+        }
+      })
+      .catch((error) => {
+        return error;
+      });
+  };
+}
+
 export function actGetSalonByEmployeeId(id) {
   return async (dispatch) => {
     const result = employeeService.GetSalonByEmployeeId(id);
@@ -241,6 +287,24 @@ export function actGetServiceHairByEmployeeId(
         if (response.status === 200 || response.status === 201) {
           dispatch(getServiceHairByEmployeeId(response.data));
           return response;
+        } else {
+          message.error("Lỗi lấy dữ liệu!!!!");
+        }
+      })
+      .catch((error) => {
+        // Xử lý lỗi nếu có
+        // console.error("Error while fetching all config money:", error);
+      });
+  };
+}
+
+export function actGetBusyScheduleEmployee(id, date) {
+  return async (dispatch) => {
+    const result = employeeService.GetBusyScheduleEmployee(id, date);
+    await result
+      .then((response) => {
+        if (response.status === 200 || response.status === 201) {
+          dispatch(getScheduleBusyByEmployeeId(response.data));
         } else {
           message.error("Lỗi lấy dữ liệu!!!!");
         }

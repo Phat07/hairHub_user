@@ -7,6 +7,7 @@ import {
   GET_SCHEDULE_EMPLOYEE_TODAY,
   GET_SERVICE_EMPLOYEE,
   GET_REVENUE_APPOINTMENT_DAY,
+  GET_SCHEDULE_BUSY_EMPLOYEE,
 } from "./action";
 
 const initialState = {
@@ -18,6 +19,7 @@ const initialState = {
   getScheduleByEmployeeId: [],
   getScheduleTodayByEmployeeId: [],
   getServiceHairByEmployeeId: [],
+  getBusyScheduleEmployee: [],
 };
 
 const reducer = (state = initialState, action) => {
@@ -62,6 +64,11 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         getServiceHairByEmployeeId: action.payload,
+      };
+    case GET_SCHEDULE_BUSY_EMPLOYEE:
+      return {
+        ...state,
+        getBusyScheduleEmployee: action.payload,
       };
     default:
       return state;

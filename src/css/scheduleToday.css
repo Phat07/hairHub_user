@@ -13,3 +13,10 @@
 .rbc-event:hover {
   opacity: 0.8; /* Tăng cường độ mờ khi hover */
 }
+.rbc-event {
+  background-color: #bf9456; /* Màu nền của sự kiện */
+  color: white; /* Màu chữ */
+}
+.rbc-event.rbc-selected, .rbc-day-slot .rbc-selected.rbc-background-event {
+  background-color: #bf9456;
+}

@@ -60,4 +60,20 @@ export const employeeService = {
       },
     });
   },
+  GetBusyScheduleEmployee(employeeId, date) {
+    return API.get(
+      `/busy_schedule_employee/GetBusyScheduleEmployee/${employeeId}`,
+      {
+        params: {
+          dateTime: date,
+        },
+      }
+    );
+  },
+  DeleteBusySchedule(id) {
+    return API.delete(`/busy_schedule_employee/DeleteBusySchedule/${id}`);
+  },
+  UpdateBusySchedule(id, data) {
+    return API.put(`/busy_schedule_employee/UpdateBusySchedule/${id}`, data);
+  },
 };

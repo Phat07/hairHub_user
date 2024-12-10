@@ -67,6 +67,14 @@ margin-inline: 2rem;
   color: white !important;
 }
 
+.add-busy-button{
+  background-color: #A38245 ;
+  border-color: #A38245;
+  color: white;
+  padding: 4px 15px;
+  border-radius: 6px;
+}
+
 .table-container {
   width: 100%;
   overflow-x: auto; /* Enable horizontal scrolling */

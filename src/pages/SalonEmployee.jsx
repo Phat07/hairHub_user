@@ -42,12 +42,17 @@ import stylesCard from "../css/customerAppointment.module.css";
 import styles from "../css/listShopBarber.module.css";
 import "../css/scheduleToday.css";
 import {
+  actDeleteBusySchedule,
+  actGetBusyScheduleEmployee,
   actGetSalonByEmployeeId,
   actGetScheduleByEmployeeId,
   actGetScheduleTodayByEmployeeId,
   actGetServiceHairByEmployeeId,
   actPostSchedule,
+  actUpdateBusySchedule,
 } from "../store/employee/action";
+import { useNavigate } from "react-router-dom";
+import { employeeService } from "@/services/employeeService";
 const { RangePicker } = TimePicker;
 
 const localizer = momentLocalizer(moment);
@@ -65,7 +70,35 @@ function SalonEmployee(props) {
   // const auth = useAuthUser();
   // const ownerId = auth?.idOwner;
   const idEmployee = useSelector((state) => state.ACCOUNT.idEmployee);
-  console.log("idEmployee", idEmployee);
+  const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
+  const idOwner = useSelector((state) => state.ACCOUNT.idOwner);
+  const dispatch = useDispatch();
+  const salonDetailEmployee = useSelector(
+    (state) => state.EMPLOYEE.getSalonByEmployeeId
+  );
+  const listServiceEmployee = useSelector(
+    (state) => state.EMPLOYEE.getServiceHairByEmployeeId
+  );
+  const listScheduleEmployee = useSelector(
+    (state) => state.EMPLOYEE.getScheduleByEmployeeId
+  );
+
+  console.log("listScheduleEmployee", listScheduleEmployee);
+
+  const scheduleEmployeeToday = useSelector(
+    (state) => state.EMPLOYEE.getScheduleTodayByEmployeeId
+  );
+  const scheduleEmployeeBusy = useSelector(
+    (state) => state.EMPLOYEE.getBusyScheduleEmployee
+  );
+  //logic fillter
+  const [searchService, setSearchService] = useState("");
+  const [searchServiceKey, setSearchServiceKey] = useState("");
+  const [SortService, setSortService] = useState(null);
+  const [FillterService, setFillterService] = useState("");
+  const [sortLabelService, setSortLabelService] = useState("Sắp xếp");
+  const [filterLabelService, setFilterLabelService] = useState("Lọc");
+
   const disabledRangePickerTimes = () => {
     const now = dayjs();
     const currentHour = now.hour();
@@ -86,48 +119,76 @@ function SalonEmployee(props) {
     };
   };
 
-  const dispatch = useDispatch();
-
-  const salonDetailEmployee = useSelector(
-    (state) => state.EMPLOYEE.getSalonByEmployeeId
-  );
-  const listServiceEmployee = useSelector(
-    (state) => state.EMPLOYEE.getServiceHairByEmployeeId
-  );
-  const listScheduleEmployee = useSelector(
-    (state) => state.EMPLOYEE.getScheduleByEmployeeId
-  );
-  const scheduleEmployeeToday = useSelector(
-    (state) => state.EMPLOYEE.getScheduleTodayByEmployeeId
-  );
-  console.log("scheduleEmployeeToday", scheduleEmployeeToday);
-
-  //logic fillter
-  const [searchService, setSearchService] = useState("");
-  const [searchServiceKey, setSearchServiceKey] = useState("");
-  const [SortService, setSortService] = useState(null);
-  const [FillterService, setFillterService] = useState("");
-  const [sortLabelService, setSortLabelService] = useState("Sắp xếp");
-  const [filterLabelService, setFilterLabelService] = useState("Lọc");
-
   const events = [
     {
-      start: new Date(2024, 12, 3, 7, 0),
-      end: new Date(2024, 12, 3, 21, 0),
-      title: "Hoạt động",
-      isActive: true,
+      startTime: "2024-12-09T09:00:00",
+      endTime: "2024-12-09T10:00:00",
+      title: "bận việc",
+      isBusySchedule: true,
+      idAppointment: null,
     },
     {
-      start: new Date(2024, 10, 1, 13, 0),
-      end: new Date(2024, 10, 1, 14, 0),
-      title: "Bận",
-      isActive: false,
+      startTime: "2024-12-09T18:30:00",
+      endTime: "2024-12-09T18:30:00",
+      title: "Lịch hẹn với khách hàng Nhat Linh",
+      isBusySchedule: false,
+      idAppointment: "40877986-feb-4cc5-bcc2-3663130121a9",
+    },
+    {
+      startTime: "2024-12-09T12:30:00",
+      endTime: "2024-12-09T13:00:00",
+      title: "Lich hen với khách hàng Cao Kha",
+      isBusySchedule: false,
+      idAppointment: null,
     },
   ];
 
+  const parsedEvents = scheduleEmployeeBusy?.map((event) => {
+    const startDate = new Date(event.startTime);
+    const endDate = new Date(event.endTime);
+
+    return {
+      ...event,
+      start: startDate,
+      end: endDate,
+    };
+  });
+
+  const [isModalDetailBusyVisible, setIsModalDetailBusyVisible] =
+    useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [formUpdateBusy] = Form.useForm();
+  const navigate = useNavigate();
+  const handleSelectEvent = (event) => {
+    if (event.isBusySchedule) {
+      formUpdateBusy.resetFields();
+      // Nếu isBusySchedule là true, hiển thị modal
+      setSelectedEvent(event);
+      setIsModalDetailBusyVisible(true);
+      formUpdateBusy.setFieldsValue({
+        note: event.title || "",
+        timeRange: [dayjs(event.start), dayjs(event.end)],
+      });
+    } else {
+      // Nếu isBusySchedule là false, điều hướng theo logic
+      if (idEmployee) {
+        navigate(`/employee_appointment?appointmentId=${event.idAppointment}`);
+      } else if (idCustomer) {
+        navigate(`/customer_appointment?appointmentId=${event.idAppointment}`);
+      } else if (idOwner) {
+        navigate(`/salon_appointment?appointmentId=${event.idAppointment}`);
+      }
+    }
+  };
+
+  const handleCancelBusyModal = () => {
+    setIsModalDetailBusyVisible(false);
+    formUpdateBusy.resetFields();
+  };
+
   const Event = ({ event }) => {
     const eventStyle = {
-      backgroundColor: event.isActive ? "#4caf50" : "#f44336", // Màu nền xanh lá hoặc đỏ
+      backgroundColor: event.isBusySchedule ? "#4caf50" : "#f44336",
       color: "white",
       borderRadius: "4px",
       padding: "10px",
@@ -193,11 +254,11 @@ function SalonEmployee(props) {
       dispatch(actGetScheduleByEmployeeId(idEmployee));
     }
   }, [idEmployee]);
-  useEffect(() => {
-    if (idEmployee) {
-      dispatch(actGetScheduleTodayByEmployeeId(idEmployee));
-    }
-  }, [idEmployee]);
+  // useEffect(() => {
+  //   if (idEmployee) {
+  //     dispatch(actGetScheduleTodayByEmployeeId(idEmployee));
+  //   }
+  // }, [idEmployee]);
 
   useEffect(() => {
     if (idEmployee && currentPageService && pageSizeService) {
@@ -232,9 +293,13 @@ function SalonEmployee(props) {
     SortService,
   ]);
 
-  // useEffect(() => {
-  //   dispatch(actGetAllServicesBySalonId(salonDetail.id, 1, 4));
-  // }, []);
+  useEffect(() => {
+    const currentDate = moment().format("YYYY-MM-DD HH:mm:ss");
+
+    if (idEmployee) {
+      dispatch(actGetBusyScheduleEmployee(idEmployee, currentDate));
+    }
+  }, [idEmployee]);
 
   const convertDayOfWeekToVietnamese = (dayOfWeek) => {
     const daysMapping = {
@@ -338,9 +403,9 @@ function SalonEmployee(props) {
   const handleAddBusySchedule = () => {
     setIsModalOpen(true);
   };
-  console.log("sa", salonDetailEmployee);
 
   const handleOk = () => {
+    const currentDate = dayjs().format("YYYY-MM-DD HH:mm:ss");
     setLoadingBusy(true);
     form
       .validateFields()
@@ -348,15 +413,17 @@ function SalonEmployee(props) {
         // Bật trạng thái loading
         const [startTime, endTime] = values.timeRange || [];
         const data = {
-          startDate: startTime.toISOString(),
-          endDate: endTime.toISOString(),
+          startDate: startTime.local().add(7, "hour").toISOString(), // Cộng thêm 7 giờ vào thời gian bắt đầu
+          endDate: endTime.local().add(7, "hour").toISOString(), // Cộng thêm 7 giờ vào thời gian kết thúc
           note: values.note,
         };
-
-        dispatch(actPostSchedule(data, idEmployee))
+        // dispatch(actPostSchedule(data, idEmployee))
+        employeeService
+          .PostBusySchedule(data, idEmployee)
           .then((res) => {
             console.log("API Response:", res);
             message.success("Lịch bận đã được thêm!");
+            dispatch(actGetBusyScheduleEmployee(idEmployee, currentDate));
             form.resetFields();
             setIsModalOpen(false);
           })
@@ -376,6 +443,96 @@ function SalonEmployee(props) {
   const handleCancel = () => {
     form.resetFields();
     setIsModalOpen(false);
+  };
+
+  const handleDeleteBusy = () => {
+    const currentTime = new Date(); // Lấy thời gian hiện tại
+    const { timeRange } = formUpdateBusy.getFieldsValue(); // Lấy khoảng thời gian từ form
+
+    if (timeRange && timeRange[1] && timeRange[1].toDate() < currentTime) {
+      // Nếu thời gian kết thúc đã qua
+      message.warning("Không thể xóa lịch bận đã qua thời gian hiện tại!");
+      return;
+    }
+
+    // Thực hiện xóa lịch bận nếu chưa qua thời gian hiện tại
+    Modal.confirm({
+      title: "Xác nhận xóa lịch bận",
+      content: "Bạn có chắc chắn muốn xóa lịch bận này không?",
+      okText: "Xóa",
+      cancelText: "Hủy",
+      onOk: async () => {
+        try {
+          setLoading(true);
+          // dispatch(actDeleteBusySchedule(selectedEvent?.id))
+          employeeService
+            .DeleteBusySchedule(selectedEvent?.id)
+            .then((res) => {
+              console.log("API Response:", res);
+              message.success("Xóa lịch bận thành công!");
+              dispatch(actGetBusyScheduleEmployee(idEmployee, currentDate));
+              form.resetFields();
+              setIsModalDetailBusyVisible(false);
+            })
+            .catch((err) => {
+              console.error("API Error:", err);
+              message.error("Xóa lịch bận thất bại!");
+            })
+            .finally(() => {
+              setLoadingBusy(false); // Tắt trạng thái loading
+            });
+          setLoading(false);
+        } catch (error) {
+          message.error("Đã xảy ra lỗi khi xóa lịch bận!");
+          setLoading(false);
+        }
+      },
+    });
+  };
+
+  const handleUpdateBusy = async () => {
+    const currentDate = moment().format("YYYY-MM-DD HH:mm:ss");
+    setLoadingBusy(true);
+    const currentTime = new Date(); // Lấy thời gian hiện tại
+    const { timeRange } = formUpdateBusy.getFieldsValue(); // Lấy khoảng thời gian từ form
+
+    if (timeRange && timeRange[1] && timeRange[1].toDate() < currentTime) {
+      // Nếu thời gian kết thúc đã qua
+      message.warning("Không thể cập nhật lịch bận đã qua thời gian hiện tại!");
+      return;
+    }
+    formUpdateBusy
+      .validateFields()
+      .then((values) => {
+        const [startTime, endTime] = values.timeRange || [];
+        const data = {
+          startDate: startTime.local().add(7, "hour").toISOString(), // Cộng thêm 7 giờ vào thời gian bắt đầu
+          endDate: endTime.local().add(7, "hour").toISOString(), // Cộng thêm 7 giờ vào thời gian kết thúc
+          note: values.note,
+        };
+        // dispatch(actUpdateBusySchedule(idEmployee, data))
+        employeeService
+          .UpdateBusySchedule(idEmployee, data)
+          .then((res) => {
+            console.log("API Response:", res);
+            message.success("Lịch bận đã được chỉnh sửa!");
+            dispatch(actGetBusyScheduleEmployee(idEmployee, currentDate));
+            formUpdateBusy.resetFields();
+            setIsModalDetailBusyVisible(false);
+          })
+          .catch((err) => {
+            console.error("API Error:", err);
+            message.error(
+              err.response?.data?.message || "Chỉnh sửa lịch bận thất bại!"
+            );
+          })
+          .finally(() => {
+            setLoadingBusy(false);
+          });
+      })
+      .catch((info) => {
+        console.log("Validate Failed:", info);
+      });
   };
 
   return (
@@ -620,21 +777,25 @@ function SalonEmployee(props) {
               <Row gutter={16} style={{ marginTop: "20px" }}>
                 <Col span={24}>
                   <div className="schedule-container">
-                    <div className="flex justify-around ">
+                    <div
+                    // className="flex justify-start items-center"
+                    >
                       <h3
                         className={styles["custom-header"]}
                         style={{ marginLeft: "1rem" }}
                       >
                         Thời gian làm việc hôm nay
                       </h3>
-
-                      <Button
-                        className="bg-[#8C6239] text-white px-8 rounded-lg hover:!border-white hover:!bg-[#b08d5f] hover:!text-black"
-                        onClick={handleAddBusySchedule}
-                      >
-                        Add Lịch Bận
-                      </Button>
                     </div>
+                    <button
+                      className={styles["add-busy-button"]}
+                      style={{
+                        marginLeft: "1rem",
+                      }}
+                      onClick={handleAddBusySchedule}
+                    >
+                      Thêm Lịch Bận
+                    </button>
                     <Modal
                       title="Thêm Lịch Bận"
                       visible={isModalOpen}
@@ -679,7 +840,7 @@ function SalonEmployee(props) {
                           <Button
                             type="button"
                             onClick={handleOk}
-                            className="bg-[#8C6239] text-white mt-4 py-2 px-8 rounded-lg hover:!border-white hover:!bg-[#b08d5f] hover:!text-black"
+                            className={styles["add-busy-button"]}
                             loading={loading} // Vô hiệu hóa nút khi đang loading
                           >
                             Thêm Lịch Bận
@@ -687,15 +848,75 @@ function SalonEmployee(props) {
                         </Form.Item>
                       </Form>
                     </Modal>
-                    ;
+                    <Modal
+                      title="Thông tin lịch bận"
+                      visible={isModalDetailBusyVisible}
+                      onCancel={handleCancelBusyModal}
+                      footer={null} // Ẩn nút mặc định của modal
+                    >
+                      <Form form={formUpdateBusy} layout="vertical">
+                        <Form.Item
+                          name="timeRange"
+                          label="Khoảng thời gian"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Vui lòng chọn khoảng thời gian!",
+                            },
+                          ]}
+                        >
+                          <RangePicker
+                            format="HH:mm"
+                            showNow={false}
+                            style={{ width: "100%" }}
+                            disabledTime={disabledRangePickerTimes}
+                          />
+                        </Form.Item>
+                        <Form.Item
+                          name="note"
+                          label="Ghi chú"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Vui lòng nhập ghi chú!",
+                            },
+                          ]}
+                        >
+                          <Input.TextArea
+                            rows={4}
+                            placeholder="Nhập ghi chú tại đây"
+                          />
+                        </Form.Item>
+                        <Form.Item>
+                          <Button
+                            onClick={handleDeleteBusy}
+                            type="primary"
+                            danger
+                            loading={loading} // Vô hiệu hóa nút khi đang loading
+                          >
+                            Xóa lịch Bận
+                          </Button>
+                          {/* <Button
+                            type="button"
+                            onClick={handleUpdateBusy}
+                            className={styles["add-busy-button"]}
+                            style={{ marginLeft: "1rem" }}
+                            loading={loading} // Vô hiệu hóa nút khi đang loading
+                          >
+                            Chỉnh sửa lịch bận
+                          </Button> */}
+                        </Form.Item>
+                      </Form>
+                    </Modal>
                     <Calendar
                       localizer={localizer}
-                      events={events}
+                      events={parsedEvents}
                       startAccessor="start"
                       endAccessor="end"
                       style={{
-                        marginLeft: "50px",
-                        marginRight: "50px",
+                        marginLeft: "1rem",
+                        marginRight: "1rem",
+                        marginTop: "1rem",
                       }}
                       views={["day"]}
                       defaultView="day"
@@ -706,6 +927,7 @@ function SalonEmployee(props) {
                         event: Event, // Sử dụng component Event tùy chỉnh
                         toolbar: () => null, // Ẩn toolbar
                       }}
+                      onSelectEvent={handleSelectEvent}
                     />
                   </div>
                 </Col>
