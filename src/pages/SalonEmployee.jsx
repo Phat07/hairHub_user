@@ -51,6 +51,7 @@ import {
   actPostSchedule,
   actUpdateBusySchedule,
 } from "../store/employee/action";
+import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { employeeService } from "@/services/employeeService";
 const { RangePicker } = TimePicker;
@@ -82,9 +83,6 @@ function SalonEmployee(props) {
   const listScheduleEmployee = useSelector(
     (state) => state.EMPLOYEE.getScheduleByEmployeeId
   );
-
-  console.log("listScheduleEmployee", listScheduleEmployee);
-
   const scheduleEmployeeToday = useSelector(
     (state) => state.EMPLOYEE.getScheduleTodayByEmployeeId
   );
@@ -99,22 +97,60 @@ function SalonEmployee(props) {
   const [sortLabelService, setSortLabelService] = useState("Sắp xếp");
   const [filterLabelService, setFilterLabelService] = useState("Lọc");
 
+  // const disabledRangePickerTimes = () => {
+  //   const now = dayjs();
+  //   const currentHour = now.hour();
+  //   const currentMinute = now.minute();
+
+  //   return {
+  //     disabledHours: () => {
+  //       // Chặn các giờ trước giờ hiện tại
+  //       return Array.from({ length: currentHour }, (_, i) => i);
+  //     },
+  //     disabledMinutes: (selectedHour) => {
+  //       // Nếu chọn giờ hiện tại, chặn các phút trước phút hiện tại
+  //       if (selectedHour === currentHour) {
+  //         return Array.from({ length: currentMinute }, (_, i) => i);
+  //       }
+  //       return [];
+  //     },
+  //   };
+  // };
   const disabledRangePickerTimes = () => {
-    const now = dayjs();
-    const currentHour = now.hour();
-    const currentMinute = now.minute();
+    // const schedule = {
+    //   startTime: "07:00",
+    //   endTime: "19:00",
+    // };
+
+    const startTime = dayjs(scheduleEmployeeToday.startTime, "HH:mm");
+    const endTime = dayjs(scheduleEmployeeToday.endTime, "HH:mm");
 
     return {
       disabledHours: () => {
-        // Chặn các giờ trước giờ hiện tại
-        return Array.from({ length: currentHour }, (_, i) => i);
+        const hours = [];
+        for (let i = 0; i < 24; i++) {
+          if (
+            dayjs().hour(i).isBefore(startTime) ||
+            dayjs().hour(i).isAfter(endTime)
+          ) {
+            hours.push(i);
+          }
+        }
+        return hours;
       },
       disabledMinutes: (selectedHour) => {
-        // Nếu chọn giờ hiện tại, chặn các phút trước phút hiện tại
-        if (selectedHour === currentHour) {
-          return Array.from({ length: currentMinute }, (_, i) => i);
+        const minutes = [];
+        if (selectedHour === startTime.hour()) {
+          for (let i = 0; i < startTime.minute(); i++) {
+            minutes.push(i);
+          }
         }
-        return [];
+        if (selectedHour === endTime.hour()) {
+          for (let i = endTime.minute() + 1; i < 60; i++) {
+            minutes.push(i);
+          }
+        }
+        return minutes;
       },
     };
   };
@@ -256,11 +292,11 @@ function SalonEmployee(props) {
       dispatch(actGetScheduleByEmployeeId(idEmployee));
     }
   }, [idEmployee]);
-  // useEffect(() => {
-  //   if (idEmployee) {
-  //     dispatch(actGetScheduleTodayByEmployeeId(idEmployee));
-  //   }
-  // }, [idEmployee]);
+  useEffect(() => {
+    if (idEmployee) {
+      dispatch(actGetScheduleTodayByEmployeeId(idEmployee, message));
+    }
+  }, [idEmployee]);
 
   useEffect(() => {
     if (idEmployee && currentPageService && pageSizeService) {
@@ -940,9 +976,28 @@ function SalonEmployee(props) {
                       step={120}
                       timeslots={1}
                       popup={true}
+                      // components={{
+                      //   event: Event, // Sử dụng component Event tùy chỉnh
+                      //   toolbar: () => null, // Ẩn toolbar
+                      // }}
                       components={{
                         event: Event, // Sử dụng component Event tùy chỉnh
-                        toolbar: () => null, // Ẩn toolbar
+                        toolbar: (props) => (
+                          <motion.div
+                            className="text-center mb-4"
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5 }}
+                          >
+                            <h2 className="text-lg font-semibold">
+                              Thời gian làm việc hôm nay:{" "}
+                              <span className="text-blue-500">
+                                {scheduleEmployeeToday?.startTime} -{" "}
+                                {scheduleEmployeeToday?.endTime}
+                              </span>
+                            </h2>
+                          </motion.div>
+                        ), // Thay đổi tiêu đề để hiển thị thời gian làm việc
                       }}
                       onSelectEvent={handleSelectEvent}
                     />
