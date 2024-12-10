@@ -247,21 +247,20 @@ export function actGetScheduleByEmployeeId(id) {
   };
 }
 
-export function actGetScheduleTodayByEmployeeId(id) {
+
+export function actGetScheduleTodayByEmployeeId(id, message) {
   return async (dispatch) => {
-    const result = employeeService.GetScheduleTodayByEmployeeId(id);
-    await result
-      .then((response) => {
-        if (response.status === 200 || response.status === 201) {
-          dispatch(getScheduleTodayByEmployeeId(response.data));
-        } else {
-          message.error("Lỗi lấy dữ liệu!!!!");
-        }
-      })
-      .catch((error) => {
-        // Xử lý lỗi nếu có
-        // console.error("Error while fetching all config money:", error);
-      });
+    try {
+      const response = await employeeService.GetScheduleTodayByEmployeeId(id);
+
+      if (response.status === 200 || response.status === 201) {
+        dispatch(getScheduleTodayByEmployeeId(response.data));
+      } else {
+        message.error("Lỗi lấy dữ liệu!!!!");
+      }
+    } catch (error) {;
+      message.error("Đã xảy ra lỗi. Vui lòng thử lại sau!");
+    }
   };
 }
 

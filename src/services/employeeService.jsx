@@ -40,7 +40,7 @@ export const employeeService = {
     return API.get(`/schedules/GetScheduleByEmployeeId/${id}`);
   },
   GetScheduleTodayByEmployeeId(id) {
-    return API.get(`/schedules/GetScheduleTodayByEmployeeId/${id}`);
+    return API.get(`/schedules/GetScheduleofDayByEmployeeId/${id}`);
   },
   GetServiceHairByEmployeeId(id, page, size, search, filter, orderby) {
     return API.get(`/servicehairs/GetServiceHairByEmployeeId/${id}`, {
