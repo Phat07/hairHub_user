@@ -116,12 +116,9 @@ function SalonEmployee(props) {
   //     },
   //   };
   // };
+  const startTime = dayjs(scheduleEmployeeToday?.startTime, "HH:mm");
+  const endTime = dayjs(scheduleEmployeeToday?.endTime, "HH:mm");
   const disabledRangePickerTimes = () => {
-    // const schedule = {
-    //   startTime: "07:00",
-    //   endTime: "19:00",
-    // };
-
     const startTime = dayjs(scheduleEmployeeToday.startTime, "HH:mm");
     const endTime = dayjs(scheduleEmployeeToday.endTime, "HH:mm");
 
@@ -139,17 +136,31 @@ function SalonEmployee(props) {
         return hours;
       },
       disabledMinutes: (selectedHour) => {
+        const allowedMinutes = [0, 15, 30, 45]; // Các phút được phép
         const minutes = [];
+
+        for (let i = 0; i < 60; i++) {
+          if (!allowedMinutes.includes(i)) {
+            minutes.push(i);
+          }
+        }
+
         if (selectedHour === startTime.hour()) {
           for (let i = 0; i < startTime.minute(); i++) {
-            minutes.push(i);
+            if (!allowedMinutes.includes(i)) {
+              minutes.push(i);
+            }
           }
         }
+
         if (selectedHour === endTime.hour()) {
           for (let i = endTime.minute() + 1; i < 60; i++) {
-            minutes.push(i);
+            if (!allowedMinutes.includes(i)) {
+              minutes.push(i);
+            }
           }
         }
+
         return minutes;
       },
     };
@@ -450,6 +461,13 @@ function SalonEmployee(props) {
       .then((values) => {
         // Bật trạng thái loading
         const [startTime, endTime] = values.timeRange || [];
+        if (startTime.isBefore(currentDate)) {
+          message.warning(
+            "Thời gian bắt đầu không được nhỏ hơn thời gian hiện tại!"
+          );
+          setLoadingBusy(false); // Tắt trạng thái loading
+          return; // Ngừng thực hiện nếu kiểm tra không thỏa mãn
+        }
         const data = {
           startDate: startTime.local().add(7, "hour").toISOString(), // Cộng thêm 7 giờ vào thời gian bắt đầu
           endDate: endTime.local().add(7, "hour").toISOString(), // Cộng thêm 7 giờ vào thời gian kết thúc
@@ -488,7 +506,6 @@ function SalonEmployee(props) {
     const { timeRange } = formUpdateBusy.getFieldsValue(); // Lấy khoảng thời gian từ form
 
     if (timeRange && timeRange[1] && timeRange[1].toDate() < currentTime) {
-      // Nếu thời gian kết thúc đã qua
       message.warning("Không thể xóa lịch bận đã qua thời gian hiện tại!");
       return;
     }
@@ -871,7 +888,57 @@ function SalonEmployee(props) {
                             format="HH:mm"
                             showNow={false}
                             style={{ width: "100%" }}
-                            disabledTime={disabledRangePickerTimes}
+                            // disabledTime={disabledRangePickerTimes}
+                            showTime={{
+                              hideDisabledOptions: true,
+                              defaultValue: [
+                                dayjs("00:00", "HH:mm"),
+                                dayjs("00:00", "HH:mm"),
+                              ],
+                              disabledHours: () => {
+                                const hours = [];
+                                for (let i = 0; i < 24; i++) {
+                                  if (
+                                    i < startTime.hour() ||
+                                    i > endTime.hour()
+                                  ) {
+                                    hours.push(i);
+                                  }
+                                }
+                                return hours;
+                              },
+                              disabledMinutes: (selectedHour) => {
+                                const allowedMinutes = [0, 15, 30, 45];
+                                const disabledMinutes = [];
+
+                                if (selectedHour === startTime.hour()) {
+                                  for (let i = 0; i < 60; i++) {
+                                    if (
+                                      !allowedMinutes.includes(i) ||
+                                      i < startTime.minute()
+                                    ) {
+                                      disabledMinutes.push(i);
+                                    }
+                                  }
+                                } else if (selectedHour === endTime.hour()) {
+                                  for (let i = 0; i < 60; i++) {
+                                    if (
+                                      !allowedMinutes.includes(i) ||
+                                      i > endTime.minute()
+                                    ) {
+                                      disabledMinutes.push(i);
+                                    }
+                                  }
+                                } else {
+                                  for (let i = 0; i < 60; i++) {
+                                    if (!allowedMinutes.includes(i)) {
+                                      disabledMinutes.push(i);
+                                    }
+                                  }
+                                }
+                                return disabledMinutes;
+                              },
+                            }}
                           />
                         </Form.Item>
                         <Form.Item
@@ -922,7 +989,57 @@ function SalonEmployee(props) {
                             format="HH:mm"
                             showNow={false}
                             style={{ width: "100%" }}
-                            disabledTime={disabledRangePickerTimes}
+                            // disabledTime={disabledRangePickerTimes}
+                            showTime={{
+                              hideDisabledOptions: true,
+                              defaultValue: [
+                                dayjs("00:00", "HH:mm"),
+                                dayjs("00:00", "HH:mm"),
+                              ],
+                              disabledHours: () => {
+                                const hours = [];
+                                for (let i = 0; i < 24; i++) {
+                                  if (
+                                    i < startTime.hour() ||
+                                    i > endTime.hour()
+                                  ) {
+                                    hours.push(i);
+                                  }
+                                }
+                                return hours;
+                              },
+                              disabledMinutes: (selectedHour) => {
+                                const allowedMinutes = [0, 15, 30, 45];
+                                const disabledMinutes = [];
+
+                                if (selectedHour === startTime.hour()) {
+                                  for (let i = 0; i < 60; i++) {
+                                    if (
+                                      !allowedMinutes.includes(i) ||
+                                      i < startTime.minute()
+                                    ) {
+                                      disabledMinutes.push(i);
+                                    }
+                                  }
+                                } else if (selectedHour === endTime.hour()) {
+                                  for (let i = 0; i < 60; i++) {
+                                    if (
+                                      !allowedMinutes.includes(i) ||
+                                      i > endTime.minute()
+                                    ) {
+                                      disabledMinutes.push(i);
+                                    }
+                                  }
+                                } else {
+                                  for (let i = 0; i < 60; i++) {
+                                    if (!allowedMinutes.includes(i)) {
+                                      disabledMinutes.push(i);
+                                    }
+                                  }
+                                }
+                                return disabledMinutes;
+                              },
+                            }}
                           />
                         </Form.Item>
                         <Form.Item
@@ -985,9 +1102,9 @@ function SalonEmployee(props) {
                         toolbar: (props) => (
                           <motion.div
                             className="text-center mb-4"
-                            initial={{ opacity: 0, y: -20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5 }}
+                            // initial={{ opacity: 0, y: -20 }}
+                            // animate={{ opacity: 1, y: 0 }}
+                            // transition={{ duration: 0.5 }}
                           >
                             <h2 className="text-lg font-semibold">
                               Thời gian làm việc hôm nay:{" "}
