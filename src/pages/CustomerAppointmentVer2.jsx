@@ -712,7 +712,7 @@ function CustomerAppointmentVer2(props) {
         } else if (status === "SUCCESSED") {
           return (
             <>
-              {/* {isReportExpired && !isFeedback ? (
+              {isReportExpired && !isFeedback ? (
                 <Button
                   style={{ marginRight: "1rem" }}
                   size="medium"
@@ -720,7 +720,7 @@ function CustomerAppointmentVer2(props) {
                 >
                   Đã quá hạn đánh giá
                 </Button>
-              ) : ( */}
+              ) : (
                 <Button
                   style={{ marginRight: "1rem" }}
                   type={isFeedback ? "" : "primary"}
@@ -730,7 +730,7 @@ function CustomerAppointmentVer2(props) {
                 >
                   {isFeedback ? "Đã đánh giá" : "Đánh giá"}
                 </Button>
-              {/* )} */}
+              )} 
               {isReportExpired && !isReportByCustomer ? (
                 <Button
                   style={{ marginRight: "1rem", marginTop: "1rem" }}
