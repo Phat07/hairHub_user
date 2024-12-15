@@ -67,7 +67,6 @@ function SalonEmployee(props) {
   const [currentPageService, setCurrentPageService] = useState(1);
   const [pageSizeService, setPageSizeService] = useState(4);
   const [loading, setLoading] = useState(false);
-  const [loadingBusy, setLoadingBusy] = useState(false);
   // const auth = useAuthUser();
   // const ownerId = auth?.idOwner;
   const idEmployee = useSelector((state) => state.ACCOUNT.idEmployee);
@@ -455,7 +454,7 @@ function SalonEmployee(props) {
 
   const handleOk = () => {
     const currentDate = dayjs().format("YYYY-MM-DD HH:mm:ss");
-    setLoadingBusy(true);
+    setLoading(true);
     form
       .validateFields()
       .then((values) => {
@@ -465,7 +464,7 @@ function SalonEmployee(props) {
           message.warning(
             "Thời gian bắt đầu không được nhỏ hơn thời gian hiện tại!"
           );
-          setLoadingBusy(false); // Tắt trạng thái loading
+          setLoading(false); // Tắt trạng thái loading
           return; // Ngừng thực hiện nếu kiểm tra không thỏa mãn
         }
         const data = {
@@ -488,7 +487,7 @@ function SalonEmployee(props) {
             message.error("Thêm lịch bận thất bại!");
           })
           .finally(() => {
-            setLoadingBusy(false); // Tắt trạng thái loading
+            setLoading(false); // Tắt trạng thái loading
           });
       })
       .catch((info) => {
@@ -534,7 +533,7 @@ function SalonEmployee(props) {
               message.error("Xóa lịch bận thất bại!");
             })
             .finally(() => {
-              setLoadingBusy(false); // Tắt trạng thái loading
+              setLoading(false); // Tắt trạng thái loading
             });
           setLoading(false);
         } catch (error) {
@@ -546,18 +545,45 @@ function SalonEmployee(props) {
   };
 
   const handleUpdateBusy = async () => {
+    setLoading(true);
     const currentDate = moment().format("YYYY-MM-DD HH:mm:ss");
-    setLoadingBusy(true);
     const currentTime = new Date(); // Lấy thời gian hiện tại
     const { timeRange, note } = formUpdateBusy.getFieldsValue(); // Lấy khoảng thời gian từ form
 
-    if (timeRange && timeRange[1] && timeRange[1].toDate() < currentTime) {
+    if (
+      dayjs(selectedEvent.start).isBefore(currentDate) &&
+      dayjs(selectedEvent.end).isBefore(currentDate)
+    ) {
       // Nếu thời gian kết thúc đã qua
       message.warning("Không thể cập nhật lịch bận đã qua thời gian hiện tại!");
       return;
     }
 
     const [startTime, endTime] = timeRange || [];
+    // if (startTime.isBefore(currentDate)) {
+    //   message.warning(
+    //     "Thời gian bắt đầu không được nhỏ hơn thời gian hiện tại!"
+    //   );
+    //   setLoadingBusy(false);
+    //   return;
+    // }
+
+    if (
+      dayjs(selectedEvent.start).isBefore(currentDate) &&
+      dayjs(selectedEvent.end).isAfter(currentDate) &&
+      !startTime.isSame(dayjs(selectedEvent.start))
+    ) {
+      message.warning(
+        "Thời gian bắt đầu đã qua, chỉ có thể cập nhật thời gian kết thúc!"
+      );
+      formUpdateBusy.setFieldsValue({
+        note: selectedEvent.title || "",
+        timeRange: [dayjs(selectedEvent.start), dayjs(selectedEvent.end)],
+      });
+      setLoading(false);
+      return;
+    }
+
     const isUnchanged =
       selectedEvent &&
       dayjs(selectedEvent.start).isSame(startTime) &&
@@ -566,7 +592,7 @@ function SalonEmployee(props) {
 
     if (isUnchanged) {
       message.info("Không có thay đổi nào để cập nhật.");
-      setLoadingBusy(false);
+      setLoading(false);
       return;
     }
 
@@ -597,7 +623,7 @@ function SalonEmployee(props) {
             );
           })
           .finally(() => {
-            setLoadingBusy(false);
+            setLoading(false);
           });
       })
       .catch((info) => {

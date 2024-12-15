@@ -305,9 +305,7 @@ function HomePage(props) {
                                   textAlign: "center",
                                 }}
                               >
-                                <div>
-                                  {item.totalRating / item.totalReviewer}/5
-                                </div>
+                                <div>{item.rate}/5</div>
                                 <div>{item.totalReviewer} đánh giá</div>
                               </div>
                             ) : (
