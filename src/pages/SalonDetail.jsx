@@ -239,6 +239,8 @@ function SalonDetail(props) {
   const userName = useSelector((state) => state.ACCOUNT.username);
   const userIdCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
   const userId = useSelector((state) => state.ACCOUNT.idOwner);
+  const idEmployee = useSelector((state) => state.ACCOUNT.idEmployee);
+  
   const uid = useSelector((state) => state.ACCOUNT.uid);
   const searchParams = new URLSearchParams(location.search);
   const serviceId = searchParams.get("service");
@@ -569,6 +571,11 @@ function SalonDetail(props) {
       message.warning("Bạn là chủ cửa hàng không thể đặt lịch");
       return;
     }
+    if (idEmployee) {
+      message.warning("Bạn là nhân viên không thể đặt lịch");
+      return;
+    }
+    
     if (
       userName === undefined ||
       !localStorage.getItem("refreshToken") ||
