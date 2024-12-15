@@ -240,7 +240,8 @@ function SalonDetail(props) {
   const userIdCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
   const userId = useSelector((state) => state.ACCOUNT.idOwner);
   const idEmployee = useSelector((state) => state.ACCOUNT.idEmployee);
-  
+  const idOwner = useSelector((state) => state.ACCOUNT.idOwner);
+
   const uid = useSelector((state) => state.ACCOUNT.uid);
   const searchParams = new URLSearchParams(location.search);
   const serviceId = searchParams.get("service");
@@ -572,16 +573,19 @@ function SalonDetail(props) {
       return;
     }
     if (idEmployee) {
-      message.warning("Bạn là nhân viên không thể đặt lịch");
+      message.warning("Hãy đăng nhập bằng tài khoản của khách để đặt lịch");
       return;
     }
-    
+    if (idOwner) {
+      message.warning("Hãy đăng nhập bằng tài khoản của khách để đặt lịch");
+      return;
+    }
     if (
       userName === undefined ||
       !localStorage.getItem("refreshToken") ||
       !localStorage.getItem("accessToken")
     ) {
-      navigate("/login");
+      // navigate("/login");
       message.warning("Vui lòng đăng ký hoặc đăng nhập để đặt lịch");
     }
     if (additionalServices.length < 1) {
