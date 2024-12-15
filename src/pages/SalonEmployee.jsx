@@ -556,6 +556,7 @@ function SalonEmployee(props) {
     ) {
       // Nếu thời gian kết thúc đã qua
       message.warning("Không thể cập nhật lịch bận đã qua thời gian hiện tại!");
+      setLoading(false);
       return;
     }
 
