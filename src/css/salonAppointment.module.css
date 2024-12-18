@@ -90,6 +90,13 @@
 .appointmentDetailD2 {
   flex: 1;
 }
+.table-fillter-item {
+  margin-right: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 1rem;
+}
 
 @media (max-width: 768px) {
   .appointmentDetail {
@@ -137,6 +144,10 @@
   }
   .appointmentContainer {
     margin-top: 5rem;
+  }
+  .table-fillter-item {
+    margin-bottom: 5px;
+    width: 100%;
   }
 }
 

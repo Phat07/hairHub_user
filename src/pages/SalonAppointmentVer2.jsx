@@ -1,3 +1,5 @@
+import AddAppointmentOutsite from "@/components/AddApointmentOutside/AddAppointmentOutsite";
+import { PlusOutlined } from "@ant-design/icons";
 import {
   Button,
   DatePicker,
@@ -13,6 +15,8 @@ import {
   Typography,
   Upload,
 } from "antd";
+import dayjs from "dayjs";
+import { motion } from "framer-motion";
 import { debounce } from "lodash";
 import moment from "moment";
 import { useCallback, useEffect, useState } from "react";
@@ -26,8 +30,6 @@ import {
   actGetAppointmentBySalonId,
   actGetSalonInformationByOwnerIdAsync,
 } from "../store/salonAppointments/action";
-import dayjs from "dayjs";
-import { motion } from "framer-motion";
 
 const { RangePicker } = DatePicker;
 const { Text, Title } = Typography;
@@ -57,8 +59,9 @@ function SalonAppointmentVer2(props) {
 
   const searchParams = new URLSearchParams(location.search);
   const appoinmentIdUrl = searchParams.get("appointmentId");
+  const [isModalAddAppointmentVisible, setIsModalAddAppointmentVisible] =
+    useState(false);
   const [pageSize, setPageSize] = useState(6);
-
   const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
   const ownerId = useSelector((state) => state.ACCOUNT.idOwner);
 
@@ -206,6 +209,10 @@ function SalonAppointmentVer2(props) {
     const hours = date.getHours().toString().padStart(2, "0");
     const minutes = date.getMinutes().toString().padStart(2, "0");
     return `${day}/${month}/${year} - ${hours}:${minutes}`;
+  };
+
+  const handleOpenModalAddApp = () => {
+    setIsModalAddAppointmentVisible(false);
   };
 
   function formatVND(amount) {
@@ -722,6 +729,15 @@ function SalonAppointmentVer2(props) {
         spinning={loading}
         // tip="Loading..."
       >
+        <Button
+          className={styles["table-fillter-item"]}
+          type="primary"
+          style={{ backgroundColor: "#BF9456" }}
+          icon={<PlusOutlined />}
+          onClick={() => setIsModalAddAppointmentVisible(true)}
+        >
+          Thêm lịch hẹn bên ngoài
+        </Button>
         <div className={styles.statusfilter}>
           {Object.keys(statusDisplayNames).map((statusKey, index) => (
             <button
@@ -1022,6 +1038,10 @@ function SalonAppointmentVer2(props) {
           style={{ marginTop: "10px" }}
         />
       </Modal>
+      <AddAppointmentOutsite
+        visible={isModalAddAppointmentVisible}
+        onCancel={handleOpenModalAddApp}
+      />
     </div>
   );
 }
