@@ -1,28 +1,24 @@
-import React, { useEffect, useState } from "react";
-import styles from "../css/customerAppointment.module.css";
-import "../css/customerAppointmentTable.css";
 import {
   DownOutlined,
-  LoadingOutlined,
-  ReloadOutlined,
-  UploadOutlined,
-  WalletOutlined,
+  ReloadOutlined
 } from "@ant-design/icons";
 import {
-  DatePicker,
-  Row,
-  Col,
   Button,
-  message,
-  Table,
-  Pagination,
-  Menu,
-  Spin,
+  DatePicker,
   Dropdown,
+  Menu,
+  Pagination,
+  Spin,
+  Table
 } from "antd";
-import dayjs from "dayjs";
 import classNames from "classnames";
+import { useEffect, useState } from "react";
+import styles from "../css/customerAppointment.module.css";
+import "../css/customerAppointmentTable.css";
 
+import { formatCurrency } from "@/components/formatCheckValue/formatCurrency";
+import { API } from "@/services/api";
+import { actGetSalonInformationByOwnerIdAsync } from "@/store/salonAppointments/action";
 import { useDispatch, useSelector } from "react-redux";
 const { RangePicker } = DatePicker;
 function ReviewAppointmentCustomerPage(props) {
@@ -32,6 +28,47 @@ function ReviewAppointmentCustomerPage(props) {
   const paymentHistory = [];
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(6);
+  const [listData, setListData] = useState([]);
+
+  const [total, setTotal] = useState(0);
+
+  const ownerId = useSelector((state) => state.ACCOUNT.idOwner);
+  const salonInformationByOwnerId = useSelector(
+    (state) => state.SALONAPPOINTMENTS.salonInformationByOwnerId
+  );
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (ownerId) {
+      dispatch(actGetSalonInformationByOwnerIdAsync(ownerId));
+    }
+  }, [ownerId]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (salonInformationByOwnerId?.id) {
+        // Chỉ chạy khi salonInformationByOwnerId?.id tồn tại
+        setLoading(true);
+        try {
+          const response = await API.get(
+            `/appointments/FrequentlyCustomers/${salonInformationByOwnerId?.id}`,
+            {
+              params: { time: type, page: currentPage, size: itemsPerPage },
+            }
+          );
+          setListData(response?.data?.items);
+          setTotal(response?.data?.total);
+        } catch (error) {
+          console.error("Error fetching appointments:", error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchData();
+  }, [type, salonInformationByOwnerId, currentPage]);
   const handleMenuClickPaymentSort = (e) => {
     const labelMap = {
       TODAY: "Ngày hôm nay",
@@ -48,7 +85,6 @@ function ReviewAppointmentCustomerPage(props) {
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
-  console.log("ss", type);
 
   const sortMenu = (
     <Menu onClick={handleMenuClickPaymentSort}>
@@ -72,87 +108,15 @@ function ReviewAppointmentCustomerPage(props) {
     },
     {
       title: "Số cuộc hẹn",
-      dataIndex: "numberAppointment",
-      key: "numberAppointment",
-      // render: (status) => {
-      //   let vietnameseStatus = "";
-      //   let color = "green";
-
-      //   switch (status) {
-      //     case "PAID":
-      //       vietnameseStatus = "Đã thanh toán";
-      //       break;
-      //     case "PENDING":
-      //       vietnameseStatus = "Đang xử lý";
-      //       color = "orange";
-      //       break;
-      //     case "CANCEL":
-      //       vietnameseStatus = "Thất bại";
-      //       color = "red";
-      //       break;
-      //     case "PROMOTION":
-      //       vietnameseStatus = "Promotion";
-      //       break;
-      //     default:
-      //       vietnameseStatus = "Không xác định";
-      //   }
-
-      //   return <Tag color={color}>{vietnameseStatus}</Tag>;
-      // },
+      dataIndex: "numberofSuccessAppointment",
+      key: "numberofSuccessAppointment",
     },
     {
       title: "Số tiền khách hàng đã bỏ ra",
-      dataIndex: "money",
-      key: "money",
-      // render: (paymentType) => {
-      //   let vietnameseStatus = "";
-      //   let color = "green";
-      //   switch (paymentType) {
-      //     case "DEPOSIT":
-      //       vietnameseStatus = "Nạp";
-      //       break;
-      //     case "WITHDRAW":
-      //       vietnameseStatus = "Rút";
-      //       color = "orange";
-      //       break;
-      //     default:
-      //       vietnameseStatus = "Không xác định";
-      //       color = "red";
-      //   }
-      //   return <Tag color={color}>{vietnameseStatus}</Tag>;
-      // },
+      dataIndex: "totalPrice",
+      key: "totalPrice",
+      render: (amount) => formatCurrency(amount),
     },
-    // {
-    //   title: "Mô tả",
-    //   dataIndex: "description",
-    //   key: "description",
-    // },
-    // {
-    //   title: "Số tiền (VNĐ)",
-    //   dataIndex: "totalAmount",
-    //   key: "totalAmount",
-    //   render: (amount) => formatCurrency(amount),
-    // },
-    // {
-    //   title: "Ngày thanh toán",
-    //   dataIndex: "paymentDate",
-    //   key: "paymentDate",
-    //   render: (date) => dayjs(date).format("DD/MM/YYYY HH:mm:ss"),
-    // },
-    // {
-    //   title: "Hành động",
-    //   key: "action",
-    //   render: () => (
-    //     <div>
-    //       <Button
-    //         className="text-black border-none hover:!bg-[#A37F4A] hover:!text-white"
-    //         style={{ backgroundColor: "#BF9456" }}
-    //       >
-    //         Hỗ trợ
-    //       </Button>
-    //     </div>
-    //   ),
-    // },
   ];
   return (
     <div className={styles.appointmentContainer}>
@@ -201,14 +165,14 @@ function ReviewAppointmentCustomerPage(props) {
         <Table
           className={styles.appointmentTable}
           columns={columns}
-          dataSource={paymentHistory?.items}
+          dataSource={listData}
           // loading={loading}
           rowKey="id"
           pagination={false}
         />
         <div className={styles.container}>
           <div className={styles.grid}>
-            {paymentHistory?.items?.map((appointment) => (
+            {listData?.map((appointment) => (
               <div key={appointment.id} className={styles.card}>
                 <h4
                   style={{
@@ -217,7 +181,7 @@ function ReviewAppointmentCustomerPage(props) {
                     textAlign: "center",
                   }}
                 >
-                  {appointment?.email}
+                  {appointment?.name}
                 </h4>
 
                 <h4>
@@ -265,17 +229,13 @@ function ReviewAppointmentCustomerPage(props) {
                   })()} */}
                 </h4>
 
-                <h4>Mô tả: {appointment?.description || "Không có mô tả"}</h4>
+                <h4>Mô tả: {appointment?.phone || "Không có mô tả"}</h4>
 
-                <h4>Số tiền: {formatCurrency(appointment.totalAmount)} VNĐ</h4>
+                <h4>Số tiền: {formatCurrency(appointment.totalPrice)}</h4>
 
                 <h4>
-                  Ngày thanh toán:{" "}
-                  {/* {appointment?.paymentDate
-                    ? dayjs(appointment?.paymentDate).format(
-                        "DD/MM/YYYY HH:mm:ss"
-                      )
-                    : "Chưa thanh toán"} */}
+                  Số lần khách hàng đến:{" "}
+                  {appointment?.numberofSuccessAppointment}
                 </h4>
               </div>
             ))}
@@ -285,7 +245,7 @@ function ReviewAppointmentCustomerPage(props) {
           className="paginationAppointment"
           current={currentPage}
           pageSize={itemsPerPage}
-          total={paymentHistory?.total}
+          total={total}
           onChange={handlePageChange}
           showSizeChanger={false}
         />

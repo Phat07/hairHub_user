@@ -156,7 +156,6 @@ const EmployeeScheduleCalendar = () => {
               params: { dateTime: moment(selectedDate).format("YYYY-MM-DD") },
             }
           );
-          console.log("res", response);
           setDataMana(response?.data?.employeesSchedules);
           const transformedData = transformSchedulesToEvents(
             response.data.employeesSchedules
