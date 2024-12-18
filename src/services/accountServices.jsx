@@ -58,4 +58,9 @@ export const AccountServices = {
   ChatMessageAI(data) {
     return API.post("/accounts/ChatMessageAI", data);
   },
+  GetCustomerByEmail(email) {
+    return API.get(`customers/GetCustomerByEmail`, {
+      params: { email: email },
+    });
+  },
 };

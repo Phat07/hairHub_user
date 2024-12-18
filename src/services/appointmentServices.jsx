@@ -83,8 +83,8 @@ export const AppointmentService = {
   createAppointment(formData) {
     return API.post("/appointments/CreateAppointment", formData);
   },
-  getAppointmentById(id){
-    return API.get(`/appointments/GetAppointmentById/${id}`)
+  getAppointmentById(id) {
+    return API.get(`/appointments/GetAppointmentById/${id}`);
   },
   getAllAppointmentsByCustomerId(id, page, size) {
     return API.get(`/appointments/GetBookingAppointmentCustomer/${id}`, {
@@ -110,5 +110,8 @@ export const AppointmentService = {
   },
   broadcastMessage(data) {
     return API.post("/signalRs/BroadcastMessage/broadcast", data);
+  },
+  CreateAppointmentOutSide(data) {
+    return API.post("/appointments/CreateAppointmentOutSide", data);
   },
 };

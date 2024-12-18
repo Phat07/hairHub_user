@@ -27,8 +27,9 @@ import { EmptyComponent } from "../components/EmptySection/DisplayEmpty";
 import styles from "../css/salonAppointment.module.css";
 import stylesCard from "../css/customerAppointment.module.css";
 import { useNavigate } from "react-router-dom";
-import { DownOutlined, LoadingOutlined } from "@ant-design/icons";
+import { DownOutlined, LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import { debounce } from "lodash";
+import AddAppointmentOutsite from "@/components/AddApointmentOutside/AddAppointmentOutsite";
 
 const { Text, Title } = Typography;
 const { Option } = Select;
@@ -52,7 +53,8 @@ function SalonAppointmentVer2(props) {
   const searchParams = new URLSearchParams(location.search);
   const appoinmentIdUrl = searchParams.get("appointmentId");
   const [pageSize, setPageSize] = useState(4);
-
+  const [isModalAddAppointmentVisible, setIsModalAddAppointmentVisible] =
+    useState(false);
   const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
   const ownerId = useSelector((state) => state.ACCOUNT.idOwner);
 
@@ -169,6 +171,10 @@ function SalonAppointmentVer2(props) {
     const hours = date.getHours().toString().padStart(2, "0");
     const minutes = date.getMinutes().toString().padStart(2, "0");
     return `${day}/${month}/${year} - ${hours}:${minutes}`;
+  };
+
+  const handleOpenModalAddApp = () => {
+    setIsModalAddAppointmentVisible(false);
   };
 
   function formatVND(amount) {
@@ -685,6 +691,15 @@ function SalonAppointmentVer2(props) {
         spinning={loading}
         // tip="Loading..."
       >
+        <Button
+          className={styles["table-fillter-item"]}
+          type="primary"
+          style={{ backgroundColor: "#BF9456" }}
+          icon={<PlusOutlined />}
+          onClick={() => setIsModalAddAppointmentVisible(true)}
+        >
+          Thêm lịch hẹn bên ngoài
+        </Button>
         <div className={styles.statusfilter}>
           {Object.keys(statusDisplayNames).map((statusKey, index) => (
             <button
@@ -955,6 +970,10 @@ function SalonAppointmentVer2(props) {
           style={{ marginTop: "10px" }}
         />
       </Modal>
+      <AddAppointmentOutsite
+        visible={isModalAddAppointmentVisible}
+        onCancel={handleOpenModalAddApp}
+      />
     </div>
   );
 }
