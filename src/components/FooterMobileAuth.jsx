@@ -9,6 +9,7 @@ import {
   QrcodeOutlined,
   RadarChartOutlined,
   UserOutlined,
+  FormOutlined,
 } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import style from "../css/footer-mobile.module.css";
@@ -170,7 +171,7 @@ function FooterMobileAuth() {
                   {isActive("/salon_appointment") && <span>Cuộc hẹn</span>}
                 </Link>
               </li>
-              <li
+              {/* <li
                 className={`${style.footerItem} ${
                   isActive("/salon_report") ? style.active : ""
                 }`}
@@ -178,6 +179,16 @@ function FooterMobileAuth() {
                 <Link to="/salon_report" onClick={scrollToTop}>
                   <WarningOutlined className={style.icon} />
                   {isActive("/salon_report") && <span>Báo cáo</span>}
+                </Link>
+              </li> */}
+               <li
+                className={`${style.footerItem} ${
+                  isActive("/manageEmployeeScheduler") ? style.active : ""
+                }`}
+              >
+                <Link to="/manageEmployeeScheduler" onClick={scrollToTop}>
+                  <FormOutlined  className={style.icon} />
+                  {isActive("/manageEmployeeScheduler") && <span> Quản lý dịch vụ</span>}
                 </Link>
               </li>
               <li

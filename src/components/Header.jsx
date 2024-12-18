@@ -5,6 +5,7 @@ import {
   QrcodeOutlined,
   UserOutlined,
   WalletOutlined,
+  WarningOutlined,
 } from "@ant-design/icons";
 import { Avatar, Badge, Dropdown, Menu, message } from "antd";
 import { useEffect, useRef, useState } from "react";
@@ -175,6 +176,13 @@ function Header(props) {
         <Menu.Item key="appointment-history">
           <Link to="/WithdrawRequest">
             <CreditCardOutlined /> Đơn rút tiền
+          </Link>
+        </Menu.Item>
+      )}
+      {idOwner && (
+        <Menu.Item key="salon_report">
+          <Link to="/salon_report">
+            <WarningOutlined /> Danh sách báo cáo
           </Link>
         </Menu.Item>
       )}
@@ -440,7 +448,7 @@ function Header(props) {
                   </Link>
                 </li>
                 <li className={style.navItem}>
-                  <Link
+                  {/* <Link
                     to="/salon_report"
                     className={`${style.navLink} ${
                       isActive("/salon_report") ? style.active : ""
@@ -448,6 +456,15 @@ function Header(props) {
                     onClick={scrollToTop}
                   >
                     Danh sách báo cáo
+                  </Link> */}
+                  <Link
+                    to="/manageEmployeeScheduler"
+                    className={`${style.navLink} ${
+                      isActive("/manageEmployeeScheduler") ? style.active : ""
+                    }`}
+                    onClick={scrollToTop}
+                  >
+                    Quản lý dịch vụ
                   </Link>
                 </li>
                 <li className={style.navItem}>
@@ -479,8 +496,19 @@ function Header(props) {
                       </Link>
                     </li>
                     <li className={style.navItemRepo}>
-                      <Link to="/salon_report" className={style.navLink}>
+                      {/* <Link to="/salon_report" className={style.navLink}>
                         Danh sách báo cáo
+                      </Link> */}
+                      <Link
+                        to="/manageEmployeeScheduler"
+                        className={`${style.navLink} ${
+                          isActive("/manageEmployeeScheduler")
+                            ? style.active
+                            : ""
+                        }`}
+                        onClick={scrollToTop}
+                      >
+                        Quản lý dịch vụ
                       </Link>
                     </li>
                     <li className={style.navItemRepo}>

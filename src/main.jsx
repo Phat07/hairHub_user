@@ -60,6 +60,8 @@ import WalletPage from "./pages/WalletPage.jsx";
 import WithdrawRequest from "./pages/WithdrawRequest.jsx";
 import RequireAuth from "./PrivateRoute.js";
 import store from "./store";
+import ReviewAppointmentCustomerPage from "./pages/ReviewAppointmentCustomerPage.jsx";
+import ManageEmployeeSchedulerPage from "./pages/ManageEmployeeSchedulerPage.jsx";
 
 const basePath = `/zapps/2685475901677367467`;
 
@@ -362,6 +364,28 @@ const router = createBrowserRouter(
               fallbackPath="/login"
             >
               <EmployeeStatistics />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "ReviewAppointmentCustomer",
+          element: (
+            <RequireAuth
+              requiredRoles={["SalonOwner"]}
+              fallbackPath="/login"
+            >
+              <ReviewAppointmentCustomerPage />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "manageEmployeeScheduler",
+          element: (
+            <RequireAuth
+              requiredRoles={["SalonOwner"]}
+              fallbackPath="/login"
+            >
+              <ManageEmployeeSchedulerPage />
             </RequireAuth>
           ),
         },

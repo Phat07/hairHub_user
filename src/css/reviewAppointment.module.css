@@ -1,0 +1,302 @@
+.appointmentContainer {
+  max-width: 1200px;
+  /* min-height: 1200px; */
+  margin-inline: auto;
+  margin-block: 7rem;
+  padding: 20px;
+  background-color: #f4f2eb;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.statusfilter {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.filterDate {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.appointmentTable {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-collapse: collapse;
+  width: 100%;
+  border-radius: 10px;
+}
+
+.detailBtn {
+  border-color: #bf9456;
+  color: #0f0f0f;
+}
+
+.select {
+  width: 7rem;
+  margin-bottom: 1rem;
+}
+
+.appointmentDetail {
+  display: flex;
+}
+
+.appointmentDetailA1,
+.appointmentDetailA2 {
+  display: flex;
+  flex-direction: column;
+}
+
+.appointmentDetailA1 {
+  flex: 1;
+}
+
+.appointmentDetailA2 {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  margin-left: 1rem;
+}
+
+.appointmentDetailB1,
+.appointmentDetailB2 {
+  flex: 1;
+}
+
+.appointmentDetailC1 {
+  flex: 1;
+}
+
+.appointmentDetailC2 {
+  flex: 1;
+  display: flex;
+}
+
+.appointmentDetailD1,
+.appointmentDetailD2 {
+  flex: 1;
+}
+
+.table-fillter-item {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.table-fillter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-block: 1rem;
+}
+:global(.my-custom-add .ant-btn) {
+  background-color: #bf9456 !important;
+  border-color: #bf9456 !important;
+}
+
+:global(.my-custom-add .ant-btn:hover) {
+  background-color: #a38245 !important;
+  border-color: #a38245 !important;
+  color: white !important;
+}
+
+@media (max-width: 768px) {
+  .appointmentDetail {
+    flex-direction: column;
+  }
+
+  .appointmentDetailA1,
+  .appointmentDetailA2 {
+    width: 100%;
+    margin: 0;
+  }
+
+  .appointmentDetailA1,
+  .appointmentDetailA2 {
+    flex: none;
+  }
+
+  .appointmentDetailA1 {
+    margin-bottom: 1rem;
+  }
+
+  .appointmentDetailA2 {
+    margin-top: 1rem;
+    margin-left: 0rem;
+  }
+
+  .appointmentDetailB1,
+  .appointmentDetailB2,
+  .appointmentDetailC1,
+  .appointmentDetailC2,
+  .appointmentDetailD1,
+  .appointmentDetailD2 {
+    width: 100%;
+  }
+
+  table {
+    width: 100%;
+    display: block;
+    overflow-x: auto;
+  }
+
+  th,
+  td {
+    white-space: nowrap;
+  }
+  .appointmentContainer {
+    margin-top: 5rem;
+  }
+  .appointmentTable {
+    display: none;
+  }
+  .table-fillter-item {
+    width: 100%;
+  }
+  .table-fillter {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-block: 5px;
+  }
+  .datePickerCustomeMobile {
+    flex-direction: column;
+  }
+}
+
+:global(.my-custom-modal .ant-modal-content) {
+  background-color: #ece8de !important;
+}
+
+/* AppointmentsGrid.module.css */
+.container {
+  padding: 16px;
+  display: none;
+  /* position: relative; */
+}
+
+.dateGroup {
+  margin-bottom: 24px;
+}
+
+.dateHeader {
+  font-size: 1rem;
+  margin-bottom: 8px;
+  color: #333;
+  font-weight: bold;
+  margin-right: 2rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 ô mỗi hàng */
+  gap: 16px;
+}
+
+.card {
+  background-color: #ece8de;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+  display: flex;
+  border-width: 1px;
+  border-color: #bf9456;
+  flex-direction: column;
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 8px #ece8de; /* Đổ bóng nhẹ */
+}
+
+.card:hover {
+  box-shadow: 0 8px 16px #bf9456;
+  transform: translateY(-2px);
+}
+
+.salonImage {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.salonImageDetail {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.employeeImage {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.cancelButton {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  margin-top: 8px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.loadmorebtn {
+  margin-top: 16px;
+  padding: 10px 20px;
+  background-color: #bf9456;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.loadmorebtn:hover {
+  background-color: #a37a46;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Màu nền bán trong suốt */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999; /* Đảm bảo overlay nằm trên cùng */
+}
+
+.loadingText {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  /* .grid {
+      grid-template-columns: repeat(2, 1fr); 
+      gap: 12px; 
+    } */
+  .dateHeader {
+    font-size: 1rem;
+    margin-right: 15px;
+    text-align: center;
+  }
+  .container {
+    padding: 0;
+    display: block;
+    /* position: relative; */
+  }
+}

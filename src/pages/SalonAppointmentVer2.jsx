@@ -1,35 +1,35 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import useAuthUser from "react-auth-kit/hooks/useAuthUser";
-import {
-  actGetAppointmentBySalonId,
-  actGetSalonInformationByOwnerIdAsync,
-} from "../store/salonAppointments/action";
 import {
   Button,
+  DatePicker,
   Divider,
   Image,
   Input,
   message,
   Modal,
   Pagination,
+  Select,
   Spin,
   Table,
   Typography,
   Upload,
-  Select,
-  DatePicker,
 } from "antd";
-import moment from "moment";
-import { actCreateReportSalon } from "../store/report/action";
-import { AppointmentService } from "../services/appointmentServices";
-import { EmptyComponent } from "../components/EmptySection/DisplayEmpty";
-import styles from "../css/salonAppointment.module.css";
-import stylesCard from "../css/customerAppointment.module.css";
-import { useNavigate } from "react-router-dom";
-import { DownOutlined, LoadingOutlined } from "@ant-design/icons";
 import { debounce } from "lodash";
+import moment from "moment";
+import { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import stylesCard from "../css/customerAppointment.module.css";
+import styles from "../css/salonAppointment.module.css";
+import { AppointmentService } from "../services/appointmentServices";
+import { actCreateReportSalon } from "../store/report/action";
+import {
+  actGetAppointmentBySalonId,
+  actGetSalonInformationByOwnerIdAsync,
+} from "../store/salonAppointments/action";
+import dayjs from "dayjs";
+import { motion } from "framer-motion";
 
+const { RangePicker } = DatePicker;
 const { Text, Title } = Typography;
 const { Option } = Select;
 
@@ -46,12 +46,18 @@ function SalonAppointmentVer2(props) {
   const [reportDescription, setReportDescription] = useState("");
   const [itemReport, setItemReport] = useState({});
   const [loading, setLoading] = useState(false);
-  const [dateFilter, setDateFilter] = useState(null);
+  const [dateFilter, setDateFilter] = useState({
+    startDay: dayjs().subtract(7, "day").format("YYYY-MM-DD"),
+    endDay: dayjs().format("YYYY-MM-DD"),
+  });
   const [nameFilter, setNameFilter] = useState(null);
+  const [nameFilterEmployee, setNameFilterEmployee] = useState(null);
   const [nameFilterInput, setNameFilterInput] = useState(null);
+  const [nameFilterInputEmployee, setNameFilterInputEmployee] = useState(null);
+
   const searchParams = new URLSearchParams(location.search);
   const appoinmentIdUrl = searchParams.get("appointmentId");
-  const [pageSize, setPageSize] = useState(4);
+  const [pageSize, setPageSize] = useState(6);
 
   const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
   const ownerId = useSelector((state) => state.ACCOUNT.idOwner);
@@ -64,6 +70,7 @@ function SalonAppointmentVer2(props) {
   );
 
   const totalPages = useSelector((state) => state.SALONAPPOINTMENTS.totalPages);
+  const total = useSelector((state) => state.SALONAPPOINTMENTS.total);
 
   useEffect(() => {
     if (ownerId) {
@@ -101,31 +108,39 @@ function SalonAppointmentVer2(props) {
 
   useEffect(() => {
     const fetchAppointments = async () => {
-      if (salonInformationByOwnerId || status) {
+      if (salonInformationByOwnerId?.id) {
+        // Chỉ chạy khi salonInformationByOwnerId?.id tồn tại
         setLoading(true);
-        await dispatch(
-          actGetAppointmentBySalonId(
-            salonInformationByOwnerId?.id,
-            currentPage,
-            pageSize,
-            status,
-            false,
-            dateFilter,
-            nameFilter
-          )
-        );
-        setLoading(false);
+        try {
+          await dispatch(
+            actGetAppointmentBySalonId(
+              salonInformationByOwnerId.id, // Không cần ?. vì đã kiểm tra ở trên
+              currentPage,
+              pageSize,
+              status,
+              false,
+              dateFilter,
+              nameFilter,
+              nameFilterEmployee
+            )
+          );
+        } catch (error) {
+          console.error("Error fetching appointments:", error);
+        } finally {
+          setLoading(false);
+        }
       }
     };
 
     fetchAppointments();
   }, [
-    salonInformationByOwnerId,
+    salonInformationByOwnerId?.id,
     status,
     currentPage,
     dateFilter,
     nameFilter,
     pageSize,
+    nameFilterEmployee,
   ]);
 
   const statusDisplayNames = {
@@ -133,6 +148,7 @@ function SalonAppointmentVer2(props) {
     CANCEL_BY_CUSTOMER: "Hủy bởi Khách",
     FAILED: "Thất bại",
     SUCCESSED: "Thành công",
+    OUT_SIDE: "Khách ngoài",
   };
 
   const handleStatusChange = (newStatus) => {
@@ -145,8 +161,20 @@ function SalonAppointmentVer2(props) {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleDateChange = (date, dateString) => {
-    setDateFilter(dateString);
+  // const handleDateChange = (date, dateString) => {
+  //   console.log("date", dateString);
+
+  //   setDateFilter(dateString);
+  // };
+  const handleDateRangeChange = (dates, dateStrings) => {
+    const [startDay, endDay] = dateStrings; // Lấy giá trị ngày bắt đầu và kết thúc từ `dateStrings`
+
+    console.log("Start Day:", startDay, "End Day:", endDay);
+
+    setDateFilter({
+      startDay,
+      endDay,
+    });
   };
 
   const debouncedSetNameFilter = useCallback(
@@ -155,12 +183,21 @@ function SalonAppointmentVer2(props) {
     }, 300), // 300ms debounce time
     []
   );
+  const debouncedSetNameFilterEmployee = useCallback(
+    debounce((value) => {
+      setNameFilterEmployee(value);
+    }, 300), // 300ms debounce time
+    []
+  );
 
   const handleNameFilterChange = (e) => {
     debouncedSetNameFilter(e.target.value);
     setNameFilterInput(e.target.value);
   };
-
+  const handleNameFilterChangeEmployee = (e) => {
+    debouncedSetNameFilterEmployee(e.target.value);
+    setNameFilterInputEmployee(e.target.value);
+  };
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const day = date.getDate().toString().padStart(2, "0");
@@ -697,6 +734,7 @@ function SalonAppointmentVer2(props) {
                     ? "1rem"
                     : "0",
                 padding: "0.5rem 1rem",
+                marginBottom: "0.5rem",
                 backgroundColor:
                   status === statusKey
                     ? status === "BOOKING"
@@ -707,6 +745,8 @@ function SalonAppointmentVer2(props) {
                       ? "#ff0000"
                       : status === "SUCCESSED"
                       ? "#389e0d"
+                      : status === "OUT_SIDE"
+                      ? "#BF9456"
                       : "gray"
                     : "gray",
                 color: "white",
@@ -726,18 +766,45 @@ function SalonAppointmentVer2(props) {
             className="datePickerCustome"
             // className={styles["date-picker-custome"]}
           >
-            <DatePicker
+            {/* <DatePicker
               style={{ marginRight: "1rem" }}
               onChange={handleDateChange}
               placeholder="Lọc theo thời gian"
-            />
-            <Input
-              placeholder="Lọc theo tên"
-              value={nameFilterInput}
-              onChange={handleNameFilterChange}
-              allowClear
-              // style={{ width: 200 }}
-            />
+            /> */}
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="w-full lg:w-auto">
+                <RangePicker
+                  style={{ marginRight: "1rem" }}
+                  onChange={handleDateRangeChange}
+                  placeholder={["Ngày bắt đầu", "Ngày kết thúc"]}
+                  defaultValue={[dayjs().subtract(7, "day"), dayjs()]}
+                />
+              </div>
+              <div className="flex w-full lg:w-auto gap-4">
+                <Input
+                  className="flex-1"
+                  placeholder="Khách hàng"
+                  value={nameFilterInput}
+                  onChange={handleNameFilterChange}
+                  allowClear
+                />
+                <Input
+                  className="flex-1"
+                  placeholder="Nhân viên"
+                  value={nameFilterInputEmployee}
+                  onChange={handleNameFilterChangeEmployee}
+                  allowClear
+                />
+              </div>
+              <motion.p
+                className="text-xl pt-5 items-center font-semibold text-gray-800"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+              >
+                Tổng: {total} cuộc hẹn
+              </motion.p>
+            </div>
           </div>
         </div>
 

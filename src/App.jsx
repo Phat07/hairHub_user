@@ -175,7 +175,7 @@ function App() {
   useEffect(() => {
     if (idOwner) {
       dispatch(actGetSalonInformationByOwnerId(idOwner));
-      dispatch(actGetAllPaymentList(idOwner, 1, 10));
+      // dispatch(actGetAllPaymentList(idOwner, 1, 10));
     }
   }, [dispatch, idOwner]);
 

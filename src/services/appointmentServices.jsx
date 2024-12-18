@@ -8,7 +8,8 @@ export const AppointmentService = {
     status,
     isAscending,
     date,
-    customerName
+    customerName,
+    employeeName
   ) {
     return API.get(`/appointments/GetAppointmentSalonByStatus/${salonId}`, {
       params: {
@@ -16,8 +17,10 @@ export const AppointmentService = {
         size,
         status,
         isAscending,
-        date,
+        StartDate: date?.startDay,
+        EndDate: date?.endDay,
         customerName,
+        employeeName
       },
     });
   },

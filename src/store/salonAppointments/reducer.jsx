@@ -12,7 +12,8 @@ const initialState = {
   loading: false,
   error: null,
   salonInformationByOwnerId: {},
-  totalPages: 1
+  totalPages: 1,
+  total:0,
 };
 
 const appointmentReducer = (state = initialState, action) => {
@@ -32,6 +33,7 @@ const appointmentReducer = (state = initialState, action) => {
       return {
         ...state,
         totalPages: action.payload.totalPages,
+        total: action.payload.total,
         loading: false,
         appointment: action.payload.list.map((item) => {
           let isBefore = false;
