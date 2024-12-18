@@ -1,7 +1,4 @@
-import {
-  DownOutlined,
-  ReloadOutlined
-} from "@ant-design/icons";
+import { DownOutlined, ReloadOutlined } from "@ant-design/icons";
 import {
   Button,
   DatePicker,
@@ -9,7 +6,7 @@ import {
   Menu,
   Pagination,
   Spin,
-  Table
+  Table,
 } from "antd";
 import classNames from "classnames";
 import { useEffect, useState } from "react";
@@ -36,9 +33,23 @@ function ReviewAppointmentCustomerPage(props) {
   const salonInformationByOwnerId = useSelector(
     (state) => state.SALONAPPOINTMENTS.salonInformationByOwnerId
   );
+  const fetchData = async () => {
+    setLoading(true); // Bật loading
+    if (salonInformationByOwnerId?.id) {
+      const response = await API.get(
+        `/appointments/FrequentlyCustomers/${salonInformationByOwnerId?.id}`,
+        {
+          params: { time: type, page: currentPage, size: itemsPerPage },
+        }
+      );
+      setListData(response?.data?.items);
+      setTotal(response?.data?.total);
+    }
+
+    setLoading(false); // Tắt loading sau khi gọi API xong
+  };
 
   const dispatch = useDispatch();
-
   useEffect(() => {
     if (ownerId) {
       dispatch(actGetSalonInformationByOwnerIdAsync(ownerId));
@@ -131,7 +142,7 @@ function ReviewAppointmentCustomerPage(props) {
       >
         <div className="flex flex-wrap justify-end space-x-2 mb-3">
           <Button
-            // onClick={() => fetchData()}
+            onClick={() => fetchData()}
             style={{
               padding: "0.5rem 1rem",
               backgroundColor: "gray",

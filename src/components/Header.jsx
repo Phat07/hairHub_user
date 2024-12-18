@@ -180,6 +180,13 @@ function Header(props) {
         </Menu.Item>
       )}
       {idOwner && (
+        <Menu.Item key="ReviewAppointmentCustomer">
+          <Link to="/ReviewAppointmentCustomer">
+            <WarningOutlined /> Khảo sát khách hàng
+          </Link>
+        </Menu.Item>
+      )}
+      {idOwner && (
         <Menu.Item key="salon_report">
           <Link to="/salon_report">
             <WarningOutlined /> Danh sách báo cáo
