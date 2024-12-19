@@ -26,7 +26,7 @@
   -webkit-overflow-scrolling: touch;
   border-collapse: collapse;
   width: 100%;
-  border-radius: 10px;
+  border-radius: 2px;
 }
 
 .detailBtn {
@@ -101,6 +101,18 @@
   color: white !important;
 }
 
+.buttonCard{
+  background-color: #A38245 !important;
+  border-color: #A38245 !important;
+  color: white !important;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 12px;
+  width: 100%;
+  max-width: 5rem;
+  padding-inline: 0.5rem;
+}
+
 
 @media (max-width: 768px) {
   .appointmentDetail {
@@ -162,6 +174,11 @@
   }
   .datePickerCustomeMobile{
   flex-direction: column;
+  }
+  .buttonCard{
+    font-size: 15px;
+    max-width: 15rem;
+    padding: 2px;
   }
 }
 
