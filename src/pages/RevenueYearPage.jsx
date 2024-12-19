@@ -73,7 +73,14 @@ const RevenueYearPage = () => {
   const salonInformationByOwnerId = useSelector(
     (state) => state.SALONAPPOINTMENTS.salonInformationByOwnerId
   );
-
+  useEffect(() => {
+    const currentYear = new Date().getFullYear();
+    if (years.includes(currentYear)) {
+      setActiveYear(currentYear);
+    } else {
+      setActiveYear(years[0]);
+    }
+  }, []);
   useEffect(() => {
     if (ownerId) {
       dispatch(actGetSalonInformationByOwnerIdAsync(ownerId));
@@ -247,17 +254,7 @@ const RevenueYearPage = () => {
       ],
     };
   };
-  useEffect(() => {
-    const currentYear = new Date().getFullYear();
-    if (years.includes(currentYear)) {
-      setActiveYear(currentYear);
-    } else {
-      setActiveYear(years[0]);
-    }
-  }, []);
-  useEffect(() => {
-    console.log("Active year updated:", activeYear);
-  }, [activeYear]);
+
   const handleYearScroll = (direction) => {
     if (direction === "prev" && startIndex > 0) {
       setStartIndex(startIndex - 1);
