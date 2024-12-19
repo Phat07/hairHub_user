@@ -240,12 +240,12 @@ function ReviewAppointmentCustomerPage(props) {
                   })()} */}
                 </h4>
 
-                <h4>Mô tả: {appointment?.phone || "Không có mô tả"}</h4>
+                <h4>Số điện thoại: {appointment?.phone || "Không có mô tả"}</h4>
 
                 <h4>Số tiền: {formatCurrency(appointment.totalPrice)}</h4>
 
                 <h4>
-                  Số lần khách hàng đến:{" "}
+                  Số lần khách hàng đến:
                   {appointment?.numberofSuccessAppointment}
                 </h4>
               </div>

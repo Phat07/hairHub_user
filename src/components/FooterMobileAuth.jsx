@@ -188,7 +188,7 @@ function FooterMobileAuth() {
               >
                 <Link to="/manageEmployeeScheduler" onClick={scrollToTop}>
                   <FormOutlined  className={style.icon} />
-                  {isActive("/manageEmployeeScheduler") && <span> Quản lý dịch vụ</span>}
+                  {isActive("/manageEmployeeScheduler") && <span>Lịch làm việc</span>}
                 </Link>
               </li>
               <li

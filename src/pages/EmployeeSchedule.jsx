@@ -134,41 +134,6 @@ const EmployeeSchedule = () => {
       <div className={styles.appointmentDetail}>
         {selectedAppointmentDetail?.status === "BOOKING" && (
           <div className={styles.appointmentDetailA1}>
-            {/* B1: Thông tin Salon */}
-            {/* <div
-            className={styles.appointmentDetailB1}
-            style={{
-              border: "1px solid #ccc",
-              padding: "10px",
-              paddingBottom: "30px",
-            }}
-          >
-            <Text strong style={{ fontSize: "16px" }}>
-              Thông tin Salon | Barber shop
-            </Text>
-            <div>
-              {selectedAppointmentDetail?.salonInformation?.img && (
-                <Image
-                  src={selectedAppointmentDetail?.salonInformation?.img}
-                  preview={false}
-                  style={{ marginBottom: "10px", marginTop: "10px" }}
-                  width={300}
-                  height={200}
-                />
-              )}
-              <p>
-                <Text strong>Tên tiệm: </Text>
-                <Text>{selectedAppointmentDetail?.salonInformation?.name}</Text>
-              </p>
-              <p>
-                <Text strong>Địa chỉ: </Text>
-                <Text>
-                  {selectedAppointmentDetail?.salonInformation?.address}
-                </Text>
-              </p>
-            </div>
-          </div> */}
-
             {/* B2: Mã QR */}
             <div
               className={styles.appointmentDetailB2}

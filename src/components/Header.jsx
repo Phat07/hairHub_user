@@ -471,7 +471,7 @@ function Header(props) {
                     }`}
                     onClick={scrollToTop}
                   >
-                    Quản lý dịch vụ
+                    Lịch làm việc
                   </Link>
                 </li>
                 <li className={style.navItem}>
