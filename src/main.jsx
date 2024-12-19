@@ -62,6 +62,7 @@ import RequireAuth from "./PrivateRoute.js";
 import store from "./store";
 import ReviewAppointmentCustomerPage from "./pages/ReviewAppointmentCustomerPage.jsx";
 import ManageEmployeeSchedulerPage from "./pages/ManageEmployeeSchedulerPage.jsx";
+import RevenueYearPage from "./pages/RevenueYearPage.jsx";
 
 const basePath = `/zapps/2685475901677367467`;
 
@@ -405,6 +406,14 @@ const router = createBrowserRouter(
           element: (
             <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
               <ReviewEmployee />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "revenueSalon",
+          element: (
+            <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
+              <RevenueYearPage />
             </RequireAuth>
           ),
         },
