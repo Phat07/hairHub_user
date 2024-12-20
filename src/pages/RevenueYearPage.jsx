@@ -302,6 +302,8 @@ const RevenueYearPage = () => {
         compileRevenuetUrl,
         { startDate: formattedDates[0], endDate: formattedDates[1] },
         (data) => {
+          console.log("data", data);
+          
           setDataRevenue(data);
         }
       ).finally(() => setLoadingRevenue(false));
@@ -907,13 +909,13 @@ const RevenueYearPage = () => {
                   <h3 className="text-lg font-bold mb-2">
                     Tỉ lệ khách hàng quay lại:
                   </h3>
-                  <p className="text-gray-700">%</p>
+                  <p className="text-gray-700">{parseFloat(dataRevenue?.rateOfReturnCustomers || 0).toFixed(3)} %</p>
                 </div>
                 <div className="bg-white p-4 rounded-lg shadow-md">
                   <h3 className="text-lg font-bold mb-2">
-                    Giá trị trung bình mỗi đơn hàng:
+                    Giá trị trung bình mỗi đơn hàng: 
                   </h3>
-                  <p className="text-gray-700">Số tiền</p>
+                  <p className="text-gray-700">{formatCurrency(dataRevenue?.valueAverageOnProduct)}</p>
                 </div>
               </div>
             </div>
