@@ -27,23 +27,33 @@ import { actGetSalonInformationByOwnerIdAsync } from "@/store/salonAppointments/
 import { API } from "@/services/api";
 const RevenueYearPage = () => {
   const { RangePicker } = DatePicker;
-  const [loading, setLoading] = useState(false);
   const [currentPageService, setCurrentPageService] = useState(1);
   const [pageSizeService, setPageSizeService] = useState(4);
-  const [sortLabelService, setSortLabelService] = useState("Không sắp xếp");
-  const [SortService, setSortService] = useState(null);
+  const [sortLabelService, setSortLabelService] = useState(
+    "Số lượng sử dụng tăng dần"
+  );
+  const [sortService, setSortService] = useState("sử dụng tăng dần");
   const [currentPageEmployee, setCurrentPageEmployee] = useState(1);
   const [pageSizeEmployee, setPageSizeEmployee] = useState(4);
-  const [sortLabelEmployee, setSortLabelEmployee] = useState("Không sắp xếp");
-  const [SortEmployee, setSortEmployee] = useState(null);
+  const [total, setTotal] = useState(1);
+  const [totalService, setTotalService] = useState(1);
+  const [sortLabelEmployee, setSortLabelEmployee] = useState(
+    "Số lượng dịch vụ tăng dần"
+  );
+  const [dataEmployee, setDataEmplyee] = useState([]);
+  const [dataService, setDataService] = useState([]);
+  const [sortEmployee, setSortEmployee] = useState("dịch vụ tăng dần");
   const [startIndex, setStartIndex] = useState(0); // Vị trí bắt đầu hiển thị
   const [activeYear, setActiveYear] = useState(null); // Năm đang được chọn
   const years = Array.from({ length: 30 }, (_, i) => 2023 + i); // Danh sách năm từ 2020 đến 2030
   const visibleYears = years.slice(startIndex, startIndex + 4); // Lấy 4 năm để hiển thị
+
+  const [dataRevenue, setDataRevenue] = useState({});
   const [tempDates, setTempDates] = useState([
     dayjs().subtract(7, "day"), // Ngày bắt đầu
     dayjs(), // Ngày kết thúc
   ]);
+
   const [selectedStartDates, setSelectedStartDates] = useState(
     dayjs().subtract(7, "day").format("YYYY-MM-DD")
   ); // 7 ngày trước
@@ -123,6 +133,180 @@ const RevenueYearPage = () => {
       });
     }
   }, [activeYear, salonInformationByOwnerId]);
+
+  //   useEffect(() => {
+  //     const fetchData = async (url, params, setData) => {
+  //       setLoading(true);
+  //       try {
+  //         const response = await API.get(url, { params });
+  //         setData(response.data);
+  //       } catch (error) {
+  //         console.error("Error fetching data:", error);
+  //       } finally {
+  //         setLoading(false);
+  //       }
+  //     };
+  //     const formattedDates = tempDates?.map((date) =>
+  //       dayjs(date.$d).format("YYYY-MM-DD")
+  //     );
+  //     const compileEmployeeUrl = `/saloninformations/CompileEmployeeSalon/${salonInformationByOwnerId?.id}`;
+  //     const compileRevenuetUrl = `/saloninformations/RevenueStatistics/${salonInformationByOwnerId?.id}`;
+  //     const compileServicetUrl = `/saloninformations/ServiceStatistics/${salonInformationByOwnerId?.id}`;
+  //     if (
+  //       salonInformationByOwnerId?.id &&
+  //       sortEmployee &&
+  //       tempDates &&
+  //       sortService &&
+  //       currentPageEmployee &&
+  //       currentPageService
+  //     ) {
+  //       fetchData(
+  //         compileEmployeeUrl,
+  //         {
+  //           startDate: formattedDates[0],
+  //           endDate: formattedDates[1],
+  //           filter: sortEmployee,
+  //           page: currentPageEmployee,
+  //           size: pageSizeEmployee,
+  //         },
+  //         (data) => {
+  //           console.log("da1", data);
+
+  //           setDataEmplyee(data?.employeeStatictis);
+  //         }
+  //       );
+  //       fetchData(
+  //         compileServicetUrl,
+  //         {
+  //           startDate: formattedDates[0],
+  //           endDate: formattedDates[1],
+  //           filter: sortService,
+  //           page: currentPageService,
+  //           size: pageSizeService,
+  //         },
+  //         (data) => {
+  //           console.log("data", data);
+  //           setDataService(data.items);
+  //           setTotalService(data?.totalPages)
+  //         }
+  //       );
+
+  //       // Fetch appointment data if salon ID and activeYear exist
+  //       fetchData(
+  //         compileRevenuetUrl,
+  //         { startDate: formattedDates[0], endDate: formattedDates[1] },
+  //         (data) => {
+  //           setDataRevenue(data);
+  //         }
+  //       );
+  //     }
+  //   }, [
+  //     tempDates,
+  //     salonInformationByOwnerId,
+  //     sortEmployee,
+  //     sortService,
+  //     currentPageEmployee,
+  //     currentPageService,
+  //     pageSizeEmployee,
+  //     pageSizeService,
+  //   ]);
+  const [loadingEmployee, setLoadingEmployee] = useState(false);
+  const [loadingService, setLoadingService] = useState(false);
+  const [loadingRevenue, setLoadingRevenue] = useState(false);
+  const fetchData = async (url, params, setData) => {
+    try {
+      const response = await API.get(url, { params });
+      setData(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (
+      salonInformationByOwnerId?.id &&
+      sortEmployee &&
+      tempDates &&
+      currentPageEmployee
+    ) {
+      setLoadingEmployee(true);
+      const compileEmployeeUrl = `/saloninformations/CompileEmployeeSalon/${salonInformationByOwnerId.id}`;
+      const formattedDates = tempDates?.map((date) =>
+        dayjs(date.$d).format("YYYY-MM-DD")
+      );
+      fetchData(
+        compileEmployeeUrl,
+        {
+          startDate: formattedDates[0],
+          endDate: formattedDates[1],
+          filter: sortEmployee,
+          page: currentPageEmployee,
+          size: pageSizeEmployee,
+        },
+        (data) => {
+          console.log("da", data);
+          setTotal(data?.totalPages);
+          setDataEmplyee(data?.items);
+        }
+      ).finally(() => setLoadingEmployee(false));
+    }
+  }, [
+    salonInformationByOwnerId?.id,
+    sortEmployee,
+    tempDates,
+    currentPageEmployee,
+  ]);
+
+  useEffect(() => {
+    if (
+      salonInformationByOwnerId?.id &&
+      sortService &&
+      tempDates &&
+      currentPageService
+    ) {
+      setLoadingService(true);
+      const compileServicetUrl = `/saloninformations/ServiceStatistics/${salonInformationByOwnerId.id}`;
+      const formattedDates = tempDates?.map((date) =>
+        dayjs(date.$d).format("YYYY-MM-DD")
+      );
+      fetchData(
+        compileServicetUrl,
+        {
+          startDate: formattedDates[0],
+          endDate: formattedDates[1],
+          filter: sortService,
+          page: currentPageService,
+          size: pageSizeService,
+        },
+        (data) => {
+          setDataService(data.items);
+          setTotalService(data?.totalPages);
+        }
+      ).finally(() => setLoadingService(false));
+    }
+  }, [
+    salonInformationByOwnerId?.id,
+    sortService,
+    tempDates,
+    currentPageService,
+  ]);
+
+  useEffect(() => {
+    if (salonInformationByOwnerId?.id && tempDates) {
+      setLoadingRevenue(true);
+      const compileRevenuetUrl = `/saloninformations/RevenueStatistics/${salonInformationByOwnerId.id}`;
+      const formattedDates = tempDates?.map((date) =>
+        dayjs(date.$d).format("YYYY-MM-DD")
+      );
+      fetchData(
+        compileRevenuetUrl,
+        { startDate: formattedDates[0], endDate: formattedDates[1] },
+        (data) => {
+          setDataRevenue(data);
+        }
+      ).finally(() => setLoadingRevenue(false));
+    }
+  }, [salonInformationByOwnerId?.id, tempDates]);
 
   const formatLineChartData = (data) => {
     const labels = data.revenuewStatistics.map((item) => item.month);
@@ -278,13 +462,13 @@ const RevenueYearPage = () => {
     setCurrentPageService(1);
     setSortService(e.key);
     setSortLabelService(
-      e.key === "" ? "Không sắp xếp" : `Sắp xếp theo ${e.key}`
+      e.key === "" ? "sử dụng tăng dần" : `Sắp xếp theo ${e.key}`
     );
   };
 
   const sortMenuService = (
     <Menu onClick={handleMenuClickServiceSort}>
-      <Menu.Item key="">Không sắp xếp</Menu.Item>
+      {/* <Menu.Item key="">Không sắp xếp</Menu.Item> */}
       <Menu.Item key="sử dụng tăng dần">Số lượng sử dụng tăng dần</Menu.Item>
       <Menu.Item key="sử dụng giảm dần">Số lượng sử dụng giảm dần</Menu.Item>
       <Menu.Item key="khách tăng dần">Số lượng khách tăng dần</Menu.Item>
@@ -298,13 +482,13 @@ const RevenueYearPage = () => {
     setCurrentPageEmployee(1);
     setSortEmployee(e.key);
     setSortLabelEmployee(
-      e.key === "" ? "Không sắp xếp" : `Sắp xếp theo ${e.key}`
+      e.key === "" ? "sử dụng tăng dần" : `Sắp xếp theo ${e.key}`
     );
   };
 
   const sortMenuEmployee = (
     <Menu onClick={handleMenuClickEmployeeSort}>
-      <Menu.Item key="">Không sắp xếp</Menu.Item>
+      {/* <Menu.Item key="">Không sắp xếp</Menu.Item> */}
       <Menu.Item key="dịch vụ tăng dần">Số lượng dịch vụ tăng dần</Menu.Item>
       <Menu.Item key="dịch vụ giảm dần">Số lượng dịch vụ giảm dần</Menu.Item>
       <Menu.Item key="khách tăng dần">Số lượng khách tăng dần</Menu.Item>
@@ -360,26 +544,26 @@ const RevenueYearPage = () => {
   const columnsService = [
     {
       title: "Tên dịch vụ",
-      dataIndex: "AppointmentType",
-      key: "AppointmentType",
+      dataIndex: "serviceName",
+      key: "serviceName",
       align: "center",
     },
     {
       title: "Số lần phục vụ",
-      dataIndex: "AppointmentNumber",
-      key: "AppointmentNumber",
+      dataIndex: "numberOfUses",
+      key: "numberOfUses",
       align: "center",
     },
     {
       title: "Số khách phục vụ",
-      dataIndex: "NumberPeopleService",
+      dataIndex: "numberOfCustomers",
       align: "center",
-      key: "NumberPeopleService",
+      key: "numberOfCustomers",
     },
     {
       title: "Doanh Thu",
-      dataIndex: "AppointmentRevenue",
-      key: "AppointmentRevenue",
+      dataIndex: "revenueFromService",
+      key: "revenueFromService",
       align: "center",
       render: (AppointmentRevenue) => formatCurrency(AppointmentRevenue),
     },
@@ -403,26 +587,26 @@ const RevenueYearPage = () => {
   const columnsEmployee = [
     {
       title: "Tên nhân viên",
-      dataIndex: "AppointmentType",
-      key: "AppointmentType",
+      dataIndex: "fullName",
+      key: "fullName",
       align: "center",
     },
     {
       title: "Số dịch vụ đã thực hiện",
-      dataIndex: "AppointmentNumber",
-      key: "AppointmentNumber",
+      dataIndex: "numberOfService",
+      key: "numberOfService",
       align: "center",
     },
     {
       title: "Số khách đã phục vụ",
-      dataIndex: "NumberPeopleService",
+      dataIndex: "numberOfUsers",
       align: "center",
-      key: "NumberPeopleService",
+      key: "numberOfUsers",
     },
     {
       title: "Doanh Thu",
-      dataIndex: "AppointmentRevenue",
-      key: "AppointmentRevenue",
+      dataIndex: "revenue",
+      key: "revenue",
       align: "center",
       render: (AppointmentRevenue) => formatCurrency(AppointmentRevenue),
     },
@@ -434,7 +618,7 @@ const RevenueYearPage = () => {
         <button
           className={stylesCard.buttonCard}
           onClick={() =>
-            console.log(`Kiểu lịch hẹn: ${record.AppointmentType}`)
+            console.log(`Kiểu lịch hẹn: ${record?.AppointmentType}`)
           }
         >
           Chi tiết
@@ -480,6 +664,7 @@ const RevenueYearPage = () => {
 
   const handleDateChange = (dates) => {
     setTempDates(dates); // Lưu ngày tạm thời
+    console.log("date", dates);
   };
 
   const handleFilter = () => {
@@ -490,6 +675,13 @@ const RevenueYearPage = () => {
     } else {
       message.error("Vui lòng chọn khoảng thời gian.");
     }
+  };
+
+  const onPageChangeEmployee = (page) => {
+    setCurrentPageEmployee(page);
+  };
+  const onPageChangeService = (page) => {
+    setCurrentPageService(page);
   };
 
   return (
@@ -625,13 +817,13 @@ const RevenueYearPage = () => {
             defaultValue={tempDates}
             dropdownClassName="custom-dropdown-range-picker"
           />
-          <button
-            className={stylesCard.buttonCard}
-            onClick={handleFilter}
-            style={{ maxWidth: "5rem", paddingBlock: "10px" }}
-          >
-            Lọc
-          </button>
+          {/* <button
+                className={stylesCard.buttonCard}
+                onClick={handleFilter}
+                style={{ maxWidth: "5rem", paddingBlock: "10px" }}
+            >
+                Lọc
+            </button> */}
         </div>
         {/* Biểu đồ số */}
         <div className="mb-4 sm:mb-6">
@@ -639,169 +831,199 @@ const RevenueYearPage = () => {
             className="text-lg sm:text-xl font-bold mb-4"
             style={{ borderBottom: "0" }}
           >
-            THỐNG KÊ TỪ {selectedStartDates} đến {selectedEndDates}
+            THỐNG KÊ TỪ{" "}
+            {tempDates?.[0]
+              ? dayjs(tempDates[0].$d).format("YYYY-MM-DD")
+              : " ? "}{" "}
+            đến{" "}
+            {tempDates?.[1]
+              ? dayjs(tempDates[1].$d).format("YYYY-MM-DD")
+              : " ? "}
           </h2>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div
-              className="w-full sm:w-2/3 flex flex-col gap-4 rounded-lg shadow-md p-4"
-              style={{ backgroundColor: "#BF9456" }}
-            >
-              <div className="flex gap-4">
-                <div className="bg-white p-4 rounded-lg shadow-md flex-1">
-                  <h3
-                    className="text-lg font-bold mb-2"
-                    style={{ color: "#33CC66" }}
-                  >
-                    Doanh thu
-                  </h3>
-                  <p className="text-gray-700">Số tiền / Số đơn</p>
+          <Spin className="custom-spin" spinning={loadingRevenue}>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div
+                className="w-full sm:w-2/3 flex flex-col gap-4 rounded-lg shadow-md p-4"
+                style={{ backgroundColor: "#BF9456" }}
+              >
+                <div className="flex gap-4">
+                  <div className="bg-white p-4 rounded-lg shadow-md flex-1">
+                    <h3
+                      className="text-lg font-bold mb-2"
+                      style={{ color: "#33CC66" }}
+                    >
+                      Doanh thu
+                    </h3>
+                    <p className="text-gray-700">
+                      {formatCurrency(dataRevenue?.totalRevenue)} /
+                      {dataRevenue?.numberOfOutsideAppointment +
+                        dataRevenue?.numberOfPlatformAppointment}
+                    </p>
+                  </div>
+                  <div className="bg-white p-4 rounded-lg shadow-md flex-1">
+                    <h3
+                      className="text-lg font-bold mb-2"
+                      style={{ color: "#FF9900" }}
+                    >
+                      Doanh thu lịch hẹn ngoài
+                    </h3>
+                    <p className="text-gray-700">
+                      {formatCurrency(dataRevenue?.outsideRevenue)} /{" "}
+                      {dataRevenue?.numberOfOutsideAppointment}
+                    </p>
+                  </div>
                 </div>
-                <div className="bg-white p-4 rounded-lg shadow-md flex-1">
-                  <h3
-                    className="text-lg font-bold mb-2"
-                    style={{ color: "#FF9900" }}
-                  >
-                    Doanh thu lịch hẹn ngoài
-                  </h3>
-                  <p className="text-gray-700">Số tiền / Số đơn</p>
+
+                <div className="flex gap-4">
+                  <div className="bg-white p-4 rounded-lg shadow-md flex-1">
+                    <h3
+                      className="text-lg font-bold mb-2"
+                      style={{ color: "#0099FF" }}
+                    >
+                      Doanh thu lịch hẹn qua hệ thống
+                    </h3>
+                    <p className="text-gray-700">
+                      {formatCurrency(dataRevenue?.platformRevenue)} /
+                      {dataRevenue?.numberOfPlatformAppointment}
+                    </p>
+                  </div>
+                  <div className="bg-white p-4 rounded-lg shadow-md flex-1">
+                    <h3
+                      className="text-lg font-bold mb-2"
+                      style={{ color: "#EE0000" }}
+                    >
+                      Số tiền đã giảm cho khách hàng
+                    </h3>
+                    <p className="text-gray-700">Số tiền / Số đơn</p>
+                  </div>
                 </div>
               </div>
 
-              <div className="flex gap-4">
-                <div className="bg-white p-4 rounded-lg shadow-md flex-1">
-                  <h3
-                    className="text-lg font-bold mb-2"
-                    style={{ color: "#0099FF" }}
-                  >
-                    Doanh thu lịch hẹn qua hệ thống
+              <div
+                className="w-full sm:w-1/3 flex flex-col gap-4 mt-4 sm:mt-0 rounded-lg shadow-md p-4"
+                style={{ backgroundColor: "#BF9456" }}
+              >
+                <div className="bg-white p-4 rounded-lg shadow-md">
+                  <h3 className="text-lg font-bold mb-2">
+                    Tỉ lệ khách hàng quay lại:
                   </h3>
-                  <p className="text-gray-700">Số tiền / Số đơn</p>
+                  <p className="text-gray-700">%</p>
                 </div>
-                <div className="bg-white p-4 rounded-lg shadow-md flex-1">
-                  <h3
-                    className="text-lg font-bold mb-2"
-                    style={{ color: "#EE0000" }}
-                  >
-                    Số tiền đã giảm cho khách hàng
+                <div className="bg-white p-4 rounded-lg shadow-md">
+                  <h3 className="text-lg font-bold mb-2">
+                    Giá trị trung bình mỗi đơn hàng:
                   </h3>
-                  <p className="text-gray-700">Số tiền / Số đơn</p>
+                  <p className="text-gray-700">Số tiền</p>
                 </div>
               </div>
             </div>
-
-            <div
-              className="w-full sm:w-1/3 flex flex-col gap-4 mt-4 sm:mt-0 rounded-lg shadow-md p-4"
-              style={{ backgroundColor: "#BF9456" }}
-            >
-              <div className="bg-white p-4 rounded-lg shadow-md">
-                <h3 className="text-lg font-bold mb-2">
-                  Tỉ lệ khách hàng quay lại:
-                </h3>
-                <p className="text-gray-700">%</p>
-              </div>
-              <div className="bg-white p-4 rounded-lg shadow-md">
-                <h3 className="text-lg font-bold mb-2">
-                  Giá trị trung bình mỗi đơn hàng:
-                </h3>
-                <p className="text-gray-700">Số tiền</p>
-              </div>
-            </div>
-          </div>
+          </Spin>
         </div>
         {/* Biểu đồ thống kê lịch hẹn */}
-        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md mb-4 sm:mb-6">
-          <h2 className="text-lg sm:text-xl font-bold mb-4">
-            THỐNG KÊ SỐ LỊCH HẸN TỪ {selectedStartDates} đến {selectedEndDates}
-          </h2>
-          <div className="flex flex-col sm:flex-row gap-4">
-            {/* Biểu đồ đường lớn hơn */}
-            <div className="w-full sm:w-2/3">
-              <div className="h-auto">
-                <div className={styles["table-container"]}>
-                  <Spin className="custom-spin" spinning={loading}>
-                    <Table
-                      className={stylesCard.appointmentTable}
-                      dataSource={dataSource}
-                      columns={columnsAppointment}
-                      pagination={false}
-                      rowKey="id"
-                    />
-                    <div className={stylesCard.container}>
-                      {dataSource?.length === 0 && (
-                        <h4
-                          style={{
-                            fontWeight: "bold",
-                            color: "#bf9456",
-                            textAlign: "center",
-                            fontSize: "1.2rem",
-                          }}
-                        >
-                          Không tìm thấy số liệu nào !!!
-                        </h4>
-                      )}
+        {/* <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md mb-4 sm:mb-6">
+            <h2 className="text-lg sm:text-xl font-bold mb-4">
+                THỐNG KÊ SỐ LỊCH HẸN TỪ{" "}
+                {tempDates?.[0]
+                ? dayjs(tempDates[0].$d).format("YYYY-MM-DD")
+                : "N/A"}{" "}
+                đến{" "}
+                {tempDates?.[1]
+                ? dayjs(tempDates[1].$d).format("YYYY-MM-DD")
+                : "N/A"}
+            </h2>
+            <div className="flex flex-col sm:flex-row gap-4">
+                <div className="w-full sm:w-2/3">
+                <div className="h-auto">
+                    <div className={styles["table-container"]}>
+                    <Spin className="custom-spin" spinning={loading}>
+                        <Table
+                        className={stylesCard.appointmentTable}
+                        dataSource={dataSource}
+                        columns={columnsAppointment}
+                        pagination={false}
+                        rowKey="id"
+                        />
+                        <div className={stylesCard.container}>
+                        {dataSource?.length === 0 && (
+                            <h4
+                            style={{
+                                fontWeight: "bold",
+                                color: "#bf9456",
+                                textAlign: "center",
+                                fontSize: "1.2rem",
+                            }}
+                            >
+                            Không tìm thấy số liệu nào !!!
+                            </h4>
+                        )}
 
-                      <div className={stylesCard.grid}>
-                        {dataSource?.map((service) => (
-                          <div key={service.id} className={stylesCard.card}>
-                            <h4>
-                              Kiểu lịch hẹn:
-                              <span
-                                style={{
-                                  display: "block",
-                                  fontWeight: "bold",
-                                  color: "#bf9456",
-                                  textAlign: "center",
-                                  fontSize: "1rem",
-                                }}
-                              >
-                                {service.AppointmentType}
-                              </span>
-                            </h4>
-                            <h4 className={stylesCard.description}>
-                              Số lượng lịch hẹn: {service.AppointmentNumber}
-                            </h4>
-                            <h4 className={stylesCard.description}>
-                              Số lượng khách phục vụ:{" "}
-                              {service.NumberPeopleService}
-                            </h4>
-                            <h4>
-                              Doanh Thu:{" "}
-                              {formatCurrency(service.AppointmentRevenue)}
-                            </h4>
-                            <h4>
-                              <button
-                                className={stylesCard.buttonCard}
-                                onClick={() =>
-                                  console.log(
-                                    `Kiểu lịch hẹn: ${service.AppointmentType}`
-                                  )
-                                }
-                              >
-                                Chi tiết
-                              </button>
-                            </h4>
-                          </div>
-                        ))}
-                      </div>
+                        <div className={stylesCard.grid}>
+                            {dataSource?.map((service) => (
+                            <div key={service.id} className={stylesCard.card}>
+                                <h4>
+                                Kiểu lịch hẹn:
+                                <span
+                                    style={{
+                                    display: "block",
+                                    fontWeight: "bold",
+                                    color: "#bf9456",
+                                    textAlign: "center",
+                                    fontSize: "1rem",
+                                    }}
+                                >
+                                    {service.AppointmentType}
+                                </span>
+                                </h4>
+                                <h4 className={stylesCard.description}>
+                                Số lượng lịch hẹn: {service.AppointmentNumber}
+                                </h4>
+                                <h4 className={stylesCard.description}>
+                                Số lượng khách phục vụ:{" "}
+                                {service.NumberPeopleService}
+                                </h4>
+                                <h4>
+                                Doanh Thu:{" "}
+                                {formatCurrency(service.AppointmentRevenue)}
+                                </h4>
+                                <h4>
+                                <button
+                                    className={stylesCard.buttonCard}
+                                    onClick={() =>
+                                    console.log(
+                                        `Kiểu lịch hẹn: ${service.AppointmentType}`
+                                    )
+                                    }
+                                >
+                                    Chi tiết
+                                </button>
+                                </h4>
+                            </div>
+                            ))}
+                        </div>
+                        </div>
+                    </Spin>
                     </div>
-                  </Spin>
                 </div>
-              </div>
+                </div>
+                <div className="w-full sm:w-1/3">
+                <div className="h-64 sm:h-80">
+                    <Pie data={pieData} options={{ maintainAspectRatio: false }} />
+                </div>
+                </div>
             </div>
-
-            {/* Biểu đồ tròn */}
-            <div className="w-full sm:w-1/3">
-              <div className="h-64 sm:h-80">
-                <Pie data={pieData} options={{ maintainAspectRatio: false }} />
-              </div>
-            </div>
-          </div>
-        </div>
+            </div> */}
 
         {/* Biểu đồ thống kê doanh thu */}
         <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md mb-4 sm:mb-6">
           <h2 className="text-lg sm:text-xl font-bold mb-4">
-            THỐNG KÊ DỊCH VỤ TỪ {selectedStartDates} đến {selectedEndDates}
+            THỐNG KÊ DỊCH VỤ TỪ{" "}
+            {tempDates?.[0]
+              ? dayjs(tempDates[0].$d).format("YYYY-MM-DD")
+              : " ? "}{" "}
+            đến{" "}
+            {tempDates?.[1]
+              ? dayjs(tempDates[1].$d).format("YYYY-MM-DD")
+              : " ? "}
           </h2>
           <div className="flex flex-col sm:flex-row gap-4">
             {/* Biểu đồ đường lớn hơn */}
@@ -823,10 +1045,10 @@ const RevenueYearPage = () => {
                   </Dropdown>
                 </div>
                 <div className={styles["table-container"]}>
-                  <Spin className="custom-spin" spinning={loading}>
+                  <Spin className="custom-spin" spinning={loadingService}>
                     <Table
                       className={stylesCard.appointmentTable}
-                      dataSource={dataSource}
+                      dataSource={Array.isArray(dataService) ? dataService : []}
                       columns={columnsService}
                       pagination={false}
                       rowKey="id"
@@ -849,7 +1071,7 @@ const RevenueYearPage = () => {
                         {dataSource?.map((service) => (
                           <div key={service.id} className={stylesCard.card}>
                             <h4>
-                              Kiểu lịch hẹn:
+                              Tên dịch vụ:
                               <span
                                 style={{
                                   display: "block",
@@ -859,19 +1081,19 @@ const RevenueYearPage = () => {
                                   fontSize: "1rem",
                                 }}
                               >
-                                {service.AppointmentType}
+                                {service.serviceName}
                               </span>
                             </h4>
                             <h4 className={stylesCard.description}>
-                              Số lượng lịch hẹn: {service.AppointmentNumber}
+                              Số lượng phục vụ: {service.numberOfUses}
                             </h4>
                             <h4 className={stylesCard.description}>
                               Số lượng khách phục vụ:{" "}
-                              {service.NumberPeopleService}
+                              {service.numberOfCustomers}
                             </h4>
                             <h4>
                               Doanh Thu:{" "}
-                              {formatCurrency(service.AppointmentRevenue)}
+                              {formatCurrency(service.revenueFromService)}
                             </h4>
                             <h4>
                               <button
@@ -893,10 +1115,10 @@ const RevenueYearPage = () => {
                 </div>
                 <Pagination
                   className="paginationAppointment"
-                  current={1}
-                  pageSize={5}
-                  total={10}
-                  // onChange={onPageChangeService}
+                  current={currentPageService}
+                  pageSize={pageSizeService}
+                  total={totalService * pageSizeService}
+                  onChange={onPageChangeService}
                   style={{ marginTop: "20px", textAlign: "center" }}
                 />
               </div>
@@ -905,8 +1127,14 @@ const RevenueYearPage = () => {
         </div>
         <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
           <h2 className="text-lg sm:text-xl font-bold mb-4">
-            THỐNG KÊ TỪNG NHÂN VIÊN TỪ {selectedStartDates} đến{" "}
-            {selectedEndDates}
+            THỐNG KÊ TỪNG NHÂN VIÊN TỪ{" "}
+            {tempDates?.[0]
+              ? dayjs(tempDates[0].$d).format("YYYY-MM-DD")
+              : " ? "}{" "}
+            đến{" "}
+            {tempDates?.[1]
+              ? dayjs(tempDates[1].$d).format("YYYY-MM-DD")
+              : " ? "}
           </h2>
           <div className="flex flex-col sm:flex-row gap-4">
             {/* Biểu đồ đường lớn hơn */}
@@ -928,10 +1156,12 @@ const RevenueYearPage = () => {
                   </Dropdown>
                 </div>
                 <div className={styles["table-container"]}>
-                  <Spin className="custom-spin" spinning={loading}>
+                  <Spin className="custom-spin" spinning={loadingEmployee}>
                     <Table
                       className={stylesCard.appointmentTable}
-                      dataSource={dataSource}
+                      dataSource={
+                        Array.isArray(dataEmployee) ? dataEmployee : []
+                      }
                       columns={columnsEmployee}
                       pagination={false}
                       rowKey="id"
@@ -951,10 +1181,10 @@ const RevenueYearPage = () => {
                       )}
 
                       <div className={stylesCard.grid}>
-                        {dataSource?.map((service) => (
+                        {dataEmployee?.map((service) => (
                           <div key={service.id} className={stylesCard.card}>
                             <h4>
-                              Kiểu lịch hẹn:
+                              Tên nhân viên:
                               <span
                                 style={{
                                   display: "block",
@@ -964,19 +1194,18 @@ const RevenueYearPage = () => {
                                   fontSize: "1rem",
                                 }}
                               >
-                                {service.AppointmentType}
+                                {service.fullName}
                               </span>
                             </h4>
                             <h4 className={stylesCard.description}>
-                              Số lượng lịch hẹn: {service.AppointmentNumber}
+                              Số lượng dịch vụ: {service.numberOfService}
                             </h4>
                             <h4 className={stylesCard.description}>
-                              Số lượng khách phục vụ:{" "}
-                              {service.NumberPeopleService}
+                              Số lượng khách phục vụ:
+                              {service.numberOfUsers}
                             </h4>
                             <h4>
-                              Doanh Thu:{" "}
-                              {formatCurrency(service.AppointmentRevenue)}
+                              Doanh Thu: {formatCurrency(service.revenue)}
                             </h4>
                             <h4>
                               <button
@@ -998,10 +1227,10 @@ const RevenueYearPage = () => {
                 </div>
                 <Pagination
                   className="paginationAppointment"
-                  current={1}
-                  pageSize={5}
-                  total={10}
-                  // onChange={onPageChangeService}
+                  current={currentPageEmployee}
+                  pageSize={pageSizeEmployee}
+                  total={total * pageSizeEmployee}
+                  onChange={onPageChangeEmployee}
                   style={{ marginTop: "20px", textAlign: "center" }}
                 />
               </div>
