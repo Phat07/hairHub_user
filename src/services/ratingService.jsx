@@ -13,6 +13,24 @@ export const RatingService = {
       },
     });
   },
+  GetFeedbackFromSalonOwner(
+    salonId,
+    page,
+    size,
+    rating,
+    serviceName,
+    dateFeedback
+  ) {
+    return API.get(`/feedbacks/GetFeedbackFromSalonOwner/${salonId}`, {
+      params: {
+        page,
+        size,
+        rating,
+        serviceName,
+        dateFeedback,
+      },
+    });
+  },
   GetFeedBackByCustomerId(customerId, page, size) {
     return API.get(`/feedbacks/GetFeedBackByCustomerId/${customerId}`, {
       params: {

@@ -8,10 +8,22 @@ import { actGetAllAppointmentHistoryByCustomerId } from "../customerAppointments
 
 export const GET_ALL_FEEDBACK_BY_SALONID = "GET_ALL_FEEDBACK_BY_SALONID";
 export const GET_FEEDBACK_BY_CUSTOMERID = "GET_FEEDBACK_BY_CUSTOMERID";
-
+export const GET_ALL_FEEDBACK_FROM_SALON_OWNER =
+  "GET_ALL_FEEDBACK_FROM_SALON_OWNER";
 export const getAllFeedbackBySalonId = (list) => {
   return {
     type: GET_ALL_FEEDBACK_BY_SALONID,
+    payload: {
+      list: list.items,
+      // totalPages: list.totalPages,
+      totalPages: list.total,
+    },
+  };
+};
+
+export const getAllFeedbackFromSalonOwner = (list) => {
+  return {
+    type: GET_ALL_FEEDBACK_FROM_SALON_OWNER,
     payload: {
       list: list.items,
       // totalPages: list.totalPages,
@@ -41,6 +53,37 @@ export function actGetAllFeedbackBySalonId(id, page, size, rating) {
       );
       if (response.status === 200 || response.status === 201) {
         dispatch(getAllFeedbackBySalonId(response.data));
+        return response; // Return the successful response
+      } else {
+        message.error("No feedback for salon!!!!");
+        return response; // Optionally return the non-200/201 response as well
+      }
+    } catch (error) {
+      return { error }; // Return the error object if an error occurs
+    }
+  };
+}
+
+export function actGetFeedbackFromSalonOwner(
+  id,
+  page,
+  size,
+  rating,
+  serviceName,
+  dateFeedback
+) {
+  return async (dispatch) => {
+    try {
+      const response = await RatingService.GetFeedbackFromSalonOwner(
+        id,
+        page,
+        size,
+        rating,
+        serviceName,
+        dateFeedback
+      );
+      if (response.status === 200 || response.status === 201) {
+        dispatch(getAllFeedbackFromSalonOwner(response.data));
         return response; // Return the successful response
       } else {
         message.error("No feedback for salon!!!!");
