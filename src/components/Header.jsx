@@ -476,9 +476,9 @@ function Header(props) {
                 </li>
                 <li className={style.navItem}>
                   <Link
-                    to="/dashboardTransaction"
+                    to="/revenueSalon"
                     className={`${style.navLink} ${
-                      isActive("/dashboardTransaction") ? style.active : ""
+                      isActive("/revenueSalon") ? style.active : ""
                     }`}
                     onClick={scrollToTop}
                   >
@@ -519,10 +519,7 @@ function Header(props) {
                       </Link>
                     </li>
                     <li className={style.navItemRepo}>
-                      <Link
-                        to="/dashboardTransaction"
-                        className={style.navLink}
-                      >
+                      <Link to="/revenueSalon" className={style.navLink}>
                         Thống kê doanh thu
                       </Link>
                     </li>

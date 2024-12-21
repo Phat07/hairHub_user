@@ -456,7 +456,7 @@ function SalonOwnerAccountPage() {
             <Link to="/salon_report">Danh sách báo cáo của bạn</Link>
           </Menu.Item>
           <Menu.Item icon={<BarChartOutlined />}>
-            <Link to="/dashboardTransaction">Thống kê doanh thu</Link>
+            <Link to="/revenueSalon">Thống kê doanh thu</Link>
           </Menu.Item>
           <Menu.Item>
             <Button

@@ -33,6 +33,8 @@ import { ServiceHairServices } from "@/services/servicesHairServices";
 import { SalonEmployeesServices } from "@/services/salonEmployeesServices";
 import BookingConfirmationModal from "./BookingConfirmationModal";
 import { AccountServices } from "@/services/accountServices";
+import { actGetEmployeesWorkSchedule } from "@/store/salonEmployees/action";
+import moment from "moment";
 const { Title, Text } = Typography;
 
 const AddAppointmentOutsite = ({ visible, onCancel }) => {
@@ -85,14 +87,15 @@ const AddAppointmentOutsite = ({ visible, onCancel }) => {
     // );
 
     //Hair Services
-    ServiceHairServices.getServiceHairBySalonNotPaging(id)
-      .then((res) => {
-        setData(res?.data);
-      })
-      .catch((err) => {
-        setError(err);
-      });
-
+    if (salonDetail?.id) {
+      ServiceHairServices.getServiceHairBySalonNotPaging(id)
+        .then((res) => {
+          setData(res?.data);
+        })
+        .catch((err) => {
+          setError(err);
+        });
+    }
     // AppointmentService.calculatePrice(calculateAppointmentData)
     //   .then((res) => {
     //     const { originalPrice, totalPrice, discountedPrice } = res.data;
@@ -794,6 +797,12 @@ const AddAppointmentOutsite = ({ visible, onCancel }) => {
         form.resetFields();
         formPrice.resetFields();
         setAppointmentData(null);
+        await dispatch(
+          actGetEmployeesWorkSchedule(
+            salonDetail?.id,
+            moment(new Date()).format("YYYY-MM-DD")
+          )
+        );
         return;
       } else {
         message.error("Có lỗi xảy ra khi dăt lịch!");
@@ -871,7 +880,7 @@ const AddAppointmentOutsite = ({ visible, onCancel }) => {
               ? "Thêm dịch vụ"
               : displayVoucherList
               ? "Thêm voucher"
-              : "Thêm lịch đặt"}
+              : "Thêm lịch đặt ngoài cho hôm nay"}
           </div>
         }
         maskClosable={false}

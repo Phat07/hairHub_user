@@ -78,7 +78,6 @@ function SalonAppointmentVer2(props) {
 
   const totalPages = useSelector((state) => state.SALONAPPOINTMENTS.totalPages);
   const total = useSelector((state) => state.SALONAPPOINTMENTS.total);
-  console.log(total);
   useEffect(() => {
     if (ownerId) {
       dispatch(actGetSalonInformationByOwnerIdAsync(ownerId));
@@ -783,7 +782,7 @@ function SalonAppointmentVer2(props) {
         spinning={loading}
         // tip="Loading..."
       >
-        <Button
+        {/* <Button
           className={styles["table-fillter-item"]}
           type="primary"
           style={{ backgroundColor: "#BF9456" }}
@@ -791,7 +790,7 @@ function SalonAppointmentVer2(props) {
           onClick={() => setIsModalAddAppointmentVisible(true)}
         >
           Thêm lịch hẹn bên ngoài
-        </Button>
+        </Button> */}
         <div className={styles.statusfilter}>
           {Object.keys(statusDisplayNames).map((statusKey, index) => (
             <button
