@@ -152,6 +152,18 @@ const EmployeeScheduleCalendar = () => {
     }
   }, [ownerId]);
 
+  const parseTime = (timeString) => {
+    const [hours, minutes] = timeString.split(":").map(Number);
+    return new Date(0, 0, 0, hours, minutes, 0);
+  };
+
+  // useState để quản lý giá trị
+  const defaultMin = new Date(0, 0, 0, 6, 0, 0); // 6:00 AM
+  const defaultMax = new Date(0, 0, 0, 22, 0, 0); // 10:00 PM
+
+  const [minTime, setMinTime] = useState(defaultMin);
+  const [maxTime, setMaxTime] = useState(defaultMax);
+
   const handleModalClose = () => {
     setSelectedEvent(null);
     setIsModalVisible(false);
@@ -185,6 +197,9 @@ const EmployeeScheduleCalendar = () => {
               params: { dateTime: moment(selectedDate).format("YYYY-MM-DD") },
             }
           );
+          console.log("test", response?.data);
+          setMinTime(parseTime(response?.data?.startTimeSalon));
+          setMaxTime(parseTime(response?.data?.endTimeSalon));
           setDataMana(response?.data?.employeesSchedules);
           const transformedData = transformSchedulesToEvents(
             response.data.employeesSchedules
@@ -541,8 +556,8 @@ const EmployeeScheduleCalendar = () => {
             timeslots={4}
             defaultView="day"
             views={["day"]}
-            min={new Date(0, 0, 0, 6, 0, 0)}
-            max={new Date(0, 0, 0, 22, 0, 0)}
+            min={minTime}
+            max={maxTime}
             components={{
               event: EventComponent,
             }}
