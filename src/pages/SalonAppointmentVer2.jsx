@@ -37,7 +37,7 @@ const { Option } = Select;
 
 function SalonAppointmentVer2(props) {
   const dispatch = useDispatch();
-  const [status, setStatus] = useState("BOOKING");
+  const [status, setStatus] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentAppointment, setCurrentAppointment] = useState(null);
@@ -48,17 +48,21 @@ function SalonAppointmentVer2(props) {
   const [reportDescription, setReportDescription] = useState("");
   const [itemReport, setItemReport] = useState({});
   const [loading, setLoading] = useState(false);
-  const [dateFilter, setDateFilter] = useState({
-    startDay: dayjs().subtract(7, "day").format("YYYY-MM-DD"),
-    endDay: dayjs().format("YYYY-MM-DD"),
-  });
+  const [dateFilter, setDateFilter] = useState({});
   const [nameFilter, setNameFilter] = useState(null);
   const [nameFilterEmployee, setNameFilterEmployee] = useState(null);
+  const [nameFilterService, setNameFilterService] = useState(null);
   const [nameFilterInput, setNameFilterInput] = useState(null);
   const [nameFilterInputEmployee, setNameFilterInputEmployee] = useState(null);
+  const [nameFilterInputService, setNameFilterInputService] = useState(null);
 
   const searchParams = new URLSearchParams(location.search);
   const appoinmentIdUrl = searchParams.get("appointmentId");
+  const appoinmentStatus = searchParams.get("appoinmentStatus");
+  const appoinmentServiceName = searchParams.get("appoinmentServiceName");
+  const appoinmentEmployeeName = searchParams.get("appoinmentEmployeeName");
+  const startDate = searchParams.get("startDate");
+  const endDate = searchParams.get("endDate");
   const [isModalAddAppointmentVisible, setIsModalAddAppointmentVisible] =
     useState(false);
   const [pageSize, setPageSize] = useState(6);
@@ -74,7 +78,7 @@ function SalonAppointmentVer2(props) {
 
   const totalPages = useSelector((state) => state.SALONAPPOINTMENTS.totalPages);
   const total = useSelector((state) => state.SALONAPPOINTMENTS.total);
-
+  console.log(total);
   useEffect(() => {
     if (ownerId) {
       dispatch(actGetSalonInformationByOwnerIdAsync(ownerId));
@@ -97,6 +101,44 @@ function SalonAppointmentVer2(props) {
     }
   }, [appoinmentIdUrl]);
   useEffect(() => {
+    if (startDate && endDate) {
+      setDateFilter({
+        startDay: startDate,
+        endDay: endDate,
+      });
+    } else {
+      setDateFilter({
+        startDay: dayjs().subtract(7, "day").format("YYYY-MM-DD"),
+        endDay: dayjs().format("YYYY-MM-DD"),
+      });
+    }
+    if (appoinmentStatus) {
+      setStatus(appoinmentStatus);
+    } else {
+      setStatus("BOOKING");
+    }
+    if (appoinmentServiceName) {
+      setNameFilterService(appoinmentServiceName);
+      setNameFilterInputService(appoinmentServiceName);
+    } else {
+      setNameFilterService(null);
+      setNameFilterInputService(null);
+    }
+    if (appoinmentEmployeeName) {
+      setNameFilterEmployee(appoinmentEmployeeName);
+      setNameFilterInputEmployee(appoinmentEmployeeName);
+    } else {
+      setNameFilterEmployee(null);
+      setNameFilterInputEmployee(null);
+    }
+  }, [
+    startDate,
+    endDate,
+    appoinmentStatus,
+    appoinmentEmployeeName,
+    appoinmentServiceName,
+  ]);
+  useEffect(() => {
     // Khi mở modal, đặt lại showCancelButton và thiết lập setTimeout
     if (isModalVisible) {
       setShowCancelButton(false);
@@ -111,7 +153,7 @@ function SalonAppointmentVer2(props) {
 
   useEffect(() => {
     const fetchAppointments = async () => {
-      if (salonInformationByOwnerId?.id) {
+      if (salonInformationByOwnerId?.id && status) {
         // Chỉ chạy khi salonInformationByOwnerId?.id tồn tại
         setLoading(true);
         try {
@@ -124,7 +166,8 @@ function SalonAppointmentVer2(props) {
               false,
               dateFilter,
               nameFilter,
-              nameFilterEmployee
+              nameFilterEmployee,
+              nameFilterService
             )
           );
         } catch (error) {
@@ -144,6 +187,7 @@ function SalonAppointmentVer2(props) {
     nameFilter,
     pageSize,
     nameFilterEmployee,
+    nameFilterService,
   ]);
 
   const statusDisplayNames = {
@@ -192,6 +236,12 @@ function SalonAppointmentVer2(props) {
     }, 300), // 300ms debounce time
     []
   );
+  const debouncedSetNameFilterService = useCallback(
+    debounce((value) => {
+      setNameFilterService(value);
+    }, 300), // 300ms debounce time
+    []
+  );
 
   const handleNameFilterChange = (e) => {
     debouncedSetNameFilter(e.target.value);
@@ -200,6 +250,10 @@ function SalonAppointmentVer2(props) {
   const handleNameFilterChangeEmployee = (e) => {
     debouncedSetNameFilterEmployee(e.target.value);
     setNameFilterInputEmployee(e.target.value);
+  };
+  const handleNameFilterChangeService = (e) => {
+    debouncedSetNameFilterService(e.target.value);
+    setNameFilterInputService(e.target.value);
   };
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -747,9 +801,9 @@ function SalonAppointmentVer2(props) {
                 flex: "1",
                 marginRight:
                   index !== Object.keys(statusDisplayNames).length - 1
-                    ? "1rem"
+                    ? "0.5rem"
                     : "0",
-                padding: "0.5rem 1rem",
+                padding: "0.5rem 0.5rem",
                 marginBottom: "0.5rem",
                 backgroundColor:
                   status === statusKey
@@ -790,7 +844,18 @@ function SalonAppointmentVer2(props) {
             <div className="flex flex-wrap items-center gap-4">
               <div className="w-full lg:w-auto">
                 <RangePicker
-                  style={{ marginRight: "1rem" }}
+                  value={
+                    dateFilter.startDay && dateFilter.endDay
+                      ? [
+                          dayjs(dateFilter.startDay).isValid()
+                            ? dayjs(dateFilter.startDay)
+                            : null,
+                          dayjs(dateFilter.endDay).isValid()
+                            ? dayjs(dateFilter.endDay)
+                            : null,
+                        ]
+                      : null
+                  }
                   onChange={handleDateRangeChange}
                   placeholder={["Ngày bắt đầu", "Ngày kết thúc"]}
                   defaultValue={[dayjs().subtract(7, "day"), dayjs()]}
@@ -799,31 +864,41 @@ function SalonAppointmentVer2(props) {
               <div className="flex w-full lg:w-auto gap-4">
                 <Input
                   className="flex-1"
-                  placeholder="Khách hàng"
+                  placeholder="Tên Khách hàng"
                   value={nameFilterInput}
                   onChange={handleNameFilterChange}
                   allowClear
                 />
+              </div>
+              <div className="flex w-full lg:w-auto gap-4">
                 <Input
                   className="flex-1"
-                  placeholder="Nhân viên"
+                  placeholder="Tên nhân viên"
                   value={nameFilterInputEmployee}
                   onChange={handleNameFilterChangeEmployee}
                   allowClear
                 />
               </div>
-              <motion.p
-                className="text-xl pt-5 items-center font-semibold text-gray-800"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5 }}
-              >
-                Tổng: {total} cuộc hẹn
-              </motion.p>
+              <div className="flex w-full lg:w-auto gap-4">
+                <Input
+                  className="flex-1"
+                  placeholder="Tên dịch vụ"
+                  value={nameFilterInputService}
+                  onChange={handleNameFilterChangeService}
+                  allowClear
+                />
+              </div>
             </div>
           </div>
         </div>
-
+        <motion.p
+          className="text-xl items-center font-semibold text-gray-800"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          Tổng: {total} cuộc hẹn
+        </motion.p>
         <Table
           className={stylesCard.appointmentTable}
           columns={columns}

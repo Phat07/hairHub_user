@@ -10,6 +10,7 @@ export const GET_ALL_SERVICE = "GET_ALL_SERVICE";
 export const GET_ALL_SERVICE_NOT = "GET_ALL_SERVICE_NOT";
 export const GET_EMPLOYEE_ID = "GET_EMPLOYEE_ID";
 export const GET_SALON_SERVICE_ID = "GET_SALON_SERVICE_ID";
+export const GET_WORK_EMPLOYEE = "GET_WORK_EMPLOYEE";
 
 export const postCreateSalonEmployees = (list) => {
   return {
@@ -21,6 +22,12 @@ export const getAllEmployee = (list, totalPages) => {
   return {
     type: GET_ALL_EMPLOYEE,
     payload: { list: list, totalPages: totalPages },
+  };
+};
+export const getWorkEmployee = (list) => {
+  return {
+    type: GET_WORK_EMPLOYEE,
+    payload: { list: list },
   };
 };
 export const getAllService = (list, totalPages) => {
@@ -125,7 +132,7 @@ export function actGetAllServicesBySalonIdNoPaging(id) {
       .then((res) => {
         dispatch(getAllServiceList(res?.data));
       })
-      .catch((err) =>{
+      .catch((err) => {
         // console.log(err, "errors")
       });
   };
@@ -183,6 +190,25 @@ export function actGetAllEmployees(
   };
 }
 
+export function actGetEmployeesWorkSchedule(id, dateTime) {
+  return (dispatch) => {
+    return SalonEmployeesServices.GetEmployeesWorkSchedule(id, dateTime)
+      .then((res) => {
+        if (res && res.data) {
+          dispatch(getWorkEmployee(res.data));
+        } else {
+          // console.error("No data received:", res);
+        }
+        return res; // Trả về phản hồi để có thể sử dụng .then()
+      })
+      .catch((err) => {
+        // console.error("Error fetching employees:", err);
+        // Có thể hiển thị thông báo lỗi nếu cần
+        // message.error("Nhân viên chưa được thêm!");
+        throw err; // Ném lỗi để có thể xử lý bên ngoài nếu cần
+      });
+  };
+}
 
 export const actDeleteEmployee = (employeeId, salonId) => {
   return (dispatch) => {

@@ -1,5 +1,5 @@
 .appointmentContainer {
-  max-width: 1200px;
+  max-width: 90rem;
   /* min-height: 1200px; */
   margin-inline: auto;
   margin-block: 7rem;
@@ -148,6 +148,8 @@
   }
   .appointmentContainer {
     margin-top: 5rem;
+    margin-inline: 5px;
+    padding: 5px;
   }
   .appointmentTable {
     display: none;

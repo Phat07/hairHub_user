@@ -37,4 +37,11 @@ export const SalonEmployeesServices = {
   activateEmployee(data) {
     return API.post("/salonemployees/CreateAccountEmployee", data);
   },
+  GetEmployeesWorkSchedule(id, dateTime) {
+    return API.get(`/salonemployees/GetEmployeesWorkSchedule/${id}`, {
+      params: {
+        dateTime,
+      },
+    });
+  },
 };

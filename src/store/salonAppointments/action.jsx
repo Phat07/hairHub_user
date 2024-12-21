@@ -19,7 +19,7 @@ export const allSalonByOwnerId = (list) => {
 export const allSalonAppoinmentByStatus = (list, totalPages, total) => {
   return {
     type: APPOINTMENT_SUCCESS,
-    payload: { list: list, totalPages: totalPages, total:total },
+    payload: { list: list, totalPages: totalPages, total: total },
   };
 };
 
@@ -77,7 +77,8 @@ export function actGetAppointmentBySalonId(
   isAscending,
   date,
   customerName,
-  employeeName
+  employeeName,
+  serviceName
 ) {
   return async (dispatch) => {
     try {
@@ -89,11 +90,12 @@ export function actGetAppointmentBySalonId(
         isAscending,
         date,
         customerName,
-        employeeName
+        employeeName,
+        serviceName
       );
       if (response.status === 200 || response.status === 201) {
         console.log("log", response);
-        
+
         dispatch(
           allSalonAppoinmentByStatus(
             response.data.items,
@@ -138,5 +140,3 @@ export function actGetSalonInformationByOwnerIdAsync(ownerId) {
       });
   };
 }
-
-

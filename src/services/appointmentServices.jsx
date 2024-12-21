@@ -9,7 +9,8 @@ export const AppointmentService = {
     isAscending,
     date,
     customerName,
-    employeeName
+    employeeName,
+    serviceName
   ) {
     return API.get(`/appointments/GetAppointmentSalonByStatus/${salonId}`, {
       params: {
@@ -20,7 +21,8 @@ export const AppointmentService = {
         StartDate: date?.startDay,
         EndDate: date?.endDay,
         customerName,
-        employeeName
+        employeeName,
+        serviceName,
       },
     });
   },

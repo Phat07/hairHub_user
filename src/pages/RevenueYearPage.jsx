@@ -25,7 +25,9 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { actGetSalonInformationByOwnerIdAsync } from "@/store/salonAppointments/action";
 import { API } from "@/services/api";
+import { useNavigate } from "react-router-dom";
 const RevenueYearPage = () => {
+  const navigate = useNavigate();
   const { RangePicker } = DatePicker;
   const [currentPageService, setCurrentPageService] = useState(1);
   const [pageSizeService, setPageSizeService] = useState(4);
@@ -42,6 +44,7 @@ const RevenueYearPage = () => {
   );
   const [dataEmployee, setDataEmplyee] = useState([]);
   const [dataService, setDataService] = useState([]);
+  const [dataAppointment, setDataAppointment] = useState([]);
   const [sortEmployee, setSortEmployee] = useState("dịch vụ tăng dần");
   const [startIndex, setStartIndex] = useState(0); // Vị trí bắt đầu hiển thị
   const [activeYear, setActiveYear] = useState(null); // Năm đang được chọn
@@ -75,6 +78,10 @@ const RevenueYearPage = () => {
     datasets: [],
   });
   const [lineDataAppointment, setLineDataAppointment] = useState({
+    labels: [],
+    datasets: [],
+  });
+  const [pieDataAppointmentRange, setPieDataAppointmentRange] = useState({
     labels: [],
     datasets: [],
   });
@@ -210,6 +217,7 @@ const RevenueYearPage = () => {
   //     pageSizeEmployee,
   //     pageSizeService,
   //   ]);
+  const [loadingAppointment, setLoadingAppointment] = useState(false);
   const [loadingEmployee, setLoadingEmployee] = useState(false);
   const [loadingService, setLoadingService] = useState(false);
   const [loadingRevenue, setLoadingRevenue] = useState(false);
@@ -293,6 +301,28 @@ const RevenueYearPage = () => {
 
   useEffect(() => {
     if (salonInformationByOwnerId?.id && tempDates) {
+      setLoadingAppointment(true);
+      const compileAppointmentUrl = `/saloninformations/CompileAppointmentSalon/${salonInformationByOwnerId.id}`;
+      const formattedDates = tempDates?.map((date) =>
+        dayjs(date.$d).format("YYYY-MM-DD")
+      );
+      fetchData(
+        compileAppointmentUrl,
+        {
+          startDate: formattedDates[0],
+          endDate: formattedDates[1],
+        },
+        (data) => {
+          setDataAppointment(data);
+          setPieDataAppointmentRange(formatPieChartDataAppointment(data));
+          console.log(data);
+        }
+      ).finally(() => setLoadingAppointment(false));
+    }
+  }, [salonInformationByOwnerId?.id, tempDates]);
+
+  useEffect(() => {
+    if (salonInformationByOwnerId?.id && tempDates) {
       setLoadingRevenue(true);
       const compileRevenuetUrl = `/saloninformations/RevenueStatistics/${salonInformationByOwnerId.id}`;
       const formattedDates = tempDates?.map((date) =>
@@ -354,6 +384,24 @@ const RevenueYearPage = () => {
           data: [data.outSideRevenuePercent, data.inSideRevenuePercent],
           backgroundColor: ["#10B981", "#46e0f4"],
           hoverBackgroundColor: ["#059669", "#1c95a5"],
+        },
+      ],
+    };
+  };
+  const formatPieChartDataAppointment = (data) => {
+    return {
+      labels: data.map((item) => item.appointmentType), // Lấy tên loại lịch hẹn
+      datasets: [
+        {
+          label: "Tỉ lệ lịch hẹn",
+          data: data.map((item) => item.percent), // Dữ liệu phần trăm
+          backgroundColor: [
+            "#FF6384", // Màu sắc từng phần
+            "#36A2EB",
+            "#FFCE56",
+            "#4BC0C0",
+          ],
+          hoverOffset: 4, // Hiệu ứng khi hover
         },
       ],
     };
@@ -463,66 +511,85 @@ const RevenueYearPage = () => {
   const handleMenuClickServiceSort = (e) => {
     setCurrentPageService(1);
     setSortService(e.key);
-    setSortLabelService(
-      e.key === "" ? "sử dụng tăng dần" : `Sắp xếp theo ${e.key}`
-    );
+    setSortLabelService(e.key === "" ? "Sắp xếp" : `${e.key}`);
   };
 
   const sortMenuService = (
     <Menu onClick={handleMenuClickServiceSort}>
       {/* <Menu.Item key="">Không sắp xếp</Menu.Item> */}
-      <Menu.Item key="sử dụng tăng dần">Số lượng sử dụng tăng dần</Menu.Item>
-      <Menu.Item key="sử dụng giảm dần">Số lượng sử dụng giảm dần</Menu.Item>
-      <Menu.Item key="khách tăng dần">Số lượng khách tăng dần</Menu.Item>
-      <Menu.Item key="khách giảm dần">Số lượng khách giảm dần</Menu.Item>
-      <Menu.Item key="doanh thu tăng dần">Số doanh thu tăng dần</Menu.Item>
-      <Menu.Item key="doanh thu giảm dần">Số doanh thu giảm dần</Menu.Item>
+      <Menu.Item key="Số lượng sử dụng tăng dần">
+        Số lượng sử dụng tăng dần
+      </Menu.Item>
+      <Menu.Item key="Số lượng sử dụng giảm dần">
+        Số lượng sử dụng giảm dần
+      </Menu.Item>
+      <Menu.Item key="Số lượng khách tăng dần">
+        Số lượng khách tăng dần
+      </Menu.Item>
+      <Menu.Item key="Số lượng khách giảm dần">
+        Số lượng khách giảm dần
+      </Menu.Item>
+      <Menu.Item key="Số doanh thu tăng dần">Số doanh thu tăng dần</Menu.Item>
+      <Menu.Item key="Số doanh thu giảm dần">Số doanh thu giảm dần</Menu.Item>
     </Menu>
   );
 
   const handleMenuClickEmployeeSort = (e) => {
     setCurrentPageEmployee(1);
     setSortEmployee(e.key);
-    setSortLabelEmployee(
-      e.key === "" ? "sử dụng tăng dần" : `Sắp xếp theo ${e.key}`
-    );
+    setSortLabelEmployee(e.key === "" ? "Sắp xếp" : `${e.key}`);
   };
 
   const sortMenuEmployee = (
     <Menu onClick={handleMenuClickEmployeeSort}>
       {/* <Menu.Item key="">Không sắp xếp</Menu.Item> */}
-      <Menu.Item key="dịch vụ tăng dần">Số lượng dịch vụ tăng dần</Menu.Item>
-      <Menu.Item key="dịch vụ giảm dần">Số lượng dịch vụ giảm dần</Menu.Item>
-      <Menu.Item key="khách tăng dần">Số lượng khách tăng dần</Menu.Item>
-      <Menu.Item key="khách giảm dần">Số lượng khách giảm dần</Menu.Item>
-      <Menu.Item key="doanh thu tăng dần">Số doanh thu tăng dần</Menu.Item>
-      <Menu.Item key="doanh thu giảm dần">Số doanh thu giảm dần</Menu.Item>
+      <Menu.Item key="Số lượng dịch vụ tăng dần">
+        Số lượng dịch vụ tăng dần
+      </Menu.Item>
+      <Menu.Item key="Số lượng dịch vụ giảm dần">
+        Số lượng dịch vụ giảm dần
+      </Menu.Item>
+      <Menu.Item key="Số lượng khách tăng dần">
+        Số lượng khách tăng dần
+      </Menu.Item>
+      <Menu.Item key="Số lượng khách giảm dần">
+        Số lượng khách giảm dần
+      </Menu.Item>
+      <Menu.Item key="Số doanh thu tăng dần">Số doanh thu tăng dần</Menu.Item>
+      <Menu.Item key="Số doanh thu giảm dần">Số doanh thu giảm dần</Menu.Item>
     </Menu>
   );
+
+  const appointmentTypeMapping = {
+    "Lịch hẹn bị hủy": "CANCEL_BY_CUSTOMER",
+    "Lịch hẹn thất bại": "FAILED",
+    "Lịch hẹn thành công": "SUCCESSED",
+    "Lịch hẹn ngoài hệ thống": "OUT_SIDE",
+  };
 
   const columnsAppointment = [
     {
       title: "Kiểu lịch hẹn",
-      dataIndex: "AppointmentType",
-      key: "AppointmentType",
+      dataIndex: "appointmentType",
+      key: "appointmentType",
       align: "center",
     },
     {
       title: "Số lượng lịch hẹn",
-      dataIndex: "AppointmentNumber",
-      key: "AppointmentNumber",
+      dataIndex: "appointmentQuantity",
+      key: "appointmentQuantity",
       align: "center",
     },
     {
       title: "Số lượng khách phục vụ",
-      dataIndex: "NumberPeopleService",
+      dataIndex: "customerQuantity",
       align: "center",
-      key: "NumberPeopleService",
+      key: "customerQuantity",
     },
     {
       title: "Doanh Thu",
-      dataIndex: "AppointmentRevenue",
-      key: "AppointmentRevenue",
+      dataIndex: "revenue",
+      key: "revenue",
       align: "center",
       render: (AppointmentRevenue) => formatCurrency(AppointmentRevenue),
     },
@@ -531,14 +598,20 @@ const RevenueYearPage = () => {
       key: "action",
       align: "center",
       render: (_, record) => (
-        <button
+        <Button
           className={stylesCard.buttonCard}
-          onClick={() =>
-            console.log(`Kiểu lịch hẹn: ${record.AppointmentType}`)
-          }
+          onClick={() => {
+            const status = appointmentTypeMapping[record.appointmentType];
+            const formattedDates = tempDates.map((date) =>
+              date.format("YYYY-MM-DD")
+            );
+            navigate(
+              `/salon_appointment?appoinmentStatus=${status}&startDate=${formattedDates[0]}&endDate=${formattedDates[1]}`
+            );
+          }}
         >
           Chi tiết
-        </button>
+        </Button>
       ),
     },
   ];
@@ -574,14 +647,20 @@ const RevenueYearPage = () => {
       key: "action",
       align: "center",
       render: (_, record) => (
-        <button
+        <Button
           className={stylesCard.buttonCard}
-          onClick={() =>
-            console.log(`Kiểu lịch hẹn: ${record.AppointmentType}`)
-          }
+          onClick={() => {
+            const service = record.serviceName;
+            const formattedDates = tempDates.map((date) =>
+              date.format("YYYY-MM-DD")
+            );
+            navigate(
+              `/salon_appointment?appoinmentStatus=SUCCESSED&appoinmentServiceName=${service}&startDate=${formattedDates[0]}&endDate=${formattedDates[1]}`
+            );
+          }}
         >
           Chi tiết
-        </button>
+        </Button>
       ),
     },
   ];
@@ -617,14 +696,20 @@ const RevenueYearPage = () => {
       key: "action",
       align: "center",
       render: (_, record) => (
-        <button
+        <Button
           className={stylesCard.buttonCard}
-          onClick={() =>
-            console.log(`Kiểu lịch hẹn: ${record?.AppointmentType}`)
-          }
+          onClick={() => {
+            const employeeName = record.fullName;
+            const formattedDates = tempDates.map((date) =>
+              date.format("YYYY-MM-DD")
+            );
+            navigate(
+              `/salon_appointment?appoinmentStatus=SUCCESSED&appoinmentEmployeeName=${employeeName}&startDate=${formattedDates[0]}&endDate=${formattedDates[1]}`
+            );
+          }}
         >
           Chi tiết
-        </button>
+        </Button>
       ),
     },
   ];
@@ -922,98 +1007,103 @@ const RevenueYearPage = () => {
           </Spin>
         </div>
         {/* Biểu đồ thống kê lịch hẹn */}
-        {/* <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md mb-4 sm:mb-6">
-            <h2 className="text-lg sm:text-xl font-bold mb-4">
-                THỐNG KÊ SỐ LỊCH HẸN TỪ{" "}
-                {tempDates?.[0]
-                ? dayjs(tempDates[0].$d).format("YYYY-MM-DD")
-                : "N/A"}{" "}
-                đến{" "}
-                {tempDates?.[1]
-                ? dayjs(tempDates[1].$d).format("YYYY-MM-DD")
-                : "N/A"}
-            </h2>
-            <div className="flex flex-col sm:flex-row gap-4">
-                <div className="w-full sm:w-2/3">
-                <div className="h-auto">
-                    <div className={styles["table-container"]}>
-                    <Spin className="custom-spin" spinning={loading}>
-                        <Table
-                        className={stylesCard.appointmentTable}
-                        dataSource={dataSource}
-                        columns={columnsAppointment}
-                        pagination={false}
-                        rowKey="id"
-                        />
-                        <div className={stylesCard.container}>
-                        {dataSource?.length === 0 && (
-                            <h4
-                            style={{
-                                fontWeight: "bold",
-                                color: "#bf9456",
-                                textAlign: "center",
-                                fontSize: "1.2rem",
-                            }}
-                            >
-                            Không tìm thấy số liệu nào !!!
-                            </h4>
-                        )}
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md mb-4 sm:mb-6">
+          <h2 className="text-lg sm:text-xl font-bold mb-4">
+            THỐNG KÊ SỐ LỊCH HẸN TỪ{" "}
+            {tempDates?.[0]
+              ? dayjs(tempDates[0].$d).format("YYYY-MM-DD")
+              : "N/A"}{" "}
+            đến{" "}
+            {tempDates?.[1]
+              ? dayjs(tempDates[1].$d).format("YYYY-MM-DD")
+              : "N/A"}
+          </h2>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="w-full sm:w-2/3">
+              <div className="h-auto">
+                <div className={styles["table-container"]}>
+                  <Spin className="custom-spin" spinning={loadingEmployee}>
+                    <Table
+                      className={stylesCard.appointmentTable}
+                      dataSource={
+                        Array.isArray(dataAppointment) ? dataAppointment : []
+                      }
+                      columns={columnsAppointment}
+                      pagination={false}
+                      rowKey="appointmentType"
+                    />
+                    <div className={stylesCard.container}>
+                      {dataSource?.length === 0 && (
+                        <h4
+                          style={{
+                            fontWeight: "bold",
+                            color: "#bf9456",
+                            textAlign: "center",
+                            fontSize: "1.2rem",
+                          }}
+                        >
+                          Không tìm thấy số liệu nào !!!
+                        </h4>
+                      )}
 
-                        <div className={stylesCard.grid}>
-                            {dataSource?.map((service) => (
-                            <div key={service.id} className={stylesCard.card}>
-                                <h4>
-                                Kiểu lịch hẹn:
-                                <span
-                                    style={{
-                                    display: "block",
-                                    fontWeight: "bold",
-                                    color: "#bf9456",
-                                    textAlign: "center",
-                                    fontSize: "1rem",
-                                    }}
-                                >
-                                    {service.AppointmentType}
-                                </span>
-                                </h4>
-                                <h4 className={stylesCard.description}>
-                                Số lượng lịch hẹn: {service.AppointmentNumber}
-                                </h4>
-                                <h4 className={stylesCard.description}>
-                                Số lượng khách phục vụ:{" "}
-                                {service.NumberPeopleService}
-                                </h4>
-                                <h4>
-                                Doanh Thu:{" "}
-                                {formatCurrency(service.AppointmentRevenue)}
-                                </h4>
-                                <h4>
-                                <button
-                                    className={stylesCard.buttonCard}
-                                    onClick={() =>
-                                    console.log(
-                                        `Kiểu lịch hẹn: ${service.AppointmentType}`
-                                    )
-                                    }
-                                >
-                                    Chi tiết
-                                </button>
-                                </h4>
-                            </div>
-                            ))}
-                        </div>
-                        </div>
-                    </Spin>
+                      <div className={stylesCard.grid}>
+                        {dataSource?.map((service) => (
+                          <div key={service.id} className={stylesCard.card}>
+                            <h4>
+                              Kiểu lịch hẹn:
+                              <span
+                                style={{
+                                  display: "block",
+                                  fontWeight: "bold",
+                                  color: "#bf9456",
+                                  textAlign: "center",
+                                  fontSize: "1rem",
+                                }}
+                              >
+                                {service.AppointmentType}
+                              </span>
+                            </h4>
+                            <h4 className={stylesCard.description}>
+                              Số lượng lịch hẹn: {service.AppointmentNumber}
+                            </h4>
+                            <h4 className={stylesCard.description}>
+                              Số lượng khách phục vụ:{" "}
+                              {service.NumberPeopleService}
+                            </h4>
+                            <h4>
+                              Doanh Thu:{" "}
+                              {formatCurrency(service.AppointmentRevenue)}
+                            </h4>
+                            <h4>
+                              <button
+                                className={stylesCard.buttonCard}
+                                onClick={() =>
+                                  console.log(
+                                    `Kiểu lịch hẹn: ${service.AppointmentType}`
+                                  )
+                                }
+                              >
+                                Chi tiết
+                              </button>
+                            </h4>
+                          </div>
+                        ))}
+                      </div>
                     </div>
+                  </Spin>
                 </div>
-                </div>
-                <div className="w-full sm:w-1/3">
-                <div className="h-64 sm:h-80">
-                    <Pie data={pieData} options={{ maintainAspectRatio: false }} />
-                </div>
-                </div>
+              </div>
             </div>
-            </div> */}
+            <div className="w-full sm:w-1/3">
+              <div className="h-64 sm:h-80">
+                <Pie
+                  data={pieDataAppointmentRange}
+                  options={{ maintainAspectRatio: false }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* Biểu đồ thống kê doanh thu */}
         <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md mb-4 sm:mb-6">
