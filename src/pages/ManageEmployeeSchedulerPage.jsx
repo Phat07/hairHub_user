@@ -172,7 +172,6 @@ const EmployeeScheduleCalendar = () => {
   };
   // Mock data based on your response structure
   const [events, setEvents] = useState([]);
-  console.log(" set", selectedEvent);
 
   useEffect(() => {
     const fetchData = async () => {
