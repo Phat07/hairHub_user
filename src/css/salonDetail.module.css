@@ -425,6 +425,21 @@ font-size: large;
   border-color: #bf946c;
   border-bottom-width: 0.1rem;
 }
+.fillter-item1{
+  flex: 0 0 auto; /* Giữ kích thước nút cố định */
+  margin-right: 5px;
+  padding: 10px 20px;
+  /* border-color: #bf946c;
+  border-bottom-width: 0.1rem; */
+  /* border-radius: 5px; */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.fillter-item-active1{
+  background-color: #bf946c;
+  color: white; 
+  border-radius: 3px;
+}
 @media (max-width: 1600px) {
   /* .detail-salon-col-1,
   .detail-salon-col-2 {
