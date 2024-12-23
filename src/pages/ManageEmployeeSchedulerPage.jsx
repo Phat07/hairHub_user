@@ -5,7 +5,7 @@ import moment from "moment-timezone";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "react-datepicker/dist/react-datepicker.css";
 import styles from "../css/reviewAppointment.module.css";
-import { Card, Image, Modal, Spin } from "antd";
+import { Button, Card, Image, Modal, Pagination, Spin } from "antd";
 import { API } from "@/services/api";
 import { useDispatch, useSelector } from "react-redux";
 import { actGetSalonInformationByOwnerIdAsync } from "@/store/salonAppointments/action";
@@ -18,6 +18,9 @@ import { Typography } from "antd";
 import "react-calendar/dist/Calendar.css";
 import { AppointmentService } from "@/services/appointmentServices";
 import { formatCurrency } from "@/components/formatCheckValue/formatCurrency";
+import { PlusOutlined } from "@ant-design/icons";
+import AddAppointmentOutsite from "@/components/AddApointmentOutside/AddAppointmentOutsite";
+import { actGetEmployeesWorkSchedule } from "@/store/salonEmployees/action";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh";
 const localizer = momentLocalizer(moment);
 const { Text } = Typography;
@@ -122,7 +125,14 @@ const EmployeeScheduleCalendar = () => {
   const [dataMana, setDataMana] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null); // Thêm trạng thái
   const [isModalVisible, setIsModalVisible] = useState(false); // Điều khiển modal
+  const [isModalAddAppointmentVisible, setIsModalAddAppointmentVisible] =
+    useState(false);
   const ownerId = useSelector((state) => state.ACCOUNT.idOwner);
+  const workEmployee = useSelector(
+    (state) => state.SALONEMPLOYEES.workEmployee
+  );
+  console.log(workEmployee.list);
+
   const salonInformationByOwnerId = useSelector(
     (state) => state.SALONAPPOINTMENTS.salonInformationByOwnerId
   );
@@ -185,26 +195,35 @@ const EmployeeScheduleCalendar = () => {
   // Mock data based on your response structure
   const [events, setEvents] = useState([]);
 
+  const handleOpenModalAddApp = () => {
+    setIsModalAddAppointmentVisible(false);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       if (salonInformationByOwnerId?.id) {
         // Chỉ chạy khi salonInformationByOwnerId?.id tồn tại
         setIsLoading(true);
         try {
-          const response = await API.get(
-            `/salonemployees/GetEmployeesWorkSchedule/${salonInformationByOwnerId?.id}`,
-            {
-              params: { dateTime: moment(selectedDate).format("YYYY-MM-DD") },
-            }
+          // const response = await API.get(
+          //   `/salonemployees/GetEmployeesWorkSchedule/${salonInformationByOwnerId?.id}`,
+          //   {
+          //     params: { dateTime: moment(selectedDate).format("YYYY-MM-DD") },
+          //   }
+          // );
+          await dispatch(
+            actGetEmployeesWorkSchedule(
+              salonInformationByOwnerId?.id,
+              moment(selectedDate).format("YYYY-MM-DD")
+            )
           );
-          console.log("test", response?.data);
-          setMinTime(parseTime(response?.data?.startTimeSalon));
-          setMaxTime(parseTime(response?.data?.endTimeSalon));
-          setDataMana(response?.data?.employeesSchedules);
-          const transformedData = transformSchedulesToEvents(
-            response.data.employeesSchedules
-          );
-          setEvents(transformedData); // Update state
+          // setMinTime(parseTime(workEmployee?.list?.startTimeSalon));
+          // setMaxTime(parseTime(workEmployee?.list?.endTimeSalon));
+          // setDataMana(workEmployee?.list?.employeesSchedules);
+          // const transformedData = transformSchedulesToEvents(
+          //   workEmployee?.list?.employeesSchedules
+          // );
+          // setEvents(transformedData);
         } catch (error) {
           console.error("Error fetching appointments:", error);
         } finally {
@@ -215,6 +234,30 @@ const EmployeeScheduleCalendar = () => {
 
     fetchData();
   }, [selectedDate, salonInformationByOwnerId]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (workEmployee?.list) {
+        // Chỉ chạy khi salonInformationByOwnerId?.id tồn tại
+        setIsLoading(true);
+        try {
+          setMinTime(parseTime(workEmployee?.list?.startTimeSalon));
+          setMaxTime(parseTime(workEmployee?.list?.endTimeSalon));
+          setDataMana(workEmployee?.list?.employeesSchedules);
+          const transformedData = transformSchedulesToEvents(
+            workEmployee?.list?.employeesSchedules
+          );
+          setEvents(transformedData);
+        } catch (error) {
+          console.error("Error fetching appointments:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchData();
+  }, [workEmployee?.list]);
 
   // Transform employee schedules into calendar events
 
@@ -457,10 +500,10 @@ const EmployeeScheduleCalendar = () => {
       <h1 className="text-2xl font-bold text-center mb-4">
         Thống kê nhân viên làm việc
       </h1>
-      <Card className="p-4">
+      <Card style={{ padding: "0px" }}>
         <div className="flex flex-nowrap justify-between mb-5">
           <motion.div
-            className="w-full max-w-md mx-auto bg-white rounded-xl shadow-lg overflow-hidden"
+            className="w-full max-w-4xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{
@@ -501,7 +544,7 @@ const EmployeeScheduleCalendar = () => {
               })}
             </div>
             {/* Pagination Controls */}
-            <div className="flex justify-center items-center gap-2 py-4 bg-gray-50">
+            {/* <div className="flex justify-center items-center gap-2 py-4 bg-gray-50">
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
@@ -529,19 +572,35 @@ const EmployeeScheduleCalendar = () => {
               >
                 Sau
               </button>
-            </div>
+            </div> */}
+            <Pagination
+              className="paginationAppointment"
+              current={currentPage}
+              total={totalPages * itemsPerPage}
+              pageSize={itemsPerPage}
+              onChange={handlePageChange}
+            />
           </motion.div>
           <div style={{ width: "200px", margin: "0 auto" }}>
             <Doughnut data={data} options={options} />
           </div>
         </div>
-        <div className="mb-4">
+        <div className="mb-4 flex flex-wrap" style={{ alignItems: "center" }}>
           <DatePicker
             selected={selectedDate}
             onChange={handleDateChange}
             dateFormat="dd/MM/yyyy"
             className="w-full p-2 border rounded-md"
           />
+          <Button
+            className={styles["table-fillter-item"]}
+            type="primary"
+            style={{ backgroundColor: "#BF9456", marginLeft: "5px" }}
+            icon={<PlusOutlined />}
+            onClick={() => setIsModalAddAppointmentVisible(true)}
+          >
+            Thêm lịch đặt ngoài cho hôm nay
+          </Button>
         </div>
         {/* <div className="h-[calc(100vh-100px)]"> */}
         {/* Tự động tính toán chiều cao */}
@@ -566,7 +625,7 @@ const EmployeeScheduleCalendar = () => {
             onNavigate={setSelectedDate}
             onSelectEvent={handleEventClick} // Thêm sự kiện click
             eventPropGetter={eventPropGetter}
-            style={{ height: "100vh" }}
+            style={{ height: "100%" }}
             culture="vi"
             // min={today}
             // max={maxDate}
@@ -614,6 +673,10 @@ const EmployeeScheduleCalendar = () => {
           renderAppointmentDetail()
         )}
       </Modal>
+      <AddAppointmentOutsite
+        visible={isModalAddAppointmentVisible}
+        onCancel={handleOpenModalAddApp}
+      />
     </div>
   );
 };

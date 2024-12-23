@@ -181,24 +181,26 @@ function FooterMobileAuth() {
                   {isActive("/salon_report") && <span>Báo cáo</span>}
                 </Link>
               </li> */}
-               <li
+              <li
                 className={`${style.footerItem} ${
                   isActive("/manageEmployeeScheduler") ? style.active : ""
                 }`}
               >
                 <Link to="/manageEmployeeScheduler" onClick={scrollToTop}>
-                  <FormOutlined  className={style.icon} />
-                  {isActive("/manageEmployeeScheduler") && <span>Lịch làm việc</span>}
+                  <FormOutlined className={style.icon} />
+                  {isActive("/manageEmployeeScheduler") && (
+                    <span>Lịch làm việc</span>
+                  )}
                 </Link>
               </li>
               <li
                 className={`${style.footerItem} ${
-                  isActive("/dashboardTransaction") ? style.active : ""
+                  isActive("/revenueSalon") ? style.active : ""
                 }`}
               >
-                <Link to="/dashboardTransaction" onClick={scrollToTop}>
+                <Link to="/revenueSalon" onClick={scrollToTop}>
                   <AreaChartOutlined className={style.icon} />
-                  {isActive("/dashboardTransaction") && <span>Doanh thu</span>}
+                  {isActive("/revenueSalon") && <span>Doanh thu</span>}
                 </Link>
               </li>
               <li
