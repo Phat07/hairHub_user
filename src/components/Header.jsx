@@ -3,6 +3,7 @@ import {
   CreditCardOutlined,
   LogoutOutlined,
   QrcodeOutlined,
+  SnippetsOutlined,
   UserOutlined,
   WalletOutlined,
   WarningOutlined,
@@ -168,8 +169,8 @@ function Header(props) {
         </Link>
       </Menu.Item>
       {/* <Menu.Item key="report">
-        <Link to="/customer_report">
-          <UserOutlined /> Lịch sử báo cáo
+        <Link to="/salon_appointment">
+          <UserOutlined /> Lịch sử lịch hẹn
         </Link>
       </Menu.Item> */}
       {!idEmployee && (
@@ -183,6 +184,13 @@ function Header(props) {
         <Menu.Item key="ReviewAppointmentCustomer">
           <Link to="/ReviewAppointmentCustomer">
             <WarningOutlined /> Khảo sát khách hàng
+          </Link>
+        </Menu.Item>
+      )}
+      {idOwner && (
+        <Menu.Item key="salon_appointment">
+          <Link to="/salon_appointment">
+            <SnippetsOutlined /> Lịch sử lịch hẹn
           </Link>
         </Menu.Item>
       )}
@@ -443,7 +451,7 @@ function Header(props) {
                     Quản lý Salon
                   </Link>
                 </li>
-                <li className={style.navItem}>
+                {/* <li className={style.navItem}>
                   <Link
                     to={"/salon_appointment"}
                     className={`${style.navLink} ${
@@ -453,17 +461,8 @@ function Header(props) {
                   >
                     Cuộc hẹn
                   </Link>
-                </li>
+                </li> */}
                 <li className={style.navItem}>
-                  {/* <Link
-                    to="/salon_report"
-                    className={`${style.navLink} ${
-                      isActive("/salon_report") ? style.active : ""
-                    }`}
-                    onClick={scrollToTop}
-                  >
-                    Danh sách báo cáo
-                  </Link> */}
                   <Link
                     to="/manageEmployeeScheduler"
                     className={`${style.navLink} ${
@@ -485,7 +484,7 @@ function Header(props) {
                     Thống kê doanh thu
                   </Link>
                 </li>
-                <li className={style.navItem}>
+                {/* <li className={style.navItem}>
                   <Link
                     to="/reviewEmployee"
                     className={`${style.navLink} ${
@@ -494,7 +493,7 @@ function Header(props) {
                   >
                     Đánh giá nhân viên
                   </Link>
-                </li>
+                </li> */}
                 {menuActive && (
                   <>
                     <li className={style.navItemRepo}>
