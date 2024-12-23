@@ -830,7 +830,7 @@ const RevenueYearPage = () => {
         {/* Biểu đồ thống kê lịch hẹn */}
         <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md mb-4 sm:mb-6">
           <h2 className="text-lg sm:text-xl font-bold mb-4">
-            THỐNG KÊ LỊCH HẸN NĂM {activeYear}
+            THỐNG KÊ DOANH THU NĂM {activeYear}
           </h2>
           <Spin className="custom-spin" spinning={isLoading}>
             <div className="flex flex-col sm:flex-row gap-4">
@@ -860,7 +860,7 @@ const RevenueYearPage = () => {
         {/* Biểu đồ thống kê doanh thu */}
         <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
           <h2 className="text-lg sm:text-xl font-bold mb-4">
-            THỐNG KÊ DOANH THU NĂM {activeYear}
+            THỐNG KÊ LỊCH HẸN NĂM {activeYear}
           </h2>
           <Spin className="custom-spin" spinning={isLoading}>
             <div className="flex flex-col sm:flex-row gap-4">
