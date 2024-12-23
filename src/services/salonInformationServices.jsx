@@ -22,6 +22,9 @@ export const SalonInformationServices = {
   getAllSalonSuggestionInformation() {
     return API.get("/saloninformations/GetAllSalonInformation");
   },
+  getAllSalonSuggestionInformationVer2() {
+    return API.get("/saloninformations/GetSalonSuggestion");
+  },
 
   getAllSalonInformationNotPaging() {
     return API.get("/saloninformations/GetAllSalonInformationNoPaging");

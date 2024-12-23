@@ -209,11 +209,11 @@ export function actPostCreateSalonInformation(id, data) {
 
 export function actGetAllSalonSuggestionInformation() {
   return async (dispatch) => {
-    const result = SalonInformationServices.getAllSalonSuggestionInformation();
+    const result = SalonInformationServices.getAllSalonSuggestionInformationVer2();
     await result
       .then((response) => {
         if (response.status === 200 || response.status === 201) {
-          dispatch(getAllSalonSuggestionInformation(response.data.items));
+          dispatch(getAllSalonSuggestionInformation(response.data));
         } else {
           message.error("Không tìm thấy salon");
         }
