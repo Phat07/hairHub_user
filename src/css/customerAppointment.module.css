@@ -28,6 +28,9 @@
   width: 100%;
   border-radius: 2px;
 }
+.appointmentTable2 {
+  border-radius: 2px;
+}
 
 .detailBtn {
   border-color: #bf9456;
@@ -225,12 +228,13 @@
   flex-direction: column;
   transition: box-shadow 0.3s ease, transform 0.2s ease;
   box-shadow: 0 4px 8px #ece8de; /* Đổ bóng nhẹ */
+  height: 100%;
 }
 
-.card:hover {
+/* .card:hover {
   box-shadow: 0 8px 16px #bf9456; 
   transform: translateY(-2px); 
-}
+} */
 
 
 .salonImage {
@@ -304,13 +308,15 @@
 
 
 @media (max-width: 768px) {
-  .grid {
-    grid-template-columns: 1fr; 
-  }
   /* .grid {
-    grid-template-columns: repeat(2, 1fr); 
-    gap: 12px; 
+    grid-template-columns: 1fr; 
   } */
+  .grid {
+    grid-template-columns: repeat(2,40vw); 
+    gap: 5px; 
+    align-items: center;
+    justify-content: center;
+  }
   .dateHeader {
     font-size: 1rem;
     margin-right: 15px;

@@ -5,7 +5,16 @@ import moment from "moment-timezone";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "react-datepicker/dist/react-datepicker.css";
 import styles from "../css/reviewAppointment.module.css";
-import { Button, Card, Image, Modal, Pagination, Spin } from "antd";
+import {
+  Avatar,
+  Button,
+  Card,
+  Image,
+  Modal,
+  Pagination,
+  Spin,
+  Table,
+} from "antd";
 import { API } from "@/services/api";
 import { useDispatch, useSelector } from "react-redux";
 import { actGetSalonInformationByOwnerIdAsync } from "@/store/salonAppointments/action";
@@ -33,6 +42,11 @@ const data = {
       hoverOffset: 4,
     },
   ],
+};
+
+const dataColor = {
+  labels: ["Đang đặt", "Thành công", "Tại cửa hàng"],
+  backgroundColor: ["#3B82F6", "#22C55E", "#8B5CF6"],
 };
 
 const options = {
@@ -495,6 +509,41 @@ const EmployeeScheduleCalendar = () => {
       </div>
     );
   };
+
+  const columnsEmployeeSchedule = [
+    // {
+    //   title: "Hình ảnh",
+    //   dataIndex: "img",
+    //   key: "img",
+    //   align: "center",
+    //   render: (text) => <Avatar shape="square" size={"large"} src={text} />,
+    // },
+    {
+      title: "Họ và tên",
+      dataIndex: "fullName",
+      key: "fullName",
+      align: "center",
+    },
+    {
+      title: "Số đơn đã phục vụ",
+      dataIndex: "workSchedules",
+      key: "workSchedules",
+      render: (workSchedules) => workSchedules.length,
+      align: "center",
+    },
+    {
+      title: "Số tiền đã phục vụ",
+      dataIndex: "totalPrice",
+      key: "totalPrice",
+      align: "center",
+      render: (totalPrice) =>
+        totalPrice.toLocaleString("vi-VN", {
+          style: "currency",
+          currency: "VND",
+        }),
+    },
+  ];
+
   return (
     <div className={styles.appointmentContainer}>
       <h1 className="text-2xl font-bold text-center mb-4">
@@ -503,7 +552,7 @@ const EmployeeScheduleCalendar = () => {
       <Card style={{ padding: "0px" }}>
         <div className="flex flex-nowrap justify-between mb-5">
           <motion.div
-            className="w-full max-w-4xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden"
+            className="w-full max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{
@@ -516,8 +565,8 @@ const EmployeeScheduleCalendar = () => {
                 Thu nhập của nhân viên
               </h2>
             </div>
-            <div className="divide-y divide-gray-100">
-              {paginatedData.map((employeeId) => {
+            {/* <div className="divide-y divide-gray-100"> */}
+            {/* {paginatedData.map((employeeId) => {
                 const formattedPrice = new Intl.NumberFormat("vi-VN", {
                   style: "currency",
                   currency: "VND",
@@ -541,8 +590,13 @@ const EmployeeScheduleCalendar = () => {
                     </span>
                   </div>
                 );
-              })}
-            </div>
+              })} */}
+            <Table
+              dataSource={paginatedData}
+              columns={columnsEmployeeSchedule}
+              pagination={false}
+            />
+            {/* </div> */}
             {/* Pagination Controls */}
             {/* <div className="flex justify-center items-center gap-2 py-4 bg-gray-50">
               <button
@@ -581,9 +635,9 @@ const EmployeeScheduleCalendar = () => {
               onChange={handlePageChange}
             />
           </motion.div>
-          <div style={{ width: "200px", margin: "0 auto" }}>
+          {/* <div style={{ width: "200px", margin: "0 auto" }}>
             <Doughnut data={data} options={options} />
-          </div>
+          </div> */}
         </div>
         <div className="mb-4 flex flex-wrap" style={{ alignItems: "center" }}>
           <DatePicker
@@ -604,6 +658,33 @@ const EmployeeScheduleCalendar = () => {
         </div>
         {/* <div className="h-[calc(100vh-100px)]"> */}
         {/* Tự động tính toán chiều cao */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            gap: "8px",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: "10px",
+          }}
+        >
+          {dataColor?.labels.map((label, index) => (
+            <div
+              key={index}
+              style={{ display: "flex", alignItems: "center", gap: "8px" }}
+            >
+              <div
+                style={{
+                  width: "16px",
+                  height: "16px",
+                  backgroundColor: dataColor.backgroundColor[index],
+                  borderRadius: "50%",
+                }}
+              ></div>
+              <span>{label}</span>
+            </div>
+          ))}
+        </div>
         <Spin className="custom-spin" spinning={isLoading}>
           <Calendar
             localizer={localizer}

@@ -161,7 +161,7 @@ function FooterMobileAuth() {
                   {isActive(handleEmptySalon()) && <span>Salon</span>}
                 </Link>
               </li>
-              <li
+              {/* <li
                 className={`${style.footerItem} ${
                   isActive("/salon_appointment") ? style.active : ""
                 }`}
@@ -170,7 +170,7 @@ function FooterMobileAuth() {
                   <CalendarOutlined className={style.icon} />
                   {isActive("/salon_appointment") && <span>Cuộc hẹn</span>}
                 </Link>
-              </li>
+              </li> */}
               {/* <li
                 className={`${style.footerItem} ${
                   isActive("/salon_report") ? style.active : ""
@@ -200,10 +200,10 @@ function FooterMobileAuth() {
               >
                 <Link to="/revenueSalon" onClick={scrollToTop}>
                   <AreaChartOutlined className={style.icon} />
-                  {isActive("/revenueSalon") && <span>Doanh thu</span>}
+                  {isActive("/revenueSalon") && <span>Báo cáo</span>}
                 </Link>
               </li>
-              <li
+              {/* <li
                 className={`${style.footerItem} ${
                   isActive("/reviewEmployee") ? style.active : ""
                 }`}
@@ -212,7 +212,7 @@ function FooterMobileAuth() {
                   <RadarChartOutlined className={style.icon} />
                   {isActive("/reviewEmployee") && <span>Nhân viên</span>}
                 </Link>
-              </li>
+              </li> */}
             </>
           )}
         </ul>

@@ -22,8 +22,10 @@ import {
 } from "antd";
 import moment from "moment";
 import {
+  CreditCardOutlined,
   DownOutlined,
   LoadingOutlined,
+  ReloadOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
@@ -31,6 +33,10 @@ import {
   GetPaymentReport,
   GetPaymentReportById,
 } from "@/store/salonPayment/action";
+import RequestWithdrawal from "@/components/RequestWithdrawal/RequestWithdrawal";
+import SalonPayment from "./SalonPayment";
+import OTPModal from "@/components/DeleteAccount/OTPModal";
+import { AccountServices } from "@/services/accountServices";
 
 const { Text } = Typography;
 const { Option } = Select;
@@ -55,6 +61,8 @@ function WithdrawRequest(props) {
   const [loading, setLoading] = useState(false);
   const [loadingModal, setLoadingModal] = useState(false);
   const [modal, setModal] = useState(false);
+  const [isRequestModalVisible, setIsRequestModalVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const paymentReport = useSelector(
     (state) => state.PAYMENTREDUCER.paymentReport
   );
@@ -62,22 +70,24 @@ function WithdrawRequest(props) {
     (state) => state.PAYMENTREDUCER.paymentReportById
   );
   const uid = useSelector((state) => state.ACCOUNT.uid);
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        if (uid) {
-          await dispatch(
-            GetPaymentReport(uid, currentPage, itemsPerPage, date, activeTab)
-          );
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
+  const userInfo = useSelector((state) => state.ACCOUNT.userInfo);
 
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      if (uid) {
+        await dispatch(
+          GetPaymentReport(uid, currentPage, itemsPerPage, date, activeTab)
+        );
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
-  }, [currentPage, itemsPerPage, email, date, activeTab, dispatch]);
+  }, [currentPage, itemsPerPage, email, date, activeTab]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -123,7 +133,26 @@ function WithdrawRequest(props) {
   function formatVND(amount) {
     return String(amount).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
-
+  const handleCancelRequest = () => {
+    setIsRequestModalVisible(false);
+  };
+  const handleConfirmRequest = async (formData) => {
+    try {
+      setIsLoading(true);
+      const response = await SalonPayment.CreateWithdrawPayment(formData);
+      if (response.status === 200) {
+        message.success("Tạo đơn thành công");
+        await dispatch(
+          GetPaymentReport(uid, currentPage, itemsPerPage, date, activeTab)
+        );
+      }
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || error.message;
+      message.warning(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   const navigate = useNavigate();
   const renderRequestDetail = () => {
     return (
@@ -339,6 +368,41 @@ function WithdrawRequest(props) {
         spinning={loading}
         // tip="Loading..."
       >
+        <div className="flex flex-wrap justify-end space-x-2 mb-3">
+          <Button
+            onClick={() => fetchData()}
+            style={{
+              padding: "0.5rem 1rem",
+              backgroundColor: "gray",
+              color: "white",
+              border: "none",
+              borderRadius: "5px",
+              cursor: "pointer",
+              textAlign: "center",
+              fontSize: "1rem",
+              fontWeight: "bold",
+            }}
+            icon={<ReloadOutlined />}
+          />
+          <Button
+            onClick={() => setIsRequestModalVisible(true)}
+            style={{
+              // flex: "1",
+              // padding: "0.5rem 1rem",
+              backgroundColor: "#389e0d",
+              color: "white",
+              border: "none",
+              borderRadius: "5px",
+              cursor: "pointer",
+              textAlign: "center",
+              // fontSize: "1rem",
+              fontWeight: "bold",
+            }}
+            icon={<CreditCardOutlined />}
+          >
+            Yêu cầu rút tiền
+          </Button>
+        </div>
         <div className={styles.statusfilter}>
           {Object.keys(statusDisplayNames).map((statusKey, index) => (
             <button
@@ -511,6 +575,12 @@ function WithdrawRequest(props) {
           {renderRequestDetail()}
         </Spin>
       </Modal>
+      <RequestWithdrawal
+        visible={isRequestModalVisible}
+        onCancel={handleCancelRequest}
+        onConfirm={handleConfirmRequest}
+        email={userInfo?.email}
+      />
     </div>
   );
 }

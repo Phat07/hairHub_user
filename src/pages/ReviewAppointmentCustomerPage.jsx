@@ -508,12 +508,6 @@ function ReviewAppointmentCustomerPage(props) {
           Danh sách đánh giá salon
         </h1>
         <div>
-          {/* <h3
-            className={style["fillter-item1"]}
-            style={{ marginBottom: "0", fontWeight: "bold", padding: "0px" }}
-          >
-            Số sao đánh giá:
-          </h3> */}
           <div
             className={style["review-fillter"]}
             // style={{ justifyContent: "flex-start" }}

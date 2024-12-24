@@ -63,6 +63,7 @@ function SalonAppointmentVer2(props) {
   const appoinmentEmployeeName = searchParams.get("appoinmentEmployeeName");
   const startDate = searchParams.get("startDate");
   const endDate = searchParams.get("endDate");
+  const appoinmentCustomerName = searchParams.get("appoinmentCustomerName");
   const [isModalAddAppointmentVisible, setIsModalAddAppointmentVisible] =
     useState(false);
   const [pageSize, setPageSize] = useState(6);
@@ -114,7 +115,14 @@ function SalonAppointmentVer2(props) {
     if (appoinmentStatus) {
       setStatus(appoinmentStatus);
     } else {
-      setStatus("BOOKING");
+      setStatus("ALL");
+    }
+    if (appoinmentCustomerName) {
+      setNameFilter(appoinmentCustomerName);
+      setNameFilterInput(appoinmentCustomerName);
+    } else {
+      setNameFilter(null);
+      setNameFilterInput(null);
     }
     if (appoinmentServiceName) {
       setNameFilterService(appoinmentServiceName);
@@ -156,12 +164,13 @@ function SalonAppointmentVer2(props) {
         // Chỉ chạy khi salonInformationByOwnerId?.id tồn tại
         setLoading(true);
         try {
+          const statusToSend = status === "ALL" ? null : status;
           await dispatch(
             actGetAppointmentBySalonId(
               salonInformationByOwnerId.id, // Không cần ?. vì đã kiểm tra ở trên
               currentPage,
               pageSize,
-              status,
+              statusToSend,
               false,
               dateFilter,
               nameFilter,
@@ -190,6 +199,7 @@ function SalonAppointmentVer2(props) {
   ]);
 
   const statusDisplayNames = {
+    ALL: "Tất cả",
     BOOKING: "Đang đặt",
     CANCEL_BY_CUSTOMER: "Hủy bởi Khách",
     FAILED: "Thất bại",
@@ -592,6 +602,13 @@ function SalonAppointmentVer2(props) {
                   {currentAppointment?.id}
                 </Text>
               </p>
+              <p>
+                <Text strong>Loại đơn: </Text>
+                <Text style={{ color: "green" }} strong>
+                  {statusDisplayNames[currentAppointment?.status] ||
+                    currentAppointment?.status}
+                </Text>
+              </p>
               {/* <p>
                 <Text strong>Khách Hàng: </Text>
                 <Text>{currentAppointment?.customer.fullName}</Text>
@@ -734,7 +751,11 @@ function SalonAppointmentVer2(props) {
         const isSameDay = startDate.isSame(currentTime, "day");
         const isReportButtonVisible =
           isSameDay && currentTime.isSameOrAfter(startTime);
+        // Tính khoảng cách thời gian giữa startTime và thời gian hiện tại
+        const hoursDiff = currentTime.diff(startTime, "hours");
 
+        // Kiểm tra xem nút báo cáo có được hiển thị hay không
+        const isReportExpired = hoursDiff >= 72;
         return (
           <>
             <Button
@@ -749,6 +770,19 @@ function SalonAppointmentVer2(props) {
                   ? "Đã báo cáo cho admin"
                   : "Báo cáo"}
               </Button>
+            )}
+            {isReportButtonVisible && (
+              <>
+                {!isReportExpired ? (
+                  <Button danger onClick={() => handleReport(record)}>
+                    {record?.isReportBySalon
+                      ? "Đã báo cáo cho admin"
+                      : "Báo cáo"}
+                  </Button>
+                ) : (
+                  <Button disabled>Quá hạn báo cáo</Button>
+                )}
+              </>
             )}
           </>
         );
@@ -777,6 +811,9 @@ function SalonAppointmentVer2(props) {
 
   return (
     <div className={styles.appointmentContainer}>
+      <h1 className="text-2xl font-bold mb-3" style={{ textAlign: "center" }}>
+        Lịch sử lịch hẹn
+      </h1>
       <Spin
         className="custom-spin"
         spinning={loading}
@@ -815,6 +852,8 @@ function SalonAppointmentVer2(props) {
                       : status === "SUCCESSED"
                       ? "#389e0d"
                       : status === "OUT_SIDE"
+                      ? "plum"
+                      : status === "ALL"
                       ? "#BF9456"
                       : "gray"
                     : "gray",
@@ -948,7 +987,7 @@ function SalonAppointmentVer2(props) {
 
               // Kiểm tra xem nút báo cáo có được hiển thị hay không
               const isReportButtonVisible =
-                currentTime.isSameOrAfter(startTime);
+                isSameDay && currentTime.isSameOrAfter(startTime);
               const isReportExpired = hoursDiff >= 72;
 
               return (
@@ -1010,7 +1049,7 @@ function SalonAppointmentVer2(props) {
                             : "Báo cáo"}
                         </Button>
                       ) : (
-                        <Button disabled>Đã quá hạn báo cáo</Button>
+                        <Button disabled>Quá hạn báo cáo</Button>
                       )}
                     </>
                   )}

@@ -44,6 +44,7 @@ import {
   Upload,
   message,
 } from "antd";
+import ReactDatePicker from "react-datepicker";
 import axios from "axios";
 import classNames from "classnames";
 import dayjs from "dayjs";
@@ -65,6 +66,7 @@ import {
   actDeleteEmployee,
   actGetAllEmployees,
   actGetAllServicesBySalonId,
+  actGetEmployeesWorkSchedule,
 } from "../store/salonEmployees/action";
 import { actGetSalonInformationByOwnerId } from "../store/salonInformation/action";
 const renderInput = (props) => (
@@ -115,7 +117,8 @@ function ListShopBarber(props) {
   const [loadingEmployee, setLoadingEmployee] = useState(false);
   const [loadingService, setLoadingService] = useState(false);
   const [loadingVoucher, setLoadingVoucher] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
   // const auth = useAuthUser();
   // const ownerId = auth?.idOwner;
   const idCustomer = useSelector((state) => state.ACCOUNT.idCustomer);
@@ -169,6 +172,14 @@ function ListShopBarber(props) {
   );
   const totalPagesVoucher = useSelector(
     (state) => state.SALONVOUCHERS.totalPages
+  );
+  const workEmployee = useSelector(
+    (state) => state.SALONEMPLOYEES.workEmployee
+  );
+  console.log(workEmployee.list);
+
+  const salonInformationByOwnerId = useSelector(
+    (state) => state.SALONAPPOINTMENTS.salonInformationByOwnerId
   );
   const hidePopover = () => {
     setOpenPopoverId(null);
@@ -334,6 +345,23 @@ function ListShopBarber(props) {
     setCurrentPageVoucher(1);
   };
 
+  // const handleEventClick = (event) => {
+  //   setSelectedEvent(event); // Lưu sự kiện được nhấn
+  //   setLoading(true);
+  //   AppointmentService.getAppointmentById(event?.appointmentId)
+  //     .then((res) => {
+  //       console.log("res", res);
+  //       setDataAppoinment(res?.data);
+  //     })
+  //     .catch((err) => {
+  //       setLoading(false);
+  //     })
+  //     .finally((err) => {
+  //       setLoading(false);
+  //     });
+  //   setIsModalVisible(true); // Hiển thị modal
+  // };
+
   useEffect(() => {
     if (ownerId) {
       dispatch(actGetSalonInformationByOwnerId(ownerId));
@@ -372,6 +400,29 @@ function ListShopBarber(props) {
     searchEmployeeKey,
     dispatch,
   ]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (salonDetail?.id) {
+        // Chỉ chạy khi salonInformationByOwnerId?.id tồn tại
+        setIsLoading(true);
+        try {
+          await dispatch(
+            actGetEmployeesWorkSchedule(
+              salonDetail?.id,
+              moment(selectedDate).format("YYYY-MM-DD")
+            )
+          );
+        } catch (error) {
+          console.error("Error fetching appointments:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchData();
+  }, [selectedDate, salonDetail]);
 
   useEffect(() => {
     if (
@@ -735,6 +786,46 @@ function ListShopBarber(props) {
       ),
     },
   ];
+  const columnsEmployeeSchedule = [
+    {
+      title: "Hình ảnh",
+      dataIndex: "img",
+      key: "img",
+      align: "center",
+      render: (text) => <Avatar shape="square" size={"large"} src={text} />,
+    },
+    {
+      title: "Họ và tên",
+      dataIndex: "fullName",
+      key: "fullName",
+      align: "center",
+    },
+    {
+      title: "Số đơn đã phục vụ",
+      dataIndex: "workSchedules",
+      key: "workSchedules",
+      render: (workSchedules) => workSchedules.length,
+      align: "center",
+    },
+    {
+      title: "Số tiền đã phục vụ",
+      dataIndex: "totalPrice",
+      key: "totalPrice",
+      align: "center",
+      render: (totalPrice) =>
+        totalPrice.toLocaleString("vi-VN", {
+          style: "currency",
+          currency: "VND",
+        }),
+    },
+  ];
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+    console.log(date);
+    // Here you would typically fetch new data for the selected date
+  };
+
   // Hàm định dạng phần trăm giảm giá
   const formatDiscount = (value) => {
     const result = value * 100;
@@ -1588,7 +1679,10 @@ function ListShopBarber(props) {
               </Row>
               <Row gutter={16} style={{ marginTop: "20px" }}>
                 <Col span={24}>
-                  <Descriptions title="Lịch trình" bordered>
+                  <div className={styles["custom-header"]}>
+                    Thời gian hoạt động
+                  </div>
+                  <Descriptions bordered>
                     {salonDetail?.schedules &&
                       sortSchedules(salonDetail?.schedules).map(
                         (schedule, index) => (
@@ -1917,6 +2011,129 @@ function ListShopBarber(props) {
                   </Collapse>
                 </Col>
               </Row>
+              {/* <Row gutter={16} style={{ marginTop: "20px" }}>
+                <Col span={24}>
+                  <Collapse
+                    defaultActiveKey={["1"]}
+                    expandIcon={({ isActive }) => (
+                      <CaretRightOutlined rotate={isActive ? 90 : 0} />
+                    )}
+                    ghost
+                    expandIconPosition={"end"}
+                  >
+                    <Panel
+                      header={
+                        <div className={styles["custom-header"]}>
+                          Thu nhập nhân viên theo ngày
+                        </div>
+                      }
+                      key="1"
+                      className={styles["title-table-collapse"]}
+                    >
+                      <div
+                        className={classNames(
+                          "my-custom-add",
+                          styles["table-fillter"]
+                        )}
+                      >
+                        <ReactDatePicker
+                          selected={selectedDate}
+                          onChange={handleDateChange}
+                          dateFormat="dd/MM/yyyy"
+                          className="p-2 border rounded-md"
+                        />
+                        <Button
+                          className={styles["table-fillter-item"]}
+                          type="primary"
+                          style={{
+                            backgroundColor: "#BF9456",
+                            marginLeft: "5px",
+                          }}
+                          icon={<PlusOutlined />}
+                          onClick={() => setSelectedDate(new Date())}
+                        >
+                          Xem hôm nay
+                        </Button>
+                      </div>
+
+                      <div className={styles["table-container"]}>
+                        <Spin className="custom-spin" spinning={isLoading}>
+                          <Table
+                            className={stylesCard.appointmentTable}
+                            dataSource={workEmployee?.list?.employeesSchedules}
+                            columns={columnsEmployeeSchedule}
+                            pagination={false}
+                          />
+                          <div className={stylesCard.container}>
+                            {workEmployee?.list?.employeesSchedules?.length ===
+                              0 && (
+                              <h4
+                                style={{
+                                  fontWeight: "bold",
+                                  color: "#bf9456",
+                                  textAlign: "center",
+                                  fontSize: "1.2rem",
+                                }}
+                              >
+                                Không tìm thấy nhân viên nào!
+                              </h4>
+                            )}
+
+                            <div className={stylesCard.grid}>
+                              {workEmployee?.list?.employeesSchedules.map(
+                                (employee) => {
+                                  const formattedPrice = new Intl.NumberFormat(
+                                    "vi-VN",
+                                    {
+                                      style: "currency",
+                                      currency: "VND",
+                                    }
+                                  ).format(employee?.totalPrice);
+
+                                  return (
+                                    <div
+                                      key={employee.id}
+                                      className={stylesCard.card}
+                                    >
+                                      <img
+                                        src={employee?.img}
+                                        alt="emplyee"
+                                        className={stylesCard.employeeImage}
+                                      />
+
+                                      <h4>
+                                        Tên đầy đủ:
+                                        <span
+                                          style={{
+                                            display: "block",
+                                            fontWeight: "bold",
+                                            color: "#bf9456",
+                                            textAlign: "center",
+                                            marginTop: "0.5rem",
+                                          }}
+                                        >
+                                          {employee.fullName}
+                                        </span>
+                                      </h4>
+                                      <h4>
+                                        Số lịch hẹn đã phục vụ:{" "}
+                                        {employee.workSchedules.length}
+                                      </h4>
+                                      <h4>
+                                        Số tiền nhận được: {formattedPrice}
+                                      </h4>
+                                    </div>
+                                  );
+                                }
+                              )}
+                            </div>
+                          </div>
+                        </Spin>
+                      </div>
+                    </Panel>
+                  </Collapse>
+                </Col>
+              </Row> */}
               <Row gutter={16} style={{ marginTop: "20px" }}>
                 <Col span={24}>
                   <Collapse

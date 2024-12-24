@@ -180,10 +180,10 @@ function Header(props) {
           </Link>
         </Menu.Item>
       )}
-      {idOwner && (
-        <Menu.Item key="ReviewAppointmentCustomer">
-          <Link to="/ReviewAppointmentCustomer">
-            <WarningOutlined /> Khảo sát khách hàng
+      {!idEmployee && (
+        <Menu.Item key="transaction-history">
+          <Link to={"/managerPayment"}>
+            <WalletOutlined /> Lịch sử giao dịch
           </Link>
         </Menu.Item>
       )}
@@ -195,16 +195,16 @@ function Header(props) {
         </Menu.Item>
       )}
       {idOwner && (
-        <Menu.Item key="salon_report">
-          <Link to="/salon_report">
-            <WarningOutlined /> Danh sách báo cáo
+        <Menu.Item key="ReviewAppointmentCustomer">
+          <Link to="/ReviewAppointmentCustomer">
+            <WarningOutlined /> Khảo sát khách hàng
           </Link>
         </Menu.Item>
       )}
-      {!idEmployee && (
-        <Menu.Item key="transaction-history">
-          <Link to={"/managerPayment"}>
-            <WalletOutlined /> Lịch sử giao dịch
+      {idOwner && (
+        <Menu.Item key="salon_report">
+          <Link to="/salon_report">
+            <WarningOutlined /> Lịch sử báo cáo
           </Link>
         </Menu.Item>
       )}
@@ -481,7 +481,7 @@ function Header(props) {
                     }`}
                     onClick={scrollToTop}
                   >
-                    Thống kê doanh thu
+                    Báo cáo
                   </Link>
                 </li>
                 {/* <li className={style.navItem}>
