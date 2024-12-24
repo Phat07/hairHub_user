@@ -63,6 +63,7 @@ import store from "./store";
 import ReviewAppointmentCustomerPage from "./pages/ReviewAppointmentCustomerPage.jsx";
 import ManageEmployeeSchedulerPage from "./pages/ManageEmployeeSchedulerPage.jsx";
 import RevenueYearPage from "./pages/RevenueYearPage.jsx";
+import OverviewSalon from "./pages/OverviewSalon.jsx";
 
 const basePath = `/zapps/2685475901677367467`;
 
@@ -371,10 +372,7 @@ const router = createBrowserRouter(
         {
           path: "ReviewAppointmentCustomer",
           element: (
-            <RequireAuth
-              requiredRoles={["SalonOwner"]}
-              fallbackPath="/login"
-            >
+            <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
               <ReviewAppointmentCustomerPage />
             </RequireAuth>
           ),
@@ -382,10 +380,7 @@ const router = createBrowserRouter(
         {
           path: "manageEmployeeScheduler",
           element: (
-            <RequireAuth
-              requiredRoles={["SalonOwner"]}
-              fallbackPath="/login"
-            >
+            <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
               <ManageEmployeeSchedulerPage />
             </RequireAuth>
           ),
@@ -414,6 +409,14 @@ const router = createBrowserRouter(
           element: (
             <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
               <RevenueYearPage />
+            </RequireAuth>
+          ),
+        },
+        {
+          path: "overviewSalon",
+          element: (
+            <RequireAuth requiredRoles={["SalonOwner"]} fallbackPath="/login">
+              <OverviewSalon />
             </RequireAuth>
           ),
         },

@@ -203,16 +203,16 @@ function FooterMobileAuth() {
                   {isActive("/revenueSalon") && <span>Báo cáo</span>}
                 </Link>
               </li>
-              {/* <li
+              <li
                 className={`${style.footerItem} ${
-                  isActive("/reviewEmployee") ? style.active : ""
+                  isActive("/overviewSalon") ? style.active : ""
                 }`}
               >
-                <Link to="/reviewEmployee">
+                <Link to="/overviewSalon">
                   <RadarChartOutlined className={style.icon} />
-                  {isActive("/reviewEmployee") && <span>Nhân viên</span>}
+                  {isActive("/overviewSalon") && <span>Tổng quan</span>}
                 </Link>
-              </li> */}
+              </li>
             </>
           )}
         </ul>

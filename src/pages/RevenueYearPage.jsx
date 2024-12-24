@@ -1659,7 +1659,7 @@ const RevenueYearPage = () => {
                       rowKey="id"
                     />
                     <div className={stylesCard.container}>
-                      {dataSource?.length === 0 && (
+                      {dataEmployee?.length === 0 && (
                         <h4
                           style={{
                             fontWeight: "bold",

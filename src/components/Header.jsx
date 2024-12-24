@@ -484,16 +484,16 @@ function Header(props) {
                     Báo cáo
                   </Link>
                 </li>
-                {/* <li className={style.navItem}>
+                <li className={style.navItem}>
                   <Link
-                    to="/reviewEmployee"
+                    to="/overviewSalon"
                     className={`${style.navLink} ${
-                      isActive("/reviewEmployee") ? style.active : ""
+                      isActive("/overviewSalon") ? style.active : ""
                     }`}
                   >
-                    Đánh giá nhân viên
+                    Tổng quan
                   </Link>
-                </li> */}
+                </li>
                 {menuActive && (
                   <>
                     <li className={style.navItemRepo}>
