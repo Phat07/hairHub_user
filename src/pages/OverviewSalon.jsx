@@ -41,12 +41,308 @@ import { actGetFeedbackFromSalonOwner } from "@/store/ratingCutomer/action";
 const OverviewSalon = () => {
   const navigate = useNavigate();
   const { RangePicker } = DatePicker;
-  const [tempDates, setTempDates] = useState(dayjs());
+  const [tempDates, setTempDates] = useState(() => dayjs());
   const [loading, setLoading] = useState(false);
-  const handleDateChange = (dates) => {
-    setTempDates(dates); // Lưu ngày tạm thời
+  const dispatch = useDispatch();
+  const ownerId = useSelector((state) => state.ACCOUNT.idOwner);
+  const [customer, setCustomer] = useState(null);
+  const [dataAppointment, setDataAppointment] = useState([]);
+  // const [loadingAppointment, setLoadingAppointment] = useState(false);
+  const [sortEmployee, setSortEmployee] = useState("Số lượng dịch vụ giảm dần");
+  const [currentPageEmployee, setCurrentPageEmployee] = useState(1);
+  const [pageSizeEmployee, setPageSizeEmployee] = useState(4);
+  const [total, setTotal] = useState(1);
+  const [dataEmployee, setDataEmplyee] = useState([]);
+  const [dataRevenue,setDataRevenue] = useState(null)
+  const [chartDataService, setChartDataService] = useState({
+    labels: [],
+    datasets: [
+      {
+        label: "Số người phục vụ",
+        data: [],
+        backgroundColor: "#36A2EB",
+        borderColor: "#2a8cd6",
+        borderWidth: 1,
+      },
+    ],
+  });
+
+  const [horizontalBarData, setHorizontalBarData] = useState({
+    labels: [],
+    datasets: [
+      {
+        label: "Số người phục vụ",
+        data: [],
+        backgroundColor: [
+          "#3B82F6",
+          "#22C55E",
+          "#8B5CF6",
+          "#FF9AA2",
+          "#36A2EB",
+        ],
+        borderWidth: 1,
+      },
+    ],
+  });
+  const [lineChartRevenue, setLineChartRevenue] = useState({
+    labels: [], // Hours (X-axis labels)
+    datasets: [
+      {
+        label: "Doanh thu ngoài",
+        data: [], // Outside revenue
+        borderColor: "rgba(255, 99, 132, 1)", // Line color
+        backgroundColor: "rgba(255, 99, 132, 0.2)", // Fill color (if applicable)
+        fill: false, // No area fill under the line
+      },
+      {
+        label: "Doanh thu nền tảng",
+        data: [], // Platform revenue
+        borderColor: "rgba(54, 162, 235, 1)",
+        backgroundColor: "rgba(54, 162, 235, 0.2)",
+        fill: false,
+      },
+      {
+        label: "Tổng doanh thu",
+        data: [], // Total revenue
+        borderColor: "rgba(75, 192, 192, 1)",
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        fill: false,
+      },
+    ],
+  });
+  const salonInformationByOwnerId = useSelector(
+    (state) => state.SALONAPPOINTMENTS.salonInformationByOwnerId
+  );
+  useEffect(() => {
+    if (ownerId) {
+      dispatch(actGetSalonInformationByOwnerIdAsync(ownerId));
+    }
+  }, [ownerId]);
+  const handleDateChange = (date) => {
+    setTempDates(date || dayjs()); // Provide fallback to current date if null
   };
-  useEffect(() => {}, [tempDates]);
+  useEffect(() => {
+    if (tempDates && salonInformationByOwnerId?.id) {
+      setLoading(true);
+      const formattedDate = dayjs(tempDates)?.format("YYYY-MM-DD");
+      API.get(
+        `/saloninformations/CustomerQuantityByDate/${salonInformationByOwnerId.id}`,
+        {
+          params: {
+            date: formattedDate,
+          },
+        }
+      )
+        .then((response) => {
+          const data = response.data;
+          setCustomer(data?.customerDate);
+          // Transform the API response into chart data
+          const labels = data.charCustomer.map((entry) => `${entry.time} giờ`);
+          const chartData = data.charCustomer.map(
+            (entry) => entry.numberOfCustomer
+          );
+
+          // Update state with the formatted data
+          setHorizontalBarData({
+            labels,
+            datasets: [
+              {
+                label: "Số người phục vụ",
+                data: chartData,
+                backgroundColor: [
+                  "#3B82F6",
+                  "#22C55E",
+                  "#8B5CF6",
+                  "#FF9AA2",
+                  "#36A2EB",
+                ],
+                borderWidth: 1,
+              },
+            ],
+          });
+        })
+        .catch((error) => {
+          console.error("Error fetching customer data:", error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [tempDates, salonInformationByOwnerId]);
+
+  useEffect(() => {
+    if (tempDates && salonInformationByOwnerId?.id) {
+      const formattedDate = dayjs(tempDates)?.format("YYYY-MM-DD");
+
+      API.get(
+        `/saloninformations/RevenueStatisticsOnOverview/${salonInformationByOwnerId.id}`,
+        {
+          params: { date: formattedDate },
+        }
+      )
+        .then((response) => {
+          const data = response.data;
+
+          // Process the API response
+          const labels = data.hourlyOutSideRevenues.map(
+            (item) => `${item.hour}h`
+          );
+          const outsideData = data.hourlyOutSideRevenues.map(
+            (item) => item.revenue
+          );
+          const platformData = data.hourlyPlatformRevenues.map(
+            (item) => item.revenue
+          );
+          const totalData = data.hourlyTotalRevenues.map(
+            (item) => item.revenue
+          );
+
+          // Update the chart data state
+          setLineChartRevenue({
+            labels,
+            datasets: [
+              {
+                label: "Doanh thu ngoài",
+                data: outsideData,
+                borderColor: "rgba(255, 99, 132, 1)",
+                backgroundColor: "rgba(255, 99, 132, 0.2)",
+                fill: false,
+              },
+              {
+                label: "Doanh thu nền tảng",
+                data: platformData,
+                borderColor: "rgba(54, 162, 235, 1)",
+                backgroundColor: "rgba(54, 162, 235, 0.2)",
+                fill: false,
+              },
+              {
+                label: "Tổng doanh thu",
+                data: totalData,
+                borderColor: "rgba(75, 192, 192, 1)",
+                backgroundColor: "rgba(75, 192, 192, 0.2)",
+                fill: false,
+              },
+            ],
+          });
+          setDataRevenue(data)
+        })
+        .catch((error) => {
+          console.error("Error fetching revenue data:", error);
+        });
+    }
+  }, [tempDates, salonInformationByOwnerId]);
+  useEffect(() => {
+    if (tempDates && salonInformationByOwnerId?.id) {
+      setLoading(true);
+      const formattedDate = dayjs(tempDates)?.format("YYYY-MM-DD");
+      API.get(
+        `/saloninformations/CompileAppointmentSalon/${salonInformationByOwnerId.id}`,
+        {
+          params: {
+            date: formattedDate,
+          },
+        }
+      )
+        .then((response) => {
+          const data = response.data;
+          setDataAppointment(data);
+        })
+        .catch((error) => {
+          console.error("Error fetching customer data:", error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [tempDates, salonInformationByOwnerId]);
+
+  useEffect(() => {
+    if (tempDates && salonInformationByOwnerId?.id) {
+      setLoading(true);
+      const formattedDate = dayjs(tempDates)?.format("YYYY-MM-DD");
+      API.get(
+        `/appointments/EvaluatedService/${salonInformationByOwnerId.id}`,
+        {
+          params: {
+            startdate: formattedDate,
+            enddate: formattedDate,
+          },
+        }
+      )
+        .then((response) => {
+          const data = response.data.evaluatedServices || [];
+          console.log("Data from server:", data);
+  
+          // Chuyển đổi dữ liệu cho biểu đồ
+          if (data.length > 0) {
+            const labels = data.map((item) => item.serviceName);
+            const counts = data.map((item) => Number(item.number));
+            setChartDataService({
+              labels,
+              datasets: [
+                {
+                  label: "Số người phục vụ",
+                  data: counts,
+                  backgroundColor: "#36A2EB",
+                  borderColor: "#2a8cd6",
+                  borderWidth: 1,
+                },
+              ],
+            });
+          } else {
+            // Nếu mảng rỗng, hiển thị biểu đồ với giá trị 0
+            setChartDataService({
+              labels: ["Không có dữ liệu"],
+              datasets: [
+                {
+                  label: "Số người phục vụ",
+                  data: [0],
+                  backgroundColor: "#36A2EB",
+                  borderColor: "#2a8cd6",
+                  borderWidth: 1,
+                },
+              ],
+            });
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching customer data:", error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [tempDates, salonInformationByOwnerId]);
+
+  useEffect(() => {
+    if (tempDates && salonInformationByOwnerId?.id) {
+      setLoading(true);
+      const formattedDate = dayjs(tempDates)?.format("YYYY-MM-DD");
+      API.get(
+        `/saloninformations/CompileEmployeeSalon/${salonInformationByOwnerId.id}`,
+        {
+          params: {
+            startDate: formattedDate,
+            endDate: formattedDate,
+            filter: sortEmployee,
+            page: currentPageEmployee,
+            size: pageSizeEmployee,
+          },
+        }
+      )
+        .then((response) => {
+          const data = response.data;
+          setTotal(data?.totalPages);
+          setDataEmplyee(data?.items);
+        })
+        .catch((error) => {
+          console.error("Error fetching customer data:", error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [tempDates, salonInformationByOwnerId, currentPageEmployee, sortEmployee]);
   const formatCurrency = (value) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
@@ -58,64 +354,9 @@ const OverviewSalon = () => {
     datasets: [
       {
         label: "Phân loại khách hàng", // Nhãn chung cho dữ liệu
-        data: [70, 30], // Giá trị tương ứng với từng nhãn
+        data: [customer?.oldCustomerPercent, customer?.newCustomerPercent], // Giá trị tương ứng với từng nhãn
         backgroundColor: ["#36A2EB", "#FF6384"], // Màu sắc cho mỗi phần của biểu đồ
         hoverBackgroundColor: ["#5AD3D1", "#FF9AA2"], // Màu sắc khi di chuột qua
-      },
-    ],
-  };
-  const horizontalBarData = {
-    labels: [
-      "8 giờ",
-      "9 giờ",
-      "10 giờ",
-      "11 giờ",
-      "12 giờ",
-      "13 giờ",
-      "14 giờ",
-      "15 giờ",
-      "16 giờ",
-      "17 giờ",
-      "18 giờ",
-      "19 giờ",
-      "20 giờ",
-    ], // Trục tung: Số giờ
-    datasets: [
-      {
-        label: "Số người phục vụ",
-        data: [10, 15, 20, 25, 30, 10, 15, 20, 25, 30, 15, 20, 25], // Trục hoành: Số người phục vụ
-        backgroundColor: [
-          "#3B82F6",
-          "#22C55E",
-          "#8B5CF6",
-          "#FF9AA2",
-          "#36A2EB",
-        ], // Màu sắc cho từng cột
-        borderWidth: 1,
-      },
-    ],
-  };
-
-  const lineChartRevenue = {
-    labels: ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6"], // Thời gian
-    datasets: [
-      {
-        label: "Tổng doanh thu",
-        data: [300, 500, 400, 700, 600, 800], // Giá trị doanh thu tổng
-        borderColor: "#3B82F6", // Màu đường
-        fill: false, // Không tô màu dưới đường
-      },
-      {
-        label: "Doanh thu ngoài hệ thống",
-        data: [100, 200, 150, 250, 300, 350], // Giá trị doanh thu ngoài hệ thống
-        borderColor: "#22C55E",
-        fill: false,
-      },
-      {
-        label: "Doanh thu trong hệ thống",
-        data: [200, 300, 250, 450, 300, 450], // Giá trị doanh thu trong hệ thống
-        borderColor: "#8B5CF6",
-        fill: false,
       },
     ],
   };
@@ -124,39 +365,12 @@ const OverviewSalon = () => {
     labels: ["Doanh thu ngoài hệ thống", "Doanh thu trong hệ thống"], // Nhãn
     datasets: [
       {
-        data: [1200, 1800], // Giá trị tương ứng
+        data: [dataRevenue?.outsideRevenue, dataRevenue?.platformRevenue], // Giá trị tương ứng
         backgroundColor: ["#22C55E", "#8B5CF6"], // Màu sắc
         hoverBackgroundColor: ["#16A34A", "#7C3AED"], // Màu khi hover
       },
     ],
   };
-
-  const dataAppointment = [
-    {
-      appointmentType: "Lịch hẹn ngoài hệ thống",
-      appointmentQuantity: 15, // Số lượng lịch hẹn
-      customerQuantity: 12, // Số lượng khách phục vụ
-      revenue: 1500000, // Doanh thu (VNĐ)
-    },
-    {
-      appointmentType: "Lịch hẹn trong hệ thống",
-      appointmentQuantity: 25,
-      customerQuantity: 20,
-      revenue: 2500000,
-    },
-    {
-      appointmentType: "Lịch hẹn bị hủy",
-      appointmentQuantity: 5,
-      customerQuantity: 0,
-      revenue: 0,
-    },
-    {
-      appointmentType: "Lịch hẹn thất bại",
-      appointmentQuantity: 8,
-      customerQuantity: 0,
-      revenue: 0,
-    },
-  ];
 
   const appointmentTypeMapping = {
     "Lịch hẹn bị hủy": "CANCEL_BY_CUSTOMER",
@@ -217,14 +431,19 @@ const OverviewSalon = () => {
   const pieDataAppointmentRange = {
     labels: [
       "Lịch hẹn ngoài hệ thống",
-      "Lịch hẹn trong hệ thống",
+      "Lịch hẹn thành công",
       "Lịch hẹn bị hủy",
       "Lịch hẹn thất bại",
     ],
     datasets: [
       {
         label: "Tỷ lệ lịch hẹn",
-        data: [15, 25, 5, 8], // Số lượng lịch hẹn từ dataAppointment
+        data: [
+          dataAppointment[0]?.percent,
+          dataAppointment[1]?.percent,
+          dataAppointment[3]?.percent,
+          dataAppointment[2]?.percent,
+        ], // Số lượng lịch hẹn từ dataAppointment
         backgroundColor: [
           "#FF6384", // Màu cho Lịch hẹn ngoài hệ thống
           "#36A2EB", // Màu cho Lịch hẹn trong hệ thống
@@ -269,44 +488,6 @@ const OverviewSalon = () => {
     responsive: true,
     maintainAspectRatio: false,
   };
-
-  const dataEmployee = [
-    {
-      id: 1,
-      fullName: "Nguyễn Văn A",
-      numberOfService: 25,
-      numberOfUsers: 20,
-      revenue: 5000000, // doanh thu
-    },
-    {
-      id: 2,
-      fullName: "Trần Thị B",
-      numberOfService: 30,
-      numberOfUsers: 25,
-      revenue: 7500000,
-    },
-    {
-      id: 3,
-      fullName: "Phạm Văn C",
-      numberOfService: 15,
-      numberOfUsers: 10,
-      revenue: 3000000,
-    },
-    {
-      id: 4,
-      fullName: "Lê Thị D",
-      numberOfService: 40,
-      numberOfUsers: 35,
-      revenue: 12000000,
-    },
-    {
-      id: 5,
-      fullName: "Hoàng Văn E",
-      numberOfService: 10,
-      numberOfUsers: 8,
-      revenue: 2000000,
-    },
-  ];
 
   const columnsEmployee = [
     {
@@ -356,7 +537,9 @@ const OverviewSalon = () => {
       ),
     },
   ];
-
+  const onPageChangeEmployee = (page) => {
+    setCurrentPageEmployee(page);
+  };
   return (
     <>
       <div
@@ -389,7 +572,7 @@ const OverviewSalon = () => {
             className="text-lg sm:text-xl font-bold mb-4"
             style={{ borderBottom: "0" }}
           >
-            KHÁCH HÀNG {tempDates.format("DD/MM/YYYY")}
+            KHÁCH HÀNG {tempDates?.format("DD/MM/YYYY")}
           </h2>
           <Spin className="custom-spin" spinning={loading}>
             <div className="flex flex-col sm:flex-row gap-4">
@@ -405,7 +588,9 @@ const OverviewSalon = () => {
                     >
                       Tổng số khách hàng phục vụ
                     </h3>
-                    <p className="text-gray-700">10 khách</p>
+                    <p className="text-gray-700">
+                      {customer?.totalCustomer} khách
+                    </p>
                   </div>
                 </div>
 
@@ -417,7 +602,9 @@ const OverviewSalon = () => {
                     >
                       Khách hàng cũ
                     </h3>
-                    <p className="text-gray-700">10 khách</p>
+                    <p className="text-gray-700">
+                      {customer?.numberOfOldCustomer} khách
+                    </p>
                   </div>
                   <div className="bg-white p-4 rounded-lg shadow-md flex-1">
                     <h3
@@ -426,7 +613,9 @@ const OverviewSalon = () => {
                     >
                       Khách hàng mới
                     </h3>
-                    <p className="text-gray-700">10 khách</p>
+                    <p className="text-gray-700">
+                      {customer?.numberOfNewCustomer} khách
+                    </p>
                   </div>
                 </div>
               </div>
@@ -446,7 +635,7 @@ const OverviewSalon = () => {
         </div>
         <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md mb-4 sm:mb-6">
           <h2 className="text-lg sm:text-xl font-bold mb-4">
-            LƯỢNG KHÁCH NGÀY {tempDates.format("DD/MM/YYYY")}
+            LƯỢNG KHÁCH NGÀY {tempDates?.format("DD/MM/YYYY")}
           </h2>
           <Spin className="custom-spin" spinning={loading}>
             <div className="flex flex-col sm:flex-row gap-4">
@@ -487,7 +676,7 @@ const OverviewSalon = () => {
         </div>
         <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
           <h2 className="text-lg sm:text-xl font-bold mb-4">
-            DOANH THU VÀO NGÀY {tempDates.format("DD/MM/YYYY")}
+            DOANH THU VÀO NGÀY {tempDates?.format("DD/MM/YYYY")}
           </h2>
           <Spin className="custom-spin" spinning={loading}>
             <div className="flex flex-col sm:flex-row gap-4">
@@ -502,7 +691,7 @@ const OverviewSalon = () => {
                         x: {
                           title: {
                             display: true,
-                            text: "Thời gian (Tháng)", // Nhãn trục x
+                            text: "Thời gian (Giờ)", // Nhãn trục x
                           },
                         },
                         y: {
@@ -544,7 +733,7 @@ const OverviewSalon = () => {
         </div>
         <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md mb-4 sm:mb-6">
           <h2 className="text-lg sm:text-xl font-bold mb-4">
-            THỐNG KÊ SỐ LỊCH HẸN NGÀY {tempDates.format("DD/MM/YYYY")}
+            THỐNG KÊ SỐ LỊCH HẸN NGÀY {tempDates?.format("DD/MM/YYYY")}
           </h2>
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="w-full sm:w-2/3">
@@ -636,7 +825,7 @@ const OverviewSalon = () => {
               <div className="w-full">
                 <div className="h-64 sm:h-80 lg:h-96">
                   <Bar
-                    data={horizontalBarChartService}
+                    data={chartDataService}
                     options={horizontalBarChartOptions}
                   />
                 </div>
@@ -728,10 +917,10 @@ const OverviewSalon = () => {
                 </div>
                 <Pagination
                   className="paginationAppointment"
-                  current={1}
-                  pageSize={5}
-                  total={50}
-                  //   onChange={onPageChangeEmployee}
+                  current={currentPageEmployee}
+                  pageSize={pageSizeEmployee}
+                  total={total * pageSizeEmployee}
+                  onChange={onPageChangeEmployee}
                   style={{ marginTop: "20px", textAlign: "center" }}
                 />
               </div>

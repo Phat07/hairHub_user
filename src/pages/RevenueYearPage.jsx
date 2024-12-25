@@ -387,7 +387,6 @@ const RevenueYearPage = () => {
         (data) => {
           setDataAppointment(data);
           setPieDataAppointmentRange(formatPieChartDataAppointment(data));
-          console.log(data);
         }
       ).finally(() => setLoadingAppointment(false));
     }
