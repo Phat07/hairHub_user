@@ -46,6 +46,7 @@ const OverviewSalon = () => {
   const handleDateChange = (dates) => {
     setTempDates(dates); // Lưu ngày tạm thời
   };
+  useEffect(() => {}, [tempDates]);
   const formatCurrency = (value) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
