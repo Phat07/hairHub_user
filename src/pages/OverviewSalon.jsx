@@ -96,23 +96,37 @@ const OverviewSalon = () => {
   };
 
   const lineChartRevenue = {
-    labels: ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6"], // Thời gian
+    labels: [
+      "8 giờ",
+      "9 giờ",
+      "10 giờ",
+      "11 giờ",
+      "12 giờ",
+      "13 giờ",
+      "14 giờ",
+      "15 giờ",
+      "16 giờ",
+      "17 giờ",
+      "18 giờ",
+      "19 giờ",
+      "20 giờ",
+    ], // Thời gian
     datasets: [
       {
         label: "Tổng doanh thu",
-        data: [300, 500, 400, 700, 600, 800], // Giá trị doanh thu tổng
+        data: [300, 500, 400, 700, 600, 800, 300, 500, 400, 700, 600, 800, 900], // Giá trị doanh thu tổng
         borderColor: "#3B82F6", // Màu đường
         fill: false, // Không tô màu dưới đường
       },
       {
         label: "Doanh thu ngoài hệ thống",
-        data: [100, 200, 150, 250, 300, 350], // Giá trị doanh thu ngoài hệ thống
+        data: [100, 200, 150, 250, 300, 350, 100, 200, 150, 250, 300, 350, 600], // Giá trị doanh thu ngoài hệ thống
         borderColor: "#22C55E",
         fill: false,
       },
       {
         label: "Doanh thu trong hệ thống",
-        data: [200, 300, 250, 450, 300, 450], // Giá trị doanh thu trong hệ thống
+        data: [200, 300, 250, 450, 300, 450, 200, 300, 250, 450, 300, 450, 500], // Giá trị doanh thu trong hệ thống
         borderColor: "#8B5CF6",
         fill: false,
       },
@@ -501,7 +515,7 @@ const OverviewSalon = () => {
                         x: {
                           title: {
                             display: true,
-                            text: "Thời gian (Tháng)", // Nhãn trục x
+                            text: "Thời gian (Giờ)", // Nhãn trục x
                           },
                         },
                         y: {
