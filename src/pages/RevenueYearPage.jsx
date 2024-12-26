@@ -1,4 +1,4 @@
-import { Line, Pie } from "react-chartjs-2";
+import { Bar, Line, Pie } from "react-chartjs-2";
 import { motion } from "framer-motion";
 import styles from "../css/reviewAppointment.module.css";
 import stylesCard from "../css/customerAppointment.module.css";
@@ -66,6 +66,8 @@ const RevenueYearPage = () => {
   const [dataService, setDataService] = useState([]);
   const [dataAppointment, setDataAppointment] = useState([]);
   const [dataCustomer, setDataCustomer] = useState([]);
+  const [dataEmployeeFeedback, setDataEmployeeFeedback] = useState([]);
+  const [dataServiceFeedback, setDataServiceFeedback] = useState([]);
   const [sortEmployee, setSortEmployee] = useState("Số lượng dịch vụ tăng dần");
   const [sortCustomer, setSortCustomer] = useState("Số cuộc hẹn tăng dần");
   const [fillterCustomer, setFillterCustomer] = useState("ALL");
@@ -75,6 +77,11 @@ const RevenueYearPage = () => {
   const visibleYears = years.slice(startIndex, startIndex + 4); // Lấy 4 năm để hiển thị
   const [dataRevenue, setDataRevenue] = useState({});
   const [tempDates, setTempDates] = useState([
+    dayjs().subtract(7, "day"), // Ngày bắt đầu
+    dayjs(), // Ngày kết thúc
+  ]);
+  const [dateLabelFeedback, setDateLabelFeedback] = useState("7 ngày qua");
+  const [tempDatesFeedback, setTempDatesFeedback] = useState([
     dayjs().subtract(7, "day"), // Ngày bắt đầu
     dayjs(), // Ngày kết thúc
   ]);
@@ -175,87 +182,13 @@ const RevenueYearPage = () => {
     }
   }, [activeYear, salonInformationByOwnerId]);
 
-  //   useEffect(() => {
-  //     const fetchData = async (url, params, setData) => {
-  //       setLoading(true);
-  //       try {
-  //         const response = await API.get(url, { params });
-  //         setData(response.data);
-  //       } catch (error) {
-  //         console.error("Error fetching data:", error);
-  //       } finally {
-  //         setLoading(false);
-  //       }
-  //     };
-  //     const formattedDates = tempDates?.map((date) =>
-  //       dayjs(date.$d).format("YYYY-MM-DD")
-  //     );
-  //     const compileEmployeeUrl = `/saloninformations/CompileEmployeeSalon/${salonInformationByOwnerId?.id}`;
-  //     const compileRevenuetUrl = `/saloninformations/RevenueStatistics/${salonInformationByOwnerId?.id}`;
-  //     const compileServicetUrl = `/saloninformations/ServiceStatistics/${salonInformationByOwnerId?.id}`;
-  //     if (
-  //       salonInformationByOwnerId?.id &&
-  //       sortEmployee &&
-  //       tempDates &&
-  //       sortService &&
-  //       currentPageEmployee &&
-  //       currentPageService
-  //     ) {
-  //       fetchData(
-  //         compileEmployeeUrl,
-  //         {
-  //           startDate: formattedDates[0],
-  //           endDate: formattedDates[1],
-  //           filter: sortEmployee,
-  //           page: currentPageEmployee,
-  //           size: pageSizeEmployee,
-  //         },
-  //         (data) => {
-  //           console.log("da1", data);
-
-  //           setDataEmplyee(data?.employeeStatictis);
-  //         }
-  //       );
-  //       fetchData(
-  //         compileServicetUrl,
-  //         {
-  //           startDate: formattedDates[0],
-  //           endDate: formattedDates[1],
-  //           filter: sortService,
-  //           page: currentPageService,
-  //           size: pageSizeService,
-  //         },
-  //         (data) => {
-  //           console.log("data", data);
-  //           setDataService(data.items);
-  //           setTotalService(data?.totalPages)
-  //         }
-  //       );
-
-  //       // Fetch appointment data if salon ID and activeYear exist
-  //       fetchData(
-  //         compileRevenuetUrl,
-  //         { startDate: formattedDates[0], endDate: formattedDates[1] },
-  //         (data) => {
-  //           setDataRevenue(data);
-  //         }
-  //       );
-  //     }
-  //   }, [
-  //     tempDates,
-  //     salonInformationByOwnerId,
-  //     sortEmployee,
-  //     sortService,
-  //     currentPageEmployee,
-  //     currentPageService,
-  //     pageSizeEmployee,
-  //     pageSizeService,
-  //   ]);
   const [loadingAppointment, setLoadingAppointment] = useState(false);
   const [loadingEmployee, setLoadingEmployee] = useState(false);
   const [loadingService, setLoadingService] = useState(false);
   const [loadingRevenue, setLoadingRevenue] = useState(false);
   const [loadingCustomer, setLoadingCustomer] = useState(false);
+  const [loadingFeedbackEmployee, setLoadingFeedbackEmployee] = useState(false);
+  const [loadingFeedbackService, setLoadingFeedbackService] = useState(false);
   const fetchData = async (url, params, setData) => {
     try {
       const response = await API.get(url, { params });
@@ -264,6 +197,46 @@ const RevenueYearPage = () => {
       console.error("Error fetching data:", error);
     }
   };
+
+  useEffect(() => {
+    if (salonInformationByOwnerId?.id && tempDatesFeedback) {
+      setLoadingFeedbackEmployee(true);
+      const compileEmployeeUrl = `/saloninformations/EmployeeEvaluation/${salonInformationByOwnerId.id}`;
+      const formattedDates = tempDatesFeedback?.map((date) =>
+        date && date.$d ? dayjs(date.$d).format("YYYY-MM-DD") : null
+      );
+      fetchData(
+        compileEmployeeUrl,
+        {
+          startDate: formattedDates[0],
+          endDate: formattedDates[1],
+        },
+        (data) => {
+          setDataEmployeeFeedback(data);
+        }
+      ).finally(() => setLoadingFeedbackEmployee(false));
+    }
+  }, [salonInformationByOwnerId?.id, tempDatesFeedback]);
+
+  useEffect(() => {
+    if (salonInformationByOwnerId?.id && tempDatesFeedback) {
+      setLoadingFeedbackService(true);
+      const compileEmployeeUrl = `/appointments/EvaluatedService/${salonInformationByOwnerId.id}`;
+      const formattedDates = tempDatesFeedback?.map((date) =>
+        date && date.$d ? dayjs(date.$d).format("YYYY-MM-DD") : null
+      );
+      fetchData(
+        compileEmployeeUrl,
+        {
+          startDate: formattedDates[0],
+          endDate: formattedDates[1],
+        },
+        (data) => {
+          setDataServiceFeedback(data);
+        }
+      ).finally(() => setLoadingFeedbackService(false));
+    }
+  }, [salonInformationByOwnerId?.id, tempDatesFeedback]);
 
   useEffect(() => {
     if (
@@ -275,7 +248,7 @@ const RevenueYearPage = () => {
       setLoadingEmployee(true);
       const compileEmployeeUrl = `/saloninformations/CompileEmployeeSalon/${salonInformationByOwnerId.id}`;
       const formattedDates = tempDates?.map((date) =>
-        dayjs(date.$d).format("YYYY-MM-DD")
+        date && date.$d ? dayjs(date.$d).format("YYYY-MM-DD") : null
       );
       fetchData(
         compileEmployeeUrl,
@@ -310,7 +283,7 @@ const RevenueYearPage = () => {
       setLoadingService(true);
       const compileServicetUrl = `/saloninformations/ServiceStatistics/${salonInformationByOwnerId.id}`;
       const formattedDates = tempDates?.map((date) =>
-        dayjs(date.$d).format("YYYY-MM-DD")
+        date && date.$d ? dayjs(date.$d).format("YYYY-MM-DD") : null
       );
       fetchData(
         compileServicetUrl,
@@ -345,7 +318,7 @@ const RevenueYearPage = () => {
       const fillter = fillterCustomer === "ALL" ? null : fillterCustomer;
       const compileServicetUrl = `/appointments/FrequentlyCustomers/${salonInformationByOwnerId.id}`;
       const formattedDates = tempDates?.map((date) =>
-        dayjs(date.$d).format("YYYY-MM-DD")
+        date && date.$d ? dayjs(date.$d).format("YYYY-MM-DD") : null
       );
       fetchData(
         compileServicetUrl,
@@ -358,7 +331,7 @@ const RevenueYearPage = () => {
           size: pageSizeCustomer,
         },
         (data) => {
-          setTotalCustomer(data?.totalPages);
+          setTotalCustomer(data?.total);
           setDataCustomer(data?.items);
         }
       ).finally(() => setLoadingCustomer(false));
@@ -376,7 +349,7 @@ const RevenueYearPage = () => {
       setLoadingAppointment(true);
       const compileAppointmentUrl = `/saloninformations/CompileAppointmentSalon/${salonInformationByOwnerId.id}`;
       const formattedDates = tempDates?.map((date) =>
-        dayjs(date.$d).format("YYYY-MM-DD")
+        date && date.$d ? dayjs(date.$d).format("YYYY-MM-DD") : null
       );
       fetchData(
         compileAppointmentUrl,
@@ -397,7 +370,7 @@ const RevenueYearPage = () => {
       setLoadingRevenue(true);
       const compileRevenuetUrl = `/saloninformations/RevenueStatistics/${salonInformationByOwnerId.id}`;
       const formattedDates = tempDates?.map((date) =>
-        dayjs(date.$d).format("YYYY-MM-DD")
+        date && date.$d ? dayjs(date.$d).format("YYYY-MM-DD") : null
       );
       fetchData(
         compileRevenuetUrl,
@@ -730,8 +703,8 @@ const RevenueYearPage = () => {
           className={stylesCard.buttonCard}
           onClick={() => {
             const status = appointmentTypeMapping[record.appointmentType];
-            const formattedDates = tempDates.map((date) =>
-              date.format("YYYY-MM-DD")
+            const formattedDates = tempDates?.map((date) =>
+              date ? date.format("YYYY-MM-DD") : ""
             );
             navigate(
               `/salon_appointment?appoinmentStatus=${status}&startDate=${formattedDates[0]}&endDate=${formattedDates[1]}`
@@ -779,8 +752,8 @@ const RevenueYearPage = () => {
           className={stylesCard.buttonCard}
           onClick={() => {
             const service = record.serviceName;
-            const formattedDates = tempDates.map((date) =>
-              date.format("YYYY-MM-DD")
+            const formattedDates = tempDates?.map((date) =>
+              date ? date.format("YYYY-MM-DD") : ""
             );
             navigate(
               `/salon_appointment?appoinmentStatus=ALL&appoinmentServiceName=${service}&startDate=${formattedDates[0]}&endDate=${formattedDates[1]}`
@@ -813,6 +786,18 @@ const RevenueYearPage = () => {
       key: "numberofSuccessAppointment",
     },
     {
+      title: "Dịch vụ",
+      dataIndex: "userService", // Trường chứa danh sách dịch vụ
+      key: "userService",
+      render: (services) => {
+        // Kiểm tra nếu mảng không rỗng, nối thành chuỗi
+        return services && services.length > 0
+          ? services.join(", ")
+          : "Không có dịch vụ";
+      },
+      align: "center",
+    },
+    {
       title: "Số tiền",
       dataIndex: "totalPrice",
       key: "totalPrice",
@@ -828,8 +813,8 @@ const RevenueYearPage = () => {
           className={stylesCard.buttonCard}
           onClick={() => {
             const name = record.name;
-            const formattedDates = tempDates.map((date) =>
-              date.format("YYYY-MM-DD")
+            const formattedDates = tempDates?.map((date) =>
+              date ? date.format("YYYY-MM-DD") : ""
             );
             navigate(
               `/salon_appointment?appoinmentStatus=ALL&appoinmentCustomerName=${name}&startDate=${formattedDates[0]}&endDate=${formattedDates[1]}`
@@ -877,8 +862,8 @@ const RevenueYearPage = () => {
           className={stylesCard.buttonCard}
           onClick={() => {
             const employeeName = record.fullName;
-            const formattedDates = tempDates.map((date) =>
-              date.format("YYYY-MM-DD")
+            const formattedDates = tempDates?.map((date) =>
+              date ? date.format("YYYY-MM-DD") : ""
             );
             navigate(
               `/salon_appointment?appoinmentStatus=ALL&appoinmentEmployeeName=${employeeName}&startDate=${formattedDates[0]}&endDate=${formattedDates[1]}`
@@ -891,49 +876,80 @@ const RevenueYearPage = () => {
     },
   ];
 
-  const dataSource = [
-    {
-      id: "1",
-      AppointmentType: "Lịch hẹn ngoài",
-      AppointmentNumber: 25,
-      NumberPeopleService: 20,
-      AppointmentRevenue: 5000000,
-      isActive: true,
-    },
-    {
-      id: "2",
-      AppointmentType: "Lịch hẹn qua hệ thống",
-      AppointmentNumber: 15,
-      NumberPeopleService: 12,
-      AppointmentRevenue: 3000000,
-      isActive: false,
-    },
-    {
-      id: "3",
-      AppointmentType: "Lịch hẹn bị hủy",
-      AppointmentNumber: 10,
-      NumberPeopleService: 8,
-      AppointmentRevenue: 4000000,
-      isActive: true,
-    },
-    {
-      id: "3",
-      AppointmentType: "Lịch hẹn thất bại",
-      AppointmentNumber: 10,
-      NumberPeopleService: 8,
-      AppointmentRevenue: 4000000,
-      isActive: true,
-    },
-  ];
-
   const handleDateChange = (dates) => {
     setTempDates(dates); // Lưu ngày tạm thời
   };
 
   const handleMenuClickRevenueSort = (e) => {
     let startDate;
-    let endDate = dayjs();
+    let endDate = dayjs(); // Mặc định là hôm nay
     setSortLabelRevenue(e.key);
+    setCurrentPageService(1);
+    setCurrentPageCustomer(1);
+    setCurrentPageEmployee(1);
+    switch (e.key) {
+      case "hôm nay":
+        startDate = dayjs(); // Ngày hôm nay
+        break;
+      case "hôm qua":
+        startDate = dayjs().subtract(1, "day"); // Ngày hôm qua
+        endDate = dayjs().subtract(1, "day");
+        break;
+      case "7 ngày qua":
+        startDate = dayjs().subtract(7, "day"); // 7 ngày trước
+        break;
+      case "Tháng này":
+        startDate = dayjs().startOf("month"); // Ngày đầu tháng
+        break;
+      case "Tháng trước":
+        startDate = dayjs().subtract(1, "month").startOf("month"); // Ngày đầu tháng trước
+        endDate = dayjs().subtract(1, "month").endOf("month"); // Ngày cuối tháng trước
+        break;
+      case "3 tháng trước":
+        startDate = dayjs().subtract(3, "month").startOf("month"); // 3 tháng trước, đầu tháng
+        break;
+      case "Năm nay":
+        startDate = dayjs().startOf("year"); // Ngày đầu năm nay
+        break;
+      case "Năm trước":
+        startDate = dayjs().subtract(1, "year").startOf("year"); // Ngày đầu năm trước
+        endDate = dayjs().subtract(1, "year").endOf("year"); // Ngày cuối năm trước
+        break;
+      case "Toàn thời gian":
+        startDate = null; // Không giới hạn thời gian
+        endDate = null;
+        break;
+      case "Tùy chọn":
+        startDate = dayjs().subtract(7, "day"); // Giá trị mặc định
+        break;
+      default:
+        startDate = dayjs(); // Mặc định là hôm nay
+    }
+
+    // Cập nhật giá trị tempDates
+    setTempDates([startDate, endDate]);
+  };
+
+  const sortMenuRevenue = (
+    <Menu onClick={handleMenuClickRevenueSort}>
+      <Menu.Item key="hôm nay">Hôm nay</Menu.Item>
+      <Menu.Item key="hôm qua">Hôm qua</Menu.Item>
+      <Menu.Item key="7 ngày qua">7 ngày qua</Menu.Item>
+      <Menu.Item key="Tháng này">Tháng này</Menu.Item>
+      <Menu.Item key="Tháng trước">Tháng trước</Menu.Item>
+      <Menu.Item key="3 tháng trước">3 tháng trước</Menu.Item>
+      <Menu.Item key="Năm nay">Năm nay</Menu.Item>
+      <Menu.Item key="Năm trước">Năm trước</Menu.Item>
+      <Menu.Item key="Toàn thời gian">Toàn thời gian</Menu.Item>
+      <Menu.Item key="Tùy chọn">Tùy chọn</Menu.Item>
+    </Menu>
+  );
+
+  const handleMenuClickSort = (e, setTempDates, setSortLabel) => {
+    let startDate;
+    let endDate = dayjs();
+    setSortLabel(e.key);
+
     switch (e.key) {
       case "hôm nay":
         startDate = dayjs(); // Ngày hôm nay
@@ -952,8 +968,14 @@ const RevenueYearPage = () => {
         startDate = dayjs().subtract(1, "month").startOf("month"); // Tháng trước
         endDate = dayjs().subtract(1, "month").endOf("month"); // Cuối tháng trước
         break;
+      case "3 tháng":
+        startDate = dayjs().subtract(3, "month").startOf("month"); // Tháng trước
+        break;
       case "Năm nay":
         startDate = dayjs().startOf("year"); // Ngày đầu năm
+        break;
+      case "Toàn thời gian":
+        setTempDates([null, null]);
         break;
       case "Tùy chọn":
         startDate = dayjs().subtract(7, "day");
@@ -961,32 +983,27 @@ const RevenueYearPage = () => {
       default:
         startDate = dayjs(); // Mặc định là hôm nay
     }
-
-    // Cập nhật giá trị tempDates
     setTempDates([startDate, endDate]);
   };
 
-  const sortMenuRevenue = (
-    <Menu onClick={handleMenuClickRevenueSort}>
-      <Menu.Item key="hôm nay">Hôm nay</Menu.Item>
-      <Menu.Item key="hôm qua">Hôm qua</Menu.Item>
+  const createSortMenu = (handleClick) => (
+    <Menu onClick={handleClick}>
+      {/* <Menu.Item key="hôm nay">Hôm nay</Menu.Item>
+      <Menu.Item key="hôm qua">Hôm qua</Menu.Item> */}
       <Menu.Item key="7 ngày qua">7 ngày qua</Menu.Item>
       <Menu.Item key="Tháng này">Tháng này</Menu.Item>
       <Menu.Item key="Tháng trước">Tháng trước</Menu.Item>
+      <Menu.Item key="3 tháng">3 tháng</Menu.Item>
       <Menu.Item key="Năm nay">Năm nay</Menu.Item>
-      <Menu.Item key="Tùy chọn">Tùy chọn</Menu.Item>
+      <Menu.Item key="Toàn thời gian">Toàn thời gian</Menu.Item>
+      {/* <Menu.Item key="Tùy chọn">Tùy chọn</Menu.Item> */}
     </Menu>
   );
 
-  const handleFilter = () => {
-    if (tempDates && tempDates.length === 2) {
-      const [startDate, endDate] = tempDates; // Lấy ngày bắt đầu và kết thúc
-      setSelectedStartDates(startDate.format("YYYY-MM-DD")); // Lưu ngày bắt đầu
-      setSelectedEndDates(endDate.format("YYYY-MM-DD")); // Lưu ngày kết thúc
-    } else {
-      message.error("Vui lòng chọn khoảng thời gian.");
-    }
+  const handleMenuClickFeedbackDate = (e) => {
+    handleMenuClickSort(e, setTempDatesFeedback, setDateLabelFeedback);
   };
+  const dateMenuFeedback = createSortMenu(handleMenuClickFeedbackDate);
 
   const onPageChangeEmployee = (page) => {
     setCurrentPageEmployee(page);
@@ -1126,13 +1143,89 @@ const RevenueYearPage = () => {
     }
   };
 
+  const chartDataRatingEmloyee = {
+    labels: dataEmployeeFeedback?.map((employee) => employee.fullName), // Tên nhân viên
+    datasets: [
+      {
+        label: "Đánh giá (số sao)", // Nhãn của biểu đồ
+        data: dataEmployeeFeedback?.map((employee) => employee.rate), // Điểm đánh giá
+        backgroundColor: ["#bf9456"],
+      },
+    ],
+  };
+
+  const chartDataRatingService = {
+    labels: dataServiceFeedback?.evaluatedServices?.map(
+      (service) => service.serviceName
+    ), // Tên dịch vụ
+    datasets: [
+      {
+        label: "Số lượt đánh giá", // Nhãn của biểu đồ
+        data: dataServiceFeedback?.evaluatedServices?.map((service) =>
+          parseInt(service.number)
+        ), // Số lượng đánh giá
+        backgroundColor: ["#bf9456"],
+      },
+    ],
+  };
+
+  const horizontalRatingEmloyee = {
+    indexAxis: "y", // Đặt trục hoành nằm ngang
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: "Số sao",
+        },
+        beginAtZero: true, // Bắt đầu từ 0
+      },
+      y: {
+        title: {
+          display: true,
+          text: "Tên nhân viên",
+        },
+      },
+    },
+    responsive: true,
+    maintainAspectRatio: false,
+  };
+
+  const horizontalRatingService = {
+    indexAxis: "y", // Đặt trục hoành nằm ngang
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: "Số sao",
+        },
+        beginAtZero: true, // Bắt đầu từ 0
+      },
+      y: {
+        title: {
+          display: true,
+          text: "Tên dịch vụ",
+        },
+      },
+    },
+    responsive: true,
+    maintainAspectRatio: false,
+  };
+
   return (
     <>
+      {/* <div
+        className={`${styles.appointmentContainer} bg-customGray  p-4 sm:p-8`}
+      >
+        <h1 className="text-2xl font-bold mb-3" style={{ textAlign: "center" }}>
+          Khách hàng
+        </h1>
+      </div> */}
+
       <div
         className={`${styles.appointmentContainer} bg-customGray min-h-screen p-4 sm:p-8`}
       >
         <h1 className="text-2xl font-bold mb-3" style={{ textAlign: "center" }}>
-          Thống kê theo khoảng thời gian
+          Thống kê
         </h1>
         <div
           className={classNames("my-custom-add", styles["table-fillter"])}
@@ -1144,11 +1237,15 @@ const RevenueYearPage = () => {
           >
             <Button>
               {sortLabelRevenue}:{" "}
-              {tempDates[0].isSame(tempDates[1], "day")
-                ? tempDates[0].format("DD/MM/YYYY") // Nếu start date và end date giống nhau, chỉ hiển thị một ngày
-                : `${tempDates[0].format("DD/MM/YYYY")} - ${tempDates[1].format(
-                    "DD/MM/YYYY"
-                  )}`}
+              {
+                tempDates && tempDates[0] && tempDates[1]
+                  ? tempDates[0].isSame(tempDates[1], "day")
+                    ? tempDates[0].format("DD/MM/YYYY") // Nếu start date và end date giống nhau, chỉ hiển thị một ngày
+                    : `${tempDates[0].format(
+                        "DD/MM/YYYY"
+                      )} đến ${tempDates[1].format("DD/MM/YYYY")}`
+                  : "" // Trường hợp không có dữ liệu hoặc giá trị null
+              }
             </Button>
           </Dropdown>
         </div>
@@ -1182,11 +1279,15 @@ const RevenueYearPage = () => {
             style={{ borderBottom: "0" }}
           >
             THỐNG KÊ{" "}
-            {tempDates[0].isSame(tempDates[1], "day")
-              ? tempDates[0].format("DD/MM/YYYY") // Nếu start date và end date giống nhau, chỉ hiển thị một ngày
-              : `${tempDates[0].format("DD/MM/YYYY")} đến ${tempDates[1].format(
-                  "DD/MM/YYYY"
-                )}`}
+            {
+              tempDates && tempDates[0] && tempDates[1]
+                ? tempDates[0].isSame(tempDates[1], "day")
+                  ? tempDates[0].format("DD/MM/YYYY") // Nếu start date và end date giống nhau, chỉ hiển thị một ngày
+                  : `${tempDates[0].format(
+                      "DD/MM/YYYY"
+                    )} đến ${tempDates[1].format("DD/MM/YYYY")}`
+                : "TOÀN THỜI GIAN" // Trường hợp không có dữ liệu hoặc giá trị null
+            }
           </h2>
           <Spin className="custom-spin" spinning={loadingRevenue}>
             <div className="flex flex-col sm:flex-row gap-4">
@@ -1279,11 +1380,15 @@ const RevenueYearPage = () => {
         <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md mb-4 sm:mb-6">
           <h2 className="text-lg sm:text-xl font-bold mb-4">
             THỐNG KÊ SỐ LỊCH HẸN{" "}
-            {tempDates[0].isSame(tempDates[1], "day")
-              ? tempDates[0].format("DD/MM/YYYY") // Nếu start date và end date giống nhau, chỉ hiển thị một ngày
-              : `${tempDates[0].format("DD/MM/YYYY")} đến ${tempDates[1].format(
-                  "DD/MM/YYYY"
-                )}`}
+            {
+              tempDates && tempDates[0] && tempDates[1]
+                ? tempDates[0].isSame(tempDates[1], "day")
+                  ? tempDates[0].format("DD/MM/YYYY") // Nếu start date và end date giống nhau, chỉ hiển thị một ngày
+                  : `${tempDates[0].format(
+                      "DD/MM/YYYY"
+                    )} đến ${tempDates[1].format("DD/MM/YYYY")}`
+                : "TOÀN THỜI GIAN" // Trường hợp không có dữ liệu hoặc giá trị null
+            }
           </h2>
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="w-full sm:w-2/3">
@@ -1350,8 +1455,9 @@ const RevenueYearPage = () => {
                                     appointmentTypeMapping[
                                       service.appointmentType
                                     ];
-                                  const formattedDates = tempDates.map((date) =>
-                                    date.format("YYYY-MM-DD")
+                                  const formattedDates = tempDates?.map(
+                                    (date) =>
+                                      date ? date.format("YYYY-MM-DD") : ""
                                   );
                                   navigate(
                                     `/salon_appointment?appoinmentStatus=${status}&startDate=${formattedDates[0]}&endDate=${formattedDates[1]}`
@@ -1384,11 +1490,15 @@ const RevenueYearPage = () => {
         <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md mb-4 sm:mb-6">
           <h2 className="text-lg sm:text-xl font-bold mb-4">
             THỐNG KÊ DỊCH VỤ{" "}
-            {tempDates[0].isSame(tempDates[1], "day")
-              ? tempDates[0].format("DD/MM/YYYY") // Nếu start date và end date giống nhau, chỉ hiển thị một ngày
-              : `${tempDates[0].format("DD/MM/YYYY")} đến ${tempDates[1].format(
-                  "DD/MM/YYYY"
-                )}`}
+            {
+              tempDates && tempDates[0] && tempDates[1]
+                ? tempDates[0].isSame(tempDates[1], "day")
+                  ? tempDates[0].format("DD/MM/YYYY") // Nếu start date và end date giống nhau, chỉ hiển thị một ngày
+                  : `${tempDates[0].format(
+                      "DD/MM/YYYY"
+                    )} đến ${tempDates[1].format("DD/MM/YYYY")}`
+                : "TOÀN THỜI GIAN" // Trường hợp không có dữ liệu hoặc giá trị null
+            }
           </h2>
           <div className="flex flex-col sm:flex-row gap-4">
             {/* Biểu đồ đường lớn hơn */}
@@ -1444,6 +1554,9 @@ const RevenueYearPage = () => {
                                   color: "#bf9456",
                                   textAlign: "center",
                                   fontSize: "1rem",
+                                  whiteSpace: "nowrap",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
                                 }}
                               >
                                 {service.serviceName}
@@ -1465,8 +1578,9 @@ const RevenueYearPage = () => {
                                 className={stylesCard.buttonCard}
                                 onClick={() => {
                                   const service = service.serviceName;
-                                  const formattedDates = tempDates.map((date) =>
-                                    date.format("YYYY-MM-DD")
+                                  const formattedDates = tempDates?.map(
+                                    (date) =>
+                                      date ? date.format("YYYY-MM-DD") : ""
                                   );
                                   navigate(
                                     `/salon_appointment?appoinmentStatus=ALL&appoinmentServiceName=${service}&startDate=${formattedDates[0]}&endDate=${formattedDates[1]}`
@@ -1497,14 +1611,17 @@ const RevenueYearPage = () => {
         <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md mb-4 sm:mb-6">
           <h2 className="text-lg sm:text-xl font-bold mb-4">
             THỐNG KÊ KHÁCH HÀNG{" "}
-            {tempDates[0].isSame(tempDates[1], "day")
-              ? tempDates[0].format("DD/MM/YYYY") // Nếu start date và end date giống nhau, chỉ hiển thị một ngày
-              : `${tempDates[0].format("DD/MM/YYYY")} đến ${tempDates[1].format(
-                  "DD/MM/YYYY"
-                )}`}
+            {
+              tempDates && tempDates[0] && tempDates[1]
+                ? tempDates[0].isSame(tempDates[1], "day")
+                  ? tempDates[0].format("DD/MM/YYYY") // Nếu start date và end date giống nhau, chỉ hiển thị một ngày
+                  : `${tempDates[0].format(
+                      "DD/MM/YYYY"
+                    )} đến ${tempDates[1].format("DD/MM/YYYY")}`
+                : "TOÀN THỜI GIAN" // Trường hợp không có dữ liệu hoặc giá trị null
+            }
           </h2>
           <div className="flex flex-col sm:flex-row gap-4">
-            {/* Biểu đồ đường lớn hơn */}
             <div className="w-full">
               <div className="h-auto">
                 <div
@@ -1513,6 +1630,31 @@ const RevenueYearPage = () => {
                     styles["table-fillter"]
                   )}
                 >
+                  {/* <Dropdown
+                      overlay={dateMenuCustomer}
+                      className={styles["table-fillter-item"]}
+                    >
+                      <Button>
+                        {dateLabelCustomer}{" "}
+                        {
+                          tempDatesCustomer &&
+                          tempDatesCustomer[0] &&
+                          tempDatesCustomer[1]
+                            ? tempDatesCustomer[0].isSame(
+                                tempDatesCustomer[1],
+                                "day"
+                              )
+                              ? tempDatesCustomer[0].format("DD/MM/YYYY") // Nếu start date và end date giống nhau, chỉ hiển thị một ngày
+                              : `${tempDatesCustomer[0].format(
+                                  "DD/MM/YYYY"
+                                )} đến ${tempDatesCustomer[1].format(
+                                  "DD/MM/YYYY"
+                                )}`
+                            : "" 
+                        }
+                      </Button>
+                    </Dropdown> */}
+
                   <Dropdown
                     overlay={sortMenuCustomer}
                     className={styles["table-fillter-item"]}
@@ -1570,6 +1712,9 @@ const RevenueYearPage = () => {
                                   color: "#bf9456",
                                   textAlign: "center",
                                   fontSize: "1rem",
+                                  whiteSpace: "nowrap",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
                                 }}
                               >
                                 {service.name}
@@ -1581,6 +1726,16 @@ const RevenueYearPage = () => {
                             <h4 className={stylesCard.description}>
                               Số cuộc hẹn: {service.numberofSuccessAppointment}
                             </h4>
+                            <h4 className={stylesCard.description}>
+                              Dịch vụ:{" "}
+                              <span>
+                                {service &&
+                                service?.userService &&
+                                service?.userService?.length > 0
+                                  ? service?.userService?.join(", ")
+                                  : "Không có dịch vụ"}
+                              </span>
+                            </h4>
                             <h4>
                               Số tiền: {formatCurrency(service.totalPrice)}
                             </h4>
@@ -1588,12 +1743,13 @@ const RevenueYearPage = () => {
                               <button
                                 className={stylesCard.buttonCard}
                                 onClick={() => {
-                                  const service = service.serviceName;
-                                  const formattedDates = tempDates.map((date) =>
-                                    date.format("YYYY-MM-DD")
+                                  const service = service.name;
+                                  const formattedDates = tempDates?.map(
+                                    (date) =>
+                                      date ? date.format("YYYY-MM-DD") : ""
                                   );
                                   navigate(
-                                    `/salon_appointment?appoinmentStatus=ALL&appoinmentServiceName=${service}&startDate=${formattedDates[0]}&endDate=${formattedDates[1]}`
+                                    `/salon_appointment?appoinmentStatus=ALL&appoinmentCustomerName=${service}&startDate=${formattedDates[0]}&endDate=${formattedDates[1]}`
                                   );
                                 }}
                               >
@@ -1610,7 +1766,7 @@ const RevenueYearPage = () => {
                   className="paginationAppointment"
                   current={currentPageCustomer}
                   pageSize={pageSizeCustomer}
-                  total={totalCustomer * pageSizeCustomer}
+                  total={totalCustomer}
                   onChange={onPageChangeCustomer}
                   style={{ marginTop: "20px", textAlign: "center" }}
                 />
@@ -1621,11 +1777,15 @@ const RevenueYearPage = () => {
         <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
           <h2 className="text-lg sm:text-xl font-bold mb-4">
             THỐNG KÊ TỪNG NHÂN VIÊN{" "}
-            {tempDates[0].isSame(tempDates[1], "day")
-              ? tempDates[0].format("DD/MM/YYYY") // Nếu start date và end date giống nhau, chỉ hiển thị một ngày
-              : `${tempDates[0].format("DD/MM/YYYY")} đến ${tempDates[1].format(
-                  "DD/MM/YYYY"
-                )}`}
+            {
+              tempDates && tempDates[0] && tempDates[1]
+                ? tempDates[0].isSame(tempDates[1], "day")
+                  ? tempDates[0].format("DD/MM/YYYY") // Nếu start date và end date giống nhau, chỉ hiển thị một ngày
+                  : `${tempDates[0].format(
+                      "DD/MM/YYYY"
+                    )} đến ${tempDates[1].format("DD/MM/YYYY")}`
+                : "TOÀN THỜI GIAN" // Trường hợp không có dữ liệu hoặc giá trị null
+            }
           </h2>
           <div className="flex flex-col sm:flex-row gap-4">
             {/* Biểu đồ đường lớn hơn */}
@@ -1703,8 +1863,9 @@ const RevenueYearPage = () => {
                                 className={stylesCard.buttonCard}
                                 onClick={() => {
                                   const employeeName = service.fullName;
-                                  const formattedDates = tempDates.map((date) =>
-                                    date.format("YYYY-MM-DD")
+                                  const formattedDates = tempDates?.map(
+                                    (date) =>
+                                      date ? date.format("YYYY-MM-DD") : ""
                                   );
                                   navigate(
                                     `/salon_appointment?appoinmentStatus=ALL&appoinmentEmployeeName=${employeeName}&startDate=${formattedDates[0]}&endDate=${formattedDates[1]}`
@@ -1737,9 +1898,196 @@ const RevenueYearPage = () => {
         className={`${styles.appointmentContainer} bg-customGray min-h-screen p-4 sm:p-8`}
       >
         <h1 className="text-2xl font-bold mb-3" style={{ textAlign: "center" }}>
+          Thống kê theo năm
+        </h1>
+        <div className="flex flex-col items-center mb-6">
+          <div className="flex flex-wrap justify-center items-center space-x-2 sm:space-x-4">
+            {/* Nút cuộn trái */}
+            <button
+              onClick={() => handleYearScroll("prev")}
+              className={`text-lg sm:text-xl font-bold p-2 ${
+                startIndex === 0 ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              disabled={startIndex === 0}
+            >
+              &lt;
+            </button>
+
+            {/* Danh sách các năm */}
+            <motion.div
+              className="flex flex-wrap justify-center items-center bg-customYellow px-2 py-1 sm:px-4 sm:py-2 rounded-full space-x-2 sm:space-x-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              {visibleYears.map((year) => (
+                <motion.div
+                  key={year}
+                  className={`text-base sm:text-xl font-bold px-2 sm:px-4 py-1 sm:py-2 cursor-pointer rounded-full transition-all ${
+                    activeYear === year
+                      ? "bg-customGold text-white"
+                      : "bg-transparent text-black"
+                  }`}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => handleYearClick(year)}
+                >
+                  {year}
+                </motion.div>
+              ))}
+            </motion.div>
+
+            {/* Nút cuộn phải */}
+            <button
+              onClick={() => handleYearScroll("next")}
+              className={`text-lg sm:text-xl font-bold p-2 ${
+                startIndex + 4 >= years.length
+                  ? "opacity-50 cursor-not-allowed"
+                  : ""
+              }`}
+              disabled={startIndex + 4 >= years.length}
+            >
+              &gt;
+            </button>
+          </div>
+        </div>
+
+        {/* Biểu đồ thống kê lịch hẹn */}
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md mb-4 sm:mb-6">
+          <h2 className="text-lg sm:text-xl font-bold mb-4">
+            THỐNG KÊ DOANH THU NĂM {activeYear}
+          </h2>
+          <Spin className="custom-spin" spinning={isLoading}>
+            <div className="flex flex-col sm:flex-row gap-4">
+              {/* Biểu đồ đường lớn hơn */}
+              <div className="w-full sm:w-2/3">
+                <div className="h-64 sm:h-80 lg:h-96">
+                  <Line
+                    data={lineData}
+                    options={{ maintainAspectRatio: false }}
+                  />
+                </div>
+              </div>
+
+              {/* Biểu đồ tròn */}
+              <div className="w-full sm:w-1/3">
+                <div className="h-64 sm:h-80">
+                  <Pie
+                    data={pieData}
+                    options={{ maintainAspectRatio: false }}
+                  />
+                </div>
+              </div>
+            </div>
+          </Spin>
+        </div>
+
+        {/* Biểu đồ thống kê doanh thu */}
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
+          <h2 className="text-lg sm:text-xl font-bold mb-4">
+            THỐNG KÊ LỊCH HẸN NĂM {activeYear}
+          </h2>
+          <Spin className="custom-spin" spinning={isLoading}>
+            <div className="flex flex-col sm:flex-row gap-4">
+              {/* Biểu đồ đường lớn hơn */}
+              <div className="w-full sm:w-2/3">
+                <div className="h-64 sm:h-80 lg:h-96">
+                  <Line
+                    data={lineDataAppointment}
+                    options={{ maintainAspectRatio: false }}
+                  />
+                </div>
+              </div>
+
+              {/* Biểu đồ tròn */}
+              <div className="w-full sm:w-1/3">
+                <div className="h-64 sm:h-80">
+                  <Pie
+                    data={pieDataAppointment}
+                    options={{ maintainAspectRatio: false }}
+                  />
+                </div>
+              </div>
+            </div>
+          </Spin>
+        </div>
+      </div>
+      <div
+        className={`${styles.appointmentContainer} bg-customGray min-h-screen p-4 sm:p-8`}
+      >
+        <h1 className="text-2xl font-bold mb-3" style={{ textAlign: "center" }}>
           Đánh giá
         </h1>
+        <div
+          className={classNames("my-custom-add", styles["table-fillter"])}
+          style={{ alignItems: "center", justifyContent: "center" }}
+        >
+          <Dropdown
+            overlay={dateMenuFeedback}
+            className="custom-dropdown-range-picker"
+          >
+            <Button>
+              {dateLabelFeedback}{" "}
+              {tempDatesFeedback && tempDatesFeedback[0] && tempDatesFeedback[1]
+                ? tempDatesFeedback[0].isSame(tempDatesFeedback[1], "day")
+                  ? tempDatesFeedback[0].format("DD/MM/YYYY") // Nếu start date và end date giống nhau, chỉ hiển thị một ngày
+                  : `${tempDatesFeedback[0].format(
+                      "DD/MM/YYYY"
+                    )} đến ${tempDatesFeedback[1].format("DD/MM/YYYY")}`
+                : ""}
+            </Button>
+          </Dropdown>
+        </div>
         {/* Biểu đồ thống kê lịch hẹn */}
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md mb-4 sm:mb-6">
+          <h2 className="text-lg sm:text-xl font-bold mb-4">
+            BẢNG ĐÁNH GIÁ NHÂN VIÊN{" "}
+            {
+              tempDates && tempDates[0] && tempDates[1]
+                ? tempDates[0].isSame(tempDates[1], "day")
+                  ? tempDates[0].format("DD/MM/YYYY") // Nếu start date và end date giống nhau, chỉ hiển thị một ngày
+                  : `${tempDates[0].format(
+                      "DD/MM/YYYY"
+                    )} đến ${tempDates[1].format("DD/MM/YYYY")}`
+                : "TOÀN THỜI GIAN" // Trường hợp không có dữ liệu hoặc giá trị null
+            }
+          </h2>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="w-full">
+              <Spin className="custom-spin" spinning={loadingFeedbackEmployee}>
+                <div className="h-64 sm:h-80">
+                  <Bar
+                    data={chartDataRatingEmloyee}
+                    options={horizontalRatingEmloyee}
+                  />
+                </div>
+              </Spin>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md mb-4 sm:mb-6">
+          <h2 className="text-lg sm:text-xl font-bold mb-4">
+            BẢNG ĐÁNH GIÁ DỊCH VỤ{" "}
+            {
+              tempDates && tempDates[0] && tempDates[1]
+                ? tempDates[0].isSame(tempDates[1], "day")
+                  ? tempDates[0].format("DD/MM/YYYY") // Nếu start date và end date giống nhau, chỉ hiển thị một ngày
+                  : `${tempDates[0].format(
+                      "DD/MM/YYYY"
+                    )} đến ${tempDates[1].format("DD/MM/YYYY")}`
+                : "TOÀN THỜI GIAN" // Trường hợp không có dữ liệu hoặc giá trị null
+            }
+          </h2>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="w-full">
+              <div className="h-64 sm:h-80">
+                <Bar
+                  data={chartDataRatingService}
+                  options={horizontalRatingService}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
         <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md mb-4 sm:mb-6">
           <h2 className="text-lg sm:text-xl font-bold mb-4">
             THỐNG KÊ ĐÁNH GIÁ TRÊN HỆ THỐNG
@@ -1951,123 +2299,6 @@ const RevenueYearPage = () => {
               />
             </div>
           </div>
-        </div>
-      </div>
-      <div
-        className={`${styles.appointmentContainer} bg-customGray min-h-screen p-4 sm:p-8`}
-      >
-        <h1 className="text-2xl font-bold mb-3" style={{ textAlign: "center" }}>
-          Thống kê theo năm
-        </h1>
-        <div className="flex flex-col items-center mb-6">
-          <div className="flex flex-wrap justify-center items-center space-x-2 sm:space-x-4">
-            {/* Nút cuộn trái */}
-            <button
-              onClick={() => handleYearScroll("prev")}
-              className={`text-lg sm:text-xl font-bold p-2 ${
-                startIndex === 0 ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-              disabled={startIndex === 0}
-            >
-              &lt;
-            </button>
-
-            {/* Danh sách các năm */}
-            <motion.div
-              className="flex flex-wrap justify-center items-center bg-customYellow px-2 py-1 sm:px-4 sm:py-2 rounded-full space-x-2 sm:space-x-6"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
-            >
-              {visibleYears.map((year) => (
-                <motion.div
-                  key={year}
-                  className={`text-base sm:text-xl font-bold px-2 sm:px-4 py-1 sm:py-2 cursor-pointer rounded-full transition-all ${
-                    activeYear === year
-                      ? "bg-customGold text-white"
-                      : "bg-transparent text-black"
-                  }`}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => handleYearClick(year)}
-                >
-                  {year}
-                </motion.div>
-              ))}
-            </motion.div>
-
-            {/* Nút cuộn phải */}
-            <button
-              onClick={() => handleYearScroll("next")}
-              className={`text-lg sm:text-xl font-bold p-2 ${
-                startIndex + 4 >= years.length
-                  ? "opacity-50 cursor-not-allowed"
-                  : ""
-              }`}
-              disabled={startIndex + 4 >= years.length}
-            >
-              &gt;
-            </button>
-          </div>
-        </div>
-
-        {/* Biểu đồ thống kê lịch hẹn */}
-        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md mb-4 sm:mb-6">
-          <h2 className="text-lg sm:text-xl font-bold mb-4">
-            THỐNG KÊ DOANH THU NĂM {activeYear}
-          </h2>
-          <Spin className="custom-spin" spinning={isLoading}>
-            <div className="flex flex-col sm:flex-row gap-4">
-              {/* Biểu đồ đường lớn hơn */}
-              <div className="w-full sm:w-2/3">
-                <div className="h-64 sm:h-80 lg:h-96">
-                  <Line
-                    data={lineData}
-                    options={{ maintainAspectRatio: false }}
-                  />
-                </div>
-              </div>
-
-              {/* Biểu đồ tròn */}
-              <div className="w-full sm:w-1/3">
-                <div className="h-64 sm:h-80">
-                  <Pie
-                    data={pieData}
-                    options={{ maintainAspectRatio: false }}
-                  />
-                </div>
-              </div>
-            </div>
-          </Spin>
-        </div>
-
-        {/* Biểu đồ thống kê doanh thu */}
-        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
-          <h2 className="text-lg sm:text-xl font-bold mb-4">
-            THỐNG KÊ LỊCH HẸN NĂM {activeYear}
-          </h2>
-          <Spin className="custom-spin" spinning={isLoading}>
-            <div className="flex flex-col sm:flex-row gap-4">
-              {/* Biểu đồ đường lớn hơn */}
-              <div className="w-full sm:w-2/3">
-                <div className="h-64 sm:h-80 lg:h-96">
-                  <Line
-                    data={lineDataAppointment}
-                    options={{ maintainAspectRatio: false }}
-                  />
-                </div>
-              </div>
-
-              {/* Biểu đồ tròn */}
-              <div className="w-full sm:w-1/3">
-                <div className="h-64 sm:h-80">
-                  <Pie
-                    data={pieDataAppointment}
-                    options={{ maintainAspectRatio: false }}
-                  />
-                </div>
-              </div>
-            </div>
-          </Spin>
         </div>
       </div>
     </>

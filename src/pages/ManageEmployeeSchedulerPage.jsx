@@ -308,6 +308,14 @@ const EmployeeScheduleCalendar = () => {
       setCurrentPage(page);
     }
   };
+  const statusDisplayNames = {
+    ALL: "Tất cả",
+    BOOKING: "Đang đặt",
+    CANCEL_BY_CUSTOMER: "Hủy bởi Khách",
+    FAILED: "Thất bại",
+    SUCCESSED: "Thành công",
+    OUT_SIDE: "Khách ngoài",
+  };
   const renderAppointmentDetail = () => {
     if (!dataAppoiment) return null;
 
@@ -445,6 +453,13 @@ const EmployeeScheduleCalendar = () => {
                 <Text strong>Mã đơn: </Text>
                 <Text style={{ color: "green" }} strong>
                   {dataAppoiment?.id}
+                </Text>
+              </p>
+              <p>
+                <Text strong>Loại đơn: </Text>
+                <Text style={{ color: "green" }} strong>
+                  {statusDisplayNames[dataAppoiment?.status] ||
+                    dataAppoiment?.status}
                 </Text>
               </p>
               <p>
