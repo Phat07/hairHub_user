@@ -47,13 +47,35 @@ const OverviewSalon = () => {
   const ownerId = useSelector((state) => state.ACCOUNT.idOwner);
   const [customer, setCustomer] = useState(null);
   const [dataAppointment, setDataAppointment] = useState([]);
+  const [pieData, setPieData] = useState({
+    labels: ["Không có dữ liệu"],
+    datasets: [
+      {
+        label: "Tỷ lệ lịch hẹn",
+        data: [100], // Giá trị mặc định
+        backgroundColor: ["#d3d3d3"], // Màu xám
+        hoverBackgroundColor: ["#d3d3d3"],
+      },
+    ],
+  });
+  const [pieDataCustomer, setPieDataCustomer] = useState({
+    labels: ["Không có dữ liệu"], // Nhãn mặc định
+    datasets: [
+      {
+        label: "Phân loại khách hàng",
+        data: [100], // Giá trị mặc định
+        backgroundColor: ["#d3d3d3"], // Màu xám
+        hoverBackgroundColor: ["#d3d3d3"], // Màu xám khi di chuột
+      },
+    ],
+  });
   // const [loadingAppointment, setLoadingAppointment] = useState(false);
   const [sortEmployee, setSortEmployee] = useState("Số lượng dịch vụ giảm dần");
   const [currentPageEmployee, setCurrentPageEmployee] = useState(1);
   const [pageSizeEmployee, setPageSizeEmployee] = useState(4);
   const [total, setTotal] = useState(1);
   const [dataEmployee, setDataEmplyee] = useState([]);
-  const [dataRevenue,setDataRevenue] = useState(null)
+  const [dataRevenue, setDataRevenue] = useState(null);
   const [chartDataService, setChartDataService] = useState({
     labels: [],
     datasets: [
@@ -110,6 +132,62 @@ const OverviewSalon = () => {
       },
     ],
   });
+  const [pieCharRevenue, setPieCharRevenue] = useState({
+    labels: ["Không có dữ liệu"], // Nhãn mặc định
+    datasets: [
+      {
+        data: [100], // Giá trị mặc định
+        backgroundColor: ["#d3d3d3"], // Màu xám
+        hoverBackgroundColor: ["#d3d3d3"], // Màu xám khi hover
+      },
+    ],
+  });
+
+  useEffect(() => {
+    if (dataRevenue) {
+      const outsideRevenue = dataRevenue?.outsideRevenue || 0;
+      const platformRevenue = dataRevenue?.platformRevenue || 0;
+
+      if (outsideRevenue > 0 || platformRevenue > 0) {
+        // Có dữ liệu hợp lệ
+        setPieCharRevenue({
+          labels: ["Doanh thu ngoài hệ thống", "Doanh thu trong hệ thống"],
+          datasets: [
+            {
+              data: [outsideRevenue, platformRevenue], // Dữ liệu thực tế
+              backgroundColor: ["#22C55E", "#8B5CF6"], // Màu sắc thực tế
+              hoverBackgroundColor: ["#16A34A", "#7C3AED"], // Màu hover thực tế
+            },
+          ],
+        });
+      } else {
+        // Không có dữ liệu (cả hai đều bằng 0)
+        setPieCharRevenue({
+          labels: ["Không có dữ liệu"],
+          datasets: [
+            {
+              data: [100], // Giá trị mặc định
+              backgroundColor: ["#d3d3d3"], // Màu xám
+              hoverBackgroundColor: ["#d3d3d3"], // Màu xám khi hover
+            },
+          ],
+        });
+      }
+    } else {
+      // Trường hợp `dataRevenue` không tồn tại
+      setPieCharRevenue({
+        labels: ["Không có dữ liệu"],
+        datasets: [
+          {
+            data: [100], // Giá trị mặc định
+            backgroundColor: ["#d3d3d3"], // Màu xám
+            hoverBackgroundColor: ["#d3d3d3"], // Màu xám khi hover
+          },
+        ],
+      });
+    }
+  }, [dataRevenue]);
+
   const salonInformationByOwnerId = useSelector(
     (state) => state.SALONAPPOINTMENTS.salonInformationByOwnerId
   );
@@ -135,6 +213,36 @@ const OverviewSalon = () => {
       )
         .then((response) => {
           const data = response.data;
+          console.log("data", data);
+          const oldPercent = data?.customerDate?.oldCustomerPercent || 0;
+          const newPercent = data?.customerDate?.newCustomerPercent || 0;
+          if (oldPercent > 0 || newPercent > 0) {
+            // Có dữ liệu
+            setPieDataCustomer({
+              labels: ["Khách hàng cũ", "Khách hàng mới"],
+              datasets: [
+                {
+                  label: "Phân loại khách hàng",
+                  data: [oldPercent, newPercent], // Sử dụng dữ liệu thực
+                  backgroundColor: ["#36A2EB", "#FF6384"], // Màu sắc thực
+                  hoverBackgroundColor: ["#5AD3D1", "#FF9AA2"], // Màu sắc khi di chuột
+                },
+              ],
+            });
+          } else {
+            // Không có dữ liệu (cả hai giá trị đều bằng 0)
+            setPieDataCustomer({
+              labels: ["Không có dữ liệu"],
+              datasets: [
+                {
+                  label: "Phân loại khách hàng",
+                  data: [100], // Giá trị mặc định
+                  backgroundColor: ["#d3d3d3"], // Màu xám
+                  hoverBackgroundColor: ["#d3d3d3"], // Màu xám khi di chuột
+                },
+              ],
+            });
+          }
           setCustomer(data?.customerDate);
           // Transform the API response into chart data
           const labels = data.charCustomer.map((entry) => `${entry.time} giờ`);
@@ -183,6 +291,34 @@ const OverviewSalon = () => {
         .then((response) => {
           const data = response.data;
 
+          const outsideRevenue = data?.outsideRevenue || 0;
+          const platformRevenue = data?.platformRevenue || 0;
+          if (outsideRevenue > 0 || platformRevenue > 0) {
+            // Có dữ liệu hợp lệ
+            setPieCharRevenue({
+              labels: ["Doanh thu ngoài hệ thống", "Doanh thu trong hệ thống"],
+              datasets: [
+                {
+                  data: [outsideRevenue, platformRevenue], // Dữ liệu thực tế
+                  backgroundColor: ["#22C55E", "#8B5CF6"], // Màu sắc thực tế
+                  hoverBackgroundColor: ["#16A34A", "#7C3AED"], // Màu hover thực tế
+                },
+              ],
+            });
+          } else {
+            // Không có dữ liệu (cả hai đều bằng 0)
+            setPieCharRevenue({
+              labels: ["Không có dữ liệu"],
+              datasets: [
+                {
+                  data: [100], // Giá trị mặc định
+                  backgroundColor: ["#d3d3d3"], // Màu xám
+                  hoverBackgroundColor: ["#d3d3d3"], // Màu xám khi hover
+                },
+              ],
+            });
+          }
+
           // Process the API response
           const labels = data.hourlyOutSideRevenues.map(
             (item) => `${item.hour}h`
@@ -224,7 +360,7 @@ const OverviewSalon = () => {
               },
             ],
           });
-          setDataRevenue(data)
+          setDataRevenue(data);
         })
         .catch((error) => {
           console.error("Error fetching revenue data:", error);
@@ -239,13 +375,75 @@ const OverviewSalon = () => {
         `/saloninformations/CompileAppointmentSalon/${salonInformationByOwnerId.id}`,
         {
           params: {
-            date: formattedDate,
+            startDate: formattedDate,
+            endDate: formattedDate,
           },
         }
       )
         .then((response) => {
           const data = response.data;
-          setDataAppointment(data);
+          console.log("Data fetched:", data);
+
+          // Kiểm tra dữ liệu nhận về
+          if (data && data.length > 0) {
+            const totalPercent = data.reduce(
+              (sum, item) => sum + item.percent,
+              0
+            );
+
+            if (totalPercent > 0) {
+              // Có dữ liệu hợp lệ
+              setPieData({
+                labels: data.map((item) => item.appointmentType),
+                datasets: [
+                  {
+                    label: "Tỷ lệ lịch hẹn",
+                    data: data.map((item) => item.percent),
+                    backgroundColor: [
+                      "#FF6384",
+                      "#36A2EB",
+                      "#4BC0C0",
+                      "#FFCE56",
+                    ],
+                    hoverBackgroundColor: [
+                      "#FF6384",
+                      "#36A2EB",
+                      "#4BC0C0",
+                      "#FFCE56",
+                    ],
+                  },
+                ],
+              });
+            } else {
+              // Tất cả giá trị percent đều bằng 0
+              setPieData({
+                labels: ["Không có dữ liệu"],
+                datasets: [
+                  {
+                    label: "Tỷ lệ lịch hẹn",
+                    data: [100], // Giá trị mặc định
+                    backgroundColor: ["#d3d3d3"], // Màu xám
+                    hoverBackgroundColor: ["#d3d3d3"],
+                  },
+                ],
+              });
+            }
+          } else {
+            // Mảng rỗng hoặc không có dữ liệu
+            setPieData({
+              labels: ["Không có dữ liệu"],
+              datasets: [
+                {
+                  label: "Tỷ lệ lịch hẹn",
+                  data: [100], // Giá trị mặc định
+                  backgroundColor: ["#d3d3d3"], // Màu xám
+                  hoverBackgroundColor: ["#d3d3d3"],
+                },
+              ],
+            });
+          }
+
+          setDataAppointment(data); // Lưu lại dữ liệu gốc
         })
         .catch((error) => {
           console.error("Error fetching customer data:", error);
@@ -272,7 +470,7 @@ const OverviewSalon = () => {
         .then((response) => {
           const data = response.data.evaluatedServices || [];
           console.log("Data from server:", data);
-  
+
           // Chuyển đổi dữ liệu cho biểu đồ
           if (data.length > 0) {
             const labels = data.map((item) => item.serviceName);
@@ -349,28 +547,28 @@ const OverviewSalon = () => {
       currency: "VND",
     }).format(value);
   };
-  const pieDataCustomer = {
-    labels: ["Khách hàng cũ", "Khách hàng mới"], // Nhãn cho các phần trong biểu đồ
-    datasets: [
-      {
-        label: "Phân loại khách hàng", // Nhãn chung cho dữ liệu
-        data: [customer?.oldCustomerPercent, customer?.newCustomerPercent], // Giá trị tương ứng với từng nhãn
-        backgroundColor: ["#36A2EB", "#FF6384"], // Màu sắc cho mỗi phần của biểu đồ
-        hoverBackgroundColor: ["#5AD3D1", "#FF9AA2"], // Màu sắc khi di chuột qua
-      },
-    ],
-  };
+  // const pieDataCustomer = {
+  //   labels: ["Khách hàng cũ", "Khách hàng mới"], // Nhãn cho các phần trong biểu đồ
+  //   datasets: [
+  //     {
+  //       label: "Phân loại khách hàng", // Nhãn chung cho dữ liệu
+  //       data: [customer?.oldCustomerPercent, customer?.newCustomerPercent], // Giá trị tương ứng với từng nhãn
+  //       backgroundColor: ["#36A2EB", "#FF6384"], // Màu sắc cho mỗi phần của biểu đồ
+  //       hoverBackgroundColor: ["#5AD3D1", "#FF9AA2"], // Màu sắc khi di chuột qua
+  //     },
+  //   ],
+  // };
 
-  const pieCharRevenue = {
-    labels: ["Doanh thu ngoài hệ thống", "Doanh thu trong hệ thống"], // Nhãn
-    datasets: [
-      {
-        data: [dataRevenue?.outsideRevenue, dataRevenue?.platformRevenue], // Giá trị tương ứng
-        backgroundColor: ["#22C55E", "#8B5CF6"], // Màu sắc
-        hoverBackgroundColor: ["#16A34A", "#7C3AED"], // Màu khi hover
-      },
-    ],
-  };
+  // const pieCharRevenue = {
+  //   labels: ["Doanh thu ngoài hệ thống", "Doanh thu trong hệ thống"], // Nhãn
+  //   datasets: [
+  //     {
+  //       data: [dataRevenue?.outsideRevenue, dataRevenue?.platformRevenue], // Giá trị tương ứng
+  //       backgroundColor: ["#22C55E", "#8B5CF6"], // Màu sắc
+  //       hoverBackgroundColor: ["#16A34A", "#7C3AED"], // Màu khi hover
+  //     },
+  //   ],
+  // };
 
   const appointmentTypeMapping = {
     "Lịch hẹn bị hủy": "CANCEL_BY_CUSTOMER",
@@ -428,32 +626,32 @@ const OverviewSalon = () => {
     },
   ];
 
-  const pieDataAppointmentRange = {
-    labels: [
-      "Lịch hẹn ngoài hệ thống",
-      "Lịch hẹn thành công",
-      "Lịch hẹn bị hủy",
-      "Lịch hẹn thất bại",
-    ],
-    datasets: [
-      {
-        label: "Tỷ lệ lịch hẹn",
-        data: [
-          dataAppointment[0]?.percent,
-          dataAppointment[1]?.percent,
-          dataAppointment[3]?.percent,
-          dataAppointment[2]?.percent,
-        ], // Số lượng lịch hẹn từ dataAppointment
-        backgroundColor: [
-          "#FF6384", // Màu cho Lịch hẹn ngoài hệ thống
-          "#36A2EB", // Màu cho Lịch hẹn trong hệ thống
-          "#FFCE56", // Màu cho Lịch hẹn bị hủy
-          "#4BC0C0", // Màu cho Lịch hẹn thất bại
-        ],
-        hoverBackgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0"],
-      },
-    ],
-  };
+  // const pieDataAppointmentRange = {
+  //   labels: [
+  //     "Lịch hẹn ngoài hệ thống",
+  //     "Lịch hẹn thành công",
+  //     "Lịch hẹn bị hủy",
+  //     "Lịch hẹn thất bại",
+  //   ],
+  //   datasets: [
+  //     {
+  //       label: "Tỷ lệ lịch hẹn",
+  //       data: [
+  //         dataAppointment[0]?.percent,
+  //         dataAppointment[1]?.percent,
+  //         dataAppointment[3]?.percent,
+  //         dataAppointment[2]?.percent,
+  //       ], // Số lượng lịch hẹn từ dataAppointment
+  //       backgroundColor: [
+  //         "#FF6384", // Màu cho Lịch hẹn ngoài hệ thống
+  //         "#36A2EB", // Màu cho Lịch hẹn trong hệ thống
+  //         "#FFCE56", // Màu cho Lịch hẹn bị hủy
+  //         "#4BC0C0", // Màu cho Lịch hẹn thất bại
+  //       ],
+  //       hoverBackgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0"],
+  //     },
+  //   ],
+  // };
 
   const horizontalBarChartService = {
     labels: ["Cắt tóc", "Gội đầu", "Uốn tóc", "Nhuộm tóc", "Massage"],
@@ -524,11 +722,12 @@ const OverviewSalon = () => {
           className={stylesCard.buttonCard}
           onClick={() => {
             const employeeName = record.fullName;
-            const formattedDates = tempDates.map((date) =>
-              date.format("YYYY-MM-DD")
-            );
+            // const formattedDates = tempDates?.map((date) =>
+            //   date.format("YYYY-MM-DD")
+            // );
+            const formattedDate = tempDates?.format("YYYY-MM-DD");
             navigate(
-              `/salon_appointment?appoinmentStatus=ALL&appoinmentEmployeeName=${employeeName}&startDate=${formattedDates[0]}&endDate=${formattedDates[1]}`
+              `/salon_appointment?appoinmentStatus=ALL&appoinmentEmployeeName=${employeeName}&startDate=${formattedDate}&endDate=${formattedDate}`
             );
           }}
         >
@@ -537,6 +736,8 @@ const OverviewSalon = () => {
       ),
     },
   ];
+  console.log("date", tempDates);
+
   const onPageChangeEmployee = (page) => {
     setCurrentPageEmployee(page);
   };
@@ -807,10 +1008,7 @@ const OverviewSalon = () => {
             </div>
             <div className="w-full sm:w-1/3">
               <div className="h-64 sm:h-80">
-                <Pie
-                  data={pieDataAppointmentRange}
-                  options={{ maintainAspectRatio: false }}
-                />
+                <Pie data={pieData} options={{ maintainAspectRatio: false }} />
               </div>
             </div>
           </div>
