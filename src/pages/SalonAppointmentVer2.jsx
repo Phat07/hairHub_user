@@ -429,11 +429,11 @@ function SalonAppointmentVer2(props) {
               padding: "10px",
               paddingBottom: "50px",
             }}
-            onClick={() =>
-              navigate(
-                `/salon_detail/${currentAppointment?.salonInformation.id}`
-              )
-            }
+            // onClick={() =>
+            //   navigate(
+            //     `/salon_detail/${currentAppointment?.salonInformation.id}`
+            //   )
+            // }
           >
             <Text strong style={{ fontSize: "16px" }}>
               Thông tin Khách hàng
