@@ -1,43 +1,20 @@
-import { Bar, Line, Pie } from "react-chartjs-2";
-import { motion } from "framer-motion";
-import styles from "../css/reviewAppointment.module.css";
-import stylesCard from "../css/customerAppointment.module.css";
-import style from "../css/salonDetail.module.css";
-import stylesFillter from "../css/listShopBarber.module.css";
-import "../css/revenue.css";
-import { useEffect, useState } from "react";
-import classNames from "classnames";
+import { API } from "@/services/api";
+import { actGetSalonInformationByOwnerIdAsync } from "@/store/salonAppointments/action";
 import {
-  Avatar,
   Button,
   DatePicker,
-  Dropdown,
-  Image,
-  Input,
-  List,
-  Menu,
-  message,
   Pagination,
   Spin,
-  Table,
-  Tag,
+  Table
 } from "antd";
 import dayjs from "dayjs";
-import {
-  BorderOutlined,
-  CheckCircleOutlined,
-  CheckSquareOutlined,
-  CloseCircleOutlined,
-  DeleteOutlined,
-  DownOutlined,
-  SearchOutlined,
-  StarFilled,
-} from "@ant-design/icons";
+import { useEffect, useState } from "react";
+import { Bar, Line, Pie } from "react-chartjs-2";
 import { useDispatch, useSelector } from "react-redux";
-import { actGetSalonInformationByOwnerIdAsync } from "@/store/salonAppointments/action";
-import { API } from "@/services/api";
 import { useNavigate } from "react-router-dom";
-import { actGetFeedbackFromSalonOwner } from "@/store/ratingCutomer/action";
+import stylesCard from "../css/customerAppointment.module.css";
+import "../css/revenue.css";
+import styles from "../css/reviewAppointment.module.css";
 const OverviewSalon = () => {
   const navigate = useNavigate();
   const { RangePicker } = DatePicker;
@@ -213,7 +190,6 @@ const OverviewSalon = () => {
       )
         .then((response) => {
           const data = response.data;
-          console.log("data", data);
           const oldPercent = data?.customerDate?.oldCustomerPercent || 0;
           const newPercent = data?.customerDate?.newCustomerPercent || 0;
           if (oldPercent > 0 || newPercent > 0) {
@@ -469,8 +445,6 @@ const OverviewSalon = () => {
       )
         .then((response) => {
           const data = response.data.evaluatedServices || [];
-          console.log("Data from server:", data);
-
           // Chuyển đổi dữ liệu cho biểu đồ
           if (data.length > 0) {
             const labels = data.map((item) => item.serviceName);
@@ -675,6 +649,12 @@ const OverviewSalon = () => {
           text: "Số người phục vụ",
         },
         beginAtZero: true, // Bắt đầu từ 0
+        ticks: {
+          stepSize: 1, // Đặt khoảng cách giữa các nhãn
+          callback: function (value) {
+            return value; // Hiển thị giá trị đúng
+          },
+        },
       },
       y: {
         title: {
@@ -736,7 +716,6 @@ const OverviewSalon = () => {
       ),
     },
   ];
-  console.log("date", tempDates);
 
   const onPageChangeEmployee = (page) => {
     setCurrentPageEmployee(page);
@@ -827,7 +806,14 @@ const OverviewSalon = () => {
                 <div className="h-64 sm:h-50">
                   <Pie
                     data={pieDataCustomer}
-                    options={{ maintainAspectRatio: false }}
+                    options={{
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: {
+                          position: "left", // Đặt vị trí của legend bên trái
+                        },
+                      },
+                    }}
                   />
                 </div>
               </div>
@@ -855,6 +841,12 @@ const OverviewSalon = () => {
                             text: "Số người phục vụ", // Nhãn trục hoành
                           },
                           beginAtZero: true, // Bắt đầu từ 0
+                          ticks: {
+                            stepSize: 1, // Đặt khoảng cách giữa các nhãn
+                            callback: function (value) {
+                              return value; // Hiển thị giá trị đúng
+                            },
+                          },
                         },
                         y: {
                           title: {
@@ -898,7 +890,7 @@ const OverviewSalon = () => {
                         y: {
                           title: {
                             display: true,
-                            text: "Doanh thu (Triệu đồng)", // Nhãn trục y
+                            text: "Doanh thu (ngàn đồng)", // Nhãn trục y
                           },
                           beginAtZero: true, // Bắt đầu từ 0
                         },
@@ -920,11 +912,11 @@ const OverviewSalon = () => {
                     data={pieCharRevenue}
                     options={{
                       maintainAspectRatio: false,
-                      //   plugins: {
-                      //     legend: {
-                      //       display: false,
-                      //     },
-                      //   },
+                      plugins: {
+                        legend: {
+                          position: "left", // Đặt vị trí của legend bên trái
+                        },
+                      },
                     }}
                   />
                 </div>
@@ -1008,7 +1000,18 @@ const OverviewSalon = () => {
             </div>
             <div className="w-full sm:w-1/3">
               <div className="h-64 sm:h-80">
-                <Pie data={pieData} options={{ maintainAspectRatio: false }} />
+                {/* <Pie data={pieData} options={{ maintainAspectRatio: false }} /> */}
+                <Pie
+                  data={pieData}
+                  options={{
+                    maintainAspectRatio: false,
+                    plugins: {
+                      legend: {
+                        position: "left", // Đặt vị trí của legend bên trái
+                      },
+                    },
+                  }}
+                />
               </div>
             </div>
           </div>
