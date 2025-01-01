@@ -108,8 +108,10 @@ function SalonAppointmentVer2(props) {
       });
     } else {
       setDateFilter({
-        startDay: dayjs().subtract(7, "day").format("YYYY-MM-DD"),
-        endDay: dayjs().format("YYYY-MM-DD"),
+        // startDay: dayjs().subtract(7, "day").format("YYYY-MM-DD"),
+        // endDay: dayjs().format("YYYY-MM-DD"),
+        startDay: "",
+        endDay: "",
       });
     }
     if (appoinmentStatus) {
@@ -197,6 +199,25 @@ function SalonAppointmentVer2(props) {
     nameFilterEmployee,
     nameFilterService,
   ]);
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "BOOKING":
+        return "#1677ff"; // Màu cho trạng thái BOOKING
+      case "CANCEL_BY_CUSTOMER":
+        return "#faa500"; // Màu cho trạng thái CANCEL_BY_CUSTOMER
+      case "FAILED":
+        return "#ff0000"; // Màu cho trạng thái FAILED
+      case "SUCCESSED":
+        return "#389e0d"; // Màu cho trạng thái SUCCESSED
+      case "OUT_SIDE":
+        return "plum"; // Màu cho trạng thái OUT_SIDE
+      case "ALL":
+        return "#BF9456"; // Màu cho trạng thái ALL
+      default:
+        return "gray"; // Màu mặc định
+    }
+  };
 
   const statusDisplayNames = {
     ALL: "Tất cả",
@@ -408,11 +429,11 @@ function SalonAppointmentVer2(props) {
               padding: "10px",
               paddingBottom: "50px",
             }}
-            onClick={() =>
-              navigate(
-                `/salon_detail/${currentAppointment?.salonInformation.id}`
-              )
-            }
+            // onClick={() =>
+            //   navigate(
+            //     `/salon_detail/${currentAppointment?.salonInformation.id}`
+            //   )
+            // }
           >
             <Text strong style={{ fontSize: "16px" }}>
               Thông tin Khách hàng
@@ -736,6 +757,19 @@ function SalonAppointmentVer2(props) {
       },
     },
     {
+      title: "Trạng thái",
+      dataIndex: "status",
+      key: "status",
+      render: (text, record) => {
+        const statusColor = getStatusColor(record?.status); // Lấy màu chữ
+        return (
+          <span style={{ color: statusColor, fontWeight: "bold" }}>
+            {statusDisplayNames[record?.status] || record?.status}
+          </span>
+        );
+      },
+    },
+    {
       title: "Tổng tiền",
       dataIndex: "totalPrice",
       key: "totalPrice",
@@ -989,7 +1023,7 @@ function SalonAppointmentVer2(props) {
               const isReportButtonVisible =
                 isSameDay && currentTime.isSameOrAfter(startTime);
               const isReportExpired = hoursDiff >= 72;
-
+              const statusColor = getStatusColor(appointment?.status);
               return (
                 <div key={appointment.id} className={stylesCard.card}>
                   <img
@@ -1005,6 +1039,9 @@ function SalonAppointmentVer2(props) {
                         fontWeight: "bold",
                         color: "#bf9456",
                         textAlign: "center",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
                       }}
                     >
                       {appointment.customer.fullName}
@@ -1012,7 +1049,6 @@ function SalonAppointmentVer2(props) {
                   </h4>
 
                   <h4>
-                    Phương thức thanh toán:{" "}
                     {appointment?.paymentMethod === "PAYBYWALLET"
                       ? "Thanh toán qua ví"
                       : appointment?.paymentMethod === "PAYINSALON"
@@ -1021,7 +1057,11 @@ function SalonAppointmentVer2(props) {
                       ? "Thanh toán qua ngân hàng"
                       : appointment?.paymentMethod}
                   </h4>
-
+                  <h>Trạng thái đơn:</h>
+                  <h4 style={{ color: statusColor }}>
+                    {statusDisplayNames[appointment?.status] ||
+                      appointment?.status}
+                  </h4>
                   <h4>Ngày bắt đầu: {formatDate(startTime)}</h4>
                   <h4>
                     Giá tiền: {appointment.totalPrice.toLocaleString()} VND

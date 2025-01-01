@@ -10,6 +10,7 @@ import {
   Button,
   Card,
   Image,
+  message,
   Modal,
   Pagination,
   Spin,
@@ -27,7 +28,7 @@ import { Typography } from "antd";
 import "react-calendar/dist/Calendar.css";
 import { AppointmentService } from "@/services/appointmentServices";
 import { formatCurrency } from "@/components/formatCheckValue/formatCurrency";
-import { PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import AddAppointmentOutsite from "@/components/AddApointmentOutside/AddAppointmentOutsite";
 import { actGetEmployeesWorkSchedule } from "@/store/salonEmployees/action";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh";
@@ -308,6 +309,14 @@ const EmployeeScheduleCalendar = () => {
       setCurrentPage(page);
     }
   };
+  const statusDisplayNames = {
+    ALL: "Tất cả",
+    BOOKING: "Đang đặt",
+    CANCEL_BY_CUSTOMER: "Hủy bởi Khách",
+    FAILED: "Thất bại",
+    SUCCESSED: "Thành công",
+    OUT_SIDE: "Khách ngoài",
+  };
   const renderAppointmentDetail = () => {
     if (!dataAppoiment) return null;
 
@@ -448,6 +457,13 @@ const EmployeeScheduleCalendar = () => {
                 </Text>
               </p>
               <p>
+                <Text strong>Loại đơn: </Text>
+                <Text style={{ color: "green" }} strong>
+                  {statusDisplayNames[dataAppoiment?.status] ||
+                    dataAppoiment?.status}
+                </Text>
+              </p>
+              <p>
                 <Text strong>Khách Hàng: </Text>
                 <Text>{dataAppoiment?.customer.fullName}</Text>
               </p>
@@ -543,6 +559,32 @@ const EmployeeScheduleCalendar = () => {
         }),
     },
   ];
+
+  const handleCancelAppointment = async (id) => {
+    try {
+      setIsLoading(true);
+      setLoading(true);
+      const res = await AppointmentService.CancelOutSideAppointment(id);
+      if (res.status === 200) {
+        setIsModalVisible(false);
+        await dispatch(
+          actGetEmployeesWorkSchedule(
+            salonInformationByOwnerId?.id,
+            moment(selectedDate).format("YYYY-MM-DD")
+          )
+        );
+      } else {
+        message.warning("Lỗi trong quá trình xóa lịch hẹn ngoài");
+      }
+      // console.log("notpAging", dataId);
+    } catch (err) {
+      console.error("Lỗi xảy ra trong quá trình xóa lịch hẹn ngoài:", err);
+      message.error("Có lỗi xảy ra trong quá trình xóa lịch hẹn ngoài!");
+    } finally {
+      setIsLoading(false);
+      setLoading(false);
+    }
+  };
 
   return (
     <div className={styles.appointmentContainer}>
@@ -742,7 +784,34 @@ const EmployeeScheduleCalendar = () => {
         }
         visible={isModalVisible}
         onCancel={handleModalClose}
-        footer={null}
+        footer={
+          dataAppoiment && dataAppoiment.status === "OUT_SIDE"
+            ? [
+                <Button
+                  key="cancel"
+                  disabled={dataAppoiment.status != "OUT_SIDE"}
+                  className="deleteButtonStyle"
+                  icon={<DeleteOutlined />}
+                  danger
+                  // onClick={() => handleCancelAppointment(dataAppoiment?.id)}
+                  onClick={() => {
+                    Modal.confirm({
+                      title: "Bạn muốn xóa lịch hẹn ngoài này chứ?",
+                      content:
+                        "Dữ liệu lịch hẹn bạn xóa sẽ không thể khôi phục.",
+                      okText: "Đồng ý xóa",
+                      cancelText: "Hủy",
+                      onOk: () => {
+                        handleCancelAppointment(dataAppoiment?.id);
+                      },
+                    });
+                  }}
+                >
+                  Xóa lịch hẹn ngoài
+                </Button>,
+              ]
+            : null
+        }
         width={1100}
         loading={loading}
       >

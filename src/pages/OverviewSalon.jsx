@@ -586,11 +586,9 @@ const OverviewSalon = () => {
           className={stylesCard.buttonCard}
           onClick={() => {
             const status = appointmentTypeMapping[record.appointmentType];
-            const formattedDates = tempDates.map((date) =>
-              date.format("YYYY-MM-DD")
-            );
+            const formattedDates = tempDates.format("YYYY-MM-DD");
             navigate(
-              `/salon_appointment?appoinmentStatus=${status}&startDate=${formattedDates[0]}&endDate=${formattedDates[1]}`
+              `/salon_appointment?appoinmentStatus=${status}&startDate=${formattedDates}&endDate=${formattedDates}`
             );
           }}
         >
@@ -986,7 +984,20 @@ const OverviewSalon = () => {
                               Doanh Thu: {formatCurrency(service.revenue)}
                             </h4>
                             <h4>
-                              <button className={stylesCard.buttonCard}>
+                              <button
+                                className={stylesCard.buttonCard}
+                                onClick={() => {
+                                  const status =
+                                    appointmentTypeMapping[
+                                      service.appointmentType
+                                    ];
+                                  const formattedDates =
+                                    tempDates.format("YYYY-MM-DD");
+                                  navigate(
+                                    `/salon_appointment?appoinmentStatus=${status}&startDate=${formattedDates}&endDate=${formattedDates}`
+                                  );
+                                }}
+                              >
                                 Chi tiết
                               </button>
                             </h4>
@@ -1099,11 +1110,10 @@ const OverviewSalon = () => {
                                 className={stylesCard.buttonCard}
                                 onClick={() => {
                                   const employeeName = service.fullName;
-                                  const formattedDates = tempDates.map((date) =>
-                                    date.format("YYYY-MM-DD")
-                                  );
+                                  const formattedDate =
+                                    tempDates?.format("YYYY-MM-DD");
                                   navigate(
-                                    `/salon_appointment?appoinmentStatus=ALL&appoinmentEmployeeName=${employeeName}&startDate=${formattedDates[0]}&endDate=${formattedDates[1]}`
+                                    `/salon_appointment?appoinmentStatus=ALL&appoinmentEmployeeName=${employeeName}&startDate=${formattedDate}&endDate=${formattedDate}`
                                   );
                                 }}
                               >

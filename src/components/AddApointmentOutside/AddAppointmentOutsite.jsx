@@ -808,8 +808,10 @@ const AddAppointmentOutsite = ({ visible, onCancel }) => {
         message.error("Có lỗi xảy ra khi dăt lịch!");
       }
     } catch (err) {
-      console.error("Lỗi xảy ra khi dăt lịch:", err);
-      message.error("Có lỗi xảy ra khi dăt lịch!");
+      const errorMessage =
+        err.response?.data?.message || "Có lỗi xảy ra khi đặt lịch!";
+      console.error("Lỗi xảy ra khi đặt lịch:", errorMessage);
+      message.error(errorMessage);
     } finally {
       setLoadingCheck(false);
     }

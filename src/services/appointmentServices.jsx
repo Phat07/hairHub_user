@@ -119,4 +119,7 @@ export const AppointmentService = {
   CreateAppointmentOutSide(data) {
     return API.post("/appointments/CreateAppointmentOutSide", data);
   },
+  CancelOutSideAppointment(id) {
+    return API.put(`/appointments/CancelOutSideAppointment/${id}`);
+  },
 };
