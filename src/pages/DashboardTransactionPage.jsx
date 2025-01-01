@@ -19,6 +19,7 @@ import { actGetSalonInformationByOwnerIdAsync } from "../store/salonAppointments
 import { actGetAppointmentTransaction } from "../store/salonTransaction/action";
 import moment from "moment";
 import { actGetAllPaymentList } from "@/store/config/action";
+import dayjs from "dayjs";
 const { RangePicker } = DatePicker;
 
 ChartJS.register(
@@ -53,8 +54,8 @@ function DashboardTransactionPage(props) {
     (state) => state.SALONTRANSACTION.getSalonTransaction
   );
 
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+  const [startDate, setStartDate] = useState(dayjs().startOf("month"));
+  const [endDate, setEndDate] = useState(dayjs());
   const [currentPage, setCurrentPage] = useState(1);
   const [currentPage2, setCurrentPage2] = useState(1);
   const pageSize = 5;
@@ -231,13 +232,14 @@ function DashboardTransactionPage(props) {
       commissionRate: transaction.commissionRate,
     }));
 
-  const handleDateRangeChange = (dates) => {
+  const handleDateRangeChange = (dates, dateStrings) => {
+    const [startDay, endDay] = dateStrings;
     if (dates) {
-      setStartDate(dates[0]);
-      setEndDate(dates[1]);
+      setStartDate(startDay);
+      setEndDate(endDay);
     } else {
-      setStartDate(null);
-      setEndDate(null);
+      setStartDate(dayjs().startOf("month"));
+      setEndDate(dayjs());
     }
   };
 
@@ -246,13 +248,26 @@ function DashboardTransactionPage(props) {
   return (
     <div className="dashboard-container">
       <div
+        className="datePickerCustome"
         style={{
           marginBottom: "2rem",
           display: "flex",
           justifyContent: "center",
         }}
       >
-        <RangePicker onChange={handleDateRangeChange} />
+        <RangePicker
+          onChange={handleDateRangeChange}
+          placeholder={["Ngày bắt đầu", "Ngày kết thúc"]}
+          value={
+            startDate && endDate
+              ? [
+                  dayjs(startDate).isValid() ? dayjs(startDate) : null,
+                  dayjs(endDate).isValid() ? dayjs(endDate) : null,
+                ]
+              : null
+          }
+          dropdownClassName="custom-dropdown-range-picker"
+        />
       </div>
       <div
         style={{

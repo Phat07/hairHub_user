@@ -1,5 +1,6 @@
 import {
   BellOutlined,
+  ContainerOutlined,
   CreditCardOutlined,
   LogoutOutlined,
   QrcodeOutlined,
@@ -208,7 +209,13 @@ function Header(props) {
           </Link>
         </Menu.Item>
       )}
-
+      {idOwner && (
+        <Menu.Item key="dashboardTransaction">
+          <Link to="/dashboardTransaction">
+            <ContainerOutlined /> Phí hoa hồng hằng tháng
+          </Link>
+        </Menu.Item>
+      )}
       <Menu.Divider />
 
       <Menu.Item key="logout" onClick={handleSignOut}>
