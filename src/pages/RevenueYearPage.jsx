@@ -316,13 +316,14 @@ const RevenueYearPage = () => {
     ) {
       setLoadingCustomer(true);
       const fillter = fillterCustomer === "ALL" ? null : fillterCustomer;
-      const compileServicetUrl = `/appointments/FrequentlyCustomers/${salonInformationByOwnerId.id}`;
+      const compileServicetUrl = `/appointments/FrequentlyCustomers`;
       const formattedDates = tempDates?.map((date) =>
         date && date.$d ? dayjs(date.$d).format("YYYY-MM-DD") : null
       );
       fetchData(
         compileServicetUrl,
         {
+          salonId: salonInformationByOwnerId.id,
           startDate: formattedDates[0],
           endDate: formattedDates[1],
           filter: sortCustomer,
