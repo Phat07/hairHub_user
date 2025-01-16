@@ -1,12 +1,6 @@
 import { API } from "@/services/api";
 import { actGetSalonInformationByOwnerIdAsync } from "@/store/salonAppointments/action";
-import {
-  Button,
-  DatePicker,
-  Pagination,
-  Spin,
-  Table
-} from "antd";
+import { Button, DatePicker, Pagination, Spin, Table } from "antd";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { Bar, Line, Pie } from "react-chartjs-2";
@@ -818,53 +812,6 @@ const OverviewSalon = () => {
             </div>
           </Spin>
         </div>
-        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md mb-4 sm:mb-6">
-          <h2 className="text-lg sm:text-xl font-bold mb-4">
-            LƯỢNG KHÁCH NGÀY {tempDates?.format("DD/MM/YYYY")}
-          </h2>
-          <Spin className="custom-spin" spinning={loading}>
-            <div className="flex flex-col sm:flex-row gap-4">
-              {/* Biểu đồ đường lớn hơn */}
-              <div className="w-full">
-                <div className="h-64 sm:h-80 lg:h-96">
-                  <Bar
-                    data={horizontalBarData}
-                    options={{
-                      indexAxis: "y", // Đảo trục để biểu đồ trở thành cột ngang
-                      maintainAspectRatio: false,
-                      scales: {
-                        x: {
-                          title: {
-                            display: true,
-                            text: "Số người phục vụ", // Nhãn trục hoành
-                          },
-                          beginAtZero: true, // Bắt đầu từ 0
-                          ticks: {
-                            stepSize: 1, // Đặt khoảng cách giữa các nhãn
-                            callback: function (value) {
-                              return value; // Hiển thị giá trị đúng
-                            },
-                          },
-                        },
-                        y: {
-                          title: {
-                            display: true,
-                            text: "Số giờ", // Nhãn trục tung
-                          },
-                        },
-                      },
-                      plugins: {
-                        legend: {
-                          display: false, // Ẩn chú thích nếu không cần thiết
-                        },
-                      },
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-          </Spin>
-        </div>
         <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
           <h2 className="text-lg sm:text-xl font-bold mb-4">
             DOANH THU VÀO NGÀY {tempDates?.format("DD/MM/YYYY")}
@@ -922,6 +869,54 @@ const OverviewSalon = () => {
             </div>
           </Spin>
         </div>
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md mb-4 sm:mb-6">
+          <h2 className="text-lg sm:text-xl font-bold mb-4">
+            LƯỢNG KHÁCH NGÀY {tempDates?.format("DD/MM/YYYY")}
+          </h2>
+          <Spin className="custom-spin" spinning={loading}>
+            <div className="flex flex-col sm:flex-row gap-4">
+              {/* Biểu đồ đường lớn hơn */}
+              <div className="w-full">
+                <div className="h-64 sm:h-80 lg:h-96">
+                  <Bar
+                    data={horizontalBarData}
+                    options={{
+                      indexAxis: "y", // Đảo trục để biểu đồ trở thành cột ngang
+                      maintainAspectRatio: false,
+                      scales: {
+                        x: {
+                          title: {
+                            display: true,
+                            text: "Số người phục vụ", // Nhãn trục hoành
+                          },
+                          beginAtZero: true, // Bắt đầu từ 0
+                          ticks: {
+                            stepSize: 1, // Đặt khoảng cách giữa các nhãn
+                            callback: function (value) {
+                              return value; // Hiển thị giá trị đúng
+                            },
+                          },
+                        },
+                        y: {
+                          title: {
+                            display: true,
+                            text: "Số giờ", // Nhãn trục tung
+                          },
+                        },
+                      },
+                      plugins: {
+                        legend: {
+                          display: false, // Ẩn chú thích nếu không cần thiết
+                        },
+                      },
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          </Spin>
+        </div>
+
         <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md mb-4 sm:mb-6">
           <h2 className="text-lg sm:text-xl font-bold mb-4">
             THỐNG KÊ SỐ LỊCH HẸN NGÀY {tempDates?.format("DD/MM/YYYY")}
